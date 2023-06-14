@@ -1,26 +1,31 @@
-﻿@inject IShoppingListApiService _apiService;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
 @inject IItemPriceCalculationService _priceCalculationService;
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Error
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models
+@using Fluxor;
 @using System.Text
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
+@using System.Globalization;
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 <div class="d-flex justify-content-end mt-2">
     <Button Type="@ButtonType.Primary"
             OnClick="@OnSummaryButtonClicked"
             Class="mr-2"
-            Disabled="@(!State.ShoppingList?.AnyItemInBasket ?? true)">
+            Disabled="@(!State.Value.ShoppingList?.AnyItemInBasket ?? true)">
         Summary
     </Button>
     <Modal TitleTemplate="@GetTitle()"
-           Visible="@_summaryVisible"
+           Visible="@State.Value.Summary.IsOpen"
            OnCancel="@OnCloseSummaryButtonClicked"
-           ConfirmLoading="@_loading"
+           ConfirmLoading="@State.Value.Summary.IsSaving"
            Footer="@GetFooter()">
         <div>@GetItemInBasketCountText()</div>
-        @if (State.ShoppingList.ItemNotInBasketCount > 0)
+        @if (State.Value.ShoppingList.ItemNotInBasketCount > 0)
         {
             <div class="pt-2">@GetItemNotInBasketCountText()</div>
         }
@@ -28,55 +33,53 @@
 </div>
 
 @code {
-    [Parameter] public ShoppingListState State { get; set; }
-    [Parameter] public IAsyncRetryFragmentCreator FragmentCreator { get; set; }
-    [Parameter] public Func<Task> OnFinishList { get; set; }
-    
-    private bool _summaryVisible = false;
-    private bool _loading = false;
-    private bool _editingFinishedAt = false;
-    private DateTime? _finishedAt = null;
-
-    private string Title => $"Finish shopping at {State.SelectedStore?.Name}";
+    private string Title => $"Finish shopping at {State.Value.SelectedStore?.Name}";
 
     private void OnSummaryButtonClicked()
     {
-        if (!State.ShoppingList.AnyItemInBasket)
+        if (!State.Value.ShoppingList.AnyItemInBasket)
             return;
-            
-        _finishedAt = DateTime.Now;
-        _summaryVisible = true;
+
+        Dispatcher.Dispatch(new OpenSummaryAction());
     }
 
     private void OnCloseSummaryButtonClicked()
     {
-        _summaryVisible = false;
-        _loading = false;
+        Dispatcher.Dispatch(new CloseSummaryAction());
     }
 
-    private async Task OnFinishListButtonClicked()
+    private void OnFinishListButtonClicked()
     {
-        var finalFinishedAt = new DateTimeOffset(_finishedAt!.Value.ToUniversalTime(), TimeSpan.Zero);
-        _loading = true;
-        await _apiService.FinishListAsync(State.ShoppingList.Id, finalFinishedAt, FragmentCreator, async () =>
-        {
-            await OnFinishList();
-            _summaryVisible = false;
-        });
-        _loading = false;
+        Dispatcher.Dispatch(new FinishShoppingListAction());
+    }
+
+    private void OnDateChanged(DateTime date)
+    {
+        Dispatcher.Dispatch(new FinishedAtOnSummaryChangedAction(date));
+    }
+
+    private void OnLeaveFinishedAtEditModeClicked()
+    {
+        Dispatcher.Dispatch(new LeaveFinishedAtEditModeAction());
+    }
+
+    private void OnEnterFinishedAtEditModeClicked()
+    {
+        Dispatcher.Dispatch(new EnterFinishedAtEditModeAction());
     }
 
     private RenderFragment GetFooter()
     {
-        return @<Template>
+        return 
+             @<Template>
                    <div class="d-flex">
                        <div class="summary-price font-weight-bold align-self-center">@GetInBasketPrice()€</div>
                        <Button Class="ml-auto"
                                OnClick="OnFinishListButtonClicked"
+                               Disabled="State.Value.Summary.IsEditingFinishedAt"
                                @key="@("submit")"
                                Type="@ButtonType.Primary"
-                               Disabled="@(_finishedAt is null)"
-                               Loading="@_loading">
+                               Loading="@State.Value.Summary.IsSaving">
                            Finish
                        </Button>
                    </div>
@@ -89,26 +92,28 @@
                    <div class ="summary-header">
                        <div>@Title</div>
                        <div>
-                           @if (_editingFinishedAt)
+                           @if (State.Value.Summary.IsEditingFinishedAt)
                            {
                                <div class="d-flex summary-datetime-edit">
                                    <div class="summary-date-picker">
                                        <DatePicker Size="@AntSizeLDSType.Small"
                                                    AllowClear="false"
-                                                   TValue="DateTime?"
-                                                   Format="dd.MM.yyyy" @bind-Value="_finishedAt"></DatePicker>
+                                                   TValue="DateTime"
+                                                   Format="dd.MM.yyyy" Value="State.Value.Summary.FinishedAt"
+                                                   ValueChanged="OnDateChanged"></DatePicker>
                                    </div>
                                    <div class="summary-time-picker">
                                        <TimePicker Size="@AntSizeLDSType.Small"
                                                    AllowClear="false"
-                                                   TValue="DateTime?"
-                                                   Format="HH:mm:ss" @bind-Value="_finishedAt"></TimePicker>
+                                                   TValue="DateTime"
+                                                   Format="HH:mm:ss"
+                                                   Value="State.Value.Summary.FinishedAt"
+                                                   ValueChanged="OnDateChanged"></TimePicker>
                                    </div>
                                    <div>
                                        <Button Class="d-flex align-items-center"
                                                Size="@AntSizeLDSType.Small"
-                                               Disabled="@(_finishedAt is null)"
-                                               OnClick="() => _editingFinishedAt = false">
+                                               OnClick="OnLeaveFinishedAtEditModeClicked">
                                            <Icon Type="check" Style="Color: #52c41a;"></Icon>
                                        </Button>
                                    </div>
@@ -116,17 +121,18 @@
                            }
                            else
                            {
-                               <div class="summary-datetime" @onclick="() => _editingFinishedAt = true">@GetDateTime()</div>
+                               <div class="summary-datetime" @onclick="OnEnterFinishedAtEditModeClicked">@GetDateTime()</div>
                            }
                        </div>
                    </div>
-                </Template>;
+            </Template>
+    ;
     }
 
     private string GetItemInBasketCountText()
     {
         var builder = new StringBuilder();
-        var count = State.ShoppingList.ItemInBasketCount;
+        var count = State.Value.ShoppingList.ItemInBasketCount;
         builder.Append(count.ToString());
 
         builder.Append(count == 1 ? " item " : " items ");
@@ -138,7 +144,7 @@
     private string GetItemNotInBasketCountText()
     {
         var builder = new StringBuilder();
-        var count = State.ShoppingList.ItemNotInBasketCount;
+        var count = State.Value.ShoppingList.ItemNotInBasketCount;
         builder.Append(count.ToString());
 
         builder.Append(count == 1 ? " item " : " items ");
@@ -149,11 +155,12 @@
 
     private string GetInBasketPrice()
     {
-        return State.ShoppingList.GetFormattedInBasketPrice(_priceCalculationService);
+        var price = _priceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
+        return price.ToString("0.00");
     }
 
     private string GetDateTime()
     {
-        return _finishedAt!.Value.ToString("g", State.Culture);
+        return State.Value.Summary.FinishedAt.ToString("g", CultureInfo.GetCultureInfo("de-de"));
     }
 }

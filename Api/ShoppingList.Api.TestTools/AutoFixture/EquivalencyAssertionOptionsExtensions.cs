@@ -20,6 +20,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"AvailableAt\[\d+\].Item")]
     private static partial Regex AvailableAtItemCycle();
 
+    [GeneratedRegex(@"RowVersion$")]
+    private static partial Regex RowVersion();
+
+    public static EquivalencyAssertionOptions<T> ExcludeRowVersion<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => RowVersion().IsMatch(info.Path));
+    }
+
     public static EquivalencyAssertionOptions<T> ExcludeItemCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
         return options.Excluding(info => ItemTypesItemCycle().IsMatch(info.Path)
@@ -42,10 +50,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"Ingredients\[\d+\].Recipe")]
     private static partial Regex IngredientsRecipeCycle();
 
+    [GeneratedRegex(@"Tags\[\d+\].Recipe")]
+    private static partial Regex RecipeTagRecipeCycle();
+
     public static EquivalencyAssertionOptions<T> ExcludeRecipeCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
         return options.Excluding(info => PreparationStepsRecipeCycle().IsMatch(info.Path)
-                                         || IngredientsRecipeCycle().IsMatch(info.Path));
+                                         || IngredientsRecipeCycle().IsMatch(info.Path)
+                                         || RecipeTagRecipeCycle().IsMatch(info.Path));
     }
 
     public static EquivalencyAssertionOptions<T> UsingDateTimeOffsetWithPrecision<T>(

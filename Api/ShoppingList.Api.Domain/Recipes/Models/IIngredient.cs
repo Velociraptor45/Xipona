@@ -13,8 +13,12 @@ public interface IIngredient
     IngredientQuantity Quantity { get; }
     ItemId? DefaultItemId { get; }
     ItemTypeId? DefaultItemTypeId { get; }
+    IngredientShoppingListProperties? ShoppingListProperties { get; }
 
     Task<IIngredient> ModifyAsync(IngredientModification modification, IValidator validator);
 
     IIngredient RemoveDefaultItem();
+
+    IIngredient ChangeDefaultItem(ItemId oldItemId, IItem newItem);
+    IIngredient ChangeDefaultStore(IItem item);
 }

@@ -1,8 +1,10 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models.Factories;
@@ -150,8 +152,7 @@ public class IngredientsTests
                 _expectedResult.Add(createdIngredient);
 
                 _ingredientFactoryMock.SetupCreateNewAsync(modification.ItemCategoryId, modification.QuantityType,
-                    modification.Quantity, modification.DefaultItemId, modification.DefaultItemTypeId,
-                    createdIngredient);
+                    modification.Quantity, modification.ShoppingListProperties, createdIngredient);
             }
 
             public void SetupIngredientToDelete()
@@ -166,6 +167,121 @@ public class IngredientsTests
 
                 _ingredientMockToModify.VerifyModifyAsync(_modificationForIngredientMockToModify, ValidatorMock.Object,
                     Times.Once);
+            }
+        }
+    }
+
+    public class ModifyAfterItemUpdate
+    {
+        private readonly ModifyAfterItemUpdateFixture _fixture = new();
+
+        [Fact]
+        public void ModifyAfterItemUpdate_WithOldItemReference_ShouldModifyIngredient()
+        {
+            // Arrange
+            _fixture.SetupTwoItems();
+            _fixture.SetupMatchingNewItem();
+            _fixture.SetupChangingDefaultItem();
+            _fixture.SetupExpectedIngredientsForMatchingIngredient();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedIngredients);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+
+            // Act
+            sut.ModifyAfterItemUpdate(_fixture.OldItemId.Value, _fixture.NewItem);
+
+            // Assert
+            sut.Should().BeEquivalentTo(_fixture.ExpectedIngredients);
+        }
+
+        [Fact]
+        public void ModifyAfterItemUpdate_WithNoOldItemReference_ShouldNoModifyIngredient()
+        {
+            // Arrange
+            _fixture.SetupTwoItems();
+            _fixture.SetupNotMatchingNewItem();
+            _fixture.SetupExpectedIngredientsForNotMatchingIngredient();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedIngredients);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldItemId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewItem);
+
+            // Act
+            sut.ModifyAfterItemUpdate(_fixture.OldItemId.Value, _fixture.NewItem);
+
+            // Assert
+            sut.Should().BeEquivalentTo(_fixture.ExpectedIngredients);
+        }
+
+        private sealed class ModifyAfterItemUpdateFixture
+        {
+            private Ingredient? _modifiedIngredient;
+            private IReadOnlyCollection<IngredientMock>? _ingredientMocks;
+            public ItemId? OldItemId { get; private set; }
+            public IItem? NewItem { get; private set; }
+            public IReadOnlyCollection<IIngredient>? ExpectedIngredients { get; private set; }
+
+            public void SetupTwoItems()
+            {
+                _ingredientMocks = new List<IngredientMock>
+                {
+                    new(new IngredientBuilder().Create(), MockBehavior.Strict),
+                    new(new IngredientBuilder().Create(), MockBehavior.Strict)
+                };
+            }
+
+            public void SetupNotMatchingNewItem()
+            {
+                OldItemId = ItemId.New;
+                NewItem = ItemMother.Initial().WithPredecessorId(OldItemId).Create();
+            }
+
+            public void SetupMatchingNewItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_ingredientMocks);
+
+                OldItemId = _ingredientMocks.Last().Object.DefaultItemId!.Value;
+                NewItem = ItemMother.Initial().WithPredecessorId(OldItemId).Create();
+            }
+
+            public void SetupChangingDefaultItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_ingredientMocks);
+                TestPropertyNotSetException.ThrowIfNull(OldItemId);
+                TestPropertyNotSetException.ThrowIfNull(NewItem);
+
+                _modifiedIngredient = new IngredientBuilder().Create();
+                _ingredientMocks.Last().SetupChangingDefaultItem(OldItemId.Value, NewItem, _modifiedIngredient);
+            }
+
+            public void SetupExpectedIngredientsForMatchingIngredient()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_ingredientMocks);
+                TestPropertyNotSetException.ThrowIfNull(_modifiedIngredient);
+
+                ExpectedIngredients = new List<IIngredient>
+                {
+                    _ingredientMocks.First().Object,
+                    _modifiedIngredient
+                };
+            }
+
+            public void SetupExpectedIngredientsForNotMatchingIngredient()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_ingredientMocks);
+
+                ExpectedIngredients = _ingredientMocks.Select(m => m.Object).ToList();
+            }
+
+            public Ingredients CreateSut()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_ingredientMocks);
+
+                return new Ingredients(_ingredientMocks.Select(m => m.Object),
+                    new IngredientFactoryMock(MockBehavior.Strict).Object);
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using Moq.Language.Flow;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
@@ -25,16 +24,16 @@ public class IngredientFactoryMock : Mock<IIngredientFactory>
     }
 
     public void SetupCreateNewAsync(ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
-        IngredientQuantity quantity, ItemId? defaultItemId, ItemTypeId? defaultItemTypeId, IIngredient returnValue)
+        IngredientQuantity quantity, IngredientShoppingListProperties? shoppingListProperties, IIngredient returnValue)
     {
-        Setup(m => m.CreateNewAsync(itemCategoryId, quantityType, quantity, defaultItemId, defaultItemTypeId))
+        Setup(m => m.CreateNewAsync(itemCategoryId, quantityType, quantity, shoppingListProperties))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupCreate(IngredientId id, ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
-        IngredientQuantity quantity, ItemId? defaultItemId, ItemTypeId? defaultItemTypeId, IIngredient returnValue)
+        IngredientQuantity quantity, IngredientShoppingListProperties? shoppingListProperties, IIngredient returnValue)
     {
-        Setup(m => m.Create(id, itemCategoryId, quantityType, quantity, defaultItemId, defaultItemTypeId))
+        Setup(m => m.Create(id, itemCategoryId, quantityType, quantity, shoppingListProperties))
             .Returns(returnValue);
     }
 }

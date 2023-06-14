@@ -5,19 +5,23 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.AllIngredientQuantityTypes;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.ItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.RecipeById;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries.Quantities;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 using System.Threading;
 
@@ -70,7 +74,7 @@ public class RecipeController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("")]
+    [Route("search-by-name")]
     public async Task<IActionResult> SearchRecipesByNameAsync([FromQuery] string searchInput,
         CancellationToken cancellationToken = default)
     {
@@ -100,6 +104,23 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<RecipeSearchResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Route("search-by-tags")]
+    public async Task<IActionResult> SearchRecipesByTagsAsync([FromQuery] IEnumerable<Guid> tagIds,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new SearchRecipesByTagsQuery(tagIds.Select(t => new RecipeTagId(t)));
+
+        var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        if (!results.Any())
+            return NoContent();
+
+        var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results);
+        return Ok(contracts);
+    }
+
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<IngredientQuantityTypeContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("ingredient-quantity-types")]
@@ -114,6 +135,34 @@ public class RecipeController : ControllerBase
         var contracts = _converters.ToContract<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>(results);
 
         return Ok(contracts);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(ItemAmountsForOneServingContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/item-amounts-for-one-serving")]
+    public async Task<IActionResult> GetItemAmountsForOneServingAsync([FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var query = new ItemAmountsForOneServingQuery(new RecipeId(id));
+            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+
+            var contract = _converters
+                .ToContract<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>(result);
+
+            return Ok(contract);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.RecipeNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
     }
 
     [HttpPost]

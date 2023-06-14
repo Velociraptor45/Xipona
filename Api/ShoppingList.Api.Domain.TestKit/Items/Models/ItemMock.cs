@@ -125,6 +125,11 @@ public class ItemMock : Mock<IItem>
         Setup(m => m.TransferToDefaultSection(oldSectionId, newSectionId));
     }
 
+    public void SetupRemoveAvailabilitiesFor(StoreId storeId)
+    {
+        Setup(m => m.RemoveAvailabilitiesFor(storeId));
+    }
+
     #region Verify
 
     public void VerifyDeleteOnce()
@@ -173,6 +178,11 @@ public class ItemMock : Mock<IItem>
     public void VerifyTransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId, Func<Times> times)
     {
         Verify(m => m.TransferToDefaultSection(oldSectionId, newSectionId), times);
+    }
+
+    public void VerifyRemoveAvailabilitiesFor(StoreId storeId, Func<Times> times)
+    {
+        Verify(m => m.RemoveAvailabilitiesFor(storeId), times);
     }
 
     #endregion Verify

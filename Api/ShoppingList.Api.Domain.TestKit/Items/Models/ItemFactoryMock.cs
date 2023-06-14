@@ -10,13 +10,6 @@ public class ItemFactoryMock : Mock<IItemFactory>
     {
     }
 
-    public void SetupCreate(TemporaryItemCreation temporaryItemCreation, IItem returnValue)
-    {
-        Setup(i => i.Create(
-                It.Is<TemporaryItemCreation>(obj => obj == temporaryItemCreation)))
-            .Returns(returnValue);
-    }
-
     public void SetupCreate(ItemCreation itemCreation, IItem returnValue)
     {
         Setup(i => i.Create(

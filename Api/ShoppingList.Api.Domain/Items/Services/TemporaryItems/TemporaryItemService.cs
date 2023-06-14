@@ -10,20 +10,19 @@ public class TemporaryItemService : ITemporaryItemService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IValidator _validator;
-    private readonly CancellationToken _cancellationToken;
 
-    public TemporaryItemService(IItemRepository itemRepository,
+    public TemporaryItemService(
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
         CancellationToken cancellationToken)
     {
-        _itemRepository = itemRepository;
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
     }
 
     public async Task MakePermanentAsync(PermanentItem permanentItem)
     {
-        IItem? item = await _itemRepository.FindByAsync(permanentItem.Id, _cancellationToken);
+        IItem? item = await _itemRepository.FindActiveByAsync(permanentItem.Id);
         if (item == null)
             throw new DomainException(new ItemNotFoundReason(permanentItem.Id));
         if (!item.IsTemporary)
@@ -34,8 +33,6 @@ public class TemporaryItemService : ITemporaryItemService
 
         await _validator.ValidateAsync(itemCategoryId);
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         if (manufacturerId != null)
         {
             await _validator.ValidateAsync(manufacturerId.Value);
@@ -44,9 +41,7 @@ public class TemporaryItemService : ITemporaryItemService
         var availabilities = permanentItem.Availabilities;
         await _validator.ValidateAsync(availabilities);
 
-        _cancellationToken.ThrowIfCancellationRequested();
-
         item.MakePermanent(permanentItem, availabilities);
-        await _itemRepository.StoreAsync(item, _cancellationToken);
+        await _itemRepository.StoreAsync(item);
     }
 }

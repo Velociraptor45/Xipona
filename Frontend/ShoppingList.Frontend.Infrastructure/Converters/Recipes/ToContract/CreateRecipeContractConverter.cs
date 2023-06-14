@@ -1,24 +1,28 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Recipes.ToContract;
 
-public class CreateRecipeContractConverter : IToContractConverter<Recipe, CreateRecipeContract>
+public class CreateRecipeContractConverter : IToContractConverter<EditedRecipe, CreateRecipeContract>
 {
-    public CreateRecipeContract ToContract(Recipe source)
+    public CreateRecipeContract ToContract(EditedRecipe source)
     {
         return new CreateRecipeContract(
             source.Name,
+            source.NumberOfServings,
             source.Ingredients.Select(i => new CreateIngredientContract(
                 i.ItemCategoryId,
-                i.QuantityType,
+                i.QuantityTypeId,
                 i.Quantity,
                 i.DefaultItemId,
-                i.DefaultItemTypeId)),
+                i.DefaultItemTypeId,
+                i.DefaultStoreId,
+                i.AddToShoppingListByDefault)),
             source.PreparationSteps.Select(p => new CreatePreparationStepContract(
                 p.Name,
-                p.SortingIndex)));
+                p.SortingIndex)),
+            source.RecipeTagIds);
     }
 }

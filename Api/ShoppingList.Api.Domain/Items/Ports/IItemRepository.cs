@@ -7,31 +7,33 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 
 public interface IItemRepository
 {
-    Task<IEnumerable<IItem>> FindByAsync(StoreId storeId, CancellationToken cancellationToken);
-
-    Task<IItem?> FindByAsync(ItemId itemId, CancellationToken cancellationToken);
-
-    Task<IItem?> FindByAsync(TemporaryItemId temporaryItemId, CancellationToken cancellationToken);
-
-    Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
-
-    Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds);
 
     Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
-        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds,
-        CancellationToken cancellationToken);
+        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput);
 
-    Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken);
+    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, StoreId storeId);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds, CancellationToken cancellationToken);
+    Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId);
 
-    Task<IItem> StoreAsync(IItem item, CancellationToken cancellationToken);
+    Task<IItem?> FindActiveByAsync(ItemId itemId);
+
+    Task<IItem?> FindActiveByAsync(ItemId itemId, ItemTypeId? itemTypeId);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(SectionId sectionId);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
+        IEnumerable<ItemId> excludedItemIds, int? limit);
+
+    Task<IItem> StoreAsync(IItem item);
 }

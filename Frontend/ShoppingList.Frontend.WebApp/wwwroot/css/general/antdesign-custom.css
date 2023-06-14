@@ -33,3 +33,19 @@
 .ant-modal-close {
     margin-top: -8px;
 }
+
+/* ingredient checkbox */
+
+.add-to-sl-wrapper .ant-checkbox-wrapper {
+    margin-top: 5px;
+}
+
+.recipe-editor-top-row-number-of-servings .ant-input-number {
+    width: 55px;
+}
+
+/* add to shopping list modal */
+
+.add-to-sl-modal-number-of-servings .ant-input-number {
+    width: 55px
+}

@@ -1,10 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Recipes.Adapters;
@@ -15,6 +22,7 @@ public class RecipeRepository : IRecipeRepository
     private readonly IToDomainConverter<Recipe, RecipeSearchResult> _searchToModelConverter;
     private readonly IToDomainConverter<Recipe, IRecipe> _toModelConverter;
     private readonly IToContractConverter<IRecipe, Recipe> _toEntityConverter;
+    private readonly ILogger<RecipeRepository> _logger;
     private readonly CancellationToken _cancellationToken;
 
     public RecipeRepository(
@@ -22,12 +30,14 @@ public class RecipeRepository : IRecipeRepository
         IToDomainConverter<Recipe, RecipeSearchResult> searchToModelConverter,
         IToDomainConverter<Recipe, IRecipe> toModelConverter,
         IToContractConverter<IRecipe, Recipe> toEntityConverter,
+        ILogger<RecipeRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _searchToModelConverter = searchToModelConverter;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
+        _logger = logger;
         _cancellationToken = cancellationToken;
     }
 
@@ -38,6 +48,22 @@ public class RecipeRepository : IRecipeRepository
             .ToListAsync(_cancellationToken);
 
         return _searchToModelConverter.ToDomain(entities);
+    }
+
+    public async Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds)
+    {
+        var rawRecipeTagIds = recipeTagIds.Select(t => t.Value).ToList();
+
+        var query = GetRecipeQuery();
+
+        foreach (Guid tagId in rawRecipeTagIds)
+        {
+            query = query.Where(r => r.Tags.Any(t => t.RecipeTagId == tagId));
+        }
+
+        var entities = await query.ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IRecipe?> FindByAsync(RecipeId recipeId)
@@ -57,6 +83,18 @@ public class RecipeRepository : IRecipeRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId,
+        StoreId defaultStoreId)
+    {
+        var entities = await GetRecipeQuery()
+            .Where(r => r.Ingredients.Any(i => i.DefaultItemId == defaultItemId
+                && i.DefaultItemTypeId == defaultItemTypeId
+                && i.DefaultStoreId == defaultStoreId))
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
     public async Task<IRecipe> StoreAsync(IRecipe recipe)
     {
         var existingEntity = await FindTrackedEntityBy(recipe.Id);
@@ -69,16 +107,30 @@ public class RecipeRepository : IRecipeRepository
         else
         {
             var updatedEntity = _toEntityConverter.ToContract(recipe);
+
+            var existingRowVersion = existingEntity.RowVersion;
             _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+            _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
             _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
             UpdateOrAddIngredients(existingEntity, updatedEntity);
             DeleteIngredients(existingEntity, updatedEntity);
             UpdateOrAddPreparationSteps(existingEntity, updatedEntity);
             DeletePreparationSteps(existingEntity, updatedEntity);
+            UpdateOrAddTags(existingEntity, updatedEntity);
+            DeleteTags(existingEntity, updatedEntity);
         }
 
-        await _dbContext.SaveChangesAsync(_cancellationToken);
+        try
+        {
+            await _dbContext.SaveChangesAsync(_cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex, () => $"Saving recipe {recipe.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
+        }
+
         var entity = await GetRecipeQuery().FirstAsync(r => r.Id == recipe.Id, _cancellationToken);
         return _toModelConverter.ToDomain(entity);
     }
@@ -88,6 +140,7 @@ public class RecipeRepository : IRecipeRepository
         return await _dbContext.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
+            .Include(r => r.Tags)
             .FirstOrDefaultAsync(r => r.Id == id, _cancellationToken);
     }
 
@@ -95,7 +148,8 @@ public class RecipeRepository : IRecipeRepository
     {
         return _dbContext.Recipes.AsNoTracking()
             .Include(r => r.Ingredients)
-            .Include(r => r.PreparationSteps);
+            .Include(r => r.PreparationSteps)
+            .Include(r => r.Tags);
     }
 
     private void UpdateOrAddIngredients(Recipe existing, Recipe updated)
@@ -156,5 +210,39 @@ public class RecipeRepository : IRecipeRepository
                 _dbContext.Remove(type);
             }
         }
+    }
+
+    private void UpdateOrAddTags(Recipe existing, Recipe updated)
+    {
+        foreach (var updatedTag in updated.Tags)
+        {
+            var existingTag = existing.Tags.FirstOrDefault(t => MatchesKey(t, updatedTag));
+
+            if (existingTag == null)
+            {
+                existing.Tags.Add(updatedTag);
+            }
+            else
+            {
+                _dbContext.Entry(existingTag).CurrentValues.SetValues(updatedTag);
+            }
+        }
+    }
+
+    private void DeleteTags(Recipe existing, Recipe updated)
+    {
+        foreach (var type in existing.Tags)
+        {
+            bool hasExistingTag = updated.Tags.Any(t => MatchesKey(t, type));
+            if (!hasExistingTag)
+            {
+                _dbContext.Remove(type);
+            }
+        }
+    }
+
+    private bool MatchesKey(TagsForRecipe left, TagsForRecipe right)
+    {
+        return left.RecipeId == right.RecipeId && left.RecipeTagId == right.RecipeTagId;
     }
 }

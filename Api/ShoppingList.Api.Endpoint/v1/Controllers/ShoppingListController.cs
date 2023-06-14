@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.FinishShoppingList;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.PutItemInBasket;
@@ -11,8 +13,9 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -28,6 +31,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 using System.Threading;
+using AddItemToShoppingListContract = ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
@@ -127,23 +131,45 @@ public class ShoppingListController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/items/temporary")]
+    public async Task<IActionResult> AddTemporaryItemToShoppingListAsync([FromRoute] Guid id,
+        [FromBody] AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(contract.ItemName))
+        {
+            return BadRequest("Item name mustn't be empty");
+        }
+
+        var command = _converters
+            .ToDomain<(Guid, AddTemporaryItemToShoppingListContract), AddTemporaryItemToShoppingListCommand>((id, contract));
+
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        return Ok();
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items")]
     public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid id,
         [FromBody] AddItemToShoppingListContract contract, CancellationToken cancellationToken = default)
     {
-        OfflineTolerantItemId itemId;
-        try
-        {
-            itemId = _converters.ToDomain<ItemIdContract, OfflineTolerantItemId>(contract.ItemId);
-        }
-        catch (ArgumentException)
-        {
-            return BadRequest("No item id was specified.");
-        }
-
         var command = new AddItemToShoppingListCommand(
             new ShoppingListId(id),
-            itemId,
+            new ItemId(contract.ItemId),
             contract.SectionId.HasValue ? new SectionId(contract.SectionId.Value) : null,
             new QuantityInBasket(contract.Quantity));
 
@@ -192,6 +218,32 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
+        return Ok();
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("add-items-to-shopping-lists")]
+    public async Task<IActionResult> AddItemsToShoppingListsAsync(
+        [FromBody] AddItemsToShoppingListsContract contract, CancellationToken cancellationToken = default)
+    {
+        var command = _converters.ToDomain<AddItemsToShoppingListsContract, AddItemsToShoppingListsCommand>(contract);
+
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+
+            if (e.Reason.ErrorCode is ErrorReasonCode.StoreNotFound or ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
         return Ok();
     }
 

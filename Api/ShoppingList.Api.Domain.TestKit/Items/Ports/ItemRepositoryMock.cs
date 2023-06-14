@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 
@@ -11,55 +12,63 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
     }
 
-    public void SetupFindByAsync(ItemId itemId, IItem? returnValue)
-    {
-        Setup(i => i.FindByAsync(
-                It.Is<ItemId>(id => id == itemId),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(returnValue);
-    }
-
     public void SetupFindByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IItem> returnValue)
     {
         Setup(i => i.FindByAsync(
-                It.Is<IEnumerable<ItemId>>(ids => ids.SequenceEqual(itemIds)),
-                It.IsAny<CancellationToken>()))
+                It.Is<IEnumerable<ItemId>>(ids => ids.SequenceEqual(itemIds))))
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindByAsync(TemporaryItemId temporaryItemId, IItem? returnValue)
+    public void SetupFindActiveByAsync(IEnumerable<ItemId> itemIds, IEnumerable<IItem> returnValue)
     {
-        Setup(i => i.FindByAsync(
-                It.Is<TemporaryItemId>(id => id == temporaryItemId),
-                It.IsAny<CancellationToken>()))
+        Setup(i => i.FindActiveByAsync(
+                It.Is<IEnumerable<ItemId>>(ids => ids.IsEquivalentTo(itemIds))))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindActiveByAsync(TemporaryItemId temporaryItemId, IItem? returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                temporaryItemId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindActiveByAsync(ItemId itemId, IItem? returnValue)
+    {
+        Setup(i => i.FindActiveByAsync(
+                itemId))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupFindActiveByAsync(ItemCategoryId itemCategoryId, IEnumerable<IItem> returnValue)
     {
         Setup(i => i.FindActiveByAsync(
-                It.Is<ItemCategoryId>(id => id == itemCategoryId),
-                It.IsAny<CancellationToken>()))
+                It.Is<ItemCategoryId>(id => id == itemCategoryId)))
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<IItem> returnValue)
+    public void SetupFindActiveByAsync(string name, StoreId storeId, IEnumerable<ItemId> excludedItemIds, int? limit,
+        IEnumerable<IItem> returnValue)
     {
-        Setup(m => m.FindActiveByAsync(name, storeId, It.IsAny<CancellationToken>()))
+        Setup(m => m.FindActiveByAsync(name, storeId, excludedItemIds, limit))
             .ReturnsAsync(returnValue);
     }
 
     public void SetupFindActiveByAsync(SectionId sectionId, IEnumerable<IItem> returnValue)
     {
-        Setup(m => m.FindActiveByAsync(sectionId, It.IsAny<CancellationToken>())).ReturnsAsync(returnValue);
+        Setup(m => m.FindActiveByAsync(sectionId)).ReturnsAsync(returnValue);
+    }
+
+    public void SetupFindActiveByAsync(StoreId storeId, IEnumerable<IItem> returnValue)
+    {
+        Setup(m => m.FindActiveByAsync(storeId)).ReturnsAsync(returnValue);
     }
 
     public void VerifyFindByAsync(TemporaryItemId temporaryItemId)
     {
         Verify(
-            i => i.FindByAsync(
-                It.Is<TemporaryItemId>(id => id == temporaryItemId),
-                It.IsAny<CancellationToken>()),
+            i => i.FindActiveByAsync(
+                It.Is<TemporaryItemId>(id => id == temporaryItemId)),
             Times.Once);
     }
 
@@ -67,8 +76,7 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
         Verify(
             i => i.StoreAsync(
-                It.Is<IItem>(it => it == item),
-                It.IsAny<CancellationToken>()),
+                It.Is<IItem>(it => it == item)),
             Times.Once);
     }
 
@@ -76,19 +84,18 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
         Verify(
             i => i.StoreAsync(
-                It.IsAny<IItem>(),
-                It.IsAny<CancellationToken>()),
+                It.IsAny<IItem>()),
             Times.Never);
     }
 
     public void SetupStoreAsync(IItem item, IItem returnValue)
     {
-        Setup(m => m.StoreAsync(item, It.IsAny<CancellationToken>()))
+        Setup(m => m.StoreAsync(item))
             .ReturnsAsync(returnValue);
     }
 
     public void VerifyStoreAsync(IItem item, Func<Times> times)
     {
-        Verify(m => m.StoreAsync(item, It.IsAny<CancellationToken>()), times);
+        Verify(m => m.StoreAsync(item), times);
     }
 }

@@ -14,4 +14,6 @@ public interface IShoppingListItem
     IShoppingListItem RemoveFromBasket();
 
     IShoppingListItem ChangeQuantity(QuantityInBasket quantity);
+
+    IShoppingListItem AddQuantity(QuantityInBasket quantity);
 }

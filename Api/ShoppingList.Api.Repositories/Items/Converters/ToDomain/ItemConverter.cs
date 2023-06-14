@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
@@ -55,6 +56,7 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
                 source.QuantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
         }
 
+        AggregateRoot item;
         if (source.ItemTypes.Any())
         {
             var itemTypes = _itemTypeConverter.ToDomain(source.ItemTypes);
@@ -62,7 +64,7 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
             if (itemCategoryId is null)
                 throw new InvalidOperationException("ItemCategoryId mustn't be null for an item with types.");
 
-            return _itemFactory.Create(
+            item = (AggregateRoot)_itemFactory.Create(
                 new ItemId(source.Id),
                 new ItemName(source.Name),
                 source.Deleted,
@@ -76,24 +78,29 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
                 itemTypes,
                 source.UpdatedOn);
         }
+        else
+        {
+            List<IItemAvailability> availabilities = _itemAvailabilityConverter.ToDomain(source.AvailableAt)
+                .ToList();
 
-        List<IItemAvailability> availabilities = _itemAvailabilityConverter.ToDomain(source.AvailableAt)
-            .ToList();
+            item = (AggregateRoot)_itemFactory.Create(
+                new ItemId(source.Id),
+                new ItemName(source.Name),
+                source.Deleted,
+                new Comment(source.Comment),
+                source.IsTemporary,
+                new ItemQuantity(
+                    source.QuantityType.ToEnum<QuantityType>(),
+                    itemQuantityInPacket),
+                itemCategoryId,
+                manufacturerId,
+                predecessorId,
+                availabilities,
+                temporaryId,
+                source.UpdatedOn);
+        }
 
-        return _itemFactory.Create(
-            new ItemId(source.Id),
-            new ItemName(source.Name),
-            source.Deleted,
-            new Comment(source.Comment),
-            source.IsTemporary,
-            new ItemQuantity(
-                source.QuantityType.ToEnum<QuantityType>(),
-                itemQuantityInPacket),
-            itemCategoryId,
-            manufacturerId,
-            predecessorId,
-            availabilities,
-            temporaryId,
-            source.UpdatedOn);
+        item.EnrichWithRowVersion(source.RowVersion);
+        return (item as IItem)!;
     }
 }

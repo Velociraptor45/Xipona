@@ -31,7 +31,7 @@ public class AvailabilityValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities);
 
         // Assert
         using (new AssertionScope())
@@ -51,7 +51,7 @@ public class AvailabilityValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities);
 
         // Assert
         using (new AssertionScope())
@@ -72,7 +72,7 @@ public class AvailabilityValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities);
 
         // Assert
         using (new AssertionScope())
@@ -93,7 +93,7 @@ public class AvailabilityValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_local.Availabilities);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities, default);
+        Func<Task> function = async () => await service.ValidateAsync(_local.Availabilities);
 
         // Assert
         using (new AssertionScope())
@@ -119,7 +119,7 @@ public class AvailabilityValidationServiceTests
 
         public AvailabilityValidationService CreateSut()
         {
-            return new AvailabilityValidationService(_storeRepositoryMock.Object);
+            return new AvailabilityValidationService(_ => _storeRepositoryMock.Object, default);
         }
 
         public void SetupAvailabilitiesWithDuplicatedStoreIds()
@@ -173,14 +173,14 @@ public class AvailabilityValidationServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(Availabilities);
             var storeIds = Availabilities.Select(av => av.StoreId);
-            _storeRepositoryMock.SetupFindByAsync(storeIds, true, _stores);
+            _storeRepositoryMock.SetupFindActiveByAsync(storeIds, _stores);
         }
 
         public void SetupFindingNoStores()
         {
             TestPropertyNotSetException.ThrowIfNull(Availabilities);
             var storeIds = Availabilities.Select(av => av.StoreId);
-            _storeRepositoryMock.SetupFindByAsync(storeIds, true, Enumerable.Empty<IStore>());
+            _storeRepositoryMock.SetupFindActiveByAsync(storeIds, Enumerable.Empty<IStore>());
         }
 
         #endregion Mock Setup

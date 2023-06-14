@@ -4,14 +4,15 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 
 public interface IManufacturerRepository
 {
-    Task<IManufacturer?> FindByAsync(ManufacturerId id, CancellationToken cancellationToken);
+    Task<IManufacturer?> FindByAsync(ManufacturerId id);
 
-    Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, bool includeDeleted,
-        CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, bool includeDeleted);
 
-    Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids, CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindByAsync(IEnumerable<ManufacturerId> ids);
 
-    Task<IEnumerable<IManufacturer>> FindByAsync(bool includeDeleted, CancellationToken cancellationToken);
+    Task<IEnumerable<IManufacturer>> FindActiveByAsync();
 
-    Task<IManufacturer> StoreAsync(IManufacturer model, CancellationToken cancellationToken);
+    Task<IManufacturer?> FindActiveByAsync(ManufacturerId id);
+
+    Task<IManufacturer> StoreAsync(IManufacturer model);
 }

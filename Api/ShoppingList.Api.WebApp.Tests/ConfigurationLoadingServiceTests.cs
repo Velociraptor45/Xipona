@@ -43,6 +43,7 @@ public class ConfigurationLoadingServiceTests
         // Arrange
         _fixture.SetupExpectedResult();
         _fixture.SetupLoadingConnectionStringFromVault();
+        _fixture.SetupEnvironmentVariableEmpty();
         var sut = _fixture.CreateSut();
 
         // Act
@@ -74,6 +75,11 @@ public class ConfigurationLoadingServiceTests
         {
             _filePath = new TestBuilder<string>().Create();
             Environment.SetEnvironmentVariable("PH_SL_DB_CONNECTION_STRING_FILE", _filePath);
+        }
+
+        public void SetupEnvironmentVariableEmpty()
+        {
+            Environment.SetEnvironmentVariable("PH_SL_DB_CONNECTION_STRING_FILE", string.Empty);
         }
 
         public void SetupLoadingConnectionStringFromFile()

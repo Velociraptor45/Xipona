@@ -5,12 +5,13 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 
 public class Item
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
     public Item()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         AvailableAt ??= new List<AvailableAt>();
+        Name = string.Empty;
+        Comment = string.Empty;
+        ItemTypes ??= new List<ItemType>();
+        RowVersion = Array.Empty<byte>();
     }
 
     [Key]
@@ -31,6 +32,9 @@ public class Item
     public Guid? CreatedFrom { get; set; }
     public DateTimeOffset? UpdatedOn { get; set; }
     public Guid? PredecessorId { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
 
     [ForeignKey("PredecessorId")]
     public Item? Predecessor { get; set; }

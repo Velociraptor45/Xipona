@@ -1,43 +1,24 @@
 ﻿@page "/items"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemsApiService LoadingService;
-@inject ItemsState State
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
+
+@inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
 
-@if (State != null)
-{
-    <div>
-        <ItemFilter State="@State" FragmentCreator="@errorHandler"></ItemFilter>
-    </div>
-}
+<div>
+    <ItemFilter></ItemFilter>
+</div>
+
 
 @code {
-    private ErrorHandler errorHandler;
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        errorHandler = new ErrorHandler(GetButtonRenderFragment);
-        await InitialLoadAsync();
-        State.ClearItems();
-        State.StateChanged -= StateHasChanged;
-        State.StateChanged += StateHasChanged;
-    }
-
-    private async Task InitialLoadAsync()
-    {
-        if (State.Stores.Any())
-            return;
-
-        await LoadingService.LoadInitialPageStateAsync(State, errorHandler);
-    }
-
-    private RenderFragment GetButtonRenderFragment(Func<Task> callback, string label = "Retry")
-    {
-        return @<Button Type="@ButtonType.Primary" OnClick="async () => await callback()">@label</Button>;
+        Dispatcher.Dispatch(new EnterItemSearchPageAction());
+        base.OnInitialized();
     }
 }

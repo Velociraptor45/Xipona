@@ -204,13 +204,13 @@ public class TemporaryItemServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(PermanentItem);
                 TestPropertyNotSetException.ThrowIfNull(ItemMock);
-                ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, ItemMock.Object);
+                ItemRepositoryMock.SetupFindActiveByAsync(PermanentItem.Id, ItemMock.Object);
             }
 
             public void SetupNotFindingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(PermanentItem);
-                ItemRepositoryMock.SetupFindByAsync(PermanentItem.Id, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(PermanentItem.Id, null);
             }
 
             #region Verify
@@ -265,7 +265,7 @@ public class TemporaryItemServiceTests
         public TemporaryItemService CreateSut()
         {
             return new TemporaryItemService(
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 default);
         }

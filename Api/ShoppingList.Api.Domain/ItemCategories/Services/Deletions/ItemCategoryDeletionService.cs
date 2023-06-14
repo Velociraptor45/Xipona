@@ -1,7 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 
@@ -12,34 +10,32 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IItemRepository _itemRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
-    private readonly CancellationToken _cancellationToken;
 
     public ItemCategoryDeletionService(
-        IItemCategoryRepository itemCategoryRepository,
-        IItemRepository itemRepository,
-        IShoppingListRepository shoppingListRepository,
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
-        _itemRepository = itemRepository;
-        _shoppingListRepository = shoppingListRepository;
-        _cancellationToken = cancellationToken;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
     }
 
     public async Task DeleteAsync(ItemCategoryId itemCategoryId)
     {
-        var category = await _itemCategoryRepository.FindByAsync(itemCategoryId, _cancellationToken);
+        var category = await _itemCategoryRepository.FindActiveByAsync(itemCategoryId);
         if (category == null)
-            throw new DomainException(new ItemCategoryNotFoundReason(itemCategoryId));
+            return;
 
         category.Delete();
 
-        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId, _cancellationToken))
+        var items = (await _itemRepository.FindActiveByAsync(itemCategoryId))
             .ToList();
 
         foreach (var item in items)
         {
-            var lists = await _shoppingListRepository.FindActiveByAsync(item.Id, _cancellationToken);
+            var lists = await _shoppingListRepository.FindActiveByAsync(item.Id);
             foreach (var list in lists)
             {
                 if (item.HasItemTypes)
@@ -54,11 +50,11 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
                     list.RemoveItem(item.Id);
                 }
 
-                await _shoppingListRepository.StoreAsync(list, _cancellationToken);
+                await _shoppingListRepository.StoreAsync(list);
             }
             item.Delete();
-            await _itemRepository.StoreAsync(item, _cancellationToken);
+            await _itemRepository.StoreAsync(item);
         }
-        await _itemCategoryRepository.StoreAsync(category, _cancellationToken);
+        await _itemCategoryRepository.StoreAsync(category);
     }
 }

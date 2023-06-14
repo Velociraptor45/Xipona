@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.DeleteItem;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
@@ -22,7 +21,6 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Items.Queries.SearchIte
 using ProjectHermes.ShoppingList.Api.Contracts.Common;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
@@ -163,8 +161,9 @@ public class ItemController : ControllerBase
         if (!readModels.Any())
             return NoContent();
 
-        var contracts =
-            _converters.ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels);
+        var contracts = _converters
+            .ToContract<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>(readModels)
+            .ToList();
 
         return Ok(contracts);
     }
@@ -296,29 +295,6 @@ public class ItemController : ControllerBase
 
             // ReSharper disable once Mvc.ActionNotResolved
             return CreatedAtAction(nameof(GetAsync), new { id = returnContract.Id }, returnContract);
-        }
-        catch (DomainException e)
-        {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            return UnprocessableEntity(errorContract);
-        }
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("temporary")]
-    public async Task<IActionResult> CreateTemporaryItemAsync([FromBody] CreateTemporaryItemContract contract,
-        CancellationToken cancellationToken = default)
-    {
-        var model = _converters.ToDomain<CreateTemporaryItemContract, TemporaryItemCreation>(contract);
-        var command = new CreateTemporaryItemCommand(model);
-        try
-        {
-            var readModel = await _commandDispatcher.DispatchAsync(command, cancellationToken);
-
-            var returnContract = _converters.ToContract<ItemReadModel, ItemContract>(readModel);
-            return Ok(returnContract);
         }
         catch (DomainException e)
         {

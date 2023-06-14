@@ -77,4 +77,21 @@ public class IngredientEntityBuilder : TestBuilderBase<Ingredient>
     {
         return WithRecipe(null);
     }
+
+    public IngredientEntityBuilder WithDefaultStoreId(Guid? defaultStoreId)
+    {
+        FillPropertyWith(p => p.DefaultStoreId, defaultStoreId);
+        return this;
+    }
+
+    public IngredientEntityBuilder WithoutDefaultStoreId()
+    {
+        return WithDefaultStoreId(null);
+    }
+
+    public IngredientEntityBuilder WithAddToShoppingListByDefault(bool addToShoppingListByDefault)
+    {
+        FillPropertyWith(p => p.AddToShoppingListByDefault, addToShoppingListByDefault);
+        return this;
+    }
 }

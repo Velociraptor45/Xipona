@@ -4,18 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Services.ItemEditor;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
-using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores.Services;
+using ProjectHermes.ShoppingList.Frontend.Redux;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using System;
 using System.Net.Http;
@@ -52,36 +44,22 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
         private static void AddDependencies(WebAssemblyHostBuilder builder)
         {
+            var config = new ShoppingListConfiguration()
+            {
+                SearchDelayAfterInput = TimeSpan.FromMilliseconds(300),
+                HideItemsDelay = TimeSpan.FromMilliseconds(1000)
+            };
+            builder.Services.AddSingleton(config);
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
             builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
             builder.Services.AddTransient<IApiClient, ApiClient>();
             builder.Services.AddScoped<ICommandQueue, CommandQueue>();
 
-            builder.Services.AddTransient<ITemporaryItemCreationService, TemporaryItemCreationService>();
-
             builder.Services.AddScoped<IItemPriceCalculationService, ItemPriceCalculationService>();
 
-            builder.Services.AddTransient<IShoppingListApiService, ShoppingListApiService>();
-
-            builder.Services.AddSingleton(new ItemsState());
-            builder.Services.AddTransient<IItemsApiService, ItemsApiService>();
-            builder.Services.AddTransient<IStoresApiService, StoresApiService>();
-
-            builder.Services.AddTransient<IItemEditorApiService, ItemEditorApiService>();
-
-            var manufacturerState = new ManufacturersState();
-            builder.Services.AddSingleton(manufacturerState);
-            builder.Services.AddTransient<IManufacturerApiService, ManufacturerApiService>();
-
-            var itemCategoryState = new ItemCategoriesState();
-            builder.Services.AddSingleton(itemCategoryState);
-            builder.Services.AddTransient<IItemCategoryApiService, ItemCategoryApiService>();
-
-            var recipeState = new RecipesState();
-            builder.Services.AddSingleton(recipeState);
-            builder.Services.AddTransient<IRecipesApiService, RecipesApiService>();
-
             builder.Services.AddInfrastructure();
+
+            builder.Services.AddRedux();
         }
     }
 }

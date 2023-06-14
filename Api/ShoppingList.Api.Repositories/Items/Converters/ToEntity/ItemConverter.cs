@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
@@ -26,7 +27,8 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
             ItemTypes = source.ItemTypes.Select(type => ToItemType(type, source)).ToList(),
             UpdatedOn = source.UpdatedOn,
-            PredecessorId = source.PredecessorId
+            PredecessorId = source.PredecessorId,
+            RowVersion = ((AggregateRoot)source).RowVersion
         };
     }
 
@@ -49,7 +51,8 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             ItemId = source.Id,
             Name = itemType.Name,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
-            PredecessorId = itemType.PredecessorId
+            PredecessorId = itemType.PredecessorId,
+            IsDeleted = itemType.IsDeleted
         };
     }
 

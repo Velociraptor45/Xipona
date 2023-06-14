@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -11,6 +12,7 @@ public interface IItemType
     ItemTypeName Name { get; }
     IReadOnlyCollection<IItemAvailability> Availabilities { get; }
     ItemTypeId? PredecessorId { get; }
+    bool IsDeleted { get; }
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
@@ -27,4 +29,8 @@ public interface IItemType
     IItemType Update();
 
     IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
+
+    IItemType Delete(out IDomainEvent domainEventToPublish);
+
+    IItemType RemoveAvailabilitiesFor(StoreId storeId, out IEnumerable<IDomainEvent> domainEventsToPublish);
 }

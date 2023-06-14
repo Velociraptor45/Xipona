@@ -45,7 +45,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -69,7 +69,7 @@ public class ShoppingListExchangeServiceTests
 
             // Act
             Func<Task> func = async () =>
-                await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+                await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListItemHasType);
@@ -89,7 +89,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -110,7 +110,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -131,7 +131,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -156,7 +156,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -176,7 +176,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -197,7 +197,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -217,7 +217,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -242,7 +242,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -263,7 +263,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -284,7 +284,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -305,7 +305,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -368,7 +368,7 @@ public class ShoppingListExchangeServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
                 TestPropertyNotSetException.ThrowIfNull(NewItem);
                 var sectionId = NewItem.GetDefaultSectionIdForStore(ShoppingListMock.Object.StoreId);
-                AddItemToShoppingListServiceMock.SetupAddItemToShoppingList(ShoppingListMock.Object, NewItem.Id,
+                AddItemToShoppingListServiceMock.SetupAddItemAsync(ShoppingListMock.Object, NewItem.Id,
                     sectionId, OldShoppingListItem.Quantity);
             }
 
@@ -390,7 +390,7 @@ public class ShoppingListExchangeServiceTests
                     .First(av => av.StoreId == ShoppingListMock.Object.StoreId)
                     .DefaultSectionId;
 
-                AddItemToShoppingListServiceMock.VerifyAddItemToShoppingListOnce(ShoppingListMock.Object,
+                AddItemToShoppingListServiceMock.VerifyAddItemAsyncOnce(ShoppingListMock.Object,
                     NewItem.Id, defaultSectionId, OldShoppingListItem.Quantity);
             }
 
@@ -468,7 +468,7 @@ public class ShoppingListExchangeServiceTests
 
             // Act
             Func<Task> func = async () =>
-                await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+                await sut.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListItemHasNoType);
@@ -488,7 +488,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -509,7 +509,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -530,7 +530,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -555,7 +555,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -576,7 +576,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -597,7 +597,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -622,7 +622,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -642,7 +642,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -663,7 +663,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -683,7 +683,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -708,7 +708,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -729,7 +729,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -750,7 +750,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -771,7 +771,7 @@ public class ShoppingListExchangeServiceTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldShoppingListItem);
 
             // Act
-            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem, default);
+            await service.ExchangeItemAsync(_fixture.OldShoppingListItem.Id, _fixture.NewItem);
 
             // Assert
             using (new AssertionScope())
@@ -850,7 +850,7 @@ public class ShoppingListExchangeServiceTests
                 TestPropertyNotSetException.ThrowIfNull(NewItem);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewSection);
                 var type = NewItem.ItemTypes.First();
-                AddItemToShoppingListServiceMock.SetupAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
+                AddItemToShoppingListServiceMock.SetupAddItemWithTypeAsync(ShoppingListMock.Object, NewItem,
                     type.Id, ExpectedNewSection.Value, OldShoppingListItem.Quantity);
             }
 
@@ -870,7 +870,7 @@ public class ShoppingListExchangeServiceTests
                 TestPropertyNotSetException.ThrowIfNull(NewItem);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewSection);
                 var type = NewItem.ItemTypes.First();
-                AddItemToShoppingListServiceMock.VerifyAddItemWithTypeToShoppingList(ShoppingListMock.Object, NewItem,
+                AddItemToShoppingListServiceMock.VerifyAddItemWithTypeAsync(ShoppingListMock.Object, NewItem,
                     type.Id, ExpectedNewSection.Value, OldShoppingListItem.Quantity, Times.Once);
             }
 
@@ -1047,9 +1047,10 @@ public class ShoppingListExchangeServiceTests
         public ShoppingListExchangeService CreateSut()
         {
             return new ShoppingListExchangeService(
-                ShoppingListRepositoryMock.Object,
-                AddItemToShoppingListServiceMock.Object,
-                _logger);
+                _ => ShoppingListRepositoryMock.Object,
+                _ => AddItemToShoppingListServiceMock.Object,
+                _logger,
+                default);
         }
     }
 }

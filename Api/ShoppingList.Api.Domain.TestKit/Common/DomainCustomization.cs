@@ -3,10 +3,13 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 
@@ -41,10 +44,13 @@ public class DomainCustomization : ICustomization
         fixture.Customize<RecipeId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<IngredientId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<RecipeTagId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());
+        fixture.Customize(new QuantityInBasketCustomization());
         fixture.Customize(new ItemQuantityCustomization());
+        fixture.Customize(new NumberOfServingsCustomization());
 
         fixture.Customize(new SectionsCustomization());
     }

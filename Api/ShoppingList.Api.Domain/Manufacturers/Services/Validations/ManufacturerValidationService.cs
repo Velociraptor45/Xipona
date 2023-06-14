@@ -9,17 +9,17 @@ public class ManufacturerValidationService : IManufacturerValidationService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ManufacturerValidationService(IManufacturerRepository manufacturerRepository)
+    public ManufacturerValidationService(
+        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
+        CancellationToken cancellationToken)
     {
-        _manufacturerRepository = manufacturerRepository;
+        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
     }
 
-    public async Task ValidateAsync(ManufacturerId manufacturerId, CancellationToken cancellationToken)
+    public async Task ValidateAsync(ManufacturerId manufacturerId)
     {
         IManufacturer? manufacturer = await _manufacturerRepository
-            .FindByAsync(manufacturerId, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FindActiveByAsync(manufacturerId);
 
         if (manufacturer == null)
             throw new DomainException(new ManufacturerNotFoundReason(manufacturerId));

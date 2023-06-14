@@ -18,7 +18,7 @@ public class ManufacturerModificationServiceTests
         {
             _fixture = new ModifyAsyncFixture();
         }
-        
+
         [Fact]
         public async Task ModifyAsync_WithNotFindingManufacturer_ShouldThrowDomainException()
         {
@@ -114,7 +114,7 @@ public class ManufacturerModificationServiceTests
 
         public ManufacturerModificationService CreateSut()
         {
-            return new ManufacturerModificationService(_manufacturerRepositoryMock.Object, default);
+            return new ManufacturerModificationService(_ => _manufacturerRepositoryMock.Object, default);
         }
 
         public void SetupManufacturerMock()
@@ -126,13 +126,13 @@ public class ManufacturerModificationServiceTests
         public void SetupNotFindingManufacturer()
         {
             TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
-            _manufacturerRepositoryMock.SetupFindByAsync(ManufacturerMock.Object.Id, null);
+            _manufacturerRepositoryMock.SetupFindActiveByAsync(ManufacturerMock.Object.Id, null);
         }
 
         public void SetupFindingManufacturer()
         {
             TestPropertyNotSetException.ThrowIfNull(ManufacturerMock);
-            _manufacturerRepositoryMock.SetupFindByAsync(ManufacturerMock.Object.Id, ManufacturerMock.Object);
+            _manufacturerRepositoryMock.SetupFindActiveByAsync(ManufacturerMock.Object.Id, ManufacturerMock.Object);
         }
 
         public void SetupStoringManufacturer()

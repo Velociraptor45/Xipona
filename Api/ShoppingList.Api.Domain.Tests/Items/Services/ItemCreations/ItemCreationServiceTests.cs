@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
@@ -376,166 +375,6 @@ public class ItemCreationServiceTests
         }
     }
 
-    public class CreateTemporaryAsyncTests
-    {
-        private readonly CreateTemporaryAsyncFixture _fixture;
-
-        public CreateTemporaryAsyncTests()
-        {
-            _fixture = new CreateTemporaryAsyncFixture();
-        }
-
-        #region WithValidData
-
-        [Fact]
-        public async Task CreateTemporaryAsync_WithValidData_ShouldNotThrow()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-            _fixture.SetupWithValidData();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.TemporaryItemCreation);
-
-            // Act
-            var func = async () => await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                await func.Should().NotThrowAsync();
-            }
-        }
-
-        [Fact]
-        public async Task CreateTemporaryAsync_WithValidData_ShouldValidateAvailabilities()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-            _fixture.SetupWithValidData();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.TemporaryItemCreation);
-
-            // Act
-            await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _fixture.VerifyValidatingAvailabilities();
-            }
-        }
-
-        [Fact]
-        public async Task CreateTemporaryAsync_WithValidData_ShouldStoreItem()
-        {
-            // Arrange
-            var sut = _fixture.CreateSut();
-            _fixture.SetupWithValidData();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.TemporaryItemCreation);
-
-            // Act
-            await sut.CreateTemporaryAsync(_fixture.TemporaryItemCreation);
-
-            // Assert
-            using (new AssertionScope())
-            {
-                _fixture.VerifyStoringItem();
-            }
-        }
-
-        #endregion WithValidData
-
-        private sealed class CreateTemporaryAsyncFixture : LocalFixture
-        {
-            private IItem? _item;
-            private IItemAvailability? _availability;
-            private ItemReadModel? _itemReadModel;
-            public TemporaryItemCreation? TemporaryItemCreation { get; private set; }
-
-            public void SetupCommand()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_availability);
-                Fixture.ConstructorArgumentFor<TemporaryItemCreation, IItemAvailability>("availability",
-                    _availability);
-                TemporaryItemCreation = Fixture.Create<TemporaryItemCreation>();
-            }
-
-            public void SetupItem()
-            {
-                _item = ItemMother.Initial().Create();
-            }
-
-            public void SetupRandomAvailability()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                _availability = CommonFixture.ChooseRandom(_item.Availabilities);
-            }
-
-            #region Mock Setup
-
-            public void SetupCreatingItem()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
-                ItemFactoryMock.SetupCreate(TemporaryItemCreation, _item);
-            }
-
-            public void SetupValidatingAvailabilities()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_availability);
-                ValidatorMock.SetupValidateAsync(_availability.ToMonoList());
-            }
-
-            public void SetupStoringItem()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                ItemRepositoryMock.SetupStoreAsync(_item, _item);
-            }
-
-            public void SetupConvertingItem()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                _itemReadModel = Fixture.Create<ItemReadModel>();
-                ConversionServiceMock.SetupConvertAsync(_item, _itemReadModel);
-            }
-
-            #endregion Mock Setup
-
-            #region Verify
-
-            public void VerifyValidatingAvailabilities()
-            {
-                TestPropertyNotSetException.ThrowIfNull(TemporaryItemCreation);
-                ValidatorMock.VerifyValidateAsync(TemporaryItemCreation.Availability.ToMonoList(), Times.Once);
-            }
-
-            public void VerifyStoringItem()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                ItemRepositoryMock.VerifyStoreAsyncOnce(_item);
-            }
-
-            #endregion Verify
-
-            #region Aggregates
-
-            public void SetupWithValidData()
-            {
-                SetupItem();
-                SetupRandomAvailability();
-                SetupCommand();
-                SetupCreatingItem();
-                SetupStoringItem();
-
-                SetupValidatingAvailabilities();
-                SetupConvertingItem();
-            }
-
-            #endregion Aggregates
-        }
-    }
-
     public abstract class LocalFixture
     {
         protected Fixture Fixture;
@@ -558,10 +397,10 @@ public class ItemCreationServiceTests
         public ItemCreationService CreateSut()
         {
             return new ItemCreationService(
-                ItemRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 ItemFactoryMock.Object,
-                ConversionServiceMock.Object,
+                _ => ConversionServiceMock.Object,
                 default);
         }
     }

@@ -1,36 +1,41 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.Models;
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Stores.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
 
 <div class="availability d-flex">
     <div class="data">
         <Select Class="mr-2 store"
-                DataSource="Stores"
-                TItem="AvailabilityStore"
+                DataSource="Available.CreateAvailabilityStores(Model, State.Value.Stores.Stores).ToList()"
+                TItem="EditedItemAvailabilityStore"
                 TItemValue="Guid"
-                DefaultValue="Model.Store.Id"
-                ValueName="@nameof(AvailabilityStore.Id)"
-                LabelName="@nameof(AvailabilityStore.Name)"
-                DisabledName="@nameof(AvailabilityStore.IsDisabled)"
+                DefaultValue="Model.StoreId"
+                ValueName="@nameof(EditedItemAvailabilityStore.Id)"
+                LabelName="@nameof(EditedItemAvailabilityStore.Name)"
+                DisabledName="@nameof(EditedItemAvailabilityStore.IsDisabled)"
                 IgnoreItemChanges="false"
                 OnSelectedItemChanged="@OnStoreChanged">
         </Select>
         <div class="d-flex pt-1">
             <div class="align-items-center d-flex">
                 <div class="price-input">
-                    <Input @bind-Value="@Model.PricePerQuantity"/>
+                    <Input TValue="float" Value="@Model.PricePerQuantity" ValueChanged="OnPriceChanged"/>
                 </div>
-                <div class="mr-2">@(State.EditedItem.QuantityType.PriceLabel)</div>
+                <div class="mr-2">@(State.Value.Editor.Item!.QuantityType.PriceLabel)</div>
             </div>
+            @*// todo convert to Select #298 *@
             <SingleSelect Class="ml-2"
-                          TItem="ItemSection"
+                          DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
+                          TItem="ItemStoreSection"
                           TValue="Guid"
-                          ValueName="@nameof(ItemSection.Id)"
-                          LabelName="@nameof(ItemSection.Name)"
-                          DataSource="@Model.Store.Sections.ToList()"
+                          ValueName="@nameof(ItemStoreSection.Id)"
+                          LabelName="@nameof(ItemStoreSection.Name)"
                           OnItemChanged="OnDefaultSectionChanged"
+                          IgnoreItemChanges="false"
                           DefaultValue="@Model.DefaultSectionId"></SingleSelect>
         </div>
     </div>
@@ -42,30 +47,26 @@
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-    [Parameter] public ItemAvailability Model { get; set; }
-    [Parameter] public List<AvailabilityStore> Stores { get; set; }
-    [Parameter] public int Index { get; set; }
-    [Parameter] public Action<int> OnRemove { get; set; }
-    [Parameter] public Action OnSelectedStoreChanged { get; set; }
-    
-    private void OnStoreChanged(AvailabilityStore availabilityStore)
-    {
-        var store = State.GetStore(availabilityStore.Id);
-        Model.Store = store.AsItemStore();
+    [Parameter] public IAvailable Available { get; set; }
+    [Parameter] public EditedItemAvailability Model { get; set; }
 
-        var defaultSection = store.Sections.Single(s => s.IsDefaultSection);
-        Model.ChangeDefaultSectionId(defaultSection.Id.BackendId);
-        OnSelectedStoreChanged?.Invoke();
+    private void OnStoreChanged(EditedItemAvailabilityStore store)
+    {
+        Dispatcher.Dispatch(new ChangeStoreAction(Available, Model, store.Id));
     }
 
     private void OnRemoveStoreButtonClicked()
     {
-        OnRemove(Index);
+        Dispatcher.Dispatch(new RemoveStoreAction(Available, Model));
     }
 
-    private void OnDefaultSectionChanged(ItemSection section)
+    private void OnDefaultSectionChanged(ItemStoreSection section)
     {
-        Model.ChangeDefaultSectionId(section.Id);
+        Dispatcher.Dispatch(new ChangeDefaultSectionAction(Available, Model, section.Id));
+    }
+
+    private void OnPriceChanged(float price)
+    {
+        Dispatcher.Dispatch(new ChangePriceAction(Available, Model, price));
     }
 }

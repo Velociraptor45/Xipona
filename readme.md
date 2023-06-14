@@ -1,4 +1,8 @@
 # Project Hermes - Shopping List
+
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-shoppinglist-api?color=blue&label=docker%20image%20api&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-shoppinglist-api)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-shoppinglist-frontend?color=blue&label=docker%20image%20frontend&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-shoppinglist-frontend)
+
 ## Project Description
 
 ## Components
@@ -15,7 +19,6 @@ The frontend can show and edit active shopping lists, items & shops. Thanks to r
 To run all required services in containers, Dockerfiles and docker-compose files are provided. Since v0.7.0 Docker Secrets are being used and thus the services must be started via a stack deploy on a Docker Swarm. Starting via docker-compose is not supported anymore.
 
 In general, all above descriptions apply, plus some additions specified in the following sections.
-Notice: All Dockerfiles use 32-bit images as base images to be able to run on Raspberry Pis.
 The ProjectHermes ShoppingList comes with the option to connecto to a Hashicorp KeyVault. The setup for it is, however, a bit complicated. That's why there's an alternative option to provide the db connection string to the api via a Docker Secret.
 
 ### Prerequisits
@@ -53,6 +56,8 @@ Prepare the following things:
   - (prd/dev)-ph-shoppinglist-vault-api-password
 - Docker Secrets (if you don't want to use the key vault; see [here](#key-vault) for connection string dummy)
   - (prd/dev)-ph-shoppinglist-db-connection-string
+- Docker Secrets (no matter if you're using the key vault or not)
+  - (prd/dev)-ph-shoppinglist-db-root-pwd
 
 ### Vault
 If you don't want to use the key vault, you can skip this section.
@@ -73,9 +78,7 @@ Configure the webserver address & the frontend's environment in shoppinglist.con
 - Make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
 
 ### yml files
-Under *Docker/Compose/* are yml files for development and production. You have to 
-- set the DB root password
-- replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
+Under *Docker/Compose/* are yml files for development and production. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
 
 Now start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. Your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
 
@@ -90,9 +93,9 @@ To get the everything running at your dev machine, at least a running dev DB is 
 The API is running via https and needs the local certificate files (shoppinglist-api-local.crt & shoppinglist-api-local.key) in the *Api/ShoppingList.Api.WebApp/ssl/* directory (you might have to create the folder).
 
 #### Database connection
-To mimic Docker Secrets, there are two variables in the *Api/ShoppingList.Api.WebApp/Properties/launchSettings.json*: PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE. Create two files with username and password to your dev key vault, respectively and specify their full absolute file path here. A normal .txt is enough. Fill the files with the same values you chose for the respective secrets during the [Prerequisits](#prerequisits) step.
+To mimic Docker Secrets, there are two variables in the *Api/ShoppingList.Api.WebApp/Properties/launchSettings.json*: PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE. If you want to use the key vault, create two files with username and password to your dev key vault, respectively and specify their full absolute file path here. A normal .txt is enough. Fill the files with the same values you chose for the respective secrets during the [Prerequisits](#prerequisits) step.
 
-If you don't want to use the key vault, create a PH_SL_DB_CONNECTION_STRING_FILE variable in the launchSettings.json file next to the other ones and specify the location of the file holding the connection string there (after you created the file). An example for the connection string can be found in the [General Setup](#general-setup) section.
+If you don't want to use the key vault, create a PH_SL_DB_CONNECTION_STRING_FILE variable in the launchSettings.json file and remove the other two and specify the location of the file holding the connection string there (after you created the file). An example for the connection string can be found in the [General Setup](#general-setup) section.
 
 ### Frontend
 No further actions are required

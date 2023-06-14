@@ -29,7 +29,7 @@ public class ManufacturerValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Manufacturer);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id);
 
         // Assert
         using (new AssertionScope())
@@ -50,7 +50,7 @@ public class ManufacturerValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.Manufacturer);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.Manufacturer.Id);
 
         // Assert
         using (new AssertionScope())
@@ -72,7 +72,7 @@ public class ManufacturerValidationServiceTests
 
         public ManufacturerValidationService CreateSut()
         {
-            return new ManufacturerValidationService(ManufacturerRepositoryMock.Object);
+            return new ManufacturerValidationService(_ => ManufacturerRepositoryMock.Object, default);
         }
 
         public void SetupManufacturer()
@@ -85,13 +85,13 @@ public class ManufacturerValidationServiceTests
         public void SetupFindingManufacturer()
         {
             TestPropertyNotSetException.ThrowIfNull(Manufacturer);
-            ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, Manufacturer);
+            ManufacturerRepositoryMock.SetupFindActiveByAsync(Manufacturer.Id, Manufacturer);
         }
 
         public void SetupFindingNoManufacturer()
         {
             TestPropertyNotSetException.ThrowIfNull(Manufacturer);
-            ManufacturerRepositoryMock.SetupFindByAsync(Manufacturer.Id, null);
+            ManufacturerRepositoryMock.SetupFindActiveByAsync(Manufacturer.Id, null);
         }
 
         #endregion Mock Setup

@@ -28,7 +28,7 @@ public class ItemCategoryValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategory);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_fixture.ItemCategory.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.ItemCategory.Id);
 
         // Assert
         using (new AssertionScope())
@@ -49,7 +49,7 @@ public class ItemCategoryValidationServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategory);
 
         // Act
-        Func<Task> function = async () => await service.ValidateAsync(_fixture.ItemCategory.Id, default);
+        Func<Task> function = async () => await service.ValidateAsync(_fixture.ItemCategory.Id);
 
         // Assert
         using (new AssertionScope())
@@ -70,7 +70,7 @@ public class ItemCategoryValidationServiceTests
 
         public ItemCategoryValidationService CreateService()
         {
-            return new ItemCategoryValidationService(ItemCategoryRepositoryMock.Object);
+            return new ItemCategoryValidationService(_ => ItemCategoryRepositoryMock.Object, default);
         }
 
         public void SetupItemCategory()
@@ -81,13 +81,13 @@ public class ItemCategoryValidationServiceTests
         public void SetupFindingItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(ItemCategory);
-            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, ItemCategory);
+            ItemCategoryRepositoryMock.SetupFindActiveByAsync(ItemCategory.Id, ItemCategory);
         }
 
         public void SetupFindingNoItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(ItemCategory);
-            ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategory.Id, null);
+            ItemCategoryRepositoryMock.SetupFindActiveByAsync(ItemCategory.Id, null);
         }
     }
 }

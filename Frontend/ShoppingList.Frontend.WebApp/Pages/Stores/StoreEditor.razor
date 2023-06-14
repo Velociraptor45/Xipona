@@ -1,0 +1,102 @@
+﻿@page "/stores/{StoreId:guid}"
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Stores
+
+@inject IDispatcher Dispatcher
+@inject IState<StoreState> State
+
+@if (State.Value.Editor.Store is not null)
+{
+    <div class="px-2">
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <Icon Type="arrow-left"></Icon>
+            </Button>
+            <div class="mx-3">
+                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+            </div>
+            @if (State.Value.Editor.Store.Id != Guid.Empty)
+            {
+                <div class="ml-auto">
+                    <Button Danger="true" OnClick="@OnDeleteButtonClicked">
+                        Delete
+                    </Button>
+                </div>
+            }
+        </div>
+
+        <Sections></Sections>
+
+        <div class="d-flex justify-content-end mt-2">
+            @if (State.Value.Editor.Store.Id == Guid.Empty)
+            {
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving">Create</Button>
+            }
+            else
+            {
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving">Save</Button>
+            }
+        </div>
+    </div>
+
+    <Modal Title="Delete Store"
+           Visible="@State.Value.Editor.IsShowingDeletionNotice"
+           OnCancel="@OnDeleteModalCancelClicked"
+           OnOk="@OnDeleteModalOkClicked"
+           OkText="@($"Delete {State.Value.Editor.Store.Name}")"
+           CancelText="@("Cancel")">
+        <div>
+            Deleting a store will also remove any availability of items in this store. 
+            Items that are only available in this store will be deleted.
+        </div>
+    </Modal>
+}
+
+@code {
+    [Parameter] public Guid StoreId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (StoreId == Guid.Empty)
+            Dispatcher.Dispatch(new SetNewStoreAction());
+        else
+            Dispatcher.Dispatch(new LoadStoreForEditingAction(StoreId));
+    }
+
+    private void OnBackButtonClicked()
+    {
+        Dispatcher.Dispatch(new LeaveStoreEditorAction());
+    }
+
+    private void OnNameChanged(string name)
+    {
+        Dispatcher.Dispatch(new StoreNameChangedAction(name ?? string.Empty));
+    }
+    
+    private void OnSaveButtonClicked()
+    {
+        Dispatcher.Dispatch(new SaveStoreAction());
+    }
+
+    private void OnDeleteButtonClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreButtonClickedAction());
+    }
+
+    private void OnDeleteModalCancelClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreAbortedAction());
+    }
+
+    private void OnDeleteModalOkClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreConfirmedAction());
+    }
+}

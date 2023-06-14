@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ProjectHermes.ShoppingList.Frontend.Redux.TestKit</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
+    <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShoppingList.Frontend.Redux\ShoppingList.Frontend.Redux.csproj" />
+    <ProjectReference Include="..\ShoppingList.Frontend.TestTools\ShoppingList.Frontend.TestTools.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+﻿using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -37,6 +38,9 @@ public class Item : AggregateRoot, IItem
         PredecessorId = predecessorId;
         _itemTypes = null;
         _availabilities = availabilities.ToList();
+
+        if (!_availabilities.Any())
+            throw new DomainException(new CannotCreateItemWithoutAvailabilitiesReason());
     }
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
@@ -79,13 +83,23 @@ public class Item : AggregateRoot, IItem
     public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.AsReadOnly();
     public bool HasItemTypes => _itemTypes?.Any() ?? false;
 
+    protected override IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
+    {
+        if (domainEvent is ItemDomainEvent itemDomainEvent)
+        {
+            return itemDomainEvent with { ItemId = Id };
+        }
+
+        return domainEvent;
+    }
+
     public void Delete()
     {
         if (IsDeleted)
             return;
 
         IsDeleted = true;
-        PublishDomainEvent(new ItemDeletedDomainEvent(Id));
+        PublishDomainEvent(new ItemDeletedDomainEvent());
     }
 
     public bool IsAvailableInStore(StoreId storeId)
@@ -95,6 +109,9 @@ public class Item : AggregateRoot, IItem
 
     public void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotMakeDeletedItemPermanentReason(Id));
+
         Name = permanentItem.Name;
         Comment = permanentItem.Comment;
         ItemQuantity = permanentItem.ItemQuantity;
@@ -106,16 +123,25 @@ public class Item : AggregateRoot, IItem
 
     public void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+
         Name = itemChange.Name;
         Comment = itemChange.Comment;
         ItemQuantity = itemChange.ItemQuantity;
         ItemCategoryId = itemChange.ItemCategoryId;
         ManufacturerId = itemChange.ManufacturerId;
         _availabilities = availabilities.ToList();
+
+        if (!_availabilities.Any())
+            throw new DomainException(new CannotModifyItemWithoutAvailabilitiesReason());
     }
 
     public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+
         if (!HasItemTypes)
             throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 
@@ -184,12 +210,18 @@ public class Item : AggregateRoot, IItem
 
     public void RemoveManufacturer()
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotRemoveManufacturerFromDeletedItemReason(Id));
+
         ManufacturerId = null;
     }
 
     public async Task<IItem> UpdateAsync(ItemWithTypesUpdate update, IValidator validator,
         IDateTimeService dateTimeService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotUpdateDeletedItemReason(Id));
+
         if (!HasItemTypes)
             throw new DomainException(new CannotUpdateItemAsItemWithTypesReason(update.OldId));
 
@@ -215,7 +247,7 @@ public class Item : AggregateRoot, IItem
             null,
             Id);
 
-        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, updatedItem));
+        PublishDomainEvent(new ItemUpdatedDomainEvent(updatedItem));
         Delete();
         UpdatedOn = dateTimeService.UtcNow;
 
@@ -224,10 +256,15 @@ public class Item : AggregateRoot, IItem
 
     public async Task<IItem> UpdateAsync(ItemUpdate update, IValidator validator, IDateTimeService dateTimeService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotUpdateDeletedItemReason(Id));
+
         if (IsTemporary)
             throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
         if (HasItemTypes)
             throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
+        if (!update.Availabilities.Any())
+            throw new DomainException(new CannotUpdateItemWithoutAvailabilitiesReason());
 
         var itemCategoryId = update.ItemCategoryId;
         var manufacturerId = update.ManufacturerId;
@@ -256,7 +293,7 @@ public class Item : AggregateRoot, IItem
             null,
             Id);
 
-        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, newItem));
+        PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
         UpdatedOn = dateTimeService.UtcNow;
 
@@ -265,6 +302,9 @@ public class Item : AggregateRoot, IItem
 
     public IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotUpdateDeletedItemReason(Id));
+
         IItem newItem;
         if (HasItemTypes)
         {
@@ -286,7 +326,7 @@ public class Item : AggregateRoot, IItem
                 ManufacturerId, availabilities, TemporaryId, null, Id);
         }
 
-        PublishDomainEvent(new ItemUpdatedDomainEvent(Id, newItem));
+        PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
         UpdatedOn = dateTimeService.UtcNow;
 
@@ -295,6 +335,9 @@ public class Item : AggregateRoot, IItem
 
     public void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotTransferDeletedItemReason(Id));
+
         if (HasItemTypes)
         {
             _itemTypes!.TransferToDefaultSection(oldSectionId, newSectionId);
@@ -306,6 +349,42 @@ public class Item : AggregateRoot, IItem
             var availability = _availabilities[i];
             if (availability.DefaultSectionId == oldSectionId)
                 _availabilities[i] = availability.TransferToDefaultSection(newSectionId);
+        }
+    }
+
+    public void RemoveAvailabilitiesFor(StoreId storeId)
+    {
+        if (IsDeleted)
+            return;
+
+        if (HasItemTypes)
+        {
+            if (_itemTypes!.Count() == 1
+               && _itemTypes!.First().Availabilities.Count == 1
+               && _itemTypes!.First().IsAvailableAt(storeId))
+            {
+                Delete();
+                return;
+            }
+
+            _itemTypes!.RemoveAvailabilitiesFor(storeId, out var domainEventsToPublish);
+            PublishDomainEvents(domainEventsToPublish);
+            return;
+        }
+
+        var availabilities = _availabilities.Where(av => av.StoreId != storeId).ToList();
+        if (availabilities.Count == _availabilities.Count)
+            return;
+
+        if (availabilities.Any())
+        {
+            var availabilitiesToRemove = _availabilities.Where(av => av.StoreId == storeId);
+            _availabilities = availabilities;
+            PublishDomainEvents(availabilitiesToRemove.Select(av => new ItemAvailabilityDeletedDomainEvent(av)));
+        }
+        else
+        {
+            Delete();
         }
     }
 }

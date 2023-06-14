@@ -1,123 +1,57 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Models;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Index.Services
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Services
-@using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using System.Threading
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject ITemporaryItemCreationService temporaryItemCreationService;
-@inject IShoppingListApiService apiService;
-@implements IDisposable
+@using System.Threading
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.SearchBar
+@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
+@using ShoppingListState = global::ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.ShoppingListState
+
+@inject IState<ShoppingListState> State
+@inject IDispatcher Dispatcher
 
 <div class="mb-2 d-flex">
-    <SingleSearchSelect OnFocus="OnSearchBarFocusIn"
-                        Class="@(State.SearchBar.Active ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
-                        TItem="SearchItemForShoppingListResult"
-                        TValue="string"
-                        DataSource="_dataSource"
-                        ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
-                        LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
-                        OnItemChanged="@OnSearchItemSelectedAsync"
-                        Placeholder="Search for item..."
-                        SearchForItemsAsync="OnSearchAsync"
-                        CanAddItem="false"
-                        AutoClearSearchValue="true"
-                        AllowClear="true"
-                        EnableSearch="true">
-    </SingleSearchSelect>
+    <Select OnFocus="OnSearchBarFocusIn"
+            Class="@(State.Value.SearchBar.IsActive ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
+            Placeholder="Search for item..."
+            ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
+            LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
+            DataSource="State.Value.SearchBar.Results"
+            TItem="SearchItemForShoppingListResult"
+            TItemValue="string"
+            OnSelectedItemChanged="OnSearchItemSelectedAsync"
+            EnableSearch
+            Value="State.Value.SearchBar.Input"
+            OnSearch="OnSearchInputChanged">
+    </Select>
 
-    @if (State.SearchBar.Active)
+    @if (State.Value.SearchBar.IsActive)
     {
-        <TemporaryItemCreator State="@State"></TemporaryItemCreator>
+        <TemporaryItemCreator></TemporaryItemCreator>
         <Button Class="mx-1" OnClick="@OnSearchBarCancelButtonClicked">Cancel</Button>
     }
 </div>
 
 @code {
-    [Parameter] public Func<Task> ReloadShoppingListAsync { get; set; }
-    [Parameter] public ShoppingListState State { get; set; }
-    [Parameter] public ErrorHandler ErrorHandler { get; set; }
-
-    private List<SearchItemForShoppingListResult> _dataSource = new();
-    private CancellationTokenSource _searchCancellationTokenSource;
-    
-    private async Task<IEnumerable<SearchItemForShoppingListResult>> OnSearchAsync(string searchInput)
+    private void OnSearchInputChanged(string input)
     {
-        if (State.ShoppingList.Store == null)
-            return Enumerable.Empty<SearchItemForShoppingListResult>();
-
-        State.SearchBar.Input = searchInput;
-
-        if (string.IsNullOrWhiteSpace(searchInput))
-        {
-            return Enumerable.Empty<SearchItemForShoppingListResult>();
-        }
-
-        searchInput = searchInput.Trim();
-        _searchCancellationTokenSource = CreateNewCancellationTokenSource();
-        return await apiService.LoadItemSearchResultAsync(searchInput, State.ShoppingList.Store.Id, ErrorHandler,
-            _searchCancellationTokenSource.Token);
+        Dispatcher.Dispatch(new ItemForShoppingListSearchInputChangedAction(input));
     }
 
-    private async Task OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
+    private void OnSearchItemSelectedAsync(SearchItemForShoppingListResult item)
     {
         if (item == null)
             return;
 
-        async Task OnSuccessAction()
-        {
-            State.SearchBar.ResetInput();
-            await State.RequestReloadAsync();
-        }
-
-        if(item.ItemTypeId == null)
-        {
-            await apiService.AddItemToShoppingListAsync(
-                State.ShoppingList.Id,
-                ShoppingListItemId.FromActualId(item.ItemId),
-                item.DefaultQuantity,
-                item.DefaultSectionId,
-                ErrorHandler,
-                OnSuccessAction);
-        }
-        else
-        {
-            await apiService.AddItemWithTypeToShoppingListAsync(
-                State.ShoppingList.Id,
-                item.ItemId,
-                item.ItemTypeId.Value,
-                item.DefaultQuantity,
-                item.DefaultSectionId, 
-                ErrorHandler,
-                OnSuccessAction);
-        }
+        Dispatcher.Dispatch(new ItemForShoppingListSearchResultSelectedAction(item));
     }
 
     private void OnSearchBarCancelButtonClicked()
     {
-        State.SearchBar.Active = false;
-        StateHasChanged();
+        Dispatcher.Dispatch(new SetSearchBarInactiveAction());
     }
 
     private void OnSearchBarFocusIn()
     {
-        State.SearchBar.Active = true;
-        StateHasChanged();
-    }
-
-    private CancellationTokenSource CreateNewCancellationTokenSource()
-    {
-        if (_searchCancellationTokenSource is not null)
-        {
-            _searchCancellationTokenSource.Cancel();
-            _searchCancellationTokenSource.Dispose();
-        }
-        return new CancellationTokenSource();
-    }
-
-    public void Dispose()
-    {
-        if(_searchCancellationTokenSource is not null)
-            _searchCancellationTokenSource.Dispose();
+        Dispatcher.Dispatch(new SetSearchBarActiveAction());
     }
 }

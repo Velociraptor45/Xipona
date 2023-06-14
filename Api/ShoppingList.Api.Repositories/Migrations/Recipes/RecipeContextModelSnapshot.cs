@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient", b =>
@@ -24,10 +24,16 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
+                    b.Property<bool?>("AddToShoppingListByDefault")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<Guid?>("DefaultItemId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid?>("DefaultItemTypeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid?>("DefaultStoreId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("ItemCategoryId")
@@ -80,9 +86,32 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("NumberOfServings")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp(6)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
+                {
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("RecipeTagId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("RecipeId", "RecipeTagId");
+
+                    b.ToTable("TagsForRecipes");
                 });
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient", b =>
@@ -107,11 +136,24 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Recipes
                     b.Navigation("Recipe");
                 });
 
+            modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
+                {
+                    b.HasOne("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
+                        .WithMany("Tags")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+                });
+
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe", b =>
                 {
                     b.Navigation("Ingredients");
 
                     b.Navigation("PreparationSteps");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

@@ -258,8 +258,14 @@ dotnet_style_namespace_match_folder = true:suggestion
 
 ###### Analyzers ######
 
+# SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
+dotnet_diagnostic.SYSLIB1045.severity = none
+
 # S4457: Parameter validation in "async"/"await" methods should be wrapped
 dotnet_diagnostic.S4457.severity = none
 
 # CS8625: Cannot convert null literal to non-nullable reference type.
 dotnet_diagnostic.CS8625.severity = error
+
+# S2094: Classes should not be empty
+dotnet_diagnostic.S2094.severity = none

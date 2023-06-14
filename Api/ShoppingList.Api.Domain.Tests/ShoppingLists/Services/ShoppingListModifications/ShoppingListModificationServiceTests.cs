@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -215,7 +216,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, _item);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, _item);
             }
 
             public void SetupNotFindingTemporaryItem()
@@ -223,7 +224,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, null);
             }
 
             #endregion Fixture Setup
@@ -469,7 +470,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.ActualId);
                 TestPropertyNotSetException.ThrowIfNull(_itemMock);
-                ItemRepositoryMock.SetupFindByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value),
+                ItemRepositoryMock.SetupFindActiveByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value),
                     _itemMock.Object);
             }
 
@@ -477,7 +478,7 @@ public class ShoppingListModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.ActualId);
-                ItemRepositoryMock.SetupFindByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value), null);
+                ItemRepositoryMock.SetupFindActiveByAsync(new ItemId(OfflineTolerantItemId.ActualId.Value), null);
             }
 
             public void SetupFindingItemByTemporaryId()
@@ -485,7 +486,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 TestPropertyNotSetException.ThrowIfNull(_itemMock);
-                ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
+                ItemRepositoryMock.SetupFindActiveByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
                     _itemMock.Object);
             }
 
@@ -493,7 +494,7 @@ public class ShoppingListModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
-                ItemRepositoryMock.SetupFindByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
+                ItemRepositoryMock.SetupFindActiveByAsync(new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value),
                     null);
             }
 
@@ -777,7 +778,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(tempId, _item);
+                ItemRepositoryMock.SetupFindActiveByAsync(tempId, _item);
             }
 
             public void SetupFindingNoItemByOfflineId()
@@ -785,7 +786,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var tempId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(tempId, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(tempId, null);
             }
 
             #endregion Mock Setup
@@ -1032,7 +1033,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, _item);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, _item);
             }
 
             public void SetupItemRepositoryFindingNoItem()
@@ -1040,7 +1041,7 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId);
                 TestPropertyNotSetException.ThrowIfNull(OfflineTolerantItemId.OfflineId);
                 var itemId = new TemporaryItemId(OfflineTolerantItemId.OfflineId.Value);
-                ItemRepositoryMock.SetupFindByAsync(itemId, null);
+                ItemRepositoryMock.SetupFindActiveByAsync(itemId, null);
             }
 
             #endregion Fixture Setup
@@ -1268,7 +1269,7 @@ public class ShoppingListModificationServiceTests
         private sealed class RemoveSectionAsyncFixture : ShoppingListModificationServiceFixture
         {
             private StoreMock? _storeMock;
-            public SectionId? SectionId { get; set; }
+            public SectionId? SectionId { get; private set; }
 
             public void SetupSectionId()
             {
@@ -1306,26 +1307,32 @@ public class ShoppingListModificationServiceTests
 
     private abstract class ShoppingListModificationServiceFixture
     {
+        protected readonly AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected readonly ItemRepositoryMock ItemRepositoryMock;
         protected readonly StoreRepositoryMock StoreRepositoryMock;
         protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
+        protected readonly ItemFactoryMock ItemFactoryMock;
 
         protected ShoppingListModificationServiceFixture()
         {
+            AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
             ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
             ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
             StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
             ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
+            ItemFactoryMock = new ItemFactoryMock(MockBehavior.Strict);
         }
 
         public ShoppingListModificationService CreateSut()
         {
             return new ShoppingListModificationService(
-                ShoppingListRepositoryMock.Object,
-                ItemRepositoryMock.Object,
-                StoreRepositoryMock.Object,
+                _ => AddItemToShoppingListServiceMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
+                _ => StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
+                ItemFactoryMock.Object,
                 default);
         }
     }

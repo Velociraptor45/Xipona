@@ -1,14 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Common.Queries;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Manufacturers.ToDomain
 {
-    public class ManufacturerConverter : IToDomainConverter<ManufacturerContract, Manufacturer>
+    public class ManufacturerConverter : IToDomainConverter<ManufacturerContract, EditedManufacturer>
     {
-        public Manufacturer ToDomain(ManufacturerContract source)
+        public EditedManufacturer ToDomain(ManufacturerContract source)
         {
-            return new Manufacturer(source.Id, source.Name);
+            return new EditedManufacturer(source.Id, source.Name);
         }
     }
 }

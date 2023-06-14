@@ -3,7 +3,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
@@ -21,9 +20,13 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
+using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -31,13 +34,16 @@ using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItem
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.AllActiveStores;
-using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AddItemToShoppingListContract = ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 
 namespace ProjectHermes.ShoppingList.Api.Client
 {
@@ -52,6 +58,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync([Path] Guid storeId,
             CancellationToken cancellationToken = default);
 
+        [Put("shopping-lists/{id}/items/temporary")]
+        Task AddTemporaryItemToShoppingListAsync([Path] Guid id, [Body] AddTemporaryItemToShoppingListContract contract,
+            CancellationToken cancellationToken = default);
+
         [Put("shopping-lists/{id}/items")]
         Task AddItemToShoppingListAsync([Path] Guid id, [Body] AddItemToShoppingListContract contract,
             CancellationToken cancellationToken = default);
@@ -60,6 +70,10 @@ namespace ProjectHermes.ShoppingList.Api.Client
         Task AddItemWithTypeToShoppingListAsync([Path] Guid id, [Path] Guid itemId,
             [Path] Guid itemTypeId, [Body] AddItemWithTypeToShoppingListContract contract,
             CancellationToken cancellationToken = default);
+
+        [Put("shopping-lists/add-items-to-shopping-lists")]
+        Task AddItemsToShoppingListsAsync(
+            [Body] AddItemsToShoppingListsContract contract, CancellationToken cancellationToken = default);
 
         [Put("shopping-lists/{id}/items/quantity")]
         Task ChangeItemQuantityOnShoppingListAsync([Path] Guid id,
@@ -90,10 +104,6 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         [Post("items/with-types")]
         Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract contract,
-            CancellationToken cancellationToken = default);
-
-        [Post("items/temporary")]
-        Task CreateTemporaryItemAsync([Body] CreateTemporaryItemContract contract,
             CancellationToken cancellationToken = default);
 
         [Get("items/{id}")]
@@ -155,8 +165,20 @@ namespace ProjectHermes.ShoppingList.Api.Client
 
         #region StoreController
 
-        [Get("stores/active")]
-        Task<IEnumerable<ActiveStoreContract>> GetAllActiveStoresAsync(CancellationToken cancellationToken = default);
+        [Get("stores/{id}")]
+        Task<StoreContract> GetStoreByIdAsync([Path] Guid id, CancellationToken cancellationToken = default);
+
+        [Get("stores/active-for-shopping")]
+        Task<IEnumerable<StoreForShoppingContract>> GetActiveStoresForShoppingAsync(
+            CancellationToken cancellationToken = default);
+
+        [Get("stores/active-for-item")]
+        Task<IEnumerable<StoreForItemContract>> GetActiveStoresForItemAsync(
+            CancellationToken cancellationToken = default);
+
+        [Get("stores/active-overview")]
+        Task<IEnumerable<StoreSearchResultContract>> GetActiveStoresOverviewAsync(
+            CancellationToken cancellationToken = default);
 
         [Post("stores")]
         Task<StoreContract> CreateStoreAsync([Body] CreateStoreContract createStoreContract,
@@ -165,6 +187,9 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Put("stores")]
         Task ModifyStoreAsync([Body] ModifyStoreContract modifyStoreContract,
             CancellationToken cancellationToken = default);
+
+        [Delete("stores/{id}")]
+        Task DeleteStoreAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
         #endregion StoreController
 
@@ -227,12 +252,20 @@ namespace ProjectHermes.ShoppingList.Api.Client
         [Get("recipes/{id}")]
         Task<RecipeContract> GetRecipeByIdAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        [Get("recipes")]
+        [Get("recipes/search-by-name")]
         Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByNameAsync([Query] string searchInput,
+            CancellationToken cancellationToken = default);
+
+        [Get("recipes/search-by-tags")]
+        Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync([Query] IEnumerable<Guid> tagIds,
             CancellationToken cancellationToken = default);
 
         [Get("recipes/ingredient-quantity-types")]
         Task<IEnumerable<IngredientQuantityTypeContract>> GetAllIngredientQuantityTypes(
+            CancellationToken cancellationToken = default);
+
+        [Get("recipes/{id}/item-amounts-for-one-serving")]
+        Task<ItemAmountsForOneServingContract> GetItemAmountsForOneServingAsync([Path] Guid id,
             CancellationToken cancellationToken = default);
 
         [Post("recipes")]
@@ -244,5 +277,16 @@ namespace ProjectHermes.ShoppingList.Api.Client
             CancellationToken cancellationToken = default);
 
         #endregion RecipeController
+
+        #region RecipeTagController
+
+        [Get("recipe-tags/all")]
+        Task<IEnumerable<RecipeTagContract>> GetAllRecipeTagsAsync(CancellationToken cancellationToken = default);
+
+        [Post("recipe-tags")]
+        Task<RecipeTagContract> CreateRecipeTagAsync([Body] CreateRecipeTagContract contract,
+            CancellationToken cancellationToken = default);
+
+        #endregion RecipeTagController
     }
 }

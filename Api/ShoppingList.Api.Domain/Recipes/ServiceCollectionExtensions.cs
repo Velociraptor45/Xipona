@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
@@ -7,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes;
 
@@ -26,8 +28,10 @@ internal static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeFactory>>(provider =>
         {
             var ingredientFactory = provider.GetRequiredService<Func<CancellationToken, IIngredientFactory>>();
+            var validator = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var preparationStepFactory = provider.GetRequiredService<IPreparationStepFactory>();
-            return cancellationToken => new RecipeFactory(ingredientFactory, preparationStepFactory, cancellationToken);
+            return cancellationToken =>
+                new RecipeFactory(ingredientFactory, validator, preparationStepFactory, cancellationToken);
         });
 
         services.AddTransient<Func<CancellationToken, IRecipeCreationService>>(provider =>
@@ -41,14 +45,22 @@ internal static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeQueryService>>(provider =>
         {
             var repository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
+            var translationService = provider.GetRequiredService<IQuantityTranslationService>();
             var logger = provider.GetRequiredService<ILogger<RecipeQueryService>>();
-            return cancellationToken => new RecipeQueryService(repository, logger, cancellationToken);
+            return cancellationToken => new RecipeQueryService(repository, itemRepositoryDelegate, storeRepositoryDelegate,
+                translationService, logger, cancellationToken);
         });
         services.AddTransient<Func<CancellationToken, IRecipeModificationService>>(provider =>
         {
-            var repository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
+            var recipeRepository = provider.GetRequiredService<Func<CancellationToken, IRecipeRepository>>();
+            var itemRepository = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
             var validator = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
-            return cancellationToken => new RecipeModificationService(repository, validator, cancellationToken);
+            return cancellationToken => new RecipeModificationService(recipeRepository, itemRepository, validator,
+                cancellationToken);
         });
+
+        services.AddTransient<IQuantityTranslationService, QuantityTranslationService>();
     }
 }

@@ -9,17 +9,17 @@ public class ItemCategoryValidationService : IItemCategoryValidationService
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
 
-    public ItemCategoryValidationService(IItemCategoryRepository itemCategoryRepository)
+    public ItemCategoryValidationService(
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
+        CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
     }
 
-    public async Task ValidateAsync(ItemCategoryId itemCategoryId, CancellationToken cancellationToken)
+    public async Task ValidateAsync(ItemCategoryId itemCategoryId)
     {
         IItemCategory? itemCategory = await _itemCategoryRepository
-            .FindByAsync(itemCategoryId, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FindActiveByAsync(itemCategoryId);
 
         if (itemCategory == null)
             throw new DomainException(new ItemCategoryNotFoundReason(itemCategoryId));

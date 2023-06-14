@@ -14,7 +14,9 @@ public class ItemEntityBuilder : TestBuilder<Item>
     {
         WithQuantityTypeInPacket(new DomainTestBuilder<QuantityTypeInPacket>().Create().ToInt());
         WithQuantityType(new DomainTestBuilder<QuantityType>().Create().ToInt());
+        WithoutPredecessor();
     }
+
     public ItemEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);
@@ -148,5 +150,16 @@ public class ItemEntityBuilder : TestBuilder<Item>
     public ItemEntityBuilder WithEmptyAvailableAt()
     {
         return WithAvailableAt(new List<AvailableAt>());
+    }
+
+    public ItemEntityBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
+    {
+        FillPropertyWith(p => p.UpdatedOn, updatedOn);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutUpdatedOn()
+    {
+        return WithUpdatedOn(null);
     }
 }

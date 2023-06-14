@@ -1,16 +1,18 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.ShoppingList.Frontend.Models.ShoppingLists.Models;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
+using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
 {
-    public class ShoppingListStoreConverter : IToDomainConverter<ShoppingListStoreContract, ShoppingListStore>
+    public class ShoppingListStoreConverter : IToDomainConverter<StoreForShoppingContract, ShoppingListStore>
     {
-        public ShoppingListStore ToDomain(ShoppingListStoreContract source)
+        public ShoppingListStore ToDomain(StoreForShoppingContract contract)
         {
-            return new ShoppingListStore(
-                source.Id,
-                source.Name);
+            var sections = contract.Sections
+                .Select(s => new ShoppingListStoreSection(s.Id, s.Name, s.IsDefaultSection, s.SortingIndex))
+                .ToList();
+            return new ShoppingListStore(contract.Id, contract.Name, sections);
         }
     }
 }

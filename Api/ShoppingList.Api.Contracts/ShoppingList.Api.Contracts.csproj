@@ -6,7 +6,7 @@
     <RootNamespace>ProjectHermes.ShoppingList.Api.Contracts</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>ProjectHermes ShoppingList Api Contracts</Title>
-    <Version>0.9.1</Version>
+    <Version>0.10.0</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes-ShoppingList</RepositoryUrl>
@@ -16,10 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Stores\Queries\Get\StoreForShoppingContract.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\readme.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="Stores\Queries\GetActiveStoresForShopping\StoreForShoppingContract.cs" />
   </ItemGroup>
 
 </Project>

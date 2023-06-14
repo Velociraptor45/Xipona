@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models.Factories;
 
@@ -15,9 +16,12 @@ public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, I
 
     public IItemCategory ToDomain(Entities.ItemCategory source)
     {
-        return _itemCategoryFactory.Create(
+        var itemCategory = (AggregateRoot)_itemCategoryFactory.Create(
             new ItemCategoryId(source.Id),
             new ItemCategoryName(source.Name),
             source.Deleted);
+
+        itemCategory.EnrichWithRowVersion(source.RowVersion);
+        return (itemCategory as IItemCategory)!;
     }
 }

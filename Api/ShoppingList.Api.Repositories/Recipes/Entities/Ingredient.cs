@@ -15,6 +15,8 @@ public class Ingredient
     public float Quantity { get; set; }
     public Guid? DefaultItemId { get; set; }
     public Guid? DefaultItemTypeId { get; set; }
+    public Guid? DefaultStoreId { get; set; }
+    public bool? AddToShoppingListByDefault { get; set; }
 
     [ForeignKey("RecipeId")]
     public Recipe? Recipe { get; set; }

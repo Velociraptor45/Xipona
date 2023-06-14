@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -42,11 +43,14 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
             sectionModels.Add(sectionModel);
         }
 
-        return _shoppingListFactory.Create(
+        var list = (AggregateRoot)_shoppingListFactory.Create(
             new ShoppingListId(source.Id),
             new StoreId(source.StoreId),
             source.CompletionDate,
             sectionModels);
+
+        list.EnrichWithRowVersion(source.RowVersion);
+        return (list as IShoppingList)!;
     }
 
     public IShoppingListSection CreateSection(Guid sectionId, IEnumerable<IShoppingListItem> items)

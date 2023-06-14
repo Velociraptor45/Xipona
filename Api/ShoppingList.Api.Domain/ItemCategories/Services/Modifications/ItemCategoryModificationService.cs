@@ -7,23 +7,22 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifica
 public class ItemCategoryModificationService : IItemCategoryModificationService
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
-    private readonly CancellationToken _cancellationToken;
 
-    public ItemCategoryModificationService(IItemCategoryRepository itemCategoryRepository,
+    public ItemCategoryModificationService(
+        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
-        _cancellationToken = cancellationToken;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
     }
 
     public async Task ModifyAsync(ItemCategoryModification modification)
     {
-        var itemCategory = await _itemCategoryRepository.FindByAsync(modification.Id, _cancellationToken);
+        var itemCategory = await _itemCategoryRepository.FindActiveByAsync(modification.Id);
         if (itemCategory is null)
             throw new DomainException(new ItemCategoryNotFoundReason(modification.Id));
 
         itemCategory.Modify(modification);
 
-        await _itemCategoryRepository.StoreAsync(itemCategory, _cancellationToken);
+        await _itemCategoryRepository.StoreAsync(itemCategory);
     }
 }

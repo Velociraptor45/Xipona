@@ -65,4 +65,14 @@ public class StoreMock : Mock<IStore>
         Verify(m => m.ModifySectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService),
             times);
     }
+
+    public void SetupDelete()
+    {
+        Setup(m => m.Delete());
+    }
+
+    public void VerifyDelete(Func<Times> times)
+    {
+        Verify(m => m.Delete(), times);
+    }
 }

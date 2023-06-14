@@ -1,6 +1,8 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Recipes.Converters.ToDomain;
 
@@ -25,7 +27,17 @@ public class RecipeConverter : IToDomainConverter<Entities.Recipe, IRecipe>
     {
         var ingredients = _ingredientConverter.ToDomain(source.Ingredients);
         var steps = _preparationStepConverter.ToDomain(source.PreparationSteps);
+        var recipeTagIds = source.Tags.Select(t => new RecipeTagId(t.RecipeTagId)).ToList();
 
-        return _recipeFactory.Create(new RecipeId(source.Id), new RecipeName(source.Name), ingredients, steps);
+        var recipe = (AggregateRoot)_recipeFactory.Create(
+            new RecipeId(source.Id),
+            new RecipeName(source.Name),
+            new NumberOfServings(source.NumberOfServings),
+            ingredients,
+            steps,
+            recipeTagIds);
+
+        recipe.EnrichWithRowVersion(source.RowVersion);
+        return (recipe as IRecipe)!;
     }
 }

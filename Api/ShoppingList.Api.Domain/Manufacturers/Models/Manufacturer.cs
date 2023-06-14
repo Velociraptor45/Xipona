@@ -1,8 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 
-public class Manufacturer : IManufacturer
+public class Manufacturer : AggregateRoot, IManufacturer
 {
     public Manufacturer(ManufacturerId id, ManufacturerName name, bool isDeleted)
     {
@@ -22,6 +25,9 @@ public class Manufacturer : IManufacturer
 
     public void Modify(ManufacturerModification modification)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedManufacturerReason(Id));
+
         Name = modification.Name;
     }
 }

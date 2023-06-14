@@ -17,7 +17,8 @@ public class ItemTypeFactoryTests
                 ItemTypeId.New,
                 expectedResult.Name,
                 expectedResult.Availabilities,
-                expectedResult.PredecessorId);
+                expectedResult.PredecessorId,
+                expectedResult.IsDeleted);
             var sut = new ItemTypeFactory();
 
             // Act

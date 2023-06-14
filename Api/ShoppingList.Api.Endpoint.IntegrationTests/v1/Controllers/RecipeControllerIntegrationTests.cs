@@ -6,9 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
@@ -16,13 +20,23 @@ using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.RecipeTags.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
+using System;
 using System.Text.RegularExpressions;
 using Xunit;
 using Ingredient = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Ingredient;
+using Item = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.Item;
+using ItemType = ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.ItemType;
 using PreparationStep = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.PreparationStep;
 using Recipe = ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities.Recipe;
 
@@ -67,12 +81,14 @@ public class RecipeControllerIntegrationTests
 
             var recipeEntities = (await _fixture.LoadAllRecipesAsync()).ToList();
             recipeEntities.Should().HaveCount(1);
-            recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt.Excluding(info =>
-                info.Path.EndsWith(".Id")
-                || info.Path == "Id"
-                || Regex.IsMatch(info.Path, @"Ingredients\[\d+\]\.Recipe")
-                || Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\]\.Recipe")
-            ));
+            recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt
+                .Excluding(info =>
+                    info.Path.EndsWith(".Id")
+                    || info.Path == "Id"
+                    || Regex.IsMatch(info.Path, @"Ingredients\[\d+\]\.Recipe")
+                    || Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\]\.Recipe"))
+                .ExcludeRowVersion()
+            );
         }
 
         private sealed class CreateRecipeAsyncFixture : RecipeControllerFixture
@@ -90,10 +106,12 @@ public class RecipeControllerIntegrationTests
             public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_model);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var tagContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
 
                 foreach (var ingredient in _model.Ingredients)
                 {
@@ -111,7 +129,7 @@ public class RecipeControllerIntegrationTests
                         .WithItemTypes(new ItemTypeEntityBuilder()
                             .WithId(ingredient.DefaultItemTypeId!.Value)
                             .WithoutItem()
-                            .WithEmptyAvailableAt()
+                            .WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(1).ToList())
                             .WithoutPredecessorId()
                             .WithoutPredecessor()
                             .CreateMany(1)
@@ -124,8 +142,14 @@ public class RecipeControllerIntegrationTests
                     itemContext.Add(item);
                 }
 
+                foreach (var tagId in Contract.RecipeTagIds)
+                {
+                    tagContext.RecipeTags.Add(new RecipeTagEntityBuilder().WithId(tagId).Create());
+                }
+
                 await itemCategoryContext.SaveChangesAsync();
                 await itemContext.SaveChangesAsync();
+                await tagContext.SaveChangesAsync();
             }
 
             public void SetupContract()
@@ -134,15 +158,19 @@ public class RecipeControllerIntegrationTests
 
                 Contract = new CreateRecipeContract(
                     _model.Name,
+                    _model.NumberOfServings,
                     _model.Ingredients.Select(i => new CreateIngredientContract(
                         i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
                         i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.DefaultItemTypeId,
+                        i.ShoppingListProperties?.DefaultStoreId,
+                        i.ShoppingListProperties?.AddToShoppingListByDefault)),
                     _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
                         p.Instruction.Value,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    _model.Tags.Select(t => t.Value));
             }
 
             public void SetupExpectedResult()
@@ -152,17 +180,21 @@ public class RecipeControllerIntegrationTests
                 ExpectedResult = new RecipeContract(
                     _model.Id,
                     _model.Name,
+                    _model.NumberOfServings,
                     _model.Ingredients.Select(i => new IngredientContract(
                         i.Id,
                         i.ItemCategoryId,
                         (int)i.QuantityType,
                         i.Quantity.Value,
-                        i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.ShoppingListProperties?.DefaultItemId,
+                        i.ShoppingListProperties?.DefaultItemTypeId,
+                        i.ShoppingListProperties?.DefaultStoreId,
+                        i.ShoppingListProperties?.AddToShoppingListByDefault)),
                     _model.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id,
                         p.Instruction.Value,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    _model.Tags.Select(t => t.Value));
             }
 
             public void SetupExpectedEntity()
@@ -173,14 +205,17 @@ public class RecipeControllerIntegrationTests
                 {
                     Id = _model.Id,
                     Name = _model.Name,
+                    NumberOfServings = _model.NumberOfServings,
                     Ingredients = _model.Ingredients.Select(i => new Ingredient
                     {
                         Id = i.Id,
                         ItemCategoryId = i.ItemCategoryId,
                         Quantity = i.Quantity.Value,
                         QuantityType = (int)i.QuantityType,
-                        DefaultItemId = i.DefaultItemId,
-                        DefaultItemTypeId = i.DefaultItemTypeId,
+                        DefaultItemId = i.ShoppingListProperties?.DefaultItemId,
+                        DefaultItemTypeId = i.ShoppingListProperties?.DefaultItemTypeId,
+                        DefaultStoreId = i.ShoppingListProperties?.DefaultStoreId,
+                        AddToShoppingListByDefault = i.ShoppingListProperties?.AddToShoppingListByDefault,
                         RecipeId = _model.Id
                     }).ToList(),
                     PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
@@ -189,7 +224,7 @@ public class RecipeControllerIntegrationTests
                         Instruction = p.Instruction.Value,
                         SortingIndex = p.SortingIndex,
                         RecipeId = _model.Id
-                    }).ToList()
+                    }).ToList(),
                 };
             }
 
@@ -443,6 +478,7 @@ public class RecipeControllerIntegrationTests
                     .WithId(recipeId)
                     .WithIngredients(new IngredientEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
                     .WithPreparationSteps(new PreparationStepEntityBuilder().WithRecipeId(recipeId).CreateMany(3).ToList())
+                    .WithTags(new TagsForRecipeEntityBuilder().WithRecipeId(recipeId).CreateMany(2).ToList())
                     .Create();
             }
 
@@ -462,7 +498,7 @@ public class RecipeControllerIntegrationTests
                     .Create();
 
                 _itemCategories = ingredients
-                        .Select(i => new ItemCategoryEntityBuilder().WithId(i.ItemCategoryId).Create())
+                        .Select(i => new ItemCategoryEntityBuilder().WithDeleted(false).WithId(i.ItemCategoryId).Create())
                         .ToList();
 
                 _items = ingredients
@@ -474,7 +510,7 @@ public class RecipeControllerIntegrationTests
                         .WithItemTypes(new ItemTypeEntityBuilder()
                             .WithId(i.DefaultItemTypeId!.Value)
                             .WithoutItem()
-                            .WithEmptyAvailableAt()
+                            .WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(1).ToList())
                             .WithoutPredecessorId()
                             .WithoutPredecessor()
                             .CreateMany(1)
@@ -536,11 +572,14 @@ public class RecipeControllerIntegrationTests
                 var ingredients = new List<ModifyIngredientContract>
                 {
                     new(firstIngredient.Id, firstIngredient.ItemCategoryId, firstIngredient.QuantityType,
-                        firstIngredient.Quantity, firstIngredient.DefaultItemId, firstIngredient.DefaultItemTypeId),
+                        firstIngredient.Quantity, firstIngredient.DefaultItemId, firstIngredient.DefaultItemTypeId,
+                        firstIngredient.DefaultStoreId, firstIngredient.AddToShoppingListByDefault),
                     new(secondIngredient.Id, secondIngredient.ItemCategoryId, secondIngredient.QuantityType,
-                        secondIngredient.Quantity, secondIngredient.DefaultItemId, secondIngredient.DefaultItemTypeId),
+                        secondIngredient.Quantity, secondIngredient.DefaultItemId, secondIngredient.DefaultItemTypeId,
+                        secondIngredient.DefaultStoreId, secondIngredient.AddToShoppingListByDefault),
                     new(null, thirdIngredient.ItemCategoryId, thirdIngredient.QuantityType, thirdIngredient.Quantity,
-                        thirdIngredient.DefaultItemId, thirdIngredient.DefaultItemTypeId)
+                        thirdIngredient.DefaultItemId, thirdIngredient.DefaultItemTypeId,
+                        thirdIngredient.DefaultStoreId, thirdIngredient.AddToShoppingListByDefault)
                 };
 
                 var firstStep = ExpectedRecipe.PreparationSteps.ElementAt(0);
@@ -555,8 +594,10 @@ public class RecipeControllerIntegrationTests
 
                 Contract = new ModifyRecipeContract(
                     ExpectedRecipe.Name,
+                    ExpectedRecipe.NumberOfServings,
                     ingredients,
-                    steps);
+                    steps,
+                    ExpectedRecipe.Tags.Select(t => t.RecipeTagId));
             }
 
             public async Task PrepareDatabase()
@@ -564,19 +605,282 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
                 TestPropertyNotSetException.ThrowIfNull(_items);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var dbContext = GetContextInstance<RecipeContext>(ArrangeScope);
+                await using var tagDbContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
                 await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
 
                 dbContext.Add(_existingRecipe);
                 itemCategoryDbContext.AddRange(_itemCategories);
                 itemDbContext.AddRange(_items);
+                foreach (var existingRecipeTag in _existingRecipe.Tags)
+                {
+                    tagDbContext.RecipeTags
+                        .Add(new RecipeTagEntityBuilder().WithId(existingRecipeTag.RecipeTagId).Create());
+                }
+                foreach (var tagId in Contract.RecipeTagIds)
+                {
+                    tagDbContext.RecipeTags.Add(new RecipeTagEntityBuilder().WithId(tagId).Create());
+                }
 
                 await dbContext.SaveChangesAsync();
                 await itemCategoryDbContext.SaveChangesAsync();
                 await itemDbContext.SaveChangesAsync();
+                await tagDbContext.SaveChangesAsync();
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class GetItemAmountsForOneServingAsync
+    {
+        private readonly GetItemAmountsForOneServingAsyncFixture _fixture;
+
+        public GetItemAmountsForOneServingAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetItemAmountsForOneServingAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetItemAmountsForOneServingAsync_WithValidData_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupRecipeId();
+            _fixture.SetupExpectedResult();
+            _fixture.SetupStores();
+            _fixture.SetupItems();
+            _fixture.SetupRecipe();
+            await _fixture.SetupDatabase();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetItemAmountsForOneServingAsync(_fixture.RecipeId);
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var okObjectResult = (OkObjectResult)result;
+
+            okObjectResult.Value.Should().BeOfType<ItemAmountsForOneServingContract>();
+            okObjectResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetItemAmountsForOneServingAsyncFixture : RecipeControllerFixture
+        {
+            private readonly List<Item> _items = new();
+            private readonly List<Store> _stores = new();
+            private Recipe? _recipe;
+
+            public GetItemAmountsForOneServingAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Guid RecipeId { get; private set; }
+            public ItemAmountsForOneServingContract? ExpectedResult { get; private set; }
+
+            public void SetupRecipeId()
+            {
+                RecipeId = Guid.NewGuid();
+            }
+
+            public void SetupExpectedResult()
+            {
+                var availability1 = new TestBuilder<ItemAmountForOneServingAvailabilityContract>().Create();
+                var availability2 = new TestBuilder<ItemAmountForOneServingAvailabilityContract>().Create();
+                var fluidToUnitName = $"{new DomainTestBuilder<string>().Create()} {new DomainTestBuilder<string>().Create()}";
+
+                ExpectedResult = new ItemAmountsForOneServingContract(new List<ItemAmountForOneServingContract>
+                {
+                    // unit to unit
+                    new TestBuilder<ItemAmountForOneServingContract>()
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.ItemTypeId).LowerFirstChar(), (Guid?)null)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Quantity).LowerFirstChar(), 0.5f) // 1.5 units (with 3 units in 1 packet)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityType).LowerFirstChar(), (int)QuantityType.Unit)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityLabel).LowerFirstChar(), "x")
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.DefaultStoreId).LowerFirstChar(), availability2.StoreId)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Availabilities).LowerFirstChar(),
+                            new List<ItemAmountForOneServingAvailabilityContract>
+                            {
+                                availability1,
+                                availability2
+                            }.AsEnumerable())
+                        .Create(),
+                    // teaspoon to weight
+                    new TestBuilder<ItemAmountForOneServingContract>()
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.ItemTypeId).LowerFirstChar(), (Guid?)null)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Quantity).LowerFirstChar(), 6f) // 2 teaspoons
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityType).LowerFirstChar(), (int)QuantityType.Weight)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityLabel).LowerFirstChar(), "g")
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.DefaultStoreId).LowerFirstChar(), availability1.StoreId)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Availabilities).LowerFirstChar(), availability1.ToMonoList().AsEnumerable())
+                        .Create(),
+                    // fluid to unit
+                    new TestBuilder<ItemAmountForOneServingContract>()
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.ItemName).LowerFirstChar(), fluidToUnitName)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Quantity).LowerFirstChar(), 1.25f) // 2.5 x 500 ml
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityType).LowerFirstChar(), (int)QuantityType.Unit)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.QuantityLabel).LowerFirstChar(), "x")
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.DefaultStoreId).LowerFirstChar(), availability1.StoreId)
+                        .FillConstructorWith(nameof(ItemAmountForOneServingContract.Availabilities).LowerFirstChar(), availability1.ToMonoList().AsEnumerable())
+                        .Create(),
+                });
+            }
+
+            public void SetupStores()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var firstExpItem = ExpectedResult.Items.First();
+
+                var store1 = StoreEntityMother.Initial()
+                    .WithId(firstExpItem.Availabilities.First().StoreId)
+                    .WithName(firstExpItem.Availabilities.First().StoreName)
+                    .Create();
+                var store2 = StoreEntityMother.Initial()
+                    .WithId(firstExpItem.Availabilities.Last().StoreId)
+                    .WithName(firstExpItem.Availabilities.Last().StoreName)
+                    .Create();
+
+                _stores.Add(store1);
+                _stores.Add(store2);
+            }
+
+            public void SetupItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var firstExpItem = ExpectedResult.Items.First();
+                var secondExpItem = ExpectedResult.Items.Skip(1).First();
+                var thirdExpItem = ExpectedResult.Items.Last();
+
+                var unitToUnitAvailabilities = new List<AvailableAt>
+                {
+                    AvailableAtEntityMother.InitialForStore(firstExpItem.Availabilities.First().StoreId)
+                        .WithPrice(firstExpItem.Availabilities.First().Price)
+                        .Create(),
+                    AvailableAtEntityMother.InitialForStore(firstExpItem.Availabilities.Last().StoreId)
+                        .WithPrice(firstExpItem.Availabilities.Last().Price)
+                        .Create(),
+                };
+                var unitToUnitItem = ItemEntityMother.Initial()
+                    .WithId(firstExpItem.ItemId)
+                    .WithName(firstExpItem.ItemName)
+                    .WithAvailableAt(unitToUnitAvailabilities)
+                    .WithQuantityType(QuantityType.Unit.ToInt())
+                    .WithQuantityInPacket(3f)
+                    .WithQuantityTypeInPacket(QuantityTypeInPacket.Unit.ToInt())
+                    .Create();
+
+                var teaspoonToWeightAvailabilities = new List<AvailableAt>
+                {
+                    AvailableAtEntityMother.InitialForStore(secondExpItem.Availabilities.First().StoreId)
+                        .WithPrice(secondExpItem.Availabilities.First().Price)
+                        .Create(),
+                };
+                var teaspoonToWeightItem = ItemEntityMother.Initial()
+                    .WithId(secondExpItem.ItemId)
+                    .WithName(secondExpItem.ItemName)
+                    .WithAvailableAt(teaspoonToWeightAvailabilities)
+                    .WithQuantityType(QuantityType.Weight.ToInt())
+                    .WithoutQuantityInPacket()
+                    .WithoutQuantityTypeInPacket()
+                    .Create();
+
+                var nameParts = thirdExpItem.ItemName!.Split(' ');
+                var fluidToUnitAvailabilities = new List<ItemTypeAvailableAt>
+                {
+                    ItemTypeAvailableAtEntityMother.InitialForStore(thirdExpItem.Availabilities.First().StoreId)
+                        .WithPrice(thirdExpItem.Availabilities.First().Price)
+                        .Create(),
+                };
+                var fluidToUnitItemTypes = new List<ItemType>
+                {
+                    ItemTypeEntityMother.Initial()
+                        .WithId(thirdExpItem.ItemTypeId!.Value)
+                        .WithName(nameParts.Last())
+                        .WithAvailableAt(fluidToUnitAvailabilities).Create(),
+                };
+                var fluidToUnitItem = ItemEntityMother.InitialWithTypes()
+                    .WithId(thirdExpItem.ItemId)
+                    .WithName(nameParts.First())
+                    .WithItemTypes(fluidToUnitItemTypes)
+                    .WithQuantityType(QuantityType.Unit.ToInt())
+                    .WithQuantityInPacket(500f)
+                    .WithQuantityTypeInPacket(QuantityTypeInPacket.Fluid.ToInt())
+                    .Create();
+
+                _items.Add(unitToUnitItem);
+                _items.Add(teaspoonToWeightItem);
+                _items.Add(fluidToUnitItem);
+            }
+
+            public void SetupRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var firstExpItem = ExpectedResult.Items.First();
+                var secondExpItem = ExpectedResult.Items.Skip(1).First();
+                var thirdExpItem = ExpectedResult.Items.Last();
+
+                var unitToUnitIngredient = new IngredientEntityBuilder()
+                    .WithDefaultItemId(firstExpItem.ItemId)
+                    .WithoutDefaultItemTypeId()
+                    .WithDefaultStoreId(firstExpItem.DefaultStoreId)
+                    .WithQuantity(3f)
+                    .WithQuantityType(IngredientQuantityType.Unit.ToInt())
+                    .WithAddToShoppingListByDefault(firstExpItem.AddToShoppingListByDefault)
+                    .Create();
+
+                var teaspoonToWeightIngredient = new IngredientEntityBuilder()
+                    .WithDefaultItemId(secondExpItem.ItemId)
+                    .WithoutDefaultItemTypeId()
+                    .WithDefaultStoreId(secondExpItem.DefaultStoreId)
+                    .WithQuantity(2f)
+                    .WithQuantityType(IngredientQuantityType.Teaspoon.ToInt())
+                    .WithAddToShoppingListByDefault(secondExpItem.AddToShoppingListByDefault)
+                    .Create();
+
+                var fluidToUnitIngredient = new IngredientEntityBuilder()
+                    .WithDefaultItemId(thirdExpItem.ItemId)
+                    .WithDefaultItemTypeId(thirdExpItem.ItemTypeId!.Value)
+                    .WithDefaultStoreId(thirdExpItem.DefaultStoreId)
+                    .WithQuantity(1250f)
+                    .WithQuantityType(IngredientQuantityType.Fluid.ToInt())
+                    .WithAddToShoppingListByDefault(thirdExpItem.AddToShoppingListByDefault)
+                    .Create();
+
+                _recipe = new RecipeEntityBuilder()
+                    .WithId(RecipeId)
+                    .WithIngredients(new List<Ingredient>
+                    {
+                        unitToUnitIngredient,
+                        teaspoonToWeightIngredient,
+                        fluidToUnitIngredient,
+                    })
+                    .WithNumberOfServings(2)
+                    .Create();
+            }
+
+            public async Task SetupDatabase()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+                await using var storeDbContext = GetContextInstance<StoreContext>(ArrangeScope);
+                await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var recipeDbContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                await storeDbContext.Stores.AddRangeAsync(_stores);
+                await itemDbContext.Items.AddRangeAsync(_items);
+                await recipeDbContext.Recipes.AddAsync(_recipe);
+
+                await storeDbContext.SaveChangesAsync();
+                await itemDbContext.SaveChangesAsync();
+                await recipeDbContext.SaveChangesAsync();
             }
         }
     }
@@ -598,9 +902,11 @@ public class RecipeControllerIntegrationTests
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
-            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
+            yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
+            yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
         }
 
         public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync()

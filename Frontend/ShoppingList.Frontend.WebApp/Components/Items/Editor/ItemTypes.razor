@@ -1,7 +1,11 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Models.Items;
-@using ProjectHermes.ShoppingList.Frontend.Models.Items.Models
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items.Models
-@using Models = ProjectHermes.ShoppingList.Frontend.Models.Items;
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
 
 <div id="itemTypes">
     <div class="mt-3 d-flex justify-content-start align-items-center">
@@ -11,10 +15,10 @@
         </Button>
     </div>
     <div class="pl-4">
-        @for(int i = 0; i < State.EditedItem.ItemTypes.Count; i++)
+        @for(int i = 0; i < State.Value.Editor.Item!.ItemTypes.Count; i++)
         {
-            <ItemType State="State" ComponentIndex="i"></ItemType>
-            @if (i < State.EditedItem.ItemTypes.Count - 1)
+            <ItemType Model="@State.Value.Editor.Item!.ItemTypes.ElementAt(i)"></ItemType>
+            @if (i < State.Value.Editor.Item.ItemTypes.Count - 1)
             {
                 <hr class="my-0"/>
             }
@@ -23,19 +27,8 @@
 </div>
 
 @code {
-    [Parameter] public ItemsState State { get; set; }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        State.StateChanged += StateHasChanged;
-    }
-
     private void OnAddItemTypeButtonClicked()
     {
-        State.EditedItem.ItemTypes.Add(
-            new Frontend.Models.Items.Models.ItemType(Guid.Empty, "New type", Enumerable.Empty<ItemAvailability>()));
-
-        State.StateChanged();
+        Dispatcher.Dispatch(new ItemTypeAddedAction());
     }
 }

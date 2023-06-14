@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
@@ -45,8 +46,7 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var modification in ingredientsToCreate)
         {
             var newIngredient = await _ingredientFactory.CreateNewAsync(modification.ItemCategoryId,
-                modification.QuantityType, modification.Quantity, modification.DefaultItemId,
-                modification.DefaultItemTypeId);
+                modification.QuantityType, modification.Quantity, modification.ShoppingListProperties);
             newIngredients.Add(newIngredient);
         }
 
@@ -95,12 +95,37 @@ public class Ingredients : IEnumerable<IIngredient>
         _ingredients.Add(ingredient.Id, ingredient);
     }
 
-    public void RemoveDefaultItem(ItemId defaultItemId)
+    public void RemoveDefaultItem(ItemId defaultItemId, ItemTypeId? itemTypeId)
     {
-        var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == defaultItemId);
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == defaultItemId
+                        && (itemTypeId is null || i.DefaultItemTypeId == itemTypeId));
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.RemoveDefaultItem();
+        }
+    }
+
+    public void ModifyAfterItemUpdate(ItemId oldItemId, IItem newItem)
+    {
+        var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == oldItemId);
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ChangeDefaultItem(oldItemId, newItem);
+        }
+    }
+
+    public void ModifyAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
+        StoreId deletedAvailabilityStoreId)
+    {
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == itemId
+                        && i.DefaultItemTypeId == itemTypeId
+                        && i.ShoppingListProperties?.DefaultStoreId == deletedAvailabilityStoreId);
+
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ChangeDefaultStore(item);
         }
     }
 }

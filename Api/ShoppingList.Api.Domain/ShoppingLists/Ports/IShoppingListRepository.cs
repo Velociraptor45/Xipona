@@ -6,15 +6,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
 
 public interface IShoppingListRepository
 {
-    Task<IShoppingList?> FindActiveByAsync(StoreId storeId, CancellationToken cancellationToken);
+    Task<IShoppingList?> FindActiveByAsync(StoreId storeId);
 
-    Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId itemId, CancellationToken cancellationToken);
+    Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId itemId);
 
-    Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId, CancellationToken cancellationToken);
+    Task<IEnumerable<IShoppingList>> FindActiveByAsync(IEnumerable<StoreId> storeIds);
 
-    Task<IShoppingList?> FindByAsync(ShoppingListId id, CancellationToken cancellationToken);
+    Task<IEnumerable<IShoppingList>> FindByAsync(ItemTypeId typeId);
 
-    Task<IEnumerable<IShoppingList>> FindByAsync(ItemId itemId, CancellationToken cancellationToken);
+    Task<IShoppingList?> FindByAsync(ShoppingListId id);
 
-    Task StoreAsync(IShoppingList shoppingList, CancellationToken cancellationToken);
+    Task<IEnumerable<IShoppingList>> FindByAsync(ItemId itemId);
+
+    Task StoreAsync(IShoppingList shoppingList);
+    Task DeleteAsync(ShoppingListId id);
 }

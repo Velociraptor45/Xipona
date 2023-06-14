@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -22,7 +23,7 @@ public class RecipeFactoryTests
         }
 
         [Fact]
-        public void CreateNew_WithValidData_ShouldReturnExpectedResult()
+        public void Create_WithValidData_ShouldReturnExpectedResult()
         {
             // Arrange
             _fixture.SetupExpectedResult();
@@ -34,8 +35,10 @@ public class RecipeFactoryTests
             var result = sut.Create(
                 _fixture.ExpectedResult.Id,
                 _fixture.ExpectedResult.Name,
+                _fixture.ExpectedResult.NumberOfServings,
                 _fixture.ExpectedResult.Ingredients,
-                _fixture.ExpectedResult.PreparationSteps);
+                _fixture.ExpectedResult.PreparationSteps,
+                _fixture.ExpectedResult.Tags);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -69,6 +72,7 @@ public class RecipeFactoryTests
             _fixture.SetupCreation();
             _fixture.SetupIngredientCreationSuccessful();
             _fixture.SetupPreparationStepCreation();
+            _fixture.SetupTagValidationSuccess();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
@@ -79,6 +83,7 @@ public class RecipeFactoryTests
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(i => i.Id));
+            _fixture.VerifyTagValidation();
         }
 
         [Fact]
@@ -118,15 +123,16 @@ public class RecipeFactoryTests
 
                 Creation = new RecipeCreation(
                     ExpectedResult.Name,
+                    ExpectedResult.NumberOfServings,
                     ExpectedResult.Ingredients.Select(i => new IngredientCreation(
                         i.ItemCategoryId,
                         i.QuantityType,
                         i.Quantity,
-                        i.DefaultItemId,
-                        i.DefaultItemTypeId)),
+                        i.ShoppingListProperties)),
                     ExpectedResult.PreparationSteps.Select(p => new PreparationStepCreation(
                         p.Instruction,
-                        p.SortingIndex)));
+                        p.SortingIndex)),
+                    ExpectedResult.Tags);
             }
 
             public void SetupPreparationStepCreation()
@@ -155,6 +161,13 @@ public class RecipeFactoryTests
                 }
             }
 
+            public void SetupTagValidationSuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Creation);
+
+                ValidatorMock.SetupValidateAsync(Creation.RecipeTagIds);
+            }
+
             public void SetupIngredientCreationFailed()
             {
                 TestPropertyNotSetException.ThrowIfNull(Creation);
@@ -167,6 +180,12 @@ public class RecipeFactoryTests
                     IngredientFactoryMock.SetupCreateNewAsync(creations[i]).ThrowsAsync(ExpectedException);
                 }
             }
+
+            public void VerifyTagValidation()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Creation);
+                ValidatorMock.VerifyValidateAsync(Creation.RecipeTagIds, Times.Once);
+            }
         }
     }
 
@@ -174,10 +193,12 @@ public class RecipeFactoryTests
     {
         protected readonly IngredientFactoryMock IngredientFactoryMock = new(MockBehavior.Strict);
         protected readonly PreparationStepFactoryMock PreparationStepFactoryMock = new(MockBehavior.Strict);
+        protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
 
         public RecipeFactory CreateSut()
         {
-            return new RecipeFactory(_ => IngredientFactoryMock.Object, PreparationStepFactoryMock.Object, default);
+            return new RecipeFactory(_ => IngredientFactoryMock.Object, _ => ValidatorMock.Object,
+                PreparationStepFactoryMock.Object, default);
         }
     }
 }

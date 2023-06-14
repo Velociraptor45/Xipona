@@ -19,13 +19,17 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
             i.ItemCategoryId,
             i.QuantityType.ToInt(),
             i.Quantity.Value,
-            i.DefaultItemId,
-            i.DefaultItemTypeId));
+            i.ShoppingListProperties?.DefaultItemId,
+            i.ShoppingListProperties?.DefaultItemTypeId,
+            i.ShoppingListProperties?.DefaultStoreId,
+            i.ShoppingListProperties?.AddToShoppingListByDefault));
 
         return new RecipeContract(
             source.Id,
             source.Name,
+            source.NumberOfServings,
             ingredients,
-            steps);
+            steps,
+            source.Tags.Select(t => t.Value));
     }
 }

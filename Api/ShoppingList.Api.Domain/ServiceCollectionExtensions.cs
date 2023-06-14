@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories;
 using ProjectHermes.ShoppingList.Api.Domain.Items;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags;
 using ProjectHermes.ShoppingList.Api.Domain.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists;
 using ProjectHermes.ShoppingList.Api.Domain.Stores;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddShoppingLists();
         services.AddItems();
         services.AddRecipes();
+        services.AddRecipeTags();
         services.AddStores();
 
         var assembly = Assembly.GetExecutingAssembly();

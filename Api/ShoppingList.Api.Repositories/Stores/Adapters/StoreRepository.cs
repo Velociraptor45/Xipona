@@ -1,155 +1,161 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
+using Store = ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities.Store;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Adapters;
 
 public class StoreRepository : IStoreRepository
 {
     private readonly StoreContext _dbContext;
-    private readonly IToDomainConverter<Entities.Store, IStore> _toDomainConverter;
-    private readonly IToEntityConverter<IStore, Entities.Store> _toEntityConverter;
+    private readonly IToDomainConverter<Store, IStore> _toDomainConverter;
+    private readonly IToEntityConverter<IStore, Store> _toEntityConverter;
+    private readonly ILogger<StoreRepository> _logger;
+    private readonly CancellationToken _cancellationToken;
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     public StoreRepository(StoreContext dbContext,
-        IToDomainConverter<Entities.Store, IStore> toDomainConverter,
-        IToEntityConverter<IStore, Entities.Store> toEntityConverter)
+        IToDomainConverter<Store, IStore> toDomainConverter,
+        IToEntityConverter<IStore, Store> toEntityConverter,
+        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
+        ILogger<StoreRepository> logger,
+        CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
         _toEntityConverter = toEntityConverter;
+        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
+        _logger = logger;
+        _cancellationToken = cancellationToken;
     }
 
-    public async Task<IEnumerable<IStore>> GetAsync(CancellationToken cancellationToken)
+    public async Task<IStore?> FindByAsync(StoreId id)
     {
-        var storeEntities = await GetStoreQuery()
-            .Where(store => !store.Deleted)
-            .ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return _toDomainConverter.ToDomain(storeEntities);
-    }
-
-    public async Task<IStore?> FindActiveByAsync(SectionId sectionId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
         var entity = await GetStoreQuery()
-            .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId), cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (entity == null)
-            return null;
-
-        return _toDomainConverter.ToDomain(entity);
-    }
-
-    public async Task<IStore?> FindActiveByAsync(StoreId id, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var entity = await GetStoreQuery()
-            .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (entity == null)
-            return null;
-
-        return _toDomainConverter.ToDomain(entity);
-    }
-
-    public async Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids,
-        CancellationToken cancellationToken)
-    {
-        return await FindByAsync(ids, true, cancellationToken);
-    }
-
-    public async Task<IStore?> FindByAsync(StoreId id, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var entity = await GetStoreQuery()
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+            .FirstOrDefaultAsync(store => store.Id == id, _cancellationToken);
 
         return entity == null ? null : _toDomainConverter.ToDomain(entity);
     }
 
-    public async Task<IEnumerable<IStore>> FindByAsync(IEnumerable<StoreId> ids, bool onlyActives,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<IStore>> GetActiveAsync()
     {
-        cancellationToken.ThrowIfCancellationRequested();
+        var storeEntities = await GetStoreQuery()
+            .Where(store => !store.Deleted)
+            .ToListAsync(_cancellationToken);
 
+        return _toDomainConverter.ToDomain(storeEntities);
+    }
+
+    public async Task<IStore?> FindActiveByAsync(SectionId sectionId)
+    {
+        var entity = await GetStoreQuery()
+            .Where(store => !store.Deleted)
+            .FirstOrDefaultAsync(store => store.Sections.Any(s => s.Id == sectionId), _cancellationToken);
+
+        if (entity == null)
+            return null;
+
+        return _toDomainConverter.ToDomain(entity);
+    }
+
+    public async Task<IStore?> FindActiveByAsync(StoreId id)
+    {
+        var entity = await GetStoreQuery()
+            .Where(store => !store.Deleted)
+            .FirstOrDefaultAsync(store => store.Id == id, _cancellationToken);
+
+        if (entity == null)
+            return null;
+
+        return _toDomainConverter.ToDomain(entity);
+    }
+
+    public async Task<IEnumerable<IStore>> FindActiveByAsync(IEnumerable<StoreId> ids)
+    {
         var idsList = ids.Select(id => id.Value).ToList();
 
         var query = GetStoreQuery()
-            .Where(store => idsList.Contains(store.Id));
+            .Where(store => !store.Deleted && idsList.Contains(store.Id));
 
-        if (onlyActives)
-            query = query.Where(s => !s.Deleted);
-
-        var entities = await query.ToListAsync(cancellationToken);
-
-        cancellationToken.ThrowIfCancellationRequested();
+        var entities = await query.ToListAsync(_cancellationToken);
 
         return _toDomainConverter.ToDomain(entities);
     }
 
-    public async Task<IStore> StoreAsync(IStore store, CancellationToken cancellationToken)
+    public async Task<IStore> StoreAsync(IStore store)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var existingEntity = await FindEntityById(store.Id, cancellationToken);
+        var existingEntity = await FindTrackedEntityById(store.Id);
 
         if (existingEntity is null)
         {
-            return await StoreAsNew(store, cancellationToken);
+            return await StoreAsNew(store);
         }
-        var existingSections = existingEntity.Sections.ToDictionary(s => s.Id);
-        var incomingEntity = _toEntityConverter.ToEntity(store);
 
-        _dbContext.Entry(incomingEntity).State = EntityState.Modified;
+        var updatedEntity = _toEntityConverter.ToEntity(store);
 
-        foreach (var section in incomingEntity.Sections)
+        var existingRowVersion = existingEntity.RowVersion;
+        _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+        _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
+        _dbContext.Entry(existingEntity).State = EntityState.Modified;
+
+        AddOrUpdateSections(existingEntity, updatedEntity);
+        DeleteSections(existingEntity, updatedEntity);
+
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (existingSections.ContainsKey(section.Id))
-            {
-                // section was modified
-                _dbContext.Entry(section).State = EntityState.Modified;
-                existingSections.Remove(section.Id);
-            }
-            else
-            {
-                // section was added
-                _dbContext.Entry(section).State = EntityState.Added;
-            }
+            await _dbContext.SaveChangesAsync(_cancellationToken);
         }
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        foreach (var section in existingSections.Values)
+        catch (DbUpdateConcurrencyException ex)
         {
-            _dbContext.Entry(section).State = EntityState.Deleted;
+            _logger.LogInformation(ex, () => $"Saving store {store.Id.Value} failed due to concurrency violation");
+            throw new DomainException(new ModelOutOfDateReason());
         }
+        await ((AggregateRoot)store).DispatchDomainEvents(_domainEventDispatcher);
 
-        cancellationToken.ThrowIfCancellationRequested();
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return _toDomainConverter.ToDomain(incomingEntity);
+        return _toDomainConverter.ToDomain(existingEntity);
     }
 
     #region private methods
 
-    private async Task<IStore> StoreAsNew(IStore store, CancellationToken cancellationToken)
+    private void AddOrUpdateSections(Store existingStore, Store updatedStore)
+    {
+        foreach (var updatedSection in updatedStore.Sections)
+        {
+            var existingSection = existingStore.Sections
+                .FirstOrDefault(t => t.Id == updatedSection.Id);
+
+            if (existingSection == null)
+            {
+                existingStore.Sections.Add(updatedSection);
+            }
+            else
+            {
+                _dbContext.Entry(existingSection).CurrentValues.SetValues(updatedSection);
+            }
+        }
+    }
+
+    private void DeleteSections(Store existingStore, Store updatedStore)
+    {
+        var deletedSections = existingStore.Sections
+            .Where(t => updatedStore.Sections.All(s => s.Id != t.Id))
+            .ToList();
+
+        foreach (var deletedSection in deletedSections)
+        {
+            _dbContext.Remove(deletedSection);
+        }
+    }
+
+    private async Task<IStore> StoreAsNew(IStore store)
     {
         var entity = _toEntityConverter.ToEntity(store);
         _dbContext.Entry(entity).State = EntityState.Added;
@@ -159,24 +165,19 @@ public class StoreRepository : IStoreRepository
             _dbContext.Entry(section).State = EntityState.Added;
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.SaveChangesAsync(_cancellationToken);
 
         return _toDomainConverter.ToDomain(entity);
     }
 
-    private async Task<Entities.Store?> FindEntityById(Guid id, CancellationToken cancellationToken)
+    private async Task<Store?> FindTrackedEntityById(Guid id)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return await _dbContext.Stores.AsNoTracking()
+        return await _dbContext.Stores
             .Include(s => s.Sections)
-            .Where(store => !store.Deleted)
-            .FirstOrDefaultAsync(store => store.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(store => store.Id == id, _cancellationToken);
     }
 
-    private IQueryable<Entities.Store> GetStoreQuery()
+    private IQueryable<Store> GetStoreQuery()
     {
         return _dbContext.Stores.AsNoTracking()
             .Include(s => s.Sections);

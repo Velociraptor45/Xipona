@@ -2,6 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
@@ -28,6 +29,11 @@ public class ValidatorMock : Mock<IValidator>
     {
         Setup(m => m.ValidateAsync(manufacturerId))
             .Returns(Task.CompletedTask);
+    }
+
+    public void SetupValidateAsync(IEnumerable<RecipeTagId> recipeTagIds)
+    {
+        Setup(m => m.ValidateAsync(recipeTagIds)).Returns(Task.CompletedTask);
     }
 
     public void SetupValidateAsync(ItemId itemId, ItemTypeId? itemTypeId)
@@ -64,6 +70,11 @@ public class ValidatorMock : Mock<IValidator>
     public void VerifyValidateAsync(ManufacturerId manufacturerId, Func<Times> times)
     {
         Verify(m => m.ValidateAsync(manufacturerId), times);
+    }
+
+    public void VerifyValidateAsync(IEnumerable<RecipeTagId> recipeTagIds, Func<Times> times)
+    {
+        Verify(m => m.ValidateAsync(recipeTagIds), times);
     }
 
     public void VerifyValidateAsync(ItemId itemId, ItemTypeId? itemTypeId, Func<Times> times)

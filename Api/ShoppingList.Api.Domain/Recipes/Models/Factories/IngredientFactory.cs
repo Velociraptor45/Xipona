@@ -1,5 +1,4 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
@@ -15,26 +14,27 @@ public class IngredientFactory : IIngredientFactory
     }
 
     public async Task<IIngredient> CreateNewAsync(ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
-        IngredientQuantity quantity, ItemId? defaultItemId, ItemTypeId? defaultItemTypeId)
+        IngredientQuantity quantity, IngredientShoppingListProperties? shoppingListProperties)
     {
         await _validator.ValidateAsync(itemCategoryId);
 
-        return new Ingredient(IngredientId.New, itemCategoryId, quantityType, quantity, defaultItemId, defaultItemTypeId);
+        if (shoppingListProperties is not null)
+            await _validator.ValidateAsync(
+                shoppingListProperties.DefaultItemId,
+                shoppingListProperties.DefaultItemTypeId);
+
+        return new Ingredient(IngredientId.New, itemCategoryId, quantityType, quantity, shoppingListProperties);
     }
 
     public async Task<IIngredient> CreateNewAsync(IngredientCreation creation)
     {
-        await _validator.ValidateAsync(creation.ItemCategoryId);
-        if (creation.DefaultItemId.HasValue)
-            await _validator.ValidateAsync(creation.DefaultItemId.Value, creation.DefaultItemTypeId);
-
-        return new Ingredient(IngredientId.New, creation.ItemCategoryId, creation.QuantityType, creation.Quantity,
-            creation.DefaultItemId, creation.DefaultItemTypeId);
+        return await CreateNewAsync(creation.ItemCategoryId, creation.QuantityType, creation.Quantity,
+            creation.ShoppingListProperties);
     }
 
     public IIngredient Create(IngredientId id, ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,
-        IngredientQuantity quantity, ItemId? defaultItemId, ItemTypeId? defaultItemTypeId)
+        IngredientQuantity quantity, IngredientShoppingListProperties? shoppingListProperties)
     {
-        return new Ingredient(id, itemCategoryId, quantityType, quantity, defaultItemId, defaultItemTypeId);
+        return new Ingredient(id, itemCategoryId, quantityType, quantity, shoppingListProperties);
     }
 }

@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Commands.ModifyStore;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Get;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
@@ -19,6 +23,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
+using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System;
 using Xunit;
@@ -28,6 +33,382 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class StoreControllerIntegrationTests
 {
+    [Collection(DockerCollection.Name)]
+    public class GetStoreByIdAsync
+    {
+        private readonly GetStoreByIdAsyncFixture _fixture;
+
+        public GetStoreByIdAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetStoreByIdAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetStoreByIdAsync_WithValidId_ShouldReturnStore()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupExistingStoreWithStoreId();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetStoreByIdAsync(_fixture.StoreId.Value);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task GetStoreByIdAsync_WithInvalidId_ShouldReturnNotFound()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupExistingStoreWithRandomStoreId();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            var result = await sut.GetStoreByIdAsync(_fixture.StoreId.Value);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        private sealed class GetStoreByIdAsyncFixture : LocalFixture
+        {
+            private Repositories.Stores.Entities.Store? _existingStore;
+
+            public GetStoreByIdAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public StoreId? StoreId { get; private set; }
+            public StoreContract? ExpectedResult { get; private set; }
+
+            public void SetupStoreId()
+            {
+                StoreId = Domain.Stores.Models.StoreId.New;
+            }
+
+            public void SetupExistingStoreWithStoreId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                _existingStore = StoreEntityMother
+                    .ActiveAndDeletedSection()
+                    .WithId(StoreId.Value)
+                    .Create();
+            }
+
+            public void SetupExistingStoreWithRandomStoreId()
+            {
+                _existingStore = StoreEntityMother
+                    .ActiveAndDeletedSection()
+                    .Create();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStore);
+
+                ExpectedResult = new StoreContract(
+                    _existingStore.Id,
+                    _existingStore.Name,
+                    _existingStore.Sections
+                        .Where(s => !s.IsDeleted)
+                        .Select(s => new SectionContract(s.Id, s.Name, s.SortIndex, s.IsDefaultSection)));
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStore);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                await dbContext.AddAsync(_existingStore);
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class GetActiveStoresForShoppingAsync
+    {
+        private readonly GetActiveStoresForShoppingAsyncFixture _fixture;
+
+        public GetActiveStoresForShoppingAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetActiveStoresForShoppingAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetActiveStoresForShoppingAsync_WithDeletedStore_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExistingStores();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetActiveStoresForShoppingAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetActiveStoresForShoppingAsyncFixture : LocalFixture
+        {
+            private IList<Repositories.Stores.Entities.Store>? _existingStores;
+
+            public GetActiveStoresForShoppingAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<StoreForShoppingContract>? ExpectedResult { get; private set; }
+
+            public void SetupExistingStores()
+            {
+                _existingStores = new List<Repositories.Stores.Entities.Store>
+                {
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
+                    StoreEntityMother.Deleted().Create()
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                ExpectedResult = _existingStores
+                    .Where(s => !s.Deleted)
+                    .Select(s => new StoreForShoppingContract(
+                        s.Id,
+                        s.Name,
+                        s.Sections
+                            .Where(s => !s.IsDeleted)
+                            .Select(sc =>
+                                new SectionForShoppingContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
+                    .ToList();
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                foreach (var existingStore in _existingStores)
+                {
+                    dbContext.Add(existingStore);
+                }
+
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class GetActiveStoresForItemAsync
+    {
+        private readonly GetActiveStoresForItemAsyncFixture _fixture;
+
+        public GetActiveStoresForItemAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetActiveStoresForItemAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetActiveStoresForItemAsync_WithDeletedStore_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExistingStores();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetActiveStoresForItemAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetActiveStoresForItemAsyncFixture : LocalFixture
+        {
+            private IList<Repositories.Stores.Entities.Store>? _existingStores;
+
+            public GetActiveStoresForItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<StoreForItemContract>? ExpectedResult { get; private set; }
+
+            public void SetupExistingStores()
+            {
+                _existingStores = new List<Repositories.Stores.Entities.Store>
+                {
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
+                    StoreEntityMother.ActiveAndDeletedSection().Create(),
+                    StoreEntityMother.Deleted().Create()
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                ExpectedResult = _existingStores
+                    .Where(s => !s.Deleted)
+                    .Select(s => new StoreForItemContract(
+                        s.Id,
+                        s.Name,
+                        s.Sections
+                            .Where(s => !s.IsDeleted)
+                            .Select(sc =>
+                                new SectionForItemContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
+                    .ToList();
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                foreach (var existingStore in _existingStores)
+                {
+                    dbContext.Add(existingStore);
+                }
+
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
+    [Collection(DockerCollection.Name)]
+    public class GetActiveStoresOverviewAsync
+    {
+        private readonly GetActiveStoresOverviewAsyncFixture _fixture;
+
+        public GetActiveStoresOverviewAsync(DockerFixture dockerFixture)
+        {
+            _fixture = new GetActiveStoresOverviewAsyncFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task GetActiveStoresOverviewAsync_WithDeletedStore_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExistingStores();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetActiveStoresOverviewAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetActiveStoresOverviewAsyncFixture : LocalFixture
+        {
+            private IList<Repositories.Stores.Entities.Store>? _existingStores;
+
+            public GetActiveStoresOverviewAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<StoreSearchResultContract>? ExpectedResult { get; private set; }
+
+            public void SetupExistingStores()
+            {
+                _existingStores = new List<Repositories.Stores.Entities.Store>
+                {
+                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.Initial().Create(),
+                    StoreEntityMother.Deleted().Create()
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                ExpectedResult = _existingStores
+                    .Where(s => !s.Deleted)
+                    .Select(s => new StoreSearchResultContract(s.Id, s.Name))
+                    .ToList();
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+
+                await ApplyMigrationsAsync(SetupScope);
+
+                using var transaction = await CreateTransactionAsync(SetupScope);
+                await using var dbContext = GetContextInstance<StoreContext>(SetupScope);
+
+                foreach (var existingStore in _existingStores)
+                {
+                    dbContext.Add(existingStore);
+                }
+
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync(default);
+            }
+        }
+    }
+
     [Collection(DockerCollection.Name)]
     public class CreateStoreAsync
     {
@@ -51,11 +432,13 @@ public class StoreControllerIntegrationTests
             var result = await sut.CreateStoreAsync(_fixture.Contract!);
 
             // Assert
-            result.Should().BeOfType<CreatedResult>();
-            var createdResult = result as CreatedResult;
+            result.Should().BeOfType<CreatedAtActionResult>();
+            var createdResult = result as CreatedAtActionResult;
             createdResult!.Value.Should().BeOfType<StoreContract>();
             createdResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
-                opts => opts.Excluding(x => x.Path.EndsWith("Id")));
+                opts => opts
+                    .Excluding(x => x.Path.EndsWith("Id"))
+                    .ExcludeRowVersion());
         }
 
         [Fact]
@@ -75,7 +458,9 @@ public class StoreControllerIntegrationTests
 
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opts => opts.Excluding(x => x.Path.EndsWith("Id")));
+                opts => opts
+                    .Excluding(x => x.Path.EndsWith("Id"))
+                    .ExcludeRowVersion());
         }
 
         private class CreateStoreAsyncFixture : LocalFixture
@@ -174,7 +559,9 @@ public class StoreControllerIntegrationTests
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opt => opt.Excluding(info => info.Path.EndsWith(".Store")));
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".Store"))
+                    .ExcludeRowVersion());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
@@ -217,7 +604,9 @@ public class StoreControllerIntegrationTests
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
-                opt => opt.Excluding(info => info.Path.EndsWith(".Store")));
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".Store"))
+                    .ExcludeRowVersion());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
@@ -412,7 +801,7 @@ public class StoreControllerIntegrationTests
                     Id = ExistingStore.Id,
                     Name = Contract.Name,
                     Deleted = false,
-                    Sections = sections
+                    Sections = sections,
                 };
             }
         }
@@ -442,7 +831,7 @@ public class StoreControllerIntegrationTests
 
         protected IStoreRepository CreateStoreRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<IStoreRepository>();
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(default);
         }
 
         public async Task<IEnumerable<Repositories.Stores.Entities.Store>> LoadAllStoresAsync()
@@ -485,7 +874,7 @@ public class StoreControllerIntegrationTests
 
             using (await CreateTransactionAsync(scope))
             {
-                return (await repo.GetAsync(default)).ToList();
+                return (await repo.GetActiveAsync()).ToList();
             }
         }
 

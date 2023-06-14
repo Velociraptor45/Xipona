@@ -1,9 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Deletions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
@@ -27,7 +25,7 @@ public class ItemCategoryDeletionServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_WithInvalidItemCategoryId_ShouldThrowDomainException()
+        public async Task DeleteAsync_WithInvalidItemCategoryId_ShouldNotThrow()
         {
             // Arrange
             _fixture.SetupItemCategoryId();
@@ -41,7 +39,7 @@ public class ItemCategoryDeletionServiceTests
             // Assert
             using (new AssertionScope())
             {
-                await action.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ItemCategoryNotFound);
+                await action.Should().NotThrowAsync();
             }
         }
 
@@ -400,12 +398,12 @@ public class ItemCategoryDeletionServiceTests
             public void SetupFindingItemCategory()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemCategoryMock);
-                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, _itemCategoryMock.Object);
+                ItemCategoryRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, _itemCategoryMock.Object);
             }
 
             public void SetupFindingNoItemCategory()
             {
-                ItemCategoryRepositoryMock.SetupFindByAsync(ItemCategoryId, null);
+                ItemCategoryRepositoryMock.SetupFindActiveByAsync(ItemCategoryId, null);
             }
 
             public void SetupStoringItemCategory()
@@ -566,9 +564,9 @@ public class ItemCategoryDeletionServiceTests
         public ItemCategoryDeletionService CreateSut()
         {
             return new ItemCategoryDeletionService(
-                ItemCategoryRepositoryMock.Object,
-                ItemRepositoryMock.Object,
-                ShoppingListRepositoryMock.Object,
+                _ => ItemCategoryRepositoryMock.Object,
+                _ => ItemRepositoryMock.Object,
+                _ => ShoppingListRepositoryMock.Object,
                 default);
         }
     }

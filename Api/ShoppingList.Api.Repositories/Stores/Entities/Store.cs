@@ -5,12 +5,11 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Stores.Entities;
 
 public class Store
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
     public Store()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         Sections ??= new List<Section>();
+        Name ??= string.Empty;
+        RowVersion ??= Array.Empty<byte>();
     }
 
     [Key]
@@ -24,4 +23,7 @@ public class Store
 
     [InverseProperty("Store")]
     public ICollection<Section> Sections { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
 }

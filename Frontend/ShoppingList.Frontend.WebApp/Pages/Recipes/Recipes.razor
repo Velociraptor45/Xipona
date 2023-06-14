@@ -1,12 +1,14 @@
 ﻿@page "/recipes"
 
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Models;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes.Services;
-@using ProjectHermes.ShoppingList.Frontend.Models.Recipes.Models
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject NavigationManager _navigationManager;
-@inject RecipesState _state;
-@inject IRecipesApiService _apiService
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
+
+@inject IDispatcher Dispatcher
+@inject IState<RecipeState> State
+
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
@@ -18,15 +20,33 @@
         </Button>
     </div>
     <div>
-        <Input TValue="string" @bind-value="@input" 
-               OnPressEnter="@OnLoadButtonClickedAsync" 
-               Placeholder="Recipe name ..."></Input>
-        <Button @onclick="@OnLoadButtonClickedAsync" Class="mt-2">Load</Button>
+        <Tabs>
+            <TabPane Tab="By Name" Key="1">
+                <Input TValue="string" @bind-value="@input"
+                       OnPressEnter="@OnLoadByNameButtonClicked"
+                       Placeholder="Recipe name"></Input>
+                <Button @onclick="@OnLoadByNameButtonClicked" Class="mt-2">Load</Button>
+            </TabPane>
+            <TabPane Tab="By Tags" Key="2">
+                <MultiSelect
+                    TItem="RecipeTag"
+                    TValue="Guid"
+                    DataSource="@State.Value.RecipeTags"
+                    ValueName="@nameof(RecipeTag.Id)"
+                    LabelName="@nameof(RecipeTag.Name)"
+                    OnItemsChanged="@OnSelectedRecipeTagsChanged"
+                    Placeholder="Recipe tags"
+                    Values="@State.Value.Search.SelectedRecipeTagIds"
+                    CanAddItem="false">
+                </MultiSelect>
+                <Button @onclick="@OnLoadByTagsButtonClicked" Class="mt-2">Load</Button>
+            </TabPane>
+        </Tabs>
     </div>
     <div>
-        @foreach (var searchResult in _state.SearchResults)
+        @foreach (var searchResult in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="searchResult" RedirectPageName="recipes"></SearchResult>
+            <SearchResult Model="searchResult" TAction="EditRecipeAction"></SearchResult>
         }
     </div>
 </div>
@@ -37,23 +57,31 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _state.ResetEditedRecipe();
+        Dispatcher.Dispatch(new EnterRecipeSearchPageAction());
+        Dispatcher.Dispatch(new LoadRecipeTagsAction());
     }
 
-    private async Task OnLoadButtonClickedAsync()
+    private void OnLoadByNameButtonClicked()
     {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            _state.RegisterSearchResults(Enumerable.Empty<RecipeSearchResult>());
-            return;
-        }
+        Dispatcher.Dispatch(new SearchRecipeByNameAction(input));
+    }
 
-        var results = await _apiService.SearchAsync(input);
-        _state.RegisterSearchResults(results);
+    private void OnLoadByTagsButtonClicked()
+    {
+        Dispatcher.Dispatch(new SearchRecipeByTagsAction());
     }
 
     private void OnCreateRecipeButtonClicked()
     {
-        _navigationManager.NavigateTo($"recipes/{Guid.Empty}");
+        Dispatcher.Dispatch(new EditRecipeAction
+        {
+            Id = Guid.Empty
+        });
+    }
+
+    private void OnSelectedRecipeTagsChanged(IEnumerable<RecipeTag> selectedRecipeTags)
+    {
+        var tagIds = selectedRecipeTags.Select(r => r.Id).ToList();
+        Dispatcher.Dispatch(new SelectedSearchRecipeTagIdsChangedAction(tagIds));
     }
 }

@@ -9,13 +9,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Queries;
 public class ItemCategoryQueryService : IItemCategoryQueryService
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
-    private readonly CancellationToken _cancellationToken;
 
-    public ItemCategoryQueryService(IItemCategoryRepository itemCategoryRepository,
+    public ItemCategoryQueryService(Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
         CancellationToken cancellationToken)
     {
-        _itemCategoryRepository = itemCategoryRepository;
-        _cancellationToken = cancellationToken;
+        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
     }
 
     public async Task<IEnumerable<ItemCategorySearchResultReadModel>> GetAsync(string searchInput, bool includeDeleted)
@@ -24,16 +22,14 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
             return Enumerable.Empty<ItemCategorySearchResultReadModel>();
 
         var itemCategoryModels =
-            await _itemCategoryRepository.FindByAsync(searchInput, includeDeleted, _cancellationToken);
-
-        _cancellationToken.ThrowIfCancellationRequested();
+            await _itemCategoryRepository.FindByAsync(searchInput, includeDeleted, null);
 
         return itemCategoryModels.Select(model => new ItemCategorySearchResultReadModel(model.Id, model.Name));
     }
 
     public async Task<IItemCategory> GetAsync(ItemCategoryId itemCategoryId)
     {
-        var itemCategory = await _itemCategoryRepository.FindByAsync(itemCategoryId, _cancellationToken);
+        var itemCategory = await _itemCategoryRepository.FindActiveByAsync(itemCategoryId);
         if (itemCategory is null)
             throw new DomainException(new ItemCategoryNotFoundReason(itemCategoryId));
 
@@ -42,7 +38,7 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
 
     public async Task<IEnumerable<ItemCategoryReadModel>> GetAllActive()
     {
-        var results = await _itemCategoryRepository.FindActiveByAsync(_cancellationToken);
+        var results = await _itemCategoryRepository.FindActiveByAsync();
 
         return results.Select(r => new ItemCategoryReadModel(r));
     }

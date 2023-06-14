@@ -515,7 +515,7 @@ public class ItemUpdateServiceTests
         public ItemUpdateService CreateSut()
         {
             return new ItemUpdateService(
-                _itemRepositoryMock.Object,
+                _ => _itemRepositoryMock.Object,
                 _ => ValidatorMock.Object,
                 DateTimeServiceMock.Object,
                 default);
@@ -523,7 +523,7 @@ public class ItemUpdateServiceTests
 
         protected void SetupFindingItem(ItemId itemId, IItem? item)
         {
-            _itemRepositoryMock.SetupFindByAsync(itemId, item);
+            _itemRepositoryMock.SetupFindActiveByAsync(itemId, item);
         }
 
         protected void SetupStoringItem(IItem item, IItem returnedItem)

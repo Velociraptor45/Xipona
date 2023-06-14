@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.TestKit;
+using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 
 namespace ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
@@ -34,15 +34,21 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
         return WithPredecessorId(null);
     }
 
-    public ItemTypeEntityBuilder WithItem(Item? item)
+    public ItemTypeEntityBuilder WithIsDeleted(bool isDeleted)
     {
-        FillPropertyWith(p => p.Item, item);
+        FillPropertyWith(p => p.IsDeleted, isDeleted);
         return this;
     }
 
     public ItemTypeEntityBuilder WithoutItem()
     {
-        return WithItem(null);
+        return WithItem(null!);
+    }
+
+    public ItemTypeEntityBuilder WithItem(Item item)
+    {
+        FillPropertyWith(p => p.Item, item);
+        return this;
     }
 
     public ItemTypeEntityBuilder WithPredecessor(ItemType? predecessor)
@@ -56,14 +62,14 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
         return WithPredecessor(null);
     }
 
+    public ItemTypeEntityBuilder WithEmptyAvailableAt()
+    {
+        return WithAvailableAt(new List<ItemTypeAvailableAt>());
+    }
+
     public ItemTypeEntityBuilder WithAvailableAt(ICollection<ItemTypeAvailableAt> availableAt)
     {
         FillPropertyWith(p => p.AvailableAt, availableAt);
         return this;
-    }
-
-    public ItemTypeEntityBuilder WithEmptyAvailableAt()
-    {
-        return WithAvailableAt(new List<ItemTypeAvailableAt>());
     }
 }

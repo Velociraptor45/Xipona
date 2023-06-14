@@ -8,7 +8,7 @@ public interface IShoppingListSection
     SectionId Id { get; }
     public IReadOnlyCollection<IShoppingListItem> Items { get; }
 
-    IShoppingListSection AddItem(IShoppingListItem item);
+    IShoppingListSection AddItem(IShoppingListItem item, bool throwIfAlreadyPresent = true);
 
     IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 

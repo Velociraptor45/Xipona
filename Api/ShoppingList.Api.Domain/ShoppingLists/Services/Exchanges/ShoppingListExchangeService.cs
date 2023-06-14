@@ -12,33 +12,38 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Exchanges
 public class ShoppingListExchangeService : IShoppingListExchangeService
 {
     private readonly IShoppingListRepository _shoppingListRepository;
-    private readonly IAddItemToShoppingListService _addItemToShoppingListService;
+    private readonly Func<CancellationToken, IAddItemToShoppingListService> _addItemToShoppingListServiceDelegate;
     private readonly ILogger<ShoppingListExchangeService> _logger;
+    private readonly CancellationToken _cancellationToken;
 
-    public ShoppingListExchangeService(IShoppingListRepository shoppingListRepository,
-        IAddItemToShoppingListService addItemToShoppingListService,
-        ILogger<ShoppingListExchangeService> logger)
+    public ShoppingListExchangeService(
+        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
+        Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
+        ILogger<ShoppingListExchangeService> logger,
+        CancellationToken cancellationToken)
     {
-        _shoppingListRepository = shoppingListRepository;
-        _addItemToShoppingListService = addItemToShoppingListService;
+        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _addItemToShoppingListServiceDelegate = addItemToShoppingListServiceDelegate;
         _logger = logger;
+        _cancellationToken = cancellationToken;
     }
 
-    public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem, CancellationToken cancellationToken)
+    public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem)
     {
         var shoppingListsWithOldItem = (await _shoppingListRepository
-                .FindActiveByAsync(oldItemId, cancellationToken))
+                .FindActiveByAsync(oldItemId))
             .ToList();
 
         if (newItem.HasItemTypes)
-            await ExchangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
+            await ExchangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem);
         else
-            await ExchangeItemWithoutTypesAsync(shoppingListsWithOldItem, oldItemId, newItem, cancellationToken);
+            await ExchangeItemWithoutTypesAsync(shoppingListsWithOldItem, oldItemId, newItem);
     }
 
     private async Task ExchangeItemWithoutTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IItem newItem, CancellationToken cancellationToken)
+        IItem newItem)
     {
+        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(_cancellationToken);
         foreach (var list in shoppingLists)
         {
             IShoppingListItem oldListItem = list.Items
@@ -51,20 +56,21 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
             if (newItem.IsAvailableInStore(list.StoreId))
             {
                 var sectionId = newItem.GetDefaultSectionIdForStore(list.StoreId);
-                await _addItemToShoppingListService.AddItemToShoppingListAsync(list, newItem.Id, sectionId,
-                    oldListItem.Quantity, cancellationToken);
+                await addItemToShoppingListService.AddItemAsync(list, newItem.Id, sectionId,
+                    oldListItem.Quantity);
 
                 if (oldListItem.IsInBasket)
                     list.PutItemInBasket(newItem.Id);
             }
 
-            await _shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 
     private async Task ExchangeItemWithTypesAsync(IEnumerable<IShoppingList> shoppingLists, ItemId oldItemId,
-        IItem newItem, CancellationToken cancellationToken)
+        IItem newItem)
     {
+        var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(_cancellationToken);
         foreach (var list in shoppingLists)
         {
             var oldListItems = list.Items
@@ -84,14 +90,14 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 
                 var sectionId = itemType.GetDefaultSectionIdForStore(list.StoreId);
 
-                await _addItemToShoppingListService.AddItemWithTypeToShoppingList(list, newItem, itemType.Id,
-                    sectionId, oldListItem.Quantity, cancellationToken);
+                await addItemToShoppingListService.AddItemWithTypeAsync(list, newItem, itemType.Id,
+                    sectionId, oldListItem.Quantity);
 
                 if (oldListItem.IsInBasket)
                     list.PutItemInBasket(newItem.Id, itemType.Id);
             }
 
-            await _shoppingListRepository.StoreAsync(list, cancellationToken);
+            await _shoppingListRepository.StoreAsync(list);
         }
     }
 }

@@ -75,7 +75,7 @@ public class ItemCategoryModificationServiceTests
 
         public ItemCategoryModificationService CreateSut()
         {
-            return new ItemCategoryModificationService(_itemCategoryRepositoryMock.Object, default);
+            return new ItemCategoryModificationService(_ => _itemCategoryRepositoryMock.Object, default);
         }
 
         public void SetupModification()
@@ -88,14 +88,14 @@ public class ItemCategoryModificationServiceTests
             TestPropertyNotSetException.ThrowIfNull(Modification);
 
             _itemCategoryMock = new ItemCategoryMock(new ItemCategoryBuilder().Create(), MockBehavior.Strict);
-            _itemCategoryRepositoryMock.SetupFindByAsync(Modification.Id, _itemCategoryMock.Object);
+            _itemCategoryRepositoryMock.SetupFindActiveByAsync(Modification.Id, _itemCategoryMock.Object);
         }
 
         public void SetupNotFindingItemCategory()
         {
             TestPropertyNotSetException.ThrowIfNull(Modification);
 
-            _itemCategoryRepositoryMock.SetupFindByAsync(Modification.Id, null);
+            _itemCategoryRepositoryMock.SetupFindActiveByAsync(Modification.Id, null);
         }
 
         public void SetupModifyingItemCategory()

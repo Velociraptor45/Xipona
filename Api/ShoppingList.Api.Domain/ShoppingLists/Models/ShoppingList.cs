@@ -1,4 +1,5 @@
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.ErrorReasons;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
@@ -7,7 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-public class ShoppingList : IShoppingList
+public class ShoppingList : AggregateRoot, IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
 
@@ -27,16 +28,16 @@ public class ShoppingList : IShoppingList
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
 
-    public void AddItem(IShoppingListItem item, SectionId sectionId)
+    public void AddItem(IShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
-        if (Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
+        if (throwIfAlreadyPresent && Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
             throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
         if (!_sections.ContainsKey(sectionId))
             throw new DomainException(new SectionNotPartOfStoreReason(sectionId, StoreId));
 
         var section = _sections[sectionId];
-        _sections[sectionId] = section.AddItem(item);
+        _sections[sectionId] = section.AddItem(item, throwIfAlreadyPresent);
     }
 
     public void RemoveItemAndItsTypes(ItemId itemId)

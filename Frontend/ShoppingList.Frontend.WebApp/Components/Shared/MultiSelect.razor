@@ -1,0 +1,93 @@
+﻿@typeparam TValue
+@typeparam TItem
+
+<Select Mode="multiple"
+        OnFocus="OnFocus"
+        Class="@Class"
+        Placeholder="@Placeholder"
+        ValueName="@ValueName"
+        LabelName="@LabelName"
+        DataSource="@DataSource"
+        TItemValue="TValue"
+        TItem="TItem"
+        OnSelectedItemsChanged="OnSelectedItemsChanged"
+        AllowClear="@AllowClear"
+        DropdownRender="@OnRender"
+        IgnoreItemChanges="@IgnoreItemChanges"
+        OnDropdownVisibleChange="OnDropdownToggle"
+        OnClearSelected="() => OnClear?.Invoke()"
+        AutoClearSearchValue="false"
+        Values="@Values">
+</Select>
+
+@code {
+    [Parameter] public EventCallback OnFocus { get; set; }
+
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Placeholder { get; set; }
+
+    [Parameter] public IEnumerable<TItem> DataSource { get; set; }
+    [Parameter] public string ValueName { get; set; }
+    [Parameter] public string LabelName { get; set; }
+
+    [Parameter] public bool CanAddItem { get; set; }
+    [Parameter] public bool AllowClear { get; set; }
+
+    [Parameter] public Action<IEnumerable<TItem>> OnItemsChanged { get; set; }
+    [Parameter] public Action OnItemAdded { get; set; }
+    [Parameter] public Action<string> OnInputChanged { get; set; }
+    [Parameter] public Action OnDropdownClosed { get; set; }
+    [Parameter] public Action OnClear { get; set; }
+
+    [Parameter] public IEnumerable<TValue> Values { get; set; }
+    [Parameter] public string SearchInput { get; set; }
+
+    [Parameter] public bool IgnoreItemChanges { get; set; }= true;
+
+    private Input<string> _searchInput;
+
+    private void OnSelectedItemsChanged(IEnumerable<TItem> items)
+    {
+        OnItemsChanged?.Invoke(items);
+    }
+
+    private void OnAddNewItem()
+    {
+        OnItemAdded?.Invoke();
+    }
+
+    private void OnSearchInput(ChangeEventArgs args)
+    {
+        OnInputChanged?.Invoke(args.Value as string ?? string.Empty);
+    }
+
+    private void OnDropdownToggle(bool visible)
+    {
+        if (visible)
+            return;
+
+        OnDropdownClosed?.Invoke();
+    }
+
+    private RenderFragment OnRender(RenderFragment originNode)
+    {
+        return
+    @<Template>
+        <div>
+            @originNode
+            @if (CanAddItem)
+            {
+                <Divider Class="my-1"></Divider>
+                <div class="d-flex p-2">
+                    <div class="max-w-100">
+                        <Input @ref="_searchInput" Value="SearchInput" OnInput="OnSearchInput" />
+                    </div>
+                    <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
+                        <Icon Type="plus" Theme="outline"></Icon>
+                    </a>
+                </div>
+            }
+        </div>
+    </Template>;
+    }
+}

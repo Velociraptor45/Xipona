@@ -8,6 +8,4 @@ public interface IItemCreationService
     Task<ItemReadModel> CreateItemWithTypesAsync(IItem item);
 
     Task<ItemReadModel> CreateAsync(ItemCreation creation);
-
-    Task<ItemReadModel> CreateTemporaryAsync(TemporaryItemCreation creation);
 }
