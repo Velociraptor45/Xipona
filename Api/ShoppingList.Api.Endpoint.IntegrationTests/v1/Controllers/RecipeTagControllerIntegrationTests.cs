@@ -47,9 +47,10 @@ public class RecipeTagControllerIntegrationTests
             result.Should().BeOfType<CreatedAtActionResult>();
 
             var createdResult = (CreatedAtActionResult)result;
+            createdResult.Value.Should().NotBeNull();
             createdResult.Value.Should().BeOfType<RecipeTagContract>();
 
-            var createdContract = (RecipeTagContract)createdResult.Value;
+            var createdContract = (RecipeTagContract)createdResult.Value!;
             createdContract.Should().BeEquivalentTo(_fixture.ExpectedContract,
                 opt => opt.Excluding(info => info.Path == "Id"));
 

@@ -110,7 +110,7 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
             contract.Should().HaveCount(1);
         }
 
@@ -135,7 +135,7 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
             contract.Should().HaveCount(3); // three item types
         }
 
@@ -160,7 +160,7 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
             contract.Should().HaveCount(20);
             contract.Should().OnlyContain(c => c.TypeId != null);
         }
@@ -189,7 +189,7 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
             contract.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -232,7 +232,7 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
             contract.Should().HaveCount(20);
             contract.Should().OnlyContain(c => c.TypeId == null);
         }
