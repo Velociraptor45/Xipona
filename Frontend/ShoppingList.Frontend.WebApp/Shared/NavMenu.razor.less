@@ -1,0 +1,28 @@
+﻿@import '../wwwroot/css/general/colors.less';
+
+@inactive-color: #34495e;
+
+div.nav-menu {
+    position: fixed;
+    bottom: 0;
+    background-color: @primary-color;
+    width: 100%;
+}
+
+.nav-menu .bi {
+    font-size: 1.0rem;
+}
+
+.nav-link div,
+.nav-link i {
+    color: @inactive-color;
+}
+
+.nav-link.active div,
+.nav-link.active i {
+    color: @secondary-color;
+}
+
+.nav .nav-item .nav-link {
+    padding: 0 0 0 0;
+}

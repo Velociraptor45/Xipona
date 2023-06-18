@@ -1,11 +1,39 @@
 ﻿@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants
-<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">ShoppingList.Frontend</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<div class="nav-menu py-2">
+    <ul class="nav d-flex justify-content-around">
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex flex-column p-0" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-bag align-self-center"></i>
+                <div>Shopping</div>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Items">
+                <i class="bi bi-clipboard align-self-center"></i>
+                <div>Items</div>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Recipes">
+                <i class="bi bi-book align-self-center"></i>
+                <div>Recipes</div>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Stores">
+                <i class="bi bi-basket2-fill align-self-center"></i>
+                <div>Stores</div>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <div class="nav-link d-flex flex-column p-0">
+                <i class="bi bi-list align-self-center"></i>
+                <div>Menu</div>
+            </div>
+        </li>
+    </ul>
 </div>
-
+@*
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
@@ -40,7 +68,7 @@
         </li>
     </ul>
 </div>
-
+*@
 @code {
     private bool collapseNavMenu = true;
 
