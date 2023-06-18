@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="wwwroot\lib\bootstrap-icons\basket2-fill.svg" />
   </ItemGroup>
 
   <ItemGroup>
