@@ -2,44 +2,44 @@
 <div class="nav-menu py-2">
     <ul class="nav d-flex justify-content-around">
         <li class="nav-item">
-            <NavLink class="nav-link d-flex flex-column p-0" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link d-flex" href="" Match="NavLinkMatch.All">
                 <i class="bi bi-bag align-self-center"></i>
                 <div class="align-self-center">Shopping</div>
             </NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Items">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Items">
                 <i class="bi bi-clipboard align-self-center"></i>
                 <div class="align-self-center">Items</div>
             </NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Recipes">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Recipes">
                 <i class="bi bi-book align-self-center"></i>
                 <div class="align-self-center">Recipes</div>
             </NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Stores">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Stores">
                 <i class="bi bi-basket2-fill align-self-center"></i>
                 <div class="align-self-center">Stores</div>
             </NavLink>
         </li>
         <li class="nav-item nav-item-menu">
-            <div class="nav-link d-flex flex-column p-0" onclick="@ToggleNavMenu">
+            <div class="nav-link d-flex" onclick="@ToggleNavMenu">
                 <i class="bi bi-list align-self-center"></i>
                 <div class="align-self-center">Menu</div>
             </div>
         </li>
-        <div class="@NavMenuCssClass nav-menu-ext px-2">
-            <li class="nav-ext-item">
-                <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.Manufacturers">
+        <div class="@NavMenuCssClass nav-menu-ext">
+            <li class="nav-item-ext">
+                <NavLink class="nav-link d-flex" href="@PageRoutes.Manufacturers">
                     <i class="bi bi-briefcase align-self-center"></i>
                     <div class="align-self-center">Manufacturers</div>
                 </NavLink>
             </li>
-            <li class="nav-ext-item pt-1">
-                <NavLink class="nav-link d-flex flex-column p-0" href="@PageRoutes.ItemCategories">
+            <li class="nav-item-ext pt-1">
+                <NavLink class="nav-link d-flex" href="@PageRoutes.ItemCategories">
                     <i class="bi bi-tag align-self-center"></i>
                     <div class="align-self-center">Categories</div>
                 </NavLink>
@@ -48,11 +48,10 @@
     </ul>
 </div>
 
-
 @code {
     private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string NavMenuCssClass => collapseNavMenu ? "nav-menu-ext-collapse" : null;
 
     private void ToggleNavMenu()
     {

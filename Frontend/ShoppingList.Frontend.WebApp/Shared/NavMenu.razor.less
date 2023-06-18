@@ -1,43 +1,86 @@
 ﻿@import '../wwwroot/css/general/colors.less';
 
-@inactive-color: #34495e;
-
 li {
     list-style-type: none;
 }
 
-div.nav-menu {
-    position: fixed;
-    bottom: 0;
-    background-color: @primary-color;
-    width: 100%;
+.nav-menu {
+    z-index: 9999;
 }
 
-.nav-menu .bi {
-    font-size: 1.0rem;
+@media (min-width: 768px) {
+    .nav {
+        flex-direction: column;
+        padding: 0 12px;
+    }
+
+    .nav-menu {
+        position: sticky;
+        left: 0;
+        background-color: @primary-color;
+        min-height: 100vh;
+    }
+
+
+    .nav-link i {
+        padding-right: 8px;
+    }
+
+    .nav-link.active div,
+    .nav-link.active i {
+        color: @secondary-color;
+    }
+
+    .nav-item,
+    .nav-item-ext {
+        padding: 6px 0;
+    }
+
+    .nav-item-menu {
+        width: 0;
+        height: 0;
+        visibility: hidden;
+        padding: 0;
+    }
 }
 
-.nav-link div,
-.nav-link i {
-    color: @inactive-color;
-}
+@media (max-width: 768px) {
 
-.nav-link.active div,
-.nav-link.active i {
-    color: @secondary-color;
-}
+    .nav-menu {
+        position: fixed;
+        bottom: 0;
+        background-color: @primary-color;
+        width: 100%;
+    }
 
-.nav .nav-item .nav-link {
-    padding: 0 0 0 0;
-}
+    .nav-menu .bi {
+        font-size: 1.0rem;
+    }
 
-.nav-menu-ext {
-    position: fixed;
-    bottom: 63.15px;
-    right: 0;
-    background-color: @primary-color;
-}
 
-.nav-item-menu {
-    cursor: pointer;
+    .nav-link div,
+    .nav-link i {
+        color: @inactive-color;
+    }
+
+    .nav-link.active div,
+    .nav-link.active i {
+        color: @secondary-color;
+    }
+
+    .nav-menu-ext {
+        position: fixed;
+        bottom: 63.15px;
+        right: 0;
+        background-color: @primary-color;
+        padding: 0 8px;
+    }
+
+    .nav-item-menu {
+        cursor: pointer;
+    }
+
+    .nav-menu-ext-collapse {
+        visibility: hidden;
+    }
 }

@@ -1,0 +1,19 @@
+﻿.nav-link {
+  color: #34495e;
+}
+@media (min-width: 768px) {
+  .nav-link {
+    font-size: 1.2rem;
+    padding: 6px 4px;
+  }
+  .nav-link:hover,
+  .nav-link-ext:hover {
+    color: #ffffff;
+  }
+}
+@media (max-width: 768px) {
+  .nav-link {
+    padding: 0;
+    flex-direction: column;
+  }
+}

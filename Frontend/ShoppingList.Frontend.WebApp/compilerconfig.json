@@ -2,5 +2,9 @@
   {
     "outputFile": "Shared/NavMenu.razor.css",
     "inputFile": "Shared/NavMenu.razor.less"
+  },
+  {
+    "outputFile": "wwwroot/css/general/general.css",
+    "inputFile": "wwwroot/css/general/general.less"
   }
 ]
