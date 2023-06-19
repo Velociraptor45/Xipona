@@ -10,5 +10,9 @@
   {
     "outputFile": "Components/Index/Section.razor.css",
     "inputFile": "Components/Index/Section.razor.less"
+  },
+  {
+    "outputFile": "Components/Index/Item.razor.css",
+    "inputFile": "Components/Index/Item.razor.less"
   }
 ]
