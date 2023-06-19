@@ -1,3 +1,20 @@
-﻿.section:hover {
+﻿@import '../../wwwroot/css/general/colors.less';
+
+.section:hover {
     cursor: pointer;
+}
+
+.all-in-basket {
+    background-color: @primary-color;
+    color: white;
+}
+
+.some-in-basket {
+    background-color: @warning-color;
+    color: black;
+}
+
+.none-in-basket {
+    background-color: @error-color;
+    color: white;
 }
