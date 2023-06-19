@@ -18,7 +18,10 @@
         <div class="d-flex flex-column ml-2">
             <div class="d-flex">
                 <!-- upper row -->
-                <div class="h3 pl-1">@Model.Name</div>
+                <div class="d-flex">
+                    <div class="h3 pl-1">@Model.Name</div>
+                    <div class="pb-2 pl-1 align-self-end">@($"{CalculatePrice():0.00}")€</div>
+                </div>
                 <Button Danger="true"
                         Class="mr-2 ml-auto px-2 remove-item"
                         OnClick="@OnRemoveItemButtonClicked">
@@ -99,7 +102,6 @@
             Dispatcher.Dispatch(new PutItemInBasketAction(Model.Id, Model.TypeId));
         }
     }
-
 
     private float CalculatePrice()
     {
