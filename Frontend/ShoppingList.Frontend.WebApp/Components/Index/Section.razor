@@ -8,7 +8,7 @@
 @inject IDispatcher Dispatcher
 
 <div>
-    <div class="py-2 mb-1 pl-1 d-flex align-items-center section @GetBackgroundColor()" @onclick="OnSectionClicked">
+    <div class="py-1 mb-1 pl-1 d-flex align-items-center section @GetBackgroundColor()" @onclick="OnSectionClicked">
         @if (Model.IsExpanded)
         {
             <i class="bi bi-chevron-down"></i>
@@ -17,7 +17,7 @@
         {
             <i class="bi bi-chevron-right"></i>
         }
-        <div class="pl-1">@Model.Name</div>
+        <div class="pl-1 name">@Model.Name</div>
     </div>
     @if (Model.IsExpanded)
     {
