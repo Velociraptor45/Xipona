@@ -6,5 +6,9 @@
   {
     "outputFile": "wwwroot/css/general/general.css",
     "inputFile": "wwwroot/css/general/general.less"
+  },
+  {
+    "outputFile": "Components/Index/Section.razor.css",
+    "inputFile": "Components/Index/Section.razor.less"
   }
 ]
