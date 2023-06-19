@@ -1,3 +1,14 @@
-﻿.item {
+﻿@import '../../wwwroot/css/general/colors.less';
+
+.item {
     list-style-type: none;
+    color: @secondary-color;
+}
+
+.in-basket {
+    background-color: @primary-color;
+}
+
+.not-in-basket {
+    background-color: @error-color;
 }
