@@ -101,6 +101,7 @@
                            OnClick="OnAddButtonClicked"
                            @key="@("submit")"
                            Type="@ButtonType.Primary"
+                           Disabled="@(!State.Value.TemporaryItemCreator.ItemName.Any())"
                            Loading="@State.Value.TemporaryItemCreator.IsSaving">
                        Add
                    </Button>
