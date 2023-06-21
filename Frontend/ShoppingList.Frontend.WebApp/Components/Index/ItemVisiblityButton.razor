@@ -12,11 +12,11 @@
         Disabled="@(!State.Value.ShoppingList?.AnyItemInBasket ?? true)">
     @if (State.Value.ItemsInBasketVisible)
     {
-        <Icon Type="eye" />
+        <i class="bi bi-eye"></i>
     }
     else
     {
-        <Icon Type="eye-invisible" />
+        <i class="bi bi-eye-slash"></i>
     }
 </Button>
 

@@ -26,10 +26,7 @@
                 <DebugSwitch></DebugSwitch>
                 <StoreSelect></StoreSelect>
                 <ItemVisiblityButton></ItemVisiblityButton>
-                <Button class="d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
-                        Disabled="@(State.Value.ShoppingList is null)">
-                    <Icon Type="edit" />
-                </Button>
+                <ItemEditModeButton></ItemEditModeButton>
             </div>
             <ItemSearchBar></ItemSearchBar>
         </div>
@@ -78,14 +75,6 @@
 
         base.OnInitialized();
     }
-
-    #region Callbacks
-
-    private void OnEditModeButtonClicked()
-    {
-        Dispatcher.Dispatch(new ToggleEditModeAction());
-    }
-    #endregion
     
     private void OnCloseUpdatePriceModalButtonClicked()
     {
