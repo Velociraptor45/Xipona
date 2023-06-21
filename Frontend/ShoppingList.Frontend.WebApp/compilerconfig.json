@@ -22,5 +22,9 @@
   {
     "outputFile": "Components/Index/ItemSearchBar.razor.css",
     "inputFile": "Components/Index/ItemSearchBar.razor.less"
+  },
+  {
+    "outputFile": "Components/Index/Summary.razor.css",
+    "inputFile": "Components/Index/Summary.razor.less"
   }
 ]
