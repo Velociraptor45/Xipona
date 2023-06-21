@@ -11,8 +11,7 @@
 <div class="temporary-item-creator">
     <Button Type="@ButtonType.Primary"
             OnClick="@OnOpenCreationButtonClicked"
-            Class="d-flex align-items-center"
-            Disabled="@(!State.Value.TemporaryItemCreator.IsButtonEnabled)">
+            Class="d-flex align-items-center">
         <Icon Type="plus"></Icon>
     </Button>
     <Modal Title="Add temporary item"
@@ -21,7 +20,9 @@
            ConfirmLoading="@State.Value.TemporaryItemCreator.IsSaving"
            Footer="@GetFooter()">
         <div>
-            <Input TValue="string" Value="State.Value.TemporaryItemCreator.ItemName" ValueChanged="OnNameChanged"></Input>
+            <Input TValue="string" Value="State.Value.TemporaryItemCreator.ItemName" 
+                   Placeholder="Item name"
+                   ValueChanged="OnNameChanged"></Input>
             <div>
                 <div>Section</div>
                 <div class="d-flex">

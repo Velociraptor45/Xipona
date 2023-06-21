@@ -56,7 +56,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             true,
             false,
             null,
-            new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
+            new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
             new TemporaryItemCreator(string.Empty, null, 1f, 0, false, false, false),
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
             new Summary(false, false, DateTime.MinValue, false),
