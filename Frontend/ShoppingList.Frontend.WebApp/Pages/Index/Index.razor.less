@@ -1,3 +1,37 @@
-﻿.price-sum .currency {
+﻿@import '../../wwwroot/css/general/colors.less';
+
+.price-sum .currency {
     padding-left: 2px;
+}
+
+.top-header {
+    padding-top: 8px;
+    padding-bottom: 3px;
+    position: sticky;
+    top: 0;
+    background-color: @background-color;
+    z-index: 1000;
+}
+
+.sections {
+    padding-top: 6px;
+}
+
+@media (min-width: 769px) {
+    .sections {
+        margin: 0 auto;
+        max-width: 600px;
+    }
+
+    .top-header {
+        margin: 0 auto;
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-header {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
 }

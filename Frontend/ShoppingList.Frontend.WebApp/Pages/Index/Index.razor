@@ -20,24 +20,26 @@
 
 @if (State != null)
 {
-    <div>
+    <div class="shopping-content">
         @if (State.Value.Errors.HasErrors)
         {
             <ProcessingError></ProcessingError>
         }
-        <div class="mb-1 d-flex justify-content-end align-items-center">
-            <DebugSwitch></DebugSwitch>
-            <StoreSelect></StoreSelect>
-            <ItemVisiblityButton></ItemVisiblityButton>
-            <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
-                    Disabled="@(State.Value.ShoppingList is null)">
-                <Icon Type="edit" />
-            </Button>
+        <div class="top-header">
+            <div class="mb-1 d-flex justify-content-end align-items-center">
+                <DebugSwitch></DebugSwitch>
+                <StoreSelect></StoreSelect>
+                <ItemVisiblityButton></ItemVisiblityButton>
+                <Button class="d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
+                        Disabled="@(State.Value.ShoppingList is null)">
+                    <Icon Type="edit" />
+                </Button>
+            </div>
+            <ItemSearchBar></ItemSearchBar>
         </div>
-        <ItemSearchBar></ItemSearchBar>
         @if (State.Value.ShoppingList is not null)
         {
-            <div>
+            <div class="sections">
                 @foreach(var section in State.Value.GetSectionsToDisplay())
                 {
                     <Section Model="section"></Section>
@@ -96,7 +98,7 @@
 
         base.OnInitialized();
     }
-    
+
     #region Callbacks
 
     private void OnEditModeButtonClicked()
