@@ -73,15 +73,16 @@
     else
     {
         <div class="d-flex">
-            <div class="m-0">
-                <span>@Model.Quantity</span><span>@Model.QuantityType.QuantityLabel</span>
+            <div class="m-0 quantity">
+                <div class="pl-1">
+                    <span>@Model.Quantity</span><span>@Model.QuantityType.QuantityLabel</span>
+                </div>
             </div>
-            <div class="m-0 pl-2">
+            <div class="m-0 pl-1">
                 @Model.Name
             </div>
-            <div class="px-2 m-0 align-self-center ml-auto">
-                <span>@($"{CalculatePrice():0.00}")</span>
-                <span>€</span>
+            <div class="px-2 m-0 align-self-center ml-auto price">
+                <span>@($"{CalculatePrice():0.00}")</span><span class="price-currency">€</span>
             </div>
         </div>
     }

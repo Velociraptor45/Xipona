@@ -47,15 +47,15 @@
         @if (State.Value.ShoppingList != null)
         {
             <div class="d-flex align-items-end flex-column px-2">
-                <div class="d-flex border-top pt-1">
+                <div class="d-flex border-top pt-1 price-sum">
                     <div class="d-flex">
                         <span>@GetInBasketPrice()</span>
-                        <span>€</span>
+                        <span class="currency">€</span>
                     </div>
                     <span class="px-1">/</span>
                     <div class="d-flex">
                         <span>@GetTotalListPrice()</span>
-                        <span>€</span>
+                        <span class="currency">€</span>
                     </div>
                 </div>
             </div>
