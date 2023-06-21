@@ -12,32 +12,48 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<div class="d-flex justify-content-end mt-2">
-    <Button Type="@ButtonType.Primary"
-            OnClick="@OnSummaryButtonClicked"
-            Class="mr-2"
-            Disabled="@(!State.Value.ShoppingList?.AnyItemInBasket ?? true)">
-        Summary
-    </Button>
-    <Modal TitleTemplate="@GetTitle()"
-           Visible="@State.Value.Summary.IsOpen"
-           OnCancel="@OnCloseSummaryButtonClicked"
-           ConfirmLoading="@State.Value.Summary.IsSaving"
-           Footer="@GetFooter()">
-        <div>@GetItemInBasketCountText()</div>
-        @if (State.Value.ShoppingList.ItemNotInBasketCount > 0)
-        {
-            <div class="pt-2">@GetItemNotInBasketCountText()</div>
-        }
-    </Modal>
-</div>
+@if (State.Value.ShoppingList != null)
+{
+    <div class="d-flex flex-column mt-2 summary">
+        <div class="pb-1 d-flex align-items-end flex-column">
+            <div class="d-flex border-top pt-1 price-sum">
+                <div class="d-flex">
+                    <span>@GetInBasketPrice()</span>
+                    <span class="currency">€</span>
+                </div>
+                <span class="px-1">/</span>
+                <div class="d-flex">
+                    <span>@GetTotalListPrice()</span>
+                    <span class="currency">€</span>
+                </div>
+            </div>
+        </div>
+        <Button Type="@ButtonType.Primary"
+                OnClick="@OnSummaryButtonClicked"
+                Class="ml-auto"
+                Disabled="@(!State.Value.ShoppingList.AnyItemInBasket)">
+            Summary
+        </Button>
+        <Modal TitleTemplate="@GetTitle()"
+               Visible="@State.Value.Summary.IsOpen"
+               OnCancel="@OnCloseSummaryButtonClicked"
+               ConfirmLoading="@State.Value.Summary.IsSaving"
+               Footer="@GetFooter()">
+            <div>@GetItemInBasketCountText()</div>
+            @if (State.Value.ShoppingList.ItemNotInBasketCount > 0)
+            {
+                <div class="pt-2">@GetItemNotInBasketCountText()</div>
+            }
+        </Modal>
+    </div>
+}
 
 @code {
     private string Title => $"Finish shopping at {State.Value.SelectedStore?.Name}";
 
     private void OnSummaryButtonClicked()
     {
-        if (!State.Value.ShoppingList.AnyItemInBasket)
+        if (!State.Value.ShoppingList!.AnyItemInBasket)
             return;
 
         Dispatcher.Dispatch(new OpenSummaryAction());
@@ -68,6 +84,18 @@
         Dispatcher.Dispatch(new EnterFinishedAtEditModeAction());
     }
 
+    private string GetTotalListPrice()
+    {
+        var price = _priceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
+        return price.ToString("0.00");
+    }
+
+    private string GetInBasketPrice()
+    {
+        var price = _priceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
+        return price.ToString("0.00");
+    }
+
     private RenderFragment GetFooter()
     {
         return 
@@ -76,7 +104,7 @@
                        <div class="summary-price font-weight-bold align-self-center">@GetInBasketPrice()€</div>
                        <Button Class="ml-auto"
                                OnClick="OnFinishListButtonClicked"
-                               Disabled="State.Value.Summary.IsEditingFinishedAt"
+                               Disabled="@State.Value.Summary.IsEditingFinishedAt"
                                @key="@("submit")"
                                Type="@ButtonType.Primary"
                                Loading="@State.Value.Summary.IsSaving">
@@ -132,7 +160,7 @@
     private string GetItemInBasketCountText()
     {
         var builder = new StringBuilder();
-        var count = State.Value.ShoppingList.ItemInBasketCount;
+        var count = State.Value.ShoppingList!.ItemInBasketCount;
         builder.Append(count.ToString());
 
         builder.Append(count == 1 ? " item " : " items ");
@@ -144,19 +172,13 @@
     private string GetItemNotInBasketCountText()
     {
         var builder = new StringBuilder();
-        var count = State.Value.ShoppingList.ItemNotInBasketCount;
+        var count = State.Value.ShoppingList!.ItemNotInBasketCount;
         builder.Append(count.ToString());
 
         builder.Append(count == 1 ? " item " : " items ");
 
         builder.Append("will be moved to the next shopping list");
         return builder.ToString();
-    }
-
-    private string GetInBasketPrice()
-    {
-        var price = _priceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
-        return price.ToString("0.00");
     }
 
     private string GetDateTime()

@@ -2,16 +2,12 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemPriceCalculationService _itemPriceCalculationService;
-
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
-@using Summary = ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index.Summary
 
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
@@ -44,22 +40,6 @@
                 {
                     <Section Model="section"></Section>
                 }
-            </div>
-        }
-        @if (State.Value.ShoppingList != null)
-        {
-            <div class="d-flex align-items-end flex-column px-2">
-                <div class="d-flex border-top pt-1 price-sum">
-                    <div class="d-flex">
-                        <span>@GetInBasketPrice()</span>
-                        <span class="currency">€</span>
-                    </div>
-                    <span class="px-1">/</span>
-                    <div class="d-flex">
-                        <span>@GetTotalListPrice()</span>
-                        <span class="currency">€</span>
-                    </div>
-                </div>
             </div>
         }
         <Summary></Summary>
@@ -106,18 +86,6 @@
         Dispatcher.Dispatch(new ToggleEditModeAction());
     }
     #endregion
-
-    private string GetTotalListPrice()
-    {
-        var price = _itemPriceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
-        return $"{price:0.00}";
-    }
-
-    private string GetInBasketPrice()
-    {
-        var price = _itemPriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
-        return $"{price:0.00}";
-    }
     
     private void OnCloseUpdatePriceModalButtonClicked()
     {
