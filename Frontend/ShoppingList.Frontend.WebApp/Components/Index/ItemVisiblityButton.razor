@@ -9,7 +9,7 @@
 
 <Button Class="mr-1 d-flex align-items-center"
         OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
-        Disabled="@(!State.Value.ShoppingList?.AnyItemInBasket ?? true)">
+        Disabled="@(State.Value.ShoppingList is null)">
     @if (State.Value.ItemsInBasketVisible)
     {
         <i class="bi bi-eye"></i>
