@@ -12,7 +12,7 @@
     <Button Type="@ButtonType.Primary"
             OnClick="@OnOpenCreationButtonClicked"
             Class="d-flex align-items-center">
-        <Icon Type="plus"></Icon>
+        <i class="bi bi-plus-lg"></i>
     </Button>
     <Modal Title="Add temporary item"
            Visible="@State.Value.TemporaryItemCreator.IsOpen"
@@ -38,7 +38,9 @@
                     </Select>
                     <div class="d-flex pl-4 align-items-center">
                         <div class="price-input mr-1">
-                            <Input TValue="float" Value="@State.Value.TemporaryItemCreator.Price" ValueChanged="OnPriceChanged"></Input>
+                            <Input TValue="float" Value="@State.Value.TemporaryItemCreator.Price"
+                                   ValueChanged="OnPriceChanged">
+                            </Input>
                         </div>
                         <div>
                             <Select TItem="QuantityType"
