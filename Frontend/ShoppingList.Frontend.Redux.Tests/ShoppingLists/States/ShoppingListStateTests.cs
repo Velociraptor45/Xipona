@@ -44,7 +44,7 @@ public class ShoppingListStateTests
         {
             // Arrange
             _fixture.SetupNotAllItemsInBasket();
-            _fixture.SetupItemsInBasketVisible();
+            _fixture.SetupItemsInBasketInvisible();
 
             // Act
             var result = _fixture.Sut.AllItemsInBasketHidden;
@@ -104,7 +104,7 @@ public class ShoppingListStateTests
 
                 Sut = Sut with
                 {
-                    ShoppingList = Sut.ShoppingList with
+                    ShoppingList = Sut.ShoppingList! with
                     {
                         Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
                     }
