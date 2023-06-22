@@ -22,7 +22,7 @@
         <div>
             <Input TValue="string" Value="State.Value.TemporaryItemCreator.ItemName" 
                    Placeholder="Item name"
-                   ValueChanged="OnNameChanged"></Input>
+                   OnInput="OnNameChanged"></Input>
             <div>
                 <div>Section</div>
                 <div class="d-flex">
@@ -59,8 +59,9 @@
 </div>
 
 @code {
-    private void OnNameChanged(string name)
+    private void OnNameChanged(ChangeEventArgs args)
     {
+        var name = args.Value.ToString();
         Dispatcher.Dispatch(new TemporaryItemNameChangedAction(name));
     }
 
