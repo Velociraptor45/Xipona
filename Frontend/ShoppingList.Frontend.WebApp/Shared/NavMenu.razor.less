@@ -8,7 +8,7 @@ li {
     z-index: 9999;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .nav {
         flex-direction: column;
         padding: 0 12px;
@@ -17,10 +17,10 @@ li {
     .nav-menu {
         position: sticky;
         left: 0;
+        top: 0;
         background-color: @primary-color;
-        min-height: 100vh;
+        height: 100vh;
     }
-
 
     .nav-link i {
         padding-right: 8px;
@@ -45,7 +45,6 @@ li {
 }
 
 @media (max-width: 768px) {
-
     .nav-menu {
         position: fixed;
         bottom: 0;
@@ -56,7 +55,6 @@ li {
     .nav-menu .bi {
         font-size: 1.0rem;
     }
-
 
     .nav-link div,
     .nav-link i {
