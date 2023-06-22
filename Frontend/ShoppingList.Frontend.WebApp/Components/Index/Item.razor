@@ -12,7 +12,7 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<li class="item py-2 mb-1 @(Model.IsInBasket ? "in-basket" : "not-in-basket")" @onclick="OnItemClicked">
+<li class="py-2 mb-1 @(State.Value.EditModeActive ? "item-editing" : "item") @(Model.IsInBasket ? "in-basket" : "not-in-basket")" @onclick="OnItemClicked">
     @if (State.Value.EditModeActive)
     {
         <div class="d-flex flex-column ml-2">
