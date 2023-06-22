@@ -89,7 +89,7 @@ public class ShoppingListStateTests
                 SetupItem(false);
             }
 
-            private void SetupItem(bool inBasket)
+            private void SetupItem(bool hidden)
             {
                 var sections = new List<ShoppingListSection>
                 {
@@ -97,7 +97,10 @@ public class ShoppingListStateTests
                     {
                         Items = new List<ShoppingListItem>()
                         {
-                            new DomainTestBuilder<ShoppingListItem>().Create() with { IsInBasket = inBasket }
+                            new DomainTestBuilder<ShoppingListItem>().Create() with
+                            {
+                                Hidden = hidden
+                            }
                         }
                     }
                 };
