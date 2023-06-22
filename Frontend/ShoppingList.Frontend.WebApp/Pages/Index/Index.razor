@@ -38,6 +38,18 @@
                     <Section Model="section"></Section>
                 }
             </div>
+            @if (!State.Value.ShoppingList.Items.Any())
+            {
+                <div class="no-items-on-list-notice py-2">
+                    No items on list yet
+                </div>
+            }
+            else if (State.Value.AllItemsInBasketHidden)
+            {
+                <div class="all-items-in-basket-hidden-notice py-2">
+                    All items in basket
+                </div>
+            }
         }
         <Summary></Summary>
         <ErrorStack></ErrorStack>

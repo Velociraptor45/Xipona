@@ -28,6 +28,7 @@ public record ShoppingListState(
     }
 
     public ShoppingListStore? SelectedStore => Stores.Stores.FirstOrDefault(s => s.Id == SelectedStoreId);
+    public bool AllItemsInBasketHidden => !ItemsInBasketVisible && (ShoppingList?.AllItemsInBasket ?? false);
 }
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
