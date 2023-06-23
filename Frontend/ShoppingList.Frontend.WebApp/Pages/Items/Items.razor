@@ -4,21 +4,46 @@
 
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Items.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
 
+@inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Items
 
-<div>
-    <ItemFilter></ItemFilter>
+<div class="pt-2 items">
+    <div class="top-bar d-flex">
+        <ItemFilter></ItemFilter>
+        <div class="d-flex mb-2 ml-auto">
+            <Button Type="@ButtonType.Primary" @onclick="OnCreateItemButtonClicked" 
+                    Class="d-flex align-items-center ml-auto">
+                <i class="bi bi-plus-lg"></i>
+            </Button>
+        </div>
+    </div>
+    <div>
+        <!-- result item list -->
+        @foreach (var item in State.Value.Search.SearchResults)
+        {
+            <SearchResult Model="item" TAction="EditItemAction"></SearchResult>
+        }
+    </div>
 </div>
-
 
 @code {
     protected override void OnInitialized()
     {
         Dispatcher.Dispatch(new EnterItemSearchPageAction());
         base.OnInitialized();
+    }
+
+    private void OnCreateItemButtonClicked()
+    {
+        Dispatcher.Dispatch(new EditItemAction
+        {
+            Id = Guid.Empty
+        });
     }
 }

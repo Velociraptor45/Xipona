@@ -26,5 +26,17 @@
   {
     "outputFile": "Components/Index/Summary.razor.css",
     "inputFile": "Components/Index/Summary.razor.less"
+  },
+  {
+    "outputFile": "Pages/Items/Items.razor.css",
+    "inputFile": "Pages/Items/Items.razor.less"
+  },
+  {
+    "outputFile": "Components/Items/Filter/ItemSearchTab.razor.css",
+    "inputFile": "Components/Items/Filter/ItemSearchTab.razor.less"
+  },
+  {
+    "outputFile": "Components/Shared/SearchResult.razor.css",
+    "inputFile": "Components/Shared/SearchResult.razor.less"
   }
 ]

@@ -1,4 +1,11 @@
-﻿.search-result:hover {
+﻿@import '../../wwwroot/css/general/colors.less';
+
+.search-result:hover {
     cursor: pointer;
-    background-color: aqua;
+    background-color: @primary-color;
+    color: @font-primary-color;
+}
+
+.search-result {
+    color: @font-primary-inverted-color;
 }
