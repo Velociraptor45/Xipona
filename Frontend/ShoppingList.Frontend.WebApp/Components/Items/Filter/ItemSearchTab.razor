@@ -9,7 +9,9 @@
 
 <div class="d-flex search-bar mb-2">
     <Input TValue="string" @bind-value="@input" OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name"></Input>
-    <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-3">Search</Button>
+    <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">
+        <i class="bi bi-search"></i>
+    </Button>
 </div>
 
 @code {
