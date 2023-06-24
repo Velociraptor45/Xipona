@@ -38,5 +38,13 @@
   {
     "outputFile": "Components/Shared/SearchResult.razor.css",
     "inputFile": "Components/Shared/SearchResult.razor.less"
+  },
+  {
+    "outputFile": "Pages/Items/ItemEditor.razor.css",
+    "inputFile": "Pages/Items/ItemEditor.razor.less"
+  },
+  {
+    "outputFile": "Components/Items/Editor/Quantity.razor.css",
+    "inputFile": "Components/Items/Editor/Quantity.razor.less"
   }
 ]

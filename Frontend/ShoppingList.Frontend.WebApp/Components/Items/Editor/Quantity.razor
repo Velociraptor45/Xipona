@@ -28,28 +28,31 @@
         <div class="ml-4 d-flex">
             <div>
                 <div class="font-weight-bold">In&nbsp;Packet</div>
-                <SingleSelect 
-                    Class="mt-1"
-                    TItem="QuantityTypeInPacket"
-                    TValue="int"
-                    ValueName="@nameof(QuantityTypeInPacket.Id)"
-                    LabelName="@nameof(QuantityTypeInPacket.Name)"
-                    Placeholder="QuantityInPacketType"
-                    DefaultValue="@State.Value.Editor.Item.QuantityInPacketType!.Id"
-                    DataSource="@State.Value.QuantityTypesInPacket.ToList()"
-                    OnItemChanged="@OnQuantityInPacketTypeChanged">
-                </SingleSelect>
+                <div class="d-flex mt-1 in-packet">
+                    <div class="in-packet-input">
+                        <Input TValue="float"
+                               Value="@State.Value.Editor.Item.QuantityInPacket!.Value"
+                               OnChange="OnQuantityInPacketChanged"/>
+                    </div>
+                    <SingleSelect Class="ml-1"
+                                  TItem="QuantityTypeInPacket"
+                                  TValue="int"
+                                  ValueName="@nameof(QuantityTypeInPacket.Id)"
+                                  LabelName="@nameof(QuantityTypeInPacket.QuantityLabel)"
+                                  Placeholder="QuantityInPacketType"
+                                  DefaultValue="@State.Value.Editor.Item.QuantityInPacketType!.Id"
+                                  DataSource="@State.Value.QuantityTypesInPacket.ToList()"
+                                  OnItemChanged="@OnQuantityInPacketTypeChanged">
+                    </SingleSelect>
+                </div>
             </div>
-            <div class="d-flex align-self-end">
+            @*<div class="d-flex align-self-end">
                 <div class="ml-2 d-flex in-packet">
                     <div>
-                        <Input TValue="float"
-                               Value="@State.Value.Editor.Item.QuantityInPacket!.Value" 
-                               OnChange="OnQuantityInPacketChanged" />
                     </div>
                     <div class="mt-1">@State.Value.Editor.Item.QuantityInPacketType.QuantityLabel</div>
                 </div>
-            </div>
+            </div>*@
         </div>
     }
 </div>
@@ -57,25 +60,11 @@
 @code {
     private void OnQuantityTypeChanged(QuantityType quantityType)
     {
-        //State.EditedItem.QuantityType = quantityType;
-        //if (quantityType.Id == 1)
-        //{
-        //    State.EditedItem.QuantityInPacket = null;
-        //    State.EditedItem.QuantityInPacketType = null;
-        //}
-        //else if(State.EditedItem.QuantityInPacketType is null)
-        //{
-        //    State.EditedItem.QuantityInPacket = 1;
-        //    State.EditedItem.QuantityInPacketType = State.QuantityTypesInPacket.First();
-        //}
-
-        //State.StateChanged();
         Dispatcher.Dispatch(new QuantityTypeChangedAction(quantityType));
     }
 
     private void OnQuantityInPacketTypeChanged(QuantityTypeInPacket quantityTypeInPacket)
     {
-        //State.EditedItem.QuantityInPacketType = quantityTypeInPacket;
         Dispatcher.Dispatch(new QuantityTypeInPacketChangedAction(quantityTypeInPacket));
     }
 
