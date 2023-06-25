@@ -533,7 +533,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = true
+                IsModifying = true
             }
         };
     }
@@ -545,7 +545,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = false
+                IsModifying = false
             }
         };
     }
@@ -557,7 +557,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = true
+                IsUpdating = true
             }
         };
     }
@@ -569,7 +569,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = false
+                IsUpdating = false
             }
         };
     }
@@ -581,7 +581,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = true
+                IsModifying = true
             }
         };
     }
@@ -593,7 +593,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = false
+                IsModifying = false
             }
         };
     }
@@ -605,7 +605,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = true
+                IsModifying = true
             }
         };
     }
@@ -617,7 +617,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = false
+                IsModifying = false
             }
         };
     }

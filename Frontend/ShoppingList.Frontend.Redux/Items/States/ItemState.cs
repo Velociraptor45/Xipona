@@ -33,6 +33,7 @@ public class ItemFeatureState : Feature<ItemState>
                 new ManufacturerSelector(new List<ManufacturerSearchResult>(), string.Empty),
                 false,
                 false,
+                false,
                 false));
     }
 }

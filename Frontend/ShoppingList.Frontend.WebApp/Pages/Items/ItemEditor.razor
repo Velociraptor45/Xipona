@@ -54,18 +54,26 @@
         <div class="d-flex justify-content-end">
             @if (State.Value.Editor.Item.Id == Guid.Empty)
             {
-                <Button OnClick="@OnCreateButtonClicked">Create</Button>
+                <Button OnClick="@OnCreateButtonClicked"
+                        Loading="@State.Value.Editor.IsModifying">
+                    Create
+                </Button>
             }
             else if (State.Value.Editor.Item.IsTemporary)
             {
-                <Button OnClick="@OnMakeItemPermanentButtonClicked">Make Permanent</Button>
+                <Button OnClick="@OnMakeItemPermanentButtonClicked"
+                        Loading="@State.Value.Editor.IsModifying">
+                    Make Permanent
+                </Button>
             }
             else
             {
-                <Button Disabled="@State.Value.Editor.DisableSaveButtons" 
+                <Button Disabled="@State.Value.Editor.DisableSaveButtons"
+                        Loading="@State.Value.Editor.IsUpdating"
                         OnClick="@OnUpdateButtonClicked">Update</Button>
-                <Button Disabled="@State.Value.Editor.DisableSaveButtons" 
-                        Class="ml-2" 
+                <Button Disabled="@State.Value.Editor.DisableSaveButtons"
+                        Class="ml-2"
+                        Loading="@State.Value.Editor.IsModifying"
                         OnClick="@OnModifyButtonClicked">Modify</Button>
             }
         </div>

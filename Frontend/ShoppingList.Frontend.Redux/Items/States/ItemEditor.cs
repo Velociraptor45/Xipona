@@ -5,7 +5,8 @@ public record ItemEditor(
     ItemCategorySelector ItemCategorySelector,
     ManufacturerSelector ManufacturerSelector,
     bool IsLoadingEditedItem,
-    bool IsSaving,
+    bool IsUpdating,
+    bool IsModifying,
     bool IsDeleting)
 {
     public bool DisableSaveButtons => Item is not null

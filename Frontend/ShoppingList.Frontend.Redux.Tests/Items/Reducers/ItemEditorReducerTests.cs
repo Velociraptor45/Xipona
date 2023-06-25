@@ -2236,7 +2236,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2247,7 +2247,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2258,7 +2258,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2310,7 +2310,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2321,7 +2321,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2332,7 +2332,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2384,7 +2384,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsUpdating = false
                     }
                 };
             }
@@ -2395,7 +2395,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsUpdating = true
                     }
                 };
             }
@@ -2406,7 +2406,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsUpdating = true
                     }
                 };
             }
@@ -2458,7 +2458,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsUpdating = true
                     }
                 };
             }
@@ -2469,7 +2469,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsUpdating = false
                     }
                 };
             }
@@ -2480,7 +2480,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsUpdating = false
                     }
                 };
             }
@@ -2532,7 +2532,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2543,7 +2543,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2554,7 +2554,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2606,7 +2606,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2617,7 +2617,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2628,7 +2628,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2680,7 +2680,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2691,7 +2691,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2702,7 +2702,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2754,7 +2754,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2765,7 +2765,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2776,7 +2776,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
