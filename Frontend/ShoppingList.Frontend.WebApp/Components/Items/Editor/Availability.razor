@@ -21,14 +21,14 @@
                 OnSelectedItemChanged="@OnStoreChanged">
         </Select>
         <div class="d-flex pt-1">
-            <div class="align-items-center d-flex">
-                <div class="price-input">
-                    <Input TValue="float" Value="@Model.PricePerQuantity" ValueChanged="OnPriceChanged"/>
-                </div>
-                <div class="mr-2">@(State.Value.Editor.Item!.QuantityType.PriceLabel)</div>
+            <div class="price-input">
+                <AntDesign.InputNumber TValue="float" Value="@Model.PricePerQuantity" 
+                                       Formatter="FormatPriceInput"
+                                       Parser="ParsePriceInput"
+                                       ValueChanged="OnPriceChanged"/>
             </div>
             @*// todo convert to Select #298 *@
-            <SingleSelect Class="ml-2"
+            <SingleSelect Class=""
                           DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
                           TItem="ItemStoreSection"
                           TValue="Guid"
@@ -68,5 +68,15 @@
     private void OnPriceChanged(float price)
     {
         Dispatcher.Dispatch(new ChangePriceAction(Available, Model, price));
+    }
+
+    private string FormatPriceInput(float price)
+    {
+        return $"{price:0.##} {State.Value.Editor.Item!.QuantityType.PriceLabel}";
+    }
+
+    private string ParsePriceInput(string value)
+    {
+        return value.Replace(State.Value.Editor.Item!.QuantityType.PriceLabel, string.Empty);
     }
 }
