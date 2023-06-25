@@ -1,11 +1,23 @@
-﻿.items {
+﻿@import '../../wwwroot/css/general/sizes.less';
+
+.items {
     max-width: 600px;
     margin: 0 auto;
 }
 
-@media (max-width: 768px) {
+@media (min-width: @desktop-view-size) {
+    .items {
+        padding-bottom: 8px;
+    }
+}
+
+@media (max-width: @mobile-view-size) {
     .top-bar {
         margin-left: 8px;
         margin-right: 8px;
+    }
+
+    .items {
+        padding-bottom: @mobile-menu-height + 8px;
     }
 }
