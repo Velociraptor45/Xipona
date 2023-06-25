@@ -30,7 +30,7 @@
                             TItemValue="Guid"
                             ValueName="@nameof(ShoppingListStoreSection.Id)"
                             LabelName="@nameof(ShoppingListStoreSection.Name)"
-                            DataSource="@State.Value.SelectedStore!.Sections.AsEnumerable()"
+                            DataSource="@State.Value.SelectedStore!.Sections.OrderBy(s => s.SortingIndex)"
                             OnSelectedItemChanged="OnSelectedSectionChanged"
                             AllowClear="false"
                             IgnoreItemChanges="false"

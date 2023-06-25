@@ -27,14 +27,14 @@
                                        Parser="ParsePriceInput"
                                        ValueChanged="OnPriceChanged"/>
             </div>
-            <Select DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
-                          TItem="ItemStoreSection"
-                          TItemValue="Guid"
-                          ValueName="@nameof(ItemStoreSection.Id)"
-                          LabelName="@nameof(ItemStoreSection.Name)"
-                          OnSelectedItemChanged="OnDefaultSectionChanged"
-                          IgnoreItemChanges="false"
-                          DefaultValue="@Model.DefaultSectionId"></Select>
+            <Select DataSource="State.Value.Stores.GetSections(Model.StoreId)"
+                    TItem="ItemStoreSection"
+                    TItemValue="Guid"
+                    ValueName="@nameof(ItemStoreSection.Id)"
+                    LabelName="@nameof(ItemStoreSection.Name)"
+                    OnSelectedItemChanged="OnDefaultSectionChanged"
+                    IgnoreItemChanges="false"
+                    DefaultValue="@Model.DefaultSectionId"></Select>
         </div>
     </div>
     <Button Class="d-flex align-items-center ml-auto"
