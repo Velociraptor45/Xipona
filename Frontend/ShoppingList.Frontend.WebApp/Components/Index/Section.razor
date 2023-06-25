@@ -22,7 +22,7 @@
     @if (Model.IsExpanded)
     {
         <ul class="pl-3">
-            @foreach (var item in Model.Items.Where(item => State.Value.ItemsInBasketVisible || !item.Hidden))
+            @foreach (var item in Model.GetDisplayedItems(State.Value.ItemsInBasketVisible))
             {
                 <Item Model="@item"></Item>
             }
