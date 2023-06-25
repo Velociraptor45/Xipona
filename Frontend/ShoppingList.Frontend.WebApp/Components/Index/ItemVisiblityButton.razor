@@ -7,18 +7,20 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Button Class="mr-1 d-flex align-items-center"
-        OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
-        Disabled="@(State.Value.ShoppingList is null)">
-    @if (State.Value.ItemsInBasketVisible)
-    {
-        <i class="bi bi-eye"></i>
-    }
-    else
-    {
-        <i class="bi bi-eye-slash"></i>
-    }
-</Button>
+<Tooltip Placement="Placement.BottomRight" Title="@("Show/Hide items in basket")">
+    <Button Class="mr-1 d-flex align-items-center"
+            OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
+            Disabled="@(State.Value.ShoppingList is null)">
+        @if (State.Value.ItemsInBasketVisible)
+        {
+            <i class="bi bi-eye"></i>
+        }
+        else
+        {
+            <i class="bi bi-eye-slash"></i>
+        }
+    </Button>
+</Tooltip>
 
 @code {
     private void OnShowBasketItemsChangeButtonClickedAsync()

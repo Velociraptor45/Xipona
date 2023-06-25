@@ -7,17 +7,19 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Button class="d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
-        Disabled="@(State.Value.ShoppingList is null)">
-    @if (State.Value.EditModeActive)
-    {
-        <i class="bi bi-pencil-fill"></i>
-    }
-    else
-    {
-        <i class="bi bi-pencil"></i>
-    }
-</Button>
+<Tooltip Placement="Placement.BottomRight" Title="@("Edit items")">
+    <Button class="d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
+            Disabled="@(State.Value.ShoppingList is null)">
+        @if (State.Value.EditModeActive)
+        {
+            <i class="bi bi-pencil-fill"></i>
+        }
+        else
+        {
+            <i class="bi bi-pencil"></i>
+        }
+    </Button>
+</Tooltip>
 
 @code {
     private void OnEditModeButtonClicked()

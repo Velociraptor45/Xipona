@@ -9,11 +9,13 @@
 @inject IDispatcher Dispatcher
 
 <div class="temporary-item-creator">
-    <Button Type="@ButtonType.Primary"
-            OnClick="@OnOpenCreationButtonClicked"
-            Class="d-flex align-items-center">
-        <i class="bi bi-plus-lg"></i>
-    </Button>
+    <Tooltip Placement="Placement.BottomRight" Title="@("Create temp. item")">
+        <Button Type="@ButtonType.Primary"
+                OnClick="@OnOpenCreationButtonClicked"
+                Class="d-flex align-items-center">
+            <i class="bi bi-plus-lg"></i>
+        </Button>
+    </Tooltip>
     <Modal Title="Add temporary item"
            Visible="@State.Value.TemporaryItemCreator.IsOpen"
            OnCancel="@CloseModal"
