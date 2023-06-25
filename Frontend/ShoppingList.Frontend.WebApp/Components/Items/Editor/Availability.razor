@@ -8,7 +8,7 @@
 @inject IDispatcher Dispatcher
 
 <div class="availability d-flex">
-    <div class="data">
+    <div class="data pr-2">
         <Select Class="mr-2 store"
                 DataSource="Available.CreateAvailabilityStores(Model, State.Value.Stores.Stores).ToList()"
                 TItem="EditedItemAvailabilityStore"
@@ -27,16 +27,14 @@
                                        Parser="ParsePriceInput"
                                        ValueChanged="OnPriceChanged"/>
             </div>
-            @*// todo convert to Select #298 *@
-            <SingleSelect Class=""
-                          DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
+            <Select DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
                           TItem="ItemStoreSection"
-                          TValue="Guid"
+                          TItemValue="Guid"
                           ValueName="@nameof(ItemStoreSection.Id)"
                           LabelName="@nameof(ItemStoreSection.Name)"
-                          OnItemChanged="OnDefaultSectionChanged"
+                          OnSelectedItemChanged="OnDefaultSectionChanged"
                           IgnoreItemChanges="false"
-                          DefaultValue="@Model.DefaultSectionId"></SingleSelect>
+                          DefaultValue="@Model.DefaultSectionId"></Select>
         </div>
     </div>
     <Button Class="d-flex align-items-center ml-auto"

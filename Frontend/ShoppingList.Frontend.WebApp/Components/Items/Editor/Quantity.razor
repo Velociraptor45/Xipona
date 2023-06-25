@@ -11,17 +11,17 @@
 <div class="d-flex flex-row py-2">
     <div>
         <div class="font-weight-bold">Quantity&nbsp;Type</div>
-        <SingleSelect 
+        <Select
             Class="max-w-100 mt-1"
             TItem="QuantityType"
-            TValue="int"
+            TItemValue="int"
             ValueName="@nameof(QuantityType.Id)"
             LabelName="@nameof(QuantityType.Name)"
             Placeholder="QuantityType"
             DefaultValue="@State.Value.Editor.Item!.QuantityType.Id"
             DataSource="@State.Value.QuantityTypes.ToList()"
-            OnItemChanged="@OnQuantityTypeChanged">
-        </SingleSelect>
+            OnSelectedItemChanged="@OnQuantityTypeChanged">
+        </Select>
     </div>
     @if (State.Value.Editor.Item.QuantityType.Id == 0)
     {
@@ -34,16 +34,16 @@
                                Value="@State.Value.Editor.Item.QuantityInPacket!.Value"
                                OnChange="OnQuantityInPacketChanged"/>
                     </div>
-                    <SingleSelect Class="ml-1"
-                                  TItem="QuantityTypeInPacket"
-                                  TValue="int"
-                                  ValueName="@nameof(QuantityTypeInPacket.Id)"
-                                  LabelName="@nameof(QuantityTypeInPacket.QuantityLabel)"
-                                  Placeholder="QuantityInPacketType"
-                                  DefaultValue="@State.Value.Editor.Item.QuantityInPacketType!.Id"
-                                  DataSource="@State.Value.QuantityTypesInPacket.ToList()"
-                                  OnItemChanged="@OnQuantityInPacketTypeChanged">
-                    </SingleSelect>
+                    <Select Class="ml-1"
+                            TItem="QuantityTypeInPacket"
+                            TItemValue="int"
+                            ValueName="@nameof(QuantityTypeInPacket.Id)"
+                            LabelName="@nameof(QuantityTypeInPacket.QuantityLabel)"
+                            Placeholder="QuantityInPacketType"
+                            DefaultValue="@State.Value.Editor.Item.QuantityInPacketType!.Id"
+                            DataSource="@State.Value.QuantityTypesInPacket.ToList()"
+                            OnSelectedItemChanged="@OnQuantityInPacketTypeChanged">
+                    </Select>
                 </div>
             </div>
         </div>
