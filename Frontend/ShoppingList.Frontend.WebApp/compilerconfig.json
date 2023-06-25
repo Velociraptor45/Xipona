@@ -46,5 +46,9 @@
   {
     "outputFile": "Components/Items/Editor/Quantity.razor.css",
     "inputFile": "Components/Items/Editor/Quantity.razor.less"
+  },
+  {
+    "outputFile": "Pages/Recipes/Recipes.razor.css",
+    "inputFile": "Pages/Recipes/Recipes.razor.less"
   }
 ]

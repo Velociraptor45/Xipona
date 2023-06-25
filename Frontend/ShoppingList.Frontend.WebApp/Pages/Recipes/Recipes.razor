@@ -12,15 +12,9 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
-<div>
-    <div class="d-flex">
-        <div class="h4">Recipes</div>
-        <Button @onclick="@OnCreateRecipeButtonClicked" Class="d-flex align-items-center ml-auto">
-            <Icon Type="plus"></Icon>
-        </Button>
-    </div>
-    <div>
-        <Tabs>
+<div class="recipes">
+    <div class="d-flex top-bar mt-2">
+        <Tabs Class="recipe-search-tabs mr-2">
             <TabPane Tab="By Name" Key="1">
                 <Input TValue="string" @bind-value="@input"
                        OnPressEnter="@OnLoadByNameButtonClicked"
@@ -42,6 +36,12 @@
                 <Button @onclick="@OnLoadByTagsButtonClicked" Class="mt-2">Load</Button>
             </TabPane>
         </Tabs>
+        <Tooltip Placement="Placement.BottomRight" Title="@("Create new recipe")">
+            <Button @onclick="@OnCreateRecipeButtonClicked" Class="d-flex align-items-center ml-auto mt-2"
+                    Type="@ButtonType.Primary">
+                <Icon Type="plus"></Icon>
+            </Button>
+        </Tooltip>
     </div>
     <div>
         @foreach (var searchResult in State.Value.Search.SearchResults)
