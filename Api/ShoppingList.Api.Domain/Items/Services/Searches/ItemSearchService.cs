@@ -142,19 +142,19 @@ public class ItemSearchService : IItemSearchService
                 searchResultItemsWithTypes, listItemIds.ItemTypeIds)
             .ToList();
 
+        // types
+        var typesResultLimit = _maxSearchResults - itemReadModels.Count - itemsWithTypeNotOnShoppingList.Count;
+        if (typesResultLimit > 0)
+        {
+            var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(nameTrimmed, storeId,
+                searchResultItemsWithTypes.Select(i => i.Id),
+                listItemIds.ItemTypeIds.Select(m => m.TypeId),
+                typesResultLimit);
+            itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
+        }
+
         var itemsWithTypesReadModels = (await _itemSearchReadModelConversionService.ConvertAsync(
             itemsWithTypeNotOnShoppingList, store)).ToList();
-
-        if (itemReadModels.Count + itemsWithTypesReadModels.Count >= _maxSearchResults)
-            return itemReadModels.Union(itemsWithTypesReadModels).Take(_maxSearchResults);
-
-        // types
-        var typesResultLimit = _maxSearchResults - itemReadModels.Count - itemsWithTypesReadModels.Count;
-        var itemsWithMatchingItemTypes = await GetItemsWithMatchingItemTypeIdsAsync(nameTrimmed, storeId,
-            searchResultItemsWithTypes.Select(i => i.Id),
-            listItemIds.ItemTypeIds.Select(m => m.TypeId),
-            typesResultLimit);
-        itemsWithTypeNotOnShoppingList.AddRange(itemsWithMatchingItemTypes);
 
         return itemsWithTypesReadModels.Union(itemReadModels).Take(_maxSearchResults);
     }
