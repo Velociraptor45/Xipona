@@ -97,7 +97,7 @@ public sealed class ManufacturerSelectorEffects : IDisposable
     [EffectMethod(typeof(ManufacturerDropdownClosedAction))]
     public static Task HandleManufacturerDropdownClosedAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new ClearManufacturerAction());
+        dispatcher.Dispatch(new ManufacturerInputChangedAction(string.Empty));
         return Task.CompletedTask;
     }
 
