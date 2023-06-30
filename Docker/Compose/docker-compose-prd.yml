@@ -32,7 +32,7 @@ services:
     command: server
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.10.0
+    image: velocir4ptor/ph-shoppinglist-api:0.10.1
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       PH_SL_VAULT_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-username
@@ -54,7 +54,7 @@ services:
       - prd-ph-shoppinglist-vault-api-username
 
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.10.0
+    image: velocir4ptor/ph-shoppinglist-frontend:0.10.1
     ports: 
       - "14000:443"
     depends_on:

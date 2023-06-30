@@ -21,6 +21,7 @@ public class ItemTypeReadRepository : IItemTypeReadRepository
         IEnumerable<ItemId> excludedItemIds,
         IEnumerable<ItemTypeId> excludedItemTypeIds, int? limit)
     {
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
         var excludedRawItemTypeIds = excludedItemTypeIds.Select(id => id.Value).ToList();
 
         var query = _dbContext.ItemTypes.AsNoTracking()
@@ -30,7 +31,8 @@ public class ItemTypeReadRepository : IItemTypeReadRepository
                 && !type.IsDeleted
                 && !excludedRawItemTypeIds.Contains(type.Id)
                 && type.Name.Contains(name)
-                && type.AvailableAt.Any(av => av.StoreId == storeId))
+                && type.AvailableAt.Any(av => av.StoreId == storeId)
+                && !excludedRawItemIds.Contains(type.Item.Id))
             .Select(type => new { type.ItemId, type.Id });
 
         if (limit.HasValue)
