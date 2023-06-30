@@ -217,7 +217,7 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
             contract.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
