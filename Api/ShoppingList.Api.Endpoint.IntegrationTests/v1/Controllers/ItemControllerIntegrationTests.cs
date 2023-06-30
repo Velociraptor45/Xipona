@@ -194,6 +194,34 @@ public class ItemControllerIntegrationTests
         }
 
         [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithOnlyTypeNameMatchingInput_ShouldReturnType()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupEmptyShoppingList();
+            _fixture.SetupItemWithTypesWhereOnlyTypeNameMatch();
+            _fixture.SetupExpectedResultForOnlyTypeNameMatch();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
+
+            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value).ToList();
+            contract.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
         public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_ShouldReturnEmptyList()
         {
             // Arrange
@@ -329,6 +357,34 @@ public class ItemControllerIntegrationTests
                 _itemCategories.Add(itemCategory);
             }
 
+            public void SetupItemWithTypesWhereOnlyTypeNameMatch()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var availability = new ItemTypeAvailableAtEntityBuilder()
+                    .WithStoreId(StoreId)
+                    .WithDefaultSectionId(_store.Sections.First().Id)
+                    .Create();
+                var itemTypes = ItemTypeEntityMother
+                    .Initial()
+                    .WithName("ABC4732" + SearchInput)
+                    .WithAvailableAt(availability.ToMonoList())
+                    .CreateMany(1)
+                    .ToList();
+                var item = ItemEntityMother
+                    .InitialWithTypes()
+                    .WithoutManufacturerId()
+                    .WithItemTypes(itemTypes)
+                    .Create();
+                _items.Add(item);
+
+                var itemCategory = new ItemCategoryEntityBuilder()
+                    .WithDeleted(false)
+                    .WithId(item.ItemCategoryId!.Value)
+                    .Create();
+                _itemCategories.Add(itemCategory);
+            }
+
             public void SetupItemAlreadyOnShoppingList()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
@@ -432,6 +488,28 @@ public class ItemControllerIntegrationTests
             }
 
             public void SetupExpectedResultForItemAndTypeNameMatch()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var item = _items.First();
+                var quantityType = item.QuantityType.ToEnum<QuantityType>();
+                var availability = item.ItemTypes.First().AvailableAt.First(av => av.StoreId == StoreId);
+                var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
+
+                ExpectedResult = new SearchItemForShoppingListResultContract(
+                        item.Id,
+                        item.ItemTypes.First().Id,
+                        $"{item.Name} {item.ItemTypes.First().Name}",
+                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        availability.Price,
+                        quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        _itemCategories.First().Name,
+                        "",
+                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
+                    .ToMonoList();
+            }
+
+            public void SetupExpectedResultForOnlyTypeNameMatch()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
 
