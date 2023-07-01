@@ -149,12 +149,14 @@
                            }
                            else
                            {
-                               <div class="summary-datetime" @onclick="OnEnterFinishedAtEditModeClicked">@GetDateTime()</div>
+                                <div class="d-flex">
+                                    <div class="summary-datetime" @onclick="OnEnterFinishedAtEditModeClicked">@GetDateTime()</div>
+                                    <i class="bi bi-pencil summary-datetime-edit d-flex align-items-start pl-1"></i>
+                                </div>
                            }
                        </div>
                    </div>
-            </Template>
-    ;
+            </Template>;
     }
 
     private string GetItemInBasketCountText()
