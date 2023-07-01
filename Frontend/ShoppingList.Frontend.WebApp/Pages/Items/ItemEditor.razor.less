@@ -1,8 +1,16 @@
 ﻿@import '../../wwwroot/css/general/colors.less';
 @import '../../wwwroot/css/general/sizes.less';
 
-.item-editor {
-    max-width: 600px;
-    margin: 0 auto;
-    padding-bottom: @mobile-menu-height + 8px;
+@media (min-width: @desktop-view-size) {
+    .item-editor {
+        max-width: 600px;
+        margin: 0 auto;
+        padding-bottom: 8px;
+    }
+}
+
+@media (max-width: @mobile-view-size) {
+    .item-editor {
+        padding-bottom: @mobile-menu-height + 8px;
+    }
 }
