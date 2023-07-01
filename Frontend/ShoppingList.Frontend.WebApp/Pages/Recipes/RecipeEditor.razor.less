@@ -1,4 +1,5 @@
-﻿@import '../../wwwroot/css/general/sizes.less';
+﻿@import '../../wwwroot/css/general/colors.less';
+@import '../../wwwroot/css/general/sizes.less';
 
 @media (min-width: @desktop-view-size) {
     .main,
@@ -45,11 +46,6 @@
 }
 
 @media (max-width: @mobile-view-size) {
-    .content,
-    .view-content {
-        display: block;
-    }
-
     .top-row:nth-child(3) {
         order: 4;
         flex-basis: 100%;
@@ -88,4 +84,10 @@
 
 hr {
     margin: 10px 0 10px 0;
+    background-color: @separator-color;
+}
+
+.preparation-step-number {
+    font-size: 1.5em;
+    border-right: 1px solid @separator-color;
 }
