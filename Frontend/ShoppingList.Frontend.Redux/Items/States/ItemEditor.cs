@@ -7,7 +7,8 @@ public record ItemEditor(
     bool IsLoadingEditedItem,
     bool IsUpdating,
     bool IsModifying,
-    bool IsDeleting)
+    bool IsDeleting,
+    bool IsDeleteDialogOpen)
 {
     public bool DisableSaveButtons => Item is not null
                                       && Item.IsItemWithTypes

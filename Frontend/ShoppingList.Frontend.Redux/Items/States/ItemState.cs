@@ -34,6 +34,7 @@ public class ItemFeatureState : Feature<ItemState>
                 false,
                 false,
                 false,
+                false,
                 false));
     }
 }

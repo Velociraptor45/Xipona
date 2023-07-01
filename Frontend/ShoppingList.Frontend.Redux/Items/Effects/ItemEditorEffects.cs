@@ -8,14 +8,19 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using RestEase;
+using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
 public sealed class ItemEditorEffects
 {
+    private const float LeaveEditorAfterDeleteDelayInSeconds = 0.5f;
+
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
     private readonly NavigationManager _navigationManager;
+
+    private Timer? _leaveEditorTimer;
 
     public ItemEditorEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager)
     {
@@ -104,6 +109,12 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(LeaveItemEditorAction))]
     public Task HandleLeaveItemEditorAction(IDispatcher dispatcher)
     {
+        if (_leaveEditorTimer is not null)
+        {
+            _leaveEditorTimer.Stop();
+            _leaveEditorTimer.Dispose();
+        }
+
         _navigationManager.NavigateTo(PageRoutes.Items);
         return Task.CompletedTask;
     }
@@ -277,6 +288,26 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new DeleteItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction());
+        dispatcher.Dispatch(new CloseDeleteItemDialogAction(true));
+    }
+
+    [EffectMethod]
+    public Task HandleCloseDeleteItemDialogAction(CloseDeleteItemDialogAction action, IDispatcher dispatcher)
+    {
+        if (!action.LeaveEditor)
+            return Task.CompletedTask;
+
+        if (_leaveEditorTimer is not null)
+        {
+            _leaveEditorTimer.Stop();
+            _leaveEditorTimer.Dispose();
+        }
+
+        _leaveEditorTimer = new Timer(TimeSpan.FromSeconds(LeaveEditorAfterDeleteDelayInSeconds));
+        _leaveEditorTimer.AutoReset = false;
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction());
+        _leaveEditorTimer.Start();
+
+        return Task.CompletedTask;
     }
 }

@@ -1254,7 +1254,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupMakingItemPermanent();
                 _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingCloseDialogAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -1311,9 +1311,9 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<DeleteItemFinishedAction>();
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingCloseDialogAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new CloseDeleteItemDialogAction(true));
             }
 
             public void SetupDispatchingExceptionAction()

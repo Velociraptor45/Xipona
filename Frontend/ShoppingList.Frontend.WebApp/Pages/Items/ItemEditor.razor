@@ -22,14 +22,7 @@
                 <Input TValue="string" Value="@State.Value.Editor.Item.Name"
                        OnChange="OnNameChanged" Placeholder="Name ..."/>
             </div>
-            @if (State.Value.Editor.Item.Id != Guid.Empty)
-            {
-                <Button Danger="true"
-                        Class="ml-auto"
-                        OnClick="@OnDeleteButtonClicked">
-                    <i class="bi bi-trash"></i>
-                </Button>
-            }
+            <DeleteItem></DeleteItem>
         </div>
         <Divider Class="my-3"></Divider>
         <div class="d-flex pb-2">
@@ -115,11 +108,6 @@
     private void OnMakeItemPermanentButtonClicked()
     {
         Dispatcher.Dispatch(new MakeItemPermanentAction());
-    }
-
-    private void OnDeleteButtonClicked()
-    {
-        Dispatcher.Dispatch(new DeleteItemAction());
     }
 
     private void OnBackButtonClicked()

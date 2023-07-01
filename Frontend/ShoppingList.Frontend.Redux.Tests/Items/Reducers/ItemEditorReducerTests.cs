@@ -2026,7 +2026,7 @@ public class ItemEditorReducerTests
             public void SetupExpectedState()
             {
                 var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
-                itemTypes.Add(new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
+                itemTypes.Insert(0, new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
 
                 ExpectedState = ExpectedState with
                 {
@@ -2925,6 +2925,154 @@ public class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsDeleting = false
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnOpenDeleteItemDialog
+    {
+        private readonly OnOpenDeleteItemDialogFixture _fixture;
+
+        public OnOpenDeleteItemDialog()
+        {
+            _fixture = new OnOpenDeleteItemDialogFixture();
+        }
+
+        [Fact]
+        public void OnOpenDeleteItemDialog_WithDialogClosed_ShouldOpenDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnOpenDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnOpenDeleteItemDialog_WithDialogOpen_ShouldOpenDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithOpenDialog();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnOpenDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnOpenDeleteItemDialogFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithOpenDialog()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCloseDeleteItemDialog
+    {
+        private readonly OnCloseDeleteItemDialogFixture _fixture;
+
+        public OnCloseDeleteItemDialog()
+        {
+            _fixture = new OnCloseDeleteItemDialogFixture();
+        }
+
+        [Fact]
+        public void OnCloseDeleteItemDialog_WithDialogOpen_ShouldCloseDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnCloseDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCloseDeleteItemDialog_WithDialogClosed_ShouldCloseDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithClosedDialog();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnCloseDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCloseDeleteItemDialogFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithClosedDialog()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
                     }
                 };
             }

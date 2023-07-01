@@ -482,7 +482,7 @@ public static class ItemEditorReducer
     public static ItemState OnItemTypeAdded(ItemState state)
     {
         var types = state.Editor.Item!.ItemTypes.ToList();
-        types.Add(new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
+        types.Insert(0, new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
 
         return state with
         {
@@ -642,6 +642,30 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 IsDeleting = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(OpenDeleteItemDialogAction))]
+    public static ItemState OnOpenDeleteItemDialog(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteItemDialogAction))]
+    public static ItemState OnCloseDeleteItemDialog(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = false
             }
         };
     }
