@@ -7,7 +7,7 @@
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
-<div class="d-flex search-bar mb-2">
+<div class="d-flex search-bar">
     <Input TValue="string" @bind-value="@input" @ref="_searchInput" 
            OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name"></Input>
     <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">

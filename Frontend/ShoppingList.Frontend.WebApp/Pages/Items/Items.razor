@@ -16,14 +16,16 @@
 <div class="pt-2 items">
     <div class="top-bar d-flex">
         <ItemFilter></ItemFilter>
-        <div class="d-flex mb-2 ml-auto">
-            <Button Type="@ButtonType.Primary" @onclick="OnCreateItemButtonClicked" 
-                    Class="d-flex align-items-center ml-auto">
-                <i class="bi bi-plus-lg"></i>
-            </Button>
+        <div class="d-flex ml-auto">
+            <Tooltip Placement="Placement.BottomRight" Title="@("Create new item")">
+                <Button Type="@ButtonType.Primary" @onclick="OnCreateItemButtonClicked" 
+                        Class="d-flex align-items-center ml-auto">
+                    <i class="bi bi-plus-lg"></i>
+                </Button>
+            </Tooltip>
         </div>
     </div>
-    <div>
+    <div class="mt-2">
         <!-- result item list -->
         @foreach (var item in State.Value.Search.SearchResults)
         {
