@@ -50,5 +50,9 @@
   {
     "outputFile": "Pages/Recipes/Recipes.razor.css",
     "inputFile": "Pages/Recipes/Recipes.razor.less"
+  },
+  {
+    "outputFile": "Pages/Recipes/RecipeEditor.razor.css",
+    "inputFile": "Pages/Recipes/RecipeEditor.razor.less"
   }
 ]

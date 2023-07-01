@@ -16,7 +16,7 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
-<div class="recipe-editor">
+<div class="recipe-editor px-2 pt-2">
     @if (State.Value.Editor.Recipe is not null)
     {
         @if (State.Value.Editor.IsInEditMode)
@@ -126,7 +126,7 @@
                 </div>
                 <div class="align-self-center recipe-editor-top-row recipe-editor-top-row-number-of-servings">
                     <span>@State.Value.Editor.Recipe.NumberOfServings</span>
-                    <span>People</span>
+                    <span>@(State.Value.Editor.Recipe.NumberOfServings == 1 ? "Person" : "People")</span>
                 </div>
                 <div class="recipe-editor-top-row d-flex ml-auto">
                     <Button Class="d-flex align-items-center mr-2"

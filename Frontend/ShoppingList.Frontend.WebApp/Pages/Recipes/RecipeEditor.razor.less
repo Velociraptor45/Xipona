@@ -1,25 +1,6 @@
-﻿@media (min-width: 1500px) {
-    .recipe-editor-main,
-    .recipe-editor-view-main {
-        width: 60%;
-    }
-}
+﻿@import '../../wwwroot/css/general/sizes.less';
 
-@media (min-width: 1200px) and (max-width: 1499.98px) {
-    .recipe-editor-main,
-    .recipe-editor-view-main {
-        width: 70%;
-    }
-}
-
-@media (min-width: 1080px) and (max-width: 1199.98px) {
-    .recipe-editor-main,
-    .recipe-editor-view-main {
-        width: 80%;
-    }
-}
-
-@media (min-width: 1080px) {
+@media (min-width: @desktop-view-size) {
     .recipe-editor-main,
     .recipe-editor-view-main {
         max-width: 1200px;
@@ -56,17 +37,14 @@
         max-width: 200px;
     }
 
-    .recipe-editor-view-content .preparation-steps {
-        max-width: 700px;
+    .recipe-editor {
+        max-width: 800px;
+        margin: 0 auto;
+        padding-bottom: 8px;
     }
 }
 
-@media (max-width: 1079.98px) {
-    .recipe-editor {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
+@media (max-width: @mobile-view-size) {
     .recipe-editor-content,
     .recipe-editor-view-content {
         display: block;
@@ -75,15 +53,17 @@
     .recipe-editor-top-row:nth-child(3) {
         order: 4;
         flex-basis: 100%;
-        margin-top: 5px;
         margin-left: 62px;
     }
 
     .recipe-editor-top-row:nth-child(4) {
         order: 5;
         flex-basis: 100%;
-        margin-top: 5px;
         margin-left: 62px;
+    }
+
+    .recipe-editor {
+        padding-bottom: @mobile-menu-height + 8px;
     }
 }
 
