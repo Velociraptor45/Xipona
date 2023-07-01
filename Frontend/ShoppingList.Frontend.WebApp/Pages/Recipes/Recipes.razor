@@ -18,7 +18,8 @@
             <TabPane Tab="By Name" Key="1">
                 <Input TValue="string" @bind-value="@input"
                        OnPressEnter="@OnLoadByNameButtonClicked"
-                       Placeholder="Recipe name"></Input>
+                       Placeholder="Recipe name"
+                       @ref="_searchInput"></Input>
                 <Button @onclick="@OnLoadByNameButtonClicked" Class="mt-2">Load</Button>
             </TabPane>
             <TabPane Tab="By Tags" Key="2">
@@ -53,12 +54,21 @@
 
 @code {
     private string input = "";
+    private Input<string> _searchInput;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         Dispatcher.Dispatch(new EnterRecipeSearchPageAction());
         Dispatcher.Dispatch(new LoadRecipeTagsAction());
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+            _searchInput.Focus();
     }
 
     private void OnLoadByNameButtonClicked()
