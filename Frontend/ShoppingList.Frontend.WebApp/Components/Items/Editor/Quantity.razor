@@ -40,7 +40,7 @@
                             ValueName="@nameof(QuantityTypeInPacket.Id)"
                             LabelName="@nameof(QuantityTypeInPacket.QuantityLabel)"
                             Placeholder="QuantityInPacketType"
-                            DefaultValue="@State.Value.Editor.Item.QuantityInPacketType!.Id"
+                            Value="@State.Value.Editor.Item.QuantityInPacketType!.Id"
                             DataSource="@State.Value.QuantityTypesInPacket.ToList()"
                             OnSelectedItemChanged="@OnQuantityInPacketTypeChanged">
                     </Select>
