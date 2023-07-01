@@ -1,39 +1,39 @@
 ﻿@import '../../wwwroot/css/general/sizes.less';
 
 @media (min-width: @desktop-view-size) {
-    .recipe-editor-main,
-    .recipe-editor-view-main {
+    .main,
+    .view-main {
         max-width: 1200px;
         margin: 0 auto;
     }
 
-    .recipe-editor-content,
-    .recipe-editor-view-content {
+    .content,
+    .view-content {
         display: flex;
     }
 
-    .recipe-editor-content .ingredients,
-    .recipe-editor-view-content .ingredients {
+    .content .ingredients,
+    .view-content .ingredients {
         padding-right: 20px;
         flex: 1 1 0;
         display: flex;
         flex-direction: column;
     }
 
-    .recipe-editor-content .preparation-steps,
-    .recipe-editor-view-content .preparation-steps {
+    .content .preparation-steps,
+    .view-content .preparation-steps {
         padding-left: 20px;
         flex: 1 1 0;
         display: flex;
         flex-direction: column;
     }
 
-    .recipe-editor-content .ingredients,
-    .recipe-editor-content .preparation-steps {
+    .content .ingredients,
+    .content .preparation-steps {
         max-width: 500px;
     }
 
-    .recipe-editor-view-content .ingredients {
+    .view-content .ingredients {
         max-width: 200px;
     }
 
@@ -45,18 +45,18 @@
 }
 
 @media (max-width: @mobile-view-size) {
-    .recipe-editor-content,
-    .recipe-editor-view-content {
+    .content,
+    .view-content {
         display: block;
     }
 
-    .recipe-editor-top-row:nth-child(3) {
+    .top-row:nth-child(3) {
         order: 4;
         flex-basis: 100%;
         margin-left: 62px;
     }
 
-    .recipe-editor-top-row:nth-child(4) {
+    .top-row:nth-child(4) {
         order: 5;
         flex-basis: 100%;
         margin-left: 62px;
@@ -67,20 +67,20 @@
     }
 }
 
-.recipe-editor-top-row-parent {
+.top-row-parent {
     flex-wrap: wrap;
 }
 
-.recipe-editor-top-row-number-of-servings {
+.top-row-number-of-servings {
     margin-left: 16px;
 }
 
-.recipe-editor-view-name {
+.view-name {
     font-weight: bold;
     font-size: 21px
 }
 
-.recipe-editor-view-tag {
+.view-tag {
     margin-right: 4px;
     background-color: #eaeaea;
     padding: 1px 3px;
