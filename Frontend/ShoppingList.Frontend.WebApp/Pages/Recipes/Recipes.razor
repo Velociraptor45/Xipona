@@ -28,6 +28,7 @@
             <TabPane Tab="By Tags" Key="2">
                 <div class="d-flex">
                     <Select Mode="multiple"
+                            Placeholder="Recipe tags"
                             ValueName="@nameof(RecipeTag.Id)"
                             LabelName="@nameof(RecipeTag.Name)"
                             DataSource="@State.Value.RecipeTags"
