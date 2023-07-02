@@ -2,18 +2,18 @@
 @import '../../wwwroot/css/general/sizes.less';
 
 @media (min-width: @desktop-view-size) {
-    .main,
+    .editor-main,
     .view-main {
         max-width: 1200px;
         margin: 0 auto;
     }
 
-    .content,
+    .editor-content,
     .view-content {
         display: flex;
     }
 
-    .content .ingredients,
+    .editor-content .ingredients,
     .view-content .ingredients {
         padding-right: 20px;
         flex: 1 1 0;
@@ -21,7 +21,7 @@
         flex-direction: column;
     }
 
-    .content .preparation-steps,
+    .editor-content .preparation-steps,
     .view-content .preparation-steps {
         padding-left: 20px;
         flex: 1 1 0;
@@ -29,8 +29,8 @@
         flex-direction: column;
     }
 
-    .content .ingredients,
-    .content .preparation-steps {
+    .editor-content .ingredients,
+    .editor-content .preparation-steps {
         max-width: 500px;
     }
 
