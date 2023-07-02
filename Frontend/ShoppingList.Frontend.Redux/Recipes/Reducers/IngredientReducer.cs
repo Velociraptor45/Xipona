@@ -24,20 +24,22 @@ public static class IngredientReducer
             return state;
 
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        ingredients.Add(new EditedIngredient(
-            Guid.NewGuid(),
-            Guid.Empty,
-            Guid.Empty,
-            state.IngredientQuantityTypes.First().Id,
-            1,
-            null,
-            null,
-            null,
-            null,
-            new ItemCategorySelector(
-                new List<ItemCategorySearchResult>(0),
-                string.Empty),
-            new ItemSelector(new List<SearchItemByItemCategoryResult>(0))));
+        ingredients.Insert(
+            0,
+            new EditedIngredient(
+                Guid.NewGuid(),
+                Guid.Empty,
+                Guid.Empty,
+                state.IngredientQuantityTypes.First().Id,
+                1,
+                null,
+                null,
+                null,
+                null,
+                new ItemCategorySelector(
+                    new List<ItemCategorySearchResult>(0),
+                    string.Empty),
+                new ItemSelector(new List<SearchItemByItemCategoryResult>(0))));
 
         return state with
         {
