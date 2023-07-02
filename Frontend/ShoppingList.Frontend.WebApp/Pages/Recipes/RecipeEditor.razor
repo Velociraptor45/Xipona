@@ -22,13 +22,13 @@
         @if (State.Value.Editor.IsInEditMode)
         {
             <div class="d-flex top-row-parent">
-                <Button Class="top-row d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                    <Icon Type="arrow-left"></Icon>
+                <Button Class="top-row-item d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                    <i class="bi bi-arrow-left"></i>
                 </Button>
-                <div class="mx-3 top-row">
+                <div class="mx-3 top-row-item">
                     <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" ValueChanged="OnNameChanged"/>
                 </div>
-                <div class="top-row">
+                <div class="top-row-item">
                     <MultiSelect
                         Class="min-w-100"
                         TItem="RecipeTag"
@@ -46,7 +46,7 @@
                         CanAddItem="true">
                     </MultiSelect>
                 </div>
-                <div class="top-row top-row-number-of-servings">
+                <div class="top-row-item number-of-servings">
                     <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
                                            TValue="int"
                                            Step="1"
@@ -54,8 +54,8 @@
                                            OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
                     <span>People</span>
                 </div>
-                <Button Class="top-row d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-                    <Icon Type="edit"></Icon>
+                <Button Class="top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+                    <i class="bi bi-pencil-fill"></i>
                 </Button>
             </div>
             <div class="main">
@@ -66,7 +66,7 @@
                             <Button class="d-flex align-items-center"
                                     Size="@AntSizeLDSType.Small"
                                     OnClick="OnAddIngredientButtonClicked">
-                                <Icon Type="plus"></Icon>
+                                <i class="bi bi-plus-lg"></i>
                             </Button>
                         </div>
                         @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
@@ -80,7 +80,7 @@
                             <Button class="d-flex align-items-center"
                                     Size="@AntSizeLDSType.Small"
                                     OnClick="OnAddPreparationStepButtonClicked">
-                                <Icon Type="plus"></Icon>
+                                <i class="bi bi-plus-lg"></i>
                             </Button>
                         </div>
                         @foreach (var step in State.Value.Editor.Recipe.PreparationSteps)
@@ -112,29 +112,29 @@
         else
         {
             <div class="d-flex top-row-parent">
-                <Button Class="top-row d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                    <Icon Type="arrow-left"></Icon>
+                <Button Class="top-row-item d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                    <i class="bi bi-arrow-left"></i>
                 </Button>
-                <div class="mx-3 view-name top-row">
+                <div class="mx-3 view-name top-row-item">
                     @State.Value.Editor.Recipe.Name
                 </div>
-                <div class="align-self-center top-row">
+                <div class="align-self-center top-row-item">
                     @foreach (var tag in State.Value.GetTagNamesFor(State.Value.Editor.Recipe.RecipeTagIds))
                     {
                         <span class="view-tag">@tag</span>
                     }
                 </div>
-                <div class="align-self-center top-row top-row-number-of-servings">
+                <div class="align-self-center top-row-item number-of-servings">
                     <span>@State.Value.Editor.Recipe.NumberOfServings</span>
                     <span>@(State.Value.Editor.Recipe.NumberOfServings == 1 ? "Person" : "People")</span>
                 </div>
-                <div class="top-row d-flex ml-auto">
+                <div class="top-row-item d-flex ml-auto">
                     <Button Class="d-flex align-items-center mr-2"
                             OnClick="OnAddToShoppingListButtonClicked">
-                        <Icon Type="shopping-cart" Theme="outline" />
+                        <i class="bi bi-cart"></i>
                     </Button>
-                    <Button Class="top-row d-flex align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-                        <Icon Type="edit"></Icon>
+                    <Button Class="d-flex align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+                        <i class="bi bi-pencil"></i>
                     </Button>
                 </div>
             </div>
