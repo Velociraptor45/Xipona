@@ -26,7 +26,8 @@
                     <i class="bi bi-arrow-left"></i>
                 </Button>
                 <div class="mx-3 editor-top-row-item">
-                    <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" ValueChanged="OnNameChanged"/>
+                    <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" 
+                           Placeholder="Recipe name" OnInput="OnNameChanged"/>
                 </div>
                 <Button Class="editor-top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <i class="bi bi-pencil-fill"></i>
@@ -107,11 +108,15 @@
                 <div class="d-flex justify-content-end mt-2">
                     @if (State.Value.Editor.Recipe.Id == Guid.Empty)
                     {
-                        <Button Type="@ButtonType.Primary" @onclick="@OnCreateButtonClickedAsync">Create</Button>
+                        <Button Type="@ButtonType.Primary"
+                                Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
+                                @onclick="@OnCreateButtonClickedAsync">Create</Button>
                     }
                     else
                     {
-                        <Button Type="@ButtonType.Primary" @onclick="@OnModifyButtonClickedAsync">Save</Button>
+                        <Button Type="@ButtonType.Primary"
+                                Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
+                                @onclick="@OnModifyButtonClickedAsync">Save</Button>
                     }
                 </div>
             </div>
@@ -196,9 +201,9 @@
             Dispatcher.Dispatch(new LoadRecipeForEditingAction(RecipeId));
     }
 
-    private void OnNameChanged(string name)
+    private void OnNameChanged(ChangeEventArgs args)
     {
-        Dispatcher.Dispatch(new RecipeNameChangedAction(name));
+        Dispatcher.Dispatch(new RecipeNameChangedAction(args.Value.ToString()));
     }
 
     private void OnBackButtonClicked()
