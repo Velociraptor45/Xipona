@@ -41,7 +41,7 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
-                        IsInEditMode = true
+                        IsInEditMode = false
                     }
                 };
             }
@@ -59,7 +59,7 @@ public class RecipeEditorReducerTests
                             new List<EditedIngredient>(0),
                             new SortedSet<EditedPreparationStep>(),
                             new List<Guid>(0)),
-                        IsInEditMode = false
+                        IsInEditMode = true
                     }
                 };
             }

@@ -22,7 +22,7 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = recipe,
-                IsInEditMode = false
+                IsInEditMode = true
             }
         };
     }

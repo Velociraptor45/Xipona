@@ -136,10 +136,13 @@
                     <span>@(State.Value.Editor.Recipe.NumberOfServings == 1 ? "Person" : "People")</span>
                 </div>
                 <div class="view-top-row-item d-flex ml-auto">
-                    <Button Class="d-flex align-items-center mr-2"
-                            OnClick="OnAddToShoppingListButtonClicked">
-                        <i class="bi bi-cart"></i>
-                    </Button>
+                    @if (State.Value.Editor.Recipe.Id != Guid.Empty)
+                    {
+                        <Button Class="d-flex align-items-center mr-2"
+                                OnClick="OnAddToShoppingListButtonClicked">
+                            <i class="bi bi-cart"></i>
+                        </Button>
+                    }
                     <Button Class="d-flex align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                         <i class="bi bi-pencil"></i>
                     </Button>
