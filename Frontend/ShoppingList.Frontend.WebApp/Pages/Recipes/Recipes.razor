@@ -9,7 +9,6 @@
 @inject IDispatcher Dispatcher
 @inject IState<RecipeState> State
 
-
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
 <div class="recipes">
@@ -28,17 +27,16 @@
             </TabPane>
             <TabPane Tab="By Tags" Key="2">
                 <div class="d-flex">
-                    <MultiSelect
-                        TItem="RecipeTag"
-                        TValue="Guid"
-                        DataSource="@State.Value.RecipeTags"
-                        ValueName="@nameof(RecipeTag.Id)"
-                        LabelName="@nameof(RecipeTag.Name)"
-                        OnItemsChanged="@OnSelectedRecipeTagsChanged"
-                        Placeholder="Recipe tags"
-                        Values="@State.Value.Search.SelectedRecipeTagIds"
-                        CanAddItem="false">
-                    </MultiSelect>
+                    <Select Mode="multiple"
+                            ValueName="@nameof(RecipeTag.Id)"
+                            LabelName="@nameof(RecipeTag.Name)"
+                            DataSource="@State.Value.RecipeTags"
+                            TItem="RecipeTag"
+                            TItemValue="Guid"
+                            AutoClearSearchValue="false"
+                            OnSelectedItemsChanged="OnSelectedRecipeTagsChanged"
+                            Values="@State.Value.Search.SelectedRecipeTagIds">
+                    </Select>
                     <Button @onclick="@OnLoadByTagsButtonClicked" Class="ml-1">
                         <i class="bi bi-search"></i>
                     </Button>
