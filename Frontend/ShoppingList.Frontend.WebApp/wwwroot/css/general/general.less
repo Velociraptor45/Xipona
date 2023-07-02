@@ -1,10 +1,11 @@
 ﻿@import 'colors.less';
+@import 'sizes.less';
 
 .nav-link {
     color: @inactive-color;
 }
 
-@media (min-width: 768px) {
+@media (min-width: @desktop-view-size) {
     .nav-link {
         font-size: 1.2rem;
         padding: 6px 4px;
@@ -14,9 +15,13 @@
     .nav-link-ext:hover {
         color: @secondary-color;
     }
+
+    .ant-modal-wrap {
+        margin-left: @desktop-menu-width;
+    }
 }
 
-@media (max-width: 768px) {
+@media (max-width: @mobile-view-size) {
     .nav-link {
         padding: 0;
         flex-direction: column;
