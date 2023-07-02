@@ -41,6 +41,7 @@ public class RecipeFeatureState : Feature<RecipeState>
                 string.Empty,
                 false,
                 false,
+                false,
                 null));
     }
 }

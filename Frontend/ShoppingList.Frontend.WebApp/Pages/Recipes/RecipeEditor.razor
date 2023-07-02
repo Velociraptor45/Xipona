@@ -33,10 +33,11 @@
                     <i class="bi bi-pencil-fill"></i>
                 </Button>
             </div>
+            <hr class="my-3"/>
             <div class="editor-main">
                 <div class="editor-content">
                     <div class="editor-content-general">
-                        <div class="editor-tags mt-2">
+                        <div class="editor-tags">
                             <div class="font-weight-bold">Tags</div>
                             <MultiSelect
                                 Class="min-w-150 w-auto"
@@ -55,7 +56,7 @@
                                 CanAddItem="true">
                             </MultiSelect>
                         </div>
-                        <div class="editor-number-of-servings mt-2">
+                        <div class="editor-number-of-servings">
                             <div class="font-weight-bold">Number of Servings</div>
                             <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
                                                    Class="editor-number-of-servings-input"
@@ -110,12 +111,14 @@
                     {
                         <Button Type="@ButtonType.Primary"
                                 Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
+                                Loading="@State.Value.Editor.IsSaving"
                                 @onclick="@OnCreateButtonClickedAsync">Create</Button>
                     }
                     else
                     {
                         <Button Type="@ButtonType.Primary"
                                 Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
+                                Loading="@State.Value.Editor.IsSaving"
                                 @onclick="@OnModifyButtonClickedAsync">Save</Button>
                     }
                 </div>

@@ -155,4 +155,64 @@ public static class RecipeEditorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(ModifyRecipeStartedAction))]
+    public static RecipeState OnModifyRecipeStarted(RecipeState state)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(ModifyRecipeFinishedAction))]
+    public static RecipeState OnModifyRecipeFinished(RecipeState state)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CreateRecipeStartedAction))]
+    public static RecipeState OnCreateRecipeStarted(RecipeState state)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CreateRecipeFinishedAction))]
+    public static RecipeState OnCreateRecipeFinished(RecipeState state)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = false
+            }
+        };
+    }
 }
