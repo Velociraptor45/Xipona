@@ -5,10 +5,8 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
-@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients
-@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.EditView
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.ReadView
 
@@ -17,179 +15,20 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Recipes
 
-<div class="recipe-editor px-2 pt-2">
-    @if (State.Value.Editor.Recipe is not null)
-    {
+@if (State.Value.Editor.Recipe is not null)
+{
+    <div class="recipe-editor px-2 pt-2">
         @if (State.Value.Editor.IsInEditMode)
         {
-            <div class="d-flex editor-top-row-parent">
-                <Button Class="editor-top-row-item d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                    <i class="bi bi-arrow-left"></i>
-                </Button>
-                <div class="mx-3 editor-top-row-item">
-                    <Input TValue="string" Value="@State.Value.Editor.Recipe.Name"
-                           Placeholder="Recipe name" OnInput="OnNameChanged" />
-                </div>
-                <Button Class="editor-top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-                    <i class="bi bi-pencil-fill"></i>
-                </Button>
-            </div>
-            <hr class="my-3" />
-            <div class="editor-main">
-                <div class="editor-content">
-                    <div class="editor-content-general">
-                        <div class="editor-tags">
-                            <div class="font-weight-bold">Tags</div>
-                            <MultiSelect Class="min-w-150 w-auto"
-                                         TItem="RecipeTag"
-                                         TValue="Guid"
-                                         DataSource="@State.Value.RecipeTags"
-                                         ValueName="@nameof(RecipeTag.Id)"
-                                         LabelName="@nameof(RecipeTag.Name)"
-                                         OnItemsChanged="@OnRecipeTagsChanged"
-                                         OnItemAdded="@OnRecipeTagCreated"
-                                         OnInputChanged="OnRecipeTagInputChanged"
-                                         Placeholder="Tags"
-                                         Values="@State.Value.Editor.Recipe.RecipeTagIds"
-                                         SearchInput="@State.Value.Editor.RecipeTagCreateInput"
-                                         OnDropdownClosed="OnRecipeTagsDropdownClosed"
-                                         CanAddItem="true">
-                            </MultiSelect>
-                        </div>
-                        <div class="editor-number-of-servings">
-                            <div class="font-weight-bold">Number of Servings</div>
-                            <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
-                                                   Class="editor-number-of-servings-input"
-                                                   TValue="int"
-                                                   Step="1"
-                                                   Min="1"
-                                                   OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
-                            <span>People</span>
-                        </div>
-                    </div>
-                    <div class="editor-content-split">
-                        <div class="ingredients">
-                            <div class="d-flex align-items-center mb-3">
-                                <h4 class="mb-0 pr-2">Ingredients</h4>
-                                <Button class="d-flex align-items-center"
-                                        Size="@AntSizeLDSType.Small"
-                                        OnClick="OnAddIngredientButtonClicked">
-                                    <i class="bi bi-plus-lg"></i>
-                                </Button>
-                            </div>
-                            @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
-                            {
-                                <IngredientEditor Model="@ingredient"></IngredientEditor>
-                            }
-                        </div>
-                        <div class="preparation-steps">
-                            <div class="d-flex align-items-center mb-3">
-                                <h4 class="mb-0 pr-2">Steps</h4>
-                                <Button class="d-flex align-items-center"
-                                        Size="@AntSizeLDSType.Small"
-                                        OnClick="OnAddPreparationStepButtonClicked">
-                                    <i class="bi bi-plus-lg"></i>
-                                </Button>
-                            </div>
-                            @foreach (var step in State.Value.Editor.Recipe.PreparationSteps)
-                            {
-                                <SortableListItem T="EditedPreparationStep"
-                                                  State="State.Value.Editor.Recipe"
-                                                  Model="step"
-                                                  IsTextArea="true"
-                                                  OnDecrement="OnDecrementPreparationStep"
-                                                  OnIncrement="OnIncrementPreparationStep"
-                                                  OnRemove="OnRemovePreparationStep"
-                                                  OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end mt-2">
-                    @if (State.Value.Editor.Recipe.Id == Guid.Empty)
-                    {
-                        <Button Type="@ButtonType.Primary"
-                                Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
-                                Loading="@State.Value.Editor.IsSaving"
-                        @onclick="@OnCreateButtonClickedAsync">
-                            Create
-                        </Button>
-                    }
-                    else
-                    {
-                        <Button Type="@ButtonType.Primary"
-                                Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
-                                Loading="@State.Value.Editor.IsSaving"
-                        @onclick="@OnModifyButtonClickedAsync">
-                            Save
-                        </Button>
-                    }
-                </div>
-            </div>
+            <RecipeEditor></RecipeEditor>
         }
         else
         {
-            <div class="d-flex view-top-row-parent">
-                <Button Class="view-top-row-item d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                    <i class="bi bi-arrow-left"></i>
-                </Button>
-                <div class="mx-3 view-name view-top-row-item">
-                    @State.Value.Editor.Recipe.Name
-                </div>
-                <div class="align-self-center view-top-row-item">
-                    @foreach (var tag in State.Value.GetTagNamesFor(State.Value.Editor.Recipe.RecipeTagIds))
-                    {
-                        <span class="view-tag">@tag</span>
-                    }
-                </div>
-                <div class="align-self-center view-top-row-item number-of-servings">
-                    <span>@State.Value.Editor.Recipe.NumberOfServings</span>
-                    <span>@(State.Value.Editor.Recipe.NumberOfServings == 1 ? "Person" : "People")</span>
-                </div>
-                <div class="view-top-row-item d-flex ml-auto">
-                    @if (State.Value.Editor.Recipe.Id != Guid.Empty)
-                    {
-                        <Button Class="d-flex align-items-center mr-2"
-                                OnClick="OnAddToShoppingListButtonClicked">
-                            <i class="bi bi-cart"></i>
-                        </Button>
-                    }
-                    <Button Class="d-flex align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-                        <i class="bi bi-pencil"></i>
-                    </Button>
-                </div>
-            </div>
-            <div class="view-main">
-                <div class="view-content">
-                    <div class="pt-4 ingredients">
-                        <div class="d-flex align-items-center mb-3">
-                            <h4 class="mb-0 pr-2">Ingredients</h4>
-                        </div>
-                        @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
-                        {
-                            <IngredientReader Model="@ingredient"></IngredientReader>
-                            <hr />
-                        }
-                    </div>
-                    <div class="pt-4 preparation-steps">
-                        <div class="d-flex align-items-center mb-3">
-                            <h4 class="mb-0 pr-2">Steps</h4>
-                        </div>
-                        @for (int i = 0; i < State.Value.Editor.Recipe.PreparationSteps.Count; i++)
-                        {
-                            <div class="d-flex align-items-center">
-                                <div class="pr-2 preparation-step-number">@(i + 1)</div>
-                                <div class="pl-2">@State.Value.Editor.Recipe.PreparationSteps.ElementAt(i).Name</div>
-                            </div>
-                            <hr />
-                        }
-                    </div>
-                </div>
-            </div>
+            <RecipeReader></RecipeReader>
         }
-    }
-</div>
-<AddToShoppingListDialog></AddToShoppingListDialog>
+    </div>
+    <AddToShoppingListDialog></AddToShoppingListDialog>
+}
 
 @code {
     [Parameter] public Guid RecipeId { get; set; }
@@ -205,90 +44,5 @@
             Dispatcher.Dispatch(new SetNewRecipeAction());
         else
             Dispatcher.Dispatch(new LoadRecipeForEditingAction(RecipeId));
-    }
-
-    private void OnNameChanged(ChangeEventArgs args)
-    {
-        Dispatcher.Dispatch(new RecipeNameChangedAction(args.Value?.ToString() ?? string.Empty));
-    }
-
-    private void OnBackButtonClicked()
-    {
-        Dispatcher.Dispatch(new LeaveRecipeEditorAction());
-    }
-
-    private void OnToggleEditModeButtonClicked()
-    {
-        Dispatcher.Dispatch(new ToggleEditModeAction());
-    }
-
-    private void OnCreateButtonClickedAsync()
-    {
-        Dispatcher.Dispatch(new CreateRecipeAction());
-    }
-
-    private void OnModifyButtonClickedAsync()
-    {
-        Dispatcher.Dispatch(new ModifyRecipeAction());
-    }
-
-    private void OnAddIngredientButtonClicked()
-    {
-        Dispatcher.Dispatch(new IngredientAddedAction());
-    }
-
-    private void OnAddPreparationStepButtonClicked()
-    {
-        Dispatcher.Dispatch(new PreparationStepAddedAction());
-    }
-
-    private void OnDecrementPreparationStep(EditedPreparationStep step)
-    {
-        Dispatcher.Dispatch(new DecrementPreparationStepAction(step));
-    }
-
-    private void OnIncrementPreparationStep(EditedPreparationStep step)
-    {
-        Dispatcher.Dispatch(new IncrementPreparationStepAction(step));
-    }
-
-    private void OnRemovePreparationStep(EditedPreparationStep step)
-    {
-        Dispatcher.Dispatch(new PreparationStepRemovedAction(step));
-    }
-
-    private void OnPreparationStepTextChanged(EditedPreparationStep step, string text)
-    {
-        Dispatcher.Dispatch(new PreparationStepTextChangedAction(step.Key, text));
-    }
-
-    private void OnRecipeTagsChanged(IEnumerable<RecipeTag> tags)
-    {
-        Dispatcher.Dispatch(new RecipeTagsChangedAction(tags.Select(t => t.Id).ToList()));
-    }
-
-    private void OnRecipeTagCreated()
-    {
-        Dispatcher.Dispatch(new CreateNewRecipeTagAction());
-    }
-
-    private void OnRecipeTagInputChanged(string input)
-    {
-        Dispatcher.Dispatch(new RecipeTagInputChangedAction(input));
-    }
-
-    private void OnRecipeTagsDropdownClosed()
-    {
-        Dispatcher.Dispatch(new RecipeTagsDropdownClosedAction());
-    }
-
-    private void OnNumberOfServingsChanged(int servings)
-    {
-        Dispatcher.Dispatch(new RecipeNumberOfServingsChangedAction(servings));
-    }
-
-    private void OnAddToShoppingListButtonClicked()
-    {
-        Dispatcher.Dispatch(new LoadAddToShoppingListAction());
     }
 }
