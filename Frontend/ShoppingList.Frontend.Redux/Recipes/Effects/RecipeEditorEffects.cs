@@ -15,12 +15,15 @@ public sealed class RecipeEditorEffects
     private readonly IApiClient _client;
     private readonly IState<RecipeState> _state;
     private readonly NavigationManager _navigationManager;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public RecipeEditorEffects(IApiClient client, IState<RecipeState> state, NavigationManager navigationManager)
+    public RecipeEditorEffects(IApiClient client, IState<RecipeState> state, NavigationManager navigationManager,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _state = state;
         _navigationManager = navigationManager;
+        _notificationService = notificationService;
     }
 
     [EffectMethod]
@@ -178,5 +181,6 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
         dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
+        _notificationService.NotifySuccess("Successfully added items to shopping lists");
     }
 }

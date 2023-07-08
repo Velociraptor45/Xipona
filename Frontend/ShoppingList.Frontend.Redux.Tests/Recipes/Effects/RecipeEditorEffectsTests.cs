@@ -1,10 +1,12 @@
-﻿using Moq.Contrib.InOrder;
+﻿using Moq;
+using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
 
@@ -727,6 +729,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupAddingToShoppingList();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupSuccessNotification();
             });
 
             // Act
@@ -881,15 +884,24 @@ public class RecipeEditorEffectsTests
             {
                 SetupDispatchingAction<AddToShoppingListModalClosedAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully added items to shopping lists");
+            }
         }
     }
 
     private abstract class RecipeEditorEffectsFixture : RecipeEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public RecipeEditorEffects CreateSut()
         {
             SetupStateReturningState();
-            return new RecipeEditorEffects(ApiClientMock.Object, RecipeStateMock.Object, NavigationManagerMock.Object);
+            return new RecipeEditorEffects(ApiClientMock.Object, RecipeStateMock.Object, NavigationManagerMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }
