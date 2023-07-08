@@ -52,11 +52,15 @@
     "inputFile": "Pages/Recipes/Recipes.razor.less"
   },
   {
-    "outputFile": "Pages/Recipes/RecipeEditor.razor.css",
-    "inputFile": "Pages/Recipes/RecipeEditor.razor.less"
-  },
-  {
     "outputFile": "Components/Items/Editor/Availabilities.razor.css",
     "inputFile": "Components/Items/Editor/Availabilities.razor.less"
+  },
+  {
+    "outputFile": "Pages/Recipes/Recipe.razor.css",
+    "inputFile": "Pages/Recipes/Recipe.razor.less"
+  },
+  {
+    "outputFile": "Components/Recipes/EditView/IngredientEditor.razor.css",
+    "inputFile": "Components/Recipes/EditView/IngredientEditor.razor.less"
   }
 ]

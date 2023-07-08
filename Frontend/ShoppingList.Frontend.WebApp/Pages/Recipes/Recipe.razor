@@ -7,9 +7,10 @@
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.EditView
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.ReadView
 
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
@@ -26,34 +27,33 @@
                     <i class="bi bi-arrow-left"></i>
                 </Button>
                 <div class="mx-3 editor-top-row-item">
-                    <Input TValue="string" Value="@State.Value.Editor.Recipe.Name" 
-                           Placeholder="Recipe name" OnInput="OnNameChanged"/>
+                    <Input TValue="string" Value="@State.Value.Editor.Recipe.Name"
+                           Placeholder="Recipe name" OnInput="OnNameChanged" />
                 </div>
                 <Button Class="editor-top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
                     <i class="bi bi-pencil-fill"></i>
                 </Button>
             </div>
-            <hr class="my-3"/>
+            <hr class="my-3" />
             <div class="editor-main">
                 <div class="editor-content">
                     <div class="editor-content-general">
                         <div class="editor-tags">
                             <div class="font-weight-bold">Tags</div>
-                            <MultiSelect
-                                Class="min-w-150 w-auto"
-                                TItem="RecipeTag"
-                                TValue="Guid"
-                                DataSource="@State.Value.RecipeTags"
-                                ValueName="@nameof(RecipeTag.Id)"
-                                LabelName="@nameof(RecipeTag.Name)"
-                                OnItemsChanged="@OnRecipeTagsChanged"
-                                OnItemAdded="@OnRecipeTagCreated"
-                                OnInputChanged="OnRecipeTagInputChanged"
-                                Placeholder="Tags"
-                                Values="@State.Value.Editor.Recipe.RecipeTagIds"
-                                SearchInput="@State.Value.Editor.RecipeTagCreateInput"
-                                OnDropdownClosed="OnRecipeTagsDropdownClosed"
-                                CanAddItem="true">
+                            <MultiSelect Class="min-w-150 w-auto"
+                                         TItem="RecipeTag"
+                                         TValue="Guid"
+                                         DataSource="@State.Value.RecipeTags"
+                                         ValueName="@nameof(RecipeTag.Id)"
+                                         LabelName="@nameof(RecipeTag.Name)"
+                                         OnItemsChanged="@OnRecipeTagsChanged"
+                                         OnItemAdded="@OnRecipeTagCreated"
+                                         OnInputChanged="OnRecipeTagInputChanged"
+                                         Placeholder="Tags"
+                                         Values="@State.Value.Editor.Recipe.RecipeTagIds"
+                                         SearchInput="@State.Value.Editor.RecipeTagCreateInput"
+                                         OnDropdownClosed="OnRecipeTagsDropdownClosed"
+                                         CanAddItem="true">
                             </MultiSelect>
                         </div>
                         <div class="editor-number-of-servings">
@@ -79,7 +79,7 @@
                             </div>
                             @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
                             {
-                                <Ingredient Model="@ingredient"></Ingredient>
+                                <IngredientEditor Model="@ingredient"></IngredientEditor>
                             }
                         </div>
                         <div class="preparation-steps">
@@ -93,15 +93,14 @@
                             </div>
                             @foreach (var step in State.Value.Editor.Recipe.PreparationSteps)
                             {
-                                <SortableListItem
-                                    T="EditedPreparationStep"
-                                    State="State.Value.Editor.Recipe"
-                                    Model="step"
-                                    IsTextArea="true"
-                                    OnDecrement="OnDecrementPreparationStep"
-                                    OnIncrement="OnIncrementPreparationStep"
-                                    OnRemove="OnRemovePreparationStep"
-                                    OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
+                                <SortableListItem T="EditedPreparationStep"
+                                                  State="State.Value.Editor.Recipe"
+                                                  Model="step"
+                                                  IsTextArea="true"
+                                                  OnDecrement="OnDecrementPreparationStep"
+                                                  OnIncrement="OnIncrementPreparationStep"
+                                                  OnRemove="OnRemovePreparationStep"
+                                                  OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
                             }
                         </div>
                     </div>
@@ -112,14 +111,18 @@
                         <Button Type="@ButtonType.Primary"
                                 Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
                                 Loading="@State.Value.Editor.IsSaving"
-                                @onclick="@OnCreateButtonClickedAsync">Create</Button>
+                        @onclick="@OnCreateButtonClickedAsync">
+                            Create
+                        </Button>
                     }
                     else
                     {
                         <Button Type="@ButtonType.Primary"
                                 Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
                                 Loading="@State.Value.Editor.IsSaving"
-                                @onclick="@OnModifyButtonClickedAsync">Save</Button>
+                        @onclick="@OnModifyButtonClickedAsync">
+                            Save
+                        </Button>
                     }
                 </div>
             </div>
@@ -164,7 +167,7 @@
                         </div>
                         @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
                         {
-                            <Ingredient Model="@ingredient"></Ingredient>
+                            <IngredientReader Model="@ingredient"></IngredientReader>
                             <hr />
                         }
                     </div>
@@ -172,7 +175,7 @@
                         <div class="d-flex align-items-center mb-3">
                             <h4 class="mb-0 pr-2">Steps</h4>
                         </div>
-                        @for(int i = 0; i < State.Value.Editor.Recipe.PreparationSteps.Count; i++)
+                        @for (int i = 0; i < State.Value.Editor.Recipe.PreparationSteps.Count; i++)
                         {
                             <div class="d-flex align-items-center">
                                 <div class="pr-2 preparation-step-number">@(i + 1)</div>
@@ -186,7 +189,7 @@
         }
     }
 </div>
-<AddToShoppingListModal></AddToShoppingListModal>
+<AddToShoppingListDialog></AddToShoppingListDialog>
 
 @code {
     [Parameter] public Guid RecipeId { get; set; }
@@ -198,7 +201,7 @@
         Dispatcher.Dispatch(new LoadIngredientQuantityTypesAction());
         Dispatcher.Dispatch(new LoadRecipeTagsAction());
 
-        if(RecipeId == Guid.Empty)
+        if (RecipeId == Guid.Empty)
             Dispatcher.Dispatch(new SetNewRecipeAction());
         else
             Dispatcher.Dispatch(new LoadRecipeForEditingAction(RecipeId));

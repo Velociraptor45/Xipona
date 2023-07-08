@@ -18,6 +18,11 @@ public record RecipeState(
                 yield return tagName;
         }
     }
+
+    public EditedIngredient? GetIngredientByKey(Guid key)
+    {
+        return Editor.Recipe?.Ingredients.FirstOrDefault(x => x.Key == key);
+    }
 }
 
 public class RecipeFeatureState : Feature<RecipeState>

@@ -1,0 +1,28 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors
+@using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
+
+@inject IState<RecipeState> State
+@inject IDispatcher Dispatcher
+
+<div class="d-flex">
+    <div>@Model.SelectedItemCategoryName</div>
+    <div class="d-flex ml-auto">
+        <div class="mr-1">@Model.Quantity</div>
+        <div>@Model.GetSelectedQuantityLabel(State.Value.IngredientQuantityTypes)</div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EditedIngredient Model { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
+    }
+}
