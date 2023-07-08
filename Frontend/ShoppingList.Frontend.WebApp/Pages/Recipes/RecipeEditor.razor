@@ -68,7 +68,7 @@
                         </div>
                     </div>
                     <div class="editor-content-split">
-                        <div class="pt-4 ingredients">
+                        <div class="ingredients">
                             <div class="d-flex align-items-center mb-3">
                                 <h4 class="mb-0 pr-2">Ingredients</h4>
                                 <Button class="d-flex align-items-center"
@@ -82,7 +82,7 @@
                                 <Ingredient Model="@ingredient"></Ingredient>
                             }
                         </div>
-                        <div class="pt-4 preparation-steps">
+                        <div class="preparation-steps">
                             <div class="d-flex align-items-center mb-3">
                                 <h4 class="mb-0 pr-2">Steps</h4>
                                 <Button class="d-flex align-items-center"
@@ -206,7 +206,7 @@
 
     private void OnNameChanged(ChangeEventArgs args)
     {
-        Dispatcher.Dispatch(new RecipeNameChangedAction(args.Value.ToString()));
+        Dispatcher.Dispatch(new RecipeNameChangedAction(args.Value?.ToString() ?? string.Empty));
     }
 
     private void OnBackButtonClicked()
