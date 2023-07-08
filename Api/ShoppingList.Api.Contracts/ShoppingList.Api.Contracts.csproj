@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Stores\Queries\Get\StoreForShoppingContract.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\readme.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
