@@ -121,7 +121,7 @@ public class ItemSearchService : IItemSearchService
 
         var items = (await _itemRepository.FindActiveByAsync(nameTrimmed, storeId, listItemIds.ItemIds, _maxSearchResults)).ToList();
         var itemCategoryResultLimit = _maxSearchResults - GetResultCount(items, storeId);
-        var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, itemCategoryResultLimit)).ToList();
+        var itemsWithItemCategory = (await LoadItemsForCategory(nameTrimmed, storeId, listItemIds.ItemIds, itemCategoryResultLimit)).ToList();
         var searchResultItemGroups = items
             .Union(itemsWithItemCategory)
             .DistinctBy(item => item.Id)
@@ -224,7 +224,8 @@ public class ItemSearchService : IItemSearchService
         return result;
     }
 
-    private async Task<IEnumerable<IItem>> LoadItemsForCategory(string name, StoreId storeId, int limit)
+    private async Task<IEnumerable<IItem>> LoadItemsForCategory(string name, StoreId storeId,
+        IEnumerable<ItemId> excludedItemIds, int limit)
     {
         if (limit <= 0)
             return Enumerable.Empty<IItem>();
@@ -234,7 +235,7 @@ public class ItemSearchService : IItemSearchService
             .ToList();
 
         return categoryIds.Any()
-            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId)).ToList()
+            ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, excludedItemIds)).ToList()
             : new List<IItem>();
     }
 

@@ -20,7 +20,8 @@ public interface IItemRepository
 
     Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, StoreId storeId);
+    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, StoreId storeId,
+        IEnumerable<ItemId> excludedItemIds);
 
     Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId);
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>ProjectHermes.ShoppingList.Api.WebApp</RootNamespace>
-    <Version>0.10.1</Version>
+    <Version>0.10.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
