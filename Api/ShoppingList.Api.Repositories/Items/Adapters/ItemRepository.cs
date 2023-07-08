@@ -213,12 +213,14 @@ public class ItemRepository : IItemRepository
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds,
-        StoreId storeId)
+        StoreId storeId, IEnumerable<ItemId> excludedItemIds)
     {
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
         var rawItemCategoryIds = itemCategoryIds.Select(id => id.Value).ToArray();
         var items = await GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
                            && rawItemCategoryIds.Contains(item.ItemCategoryId.Value)
+                           && !excludedRawItemIds.Contains(item.Id)
                            && !item.Deleted
                            && (item.AvailableAt.Any(av => av.StoreId == storeId)
                                || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))

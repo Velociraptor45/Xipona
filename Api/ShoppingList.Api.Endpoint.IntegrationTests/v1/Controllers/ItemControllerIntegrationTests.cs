@@ -240,6 +240,24 @@ public class ItemControllerIntegrationTests
         }
 
         [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_WithFindingViaCategoryName_ShouldReturnEmptyList()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupItemAlreadyOnShoppingListWithFindingViaItemCategory();
+            _fixture.SetupShoppingListContainingItem();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NoContentResult>();
+        }
+
+        [Fact]
         public async Task SearchItemsForShoppingListAsync_WithItemAndCategoryExceedingLimit_ShouldReturnNoItemTypes()
         {
             // Arrange
@@ -398,6 +416,29 @@ public class ItemControllerIntegrationTests
                     .WithAvailableAt(availability.ToMonoList())
                     .Create();
                 _items.Add(item);
+            }
+
+            public void SetupItemAlreadyOnShoppingListWithFindingViaItemCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var availability = new AvailableAtEntityBuilder()
+                    .WithStoreId(StoreId)
+                    .WithDefaultSectionId(_store.Sections.First().Id)
+                    .Create();
+                var item = ItemEntityMother.Initial()
+                    .WithoutManufacturerId()
+                    .WithAvailableAt(availability.ToMonoList())
+                    .Create();
+                _items.Add(item);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithDeleted(false)
+                    .WithId(item.ItemCategoryId!.Value)
+                    .WithName("Cat" + SearchInput)
+                    .Create();
+
+                _itemCategories.Add(category);
             }
 
             public void SetupItemsAndItemCategoriesExceedingLimit()
