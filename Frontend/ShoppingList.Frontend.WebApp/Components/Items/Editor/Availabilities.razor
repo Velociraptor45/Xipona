@@ -15,10 +15,10 @@
             <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    <div class="py-2">
+    <div class="pt-2 stores">
         @foreach(var availability in Available.Availabilities)
         {
-            <div class="pb-3">
+            <div class="store">
                 <Availability Available="Available" Model="@availability"></Availability>
             </div>
         }
