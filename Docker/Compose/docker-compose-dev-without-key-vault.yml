@@ -16,7 +16,7 @@ services:
       - dev-ph-shoppinglist-db-root-pwd
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.10.1
+    image: velocir4ptor/ph-shoppinglist-api:0.10.2
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       PH_SL_DB_CONNECTION_STRING_FILE: /run/secrets/dev-ph-shoppinglist-db-connection-string
@@ -34,7 +34,7 @@ services:
       - dev-ph-shoppinglist-db-connection-string
 
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.10.1
+    image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
     ports:
       - "13997:443"
     depends_on:
