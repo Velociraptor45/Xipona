@@ -62,12 +62,13 @@
             else
             {
                 <Button Disabled="@State.Value.Editor.DisableSaveButtons"
-                        Loading="@State.Value.Editor.IsUpdating"
-                        OnClick="@OnUpdateButtonClicked">Update</Button>
-                <Button Disabled="@State.Value.Editor.DisableSaveButtons"
-                        Class="ml-2"
                         Loading="@State.Value.Editor.IsModifying"
                         OnClick="@OnModifyButtonClicked">Modify</Button>
+                <Button Type="@ButtonType.Primary"
+                        Class="ml-2"
+                        Disabled="@State.Value.Editor.DisableSaveButtons"
+                        Loading="@State.Value.Editor.IsUpdating"
+                        OnClick="@OnUpdateButtonClicked">Update</Button>
             }
         </div>
     </div>
