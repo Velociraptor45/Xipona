@@ -58,9 +58,11 @@ public sealed class RecipeEditorEffects
     public async Task HandleModifyRecipeAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new ModifyRecipeStartedAction());
+
+        var recipe = _state.Value.Editor.Recipe!;
         try
         {
-            await _client.ModifyRecipeAsync(_state.Value.Editor.Recipe!);
+            await _client.ModifyRecipeAsync(recipe);
         }
         catch (ApiException e)
         {
@@ -77,15 +79,18 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new ModifyRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        _notificationService.NotifySuccess($"Successfully modified recipe {recipe.Name}");
     }
 
     [EffectMethod(typeof(CreateRecipeAction))]
     public async Task HandleCreateRecipeAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new CreateRecipeStartedAction());
+
+        var recipe = _state.Value.Editor.Recipe!;
         try
         {
-            await _client.CreateRecipeAsync(_state.Value.Editor.Recipe!);
+            await _client.CreateRecipeAsync(recipe);
         }
         catch (ApiException e)
         {
@@ -102,6 +107,7 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new CreateRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        _notificationService.NotifySuccess($"Successfully created recipe {recipe.Name}");
     }
 
     [EffectMethod(typeof(CreateNewRecipeTagAction))]

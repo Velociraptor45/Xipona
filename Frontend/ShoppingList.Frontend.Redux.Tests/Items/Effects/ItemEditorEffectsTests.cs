@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Moq;
 using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
@@ -7,6 +8,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
 using Xunit.Abstractions;
@@ -553,6 +555,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -574,6 +577,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -616,6 +620,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -637,6 +642,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -670,6 +676,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleCreateItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -678,6 +686,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes
                         }
                     }
@@ -692,6 +701,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.NotDefined,
                             ItemTypes = new List<EditedItemType>()
                         }
@@ -707,6 +717,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithTypes
                         }
                     }
@@ -721,6 +732,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.NotDefined,
                             ItemTypes = new DomainTestBuilder<EditedItemType>().CreateMany(2).ToList()
                         }
@@ -771,6 +783,11 @@ public class ItemEditorEffectsTests
             {
                 SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item {_itemName}");
+            }
         }
     }
 
@@ -794,6 +811,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupUpdatingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -836,6 +854,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupUpdatingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -869,6 +888,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleUpdateItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -877,6 +898,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes
                         }
                     }
@@ -891,6 +913,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithTypes
                         }
                     }
@@ -940,6 +963,11 @@ public class ItemEditorEffectsTests
             {
                 SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully updated item {_itemName}");
+            }
         }
     }
 
@@ -963,6 +991,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupModifyingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1005,6 +1034,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupModifyingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1038,6 +1068,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleModifyItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -1046,6 +1078,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes
                         }
                     }
@@ -1060,6 +1093,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithTypes
                         }
                     }
@@ -1109,6 +1143,11 @@ public class ItemEditorEffectsTests
             {
                 SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item {_itemName}");
+            }
         }
     }
 
@@ -1132,6 +1171,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupMakingItemPermanent();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1165,6 +1205,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleMakeItemPermanentActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -1173,6 +1215,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes,
                             ItemTypes = new List<EditedItemType>(),
                             Availabilities = new DomainTestBuilder<EditedItemAvailability>().CreateMany(2).ToList()
@@ -1233,6 +1276,11 @@ public class ItemEditorEffectsTests
             {
                 SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully made item {_itemName} permanent");
+            }
         }
     }
 
@@ -1255,6 +1303,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupMakingItemPermanent();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseDialogAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1287,8 +1336,20 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleDeleteItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupMakingItemPermanent()
             {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            Name = _itemName
+                        }
+                    }
+                };
                 var item = State.Editor.Item!;
                 var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
                 ApiClientMock.SetupDeleteItemAsync(request);
@@ -1296,6 +1357,16 @@ public class ItemEditorEffectsTests
 
             public void SetupMakingItemPermanentFailed()
             {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            Name = _itemName
+                        }
+                    }
+                };
                 var item = State.Editor.Item!;
                 var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
                 ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
@@ -1320,15 +1391,24 @@ public class ItemEditorEffectsTests
             {
                 SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted item {_itemName}");
+            }
         }
     }
 
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public ItemEditorEffects CreateSut()
         {
             SetupStateReturningState();
-            return new ItemEditorEffects(ApiClientMock.Object, ItemStateMock.Object, NavigationManagerMock.Object);
+            return new ItemEditorEffects(ApiClientMock.Object, ItemStateMock.Object, NavigationManagerMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }

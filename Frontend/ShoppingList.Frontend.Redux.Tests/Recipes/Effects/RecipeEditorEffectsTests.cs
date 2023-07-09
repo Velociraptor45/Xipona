@@ -154,6 +154,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupModifyingRecipe();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
 
             // Act
@@ -271,6 +272,12 @@ public class RecipeEditorEffectsTests
             {
                 SetupDispatchingAction<LeaveRecipeEditorAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified recipe {_recipe.Name}");
+            }
         }
     }
 
@@ -290,6 +297,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupCreatingRecipe();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
 
             // Act
@@ -407,6 +415,12 @@ public class RecipeEditorEffectsTests
             public void SetupDispatchingLeaveAction()
             {
                 SetupDispatchingAction<LeaveRecipeEditorAction>();
+            }
+
+            public void SetupSuccessNotification()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created recipe {_recipe.Name}");
             }
         }
     }

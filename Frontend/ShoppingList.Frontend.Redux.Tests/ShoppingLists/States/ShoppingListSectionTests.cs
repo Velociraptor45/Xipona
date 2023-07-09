@@ -43,7 +43,7 @@ public class ShoppingListSectionTests
         private sealed class GetDisplayedItemsFixture : ShoppingListSectionFixture
         {
             public bool ItemsInBasketVisible { get; private set; }
-            public IReadOnlyCollection<ShoppingListItem> ExpectedResult { get; private set; }
+            public IReadOnlyCollection<ShoppingListItem>? ExpectedResult { get; private set; }
 
             public void SetupHiddenAndNotHiddenItem()
             {

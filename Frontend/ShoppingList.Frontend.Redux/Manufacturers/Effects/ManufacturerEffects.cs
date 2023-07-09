@@ -15,12 +15,15 @@ public class ManufacturerEffects
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
     private readonly IState<ManufacturerState> _state;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public ManufacturerEffects(IApiClient client, NavigationManager navigationManager, IState<ManufacturerState> state)
+    public ManufacturerEffects(IApiClient client, NavigationManager navigationManager, IState<ManufacturerState> state,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _navigationManager = navigationManager;
         _state = state;
+        _notificationService = notificationService;
     }
 
     [EffectMethod]
@@ -117,6 +120,7 @@ public class ManufacturerEffects
                 dispatcher.Dispatch(new SavingManufacturerFinishedAction());
                 return;
             }
+            _notificationService.NotifySuccess($"Successfully created manufacturer {editor.Manufacturer.Name}");
         }
         else
         {
@@ -142,6 +146,7 @@ public class ManufacturerEffects
                 editor.Manufacturer.Id,
                 editor.Manufacturer.Name);
             dispatcher.Dispatch(updateAction);
+            _notificationService.NotifySuccess($"Successfully modified manufacturer {editor.Manufacturer.Name}");
         }
 
         dispatcher.Dispatch(new SavingManufacturerFinishedAction());
@@ -153,9 +158,10 @@ public class ManufacturerEffects
     {
         dispatcher.Dispatch(new DeletingManufacturerStartedAction());
 
+        var manufacturer = _state.Value.Editor.Manufacturer!;
         try
         {
-            await _client.DeleteManufacturerAsync(_state.Value.Editor.Manufacturer!.Id);
+            await _client.DeleteManufacturerAsync(manufacturer.Id);
         }
         catch (ApiException e)
         {
@@ -172,5 +178,6 @@ public class ManufacturerEffects
 
         dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
         dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        _notificationService.NotifySuccess($"Successfully deleted manufacturer {manufacturer.Name}");
     }
 }

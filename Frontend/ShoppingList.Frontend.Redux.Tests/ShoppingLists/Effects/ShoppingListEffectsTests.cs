@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryIt
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 using RestEase;
@@ -656,6 +657,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupCallingEndpoint();
                 _fixture.SetupDispatchingFinishActionForAllTypes();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupSuccessNotification();
             });
 
             _fixture.SetupStateReturningState();
@@ -682,6 +684,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupCallingEndpoint();
                 _fixture.SetupDispatchingFinishActionForOneType();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupSuccessNotification();
             });
 
             _fixture.SetupStateReturningState();
@@ -782,6 +785,11 @@ public class ShoppingListEffectsTests
                 ApiClientMock.SetupUpdateItemPriceAsync(_expectedRequest);
             }
 
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully updated item price");
+            }
+
             public void VerifyCallingEndpoint()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRequest);
@@ -820,6 +828,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupFinishingList();
                 _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingStoreChangeAction();
+                _fixture.SetupSuccessNotification();
             });
 
             _fixture.SetupStateReturningState();
@@ -882,6 +891,11 @@ public class ShoppingListEffectsTests
                 ApiClientMock.SetupFinishListAsync(_expectedFinishRequest);
             }
 
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Finished shopping list");
+            }
+
             public void VerifyFinishingList()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedFinishRequest);
@@ -892,10 +906,14 @@ public class ShoppingListEffectsTests
 
     private abstract class ShoppingListEffectsFixture : ShoppingListEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public ShoppingListEffects CreateSut()
         {
             SetupStateReturningState();
-            return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object);
+            return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }

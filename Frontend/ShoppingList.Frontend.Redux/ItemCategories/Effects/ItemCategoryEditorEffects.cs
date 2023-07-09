@@ -15,13 +15,15 @@ public class ItemCategoryEditorEffects
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
     private readonly IState<ItemCategoryState> _state;
+    private readonly IShoppingListNotificationService _notificationService;
 
     public ItemCategoryEditorEffects(IApiClient client, NavigationManager navigationManager,
-        IState<ItemCategoryState> state)
+        IState<ItemCategoryState> state, IShoppingListNotificationService notificationService)
     {
         _client = client;
         _navigationManager = navigationManager;
         _state = state;
+        _notificationService = notificationService;
     }
 
     [EffectMethod(typeof(LeaveItemCategoryEditorAction))]
@@ -81,6 +83,7 @@ public class ItemCategoryEditorEffects
                 dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
                 return;
             }
+            _notificationService.NotifySuccess($"Successfully created item category {editor.ItemCategory.Name}");
         }
         else
         {
@@ -106,6 +109,7 @@ public class ItemCategoryEditorEffects
                 editor.ItemCategory.Id,
                 editor.ItemCategory.Name);
             dispatcher.Dispatch(updateAction);
+            _notificationService.NotifySuccess($"Successfully modified item category {editor.ItemCategory.Name}");
         }
 
         dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
@@ -117,9 +121,10 @@ public class ItemCategoryEditorEffects
     {
         dispatcher.Dispatch(new DeleteItemCategoryStartedAction());
 
+        var itemCategory = _state.Value.Editor.ItemCategory!;
         try
         {
-            await _client.DeleteItemCategoryAsync(_state.Value.Editor.ItemCategory!.Id);
+            await _client.DeleteItemCategoryAsync(itemCategory.Id);
         }
         catch (ApiException e)
         {
@@ -136,5 +141,6 @@ public class ItemCategoryEditorEffects
 
         dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
         dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
+        _notificationService.NotifySuccess($"Successfully deleted item category {itemCategory.Name}");
     }
 }
