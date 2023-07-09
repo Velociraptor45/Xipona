@@ -110,6 +110,8 @@ public class StoreEditorEffects
         if (store is null)
             return;
 
+        dispatcher.Dispatch(new DeleteStoreStartedAction());
+
         try
         {
             await _client.DeleteStoreAsync(store.Id);
@@ -117,15 +119,18 @@ public class StoreEditorEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting store failed", e));
+            dispatcher.Dispatch(new DeleteStoreFinishedAction());
             return;
         }
         catch (HttpRequestException e)
         {
             dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting store failed", e.Message));
+            dispatcher.Dispatch(new DeleteStoreFinishedAction());
             return;
         }
 
         dispatcher.Dispatch(new DeleteStoreFinishedAction());
+        dispatcher.Dispatch(new CloseDeleteStoreDialogAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
 }

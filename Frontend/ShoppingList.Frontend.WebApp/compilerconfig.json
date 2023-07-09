@@ -70,5 +70,13 @@
   {
     "outputFile": "Components/Recipes/EditView/RecipeEditor.razor.css",
     "inputFile": "Components/Recipes/EditView/RecipeEditor.razor.less"
+  },
+  {
+    "outputFile": "Pages/Stores/Stores.razor.css",
+    "inputFile": "Pages/Stores/Stores.razor.less"
+  },
+  {
+    "outputFile": "Pages/Stores/StoreEditor.razor.css",
+    "inputFile": "Pages/Stores/StoreEditor.razor.less"
   }
 ]

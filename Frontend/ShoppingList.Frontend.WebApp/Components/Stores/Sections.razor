@@ -10,14 +10,16 @@
 
 
 <div class="my-3">
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center pb-1">
         <div>
             Sections
         </div>
         <div class="ml-2">
-            <Button Icon="plus"
+            <Button Size="@ButtonSize.Small"
                     Class="align-items-center justify-content-center d-flex"
-                    OnClick="@OnAddSectionButtonClicked"></Button>
+                    OnClick="@OnAddSectionButtonClicked">
+                <i class="bi bi-plus-lg"></i>
+            </Button>
         </div>
     </div>
     @foreach (var section in State.Value.Editor.Store!.Sections)

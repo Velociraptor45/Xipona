@@ -397,8 +397,10 @@ public class StoreEditorEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
+                _fixture.SetupDispatchingStartAction();
                 _fixture.SetupDeletingStore();
                 _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingCloseDialogAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
             var sut = _fixture.CreateSut();
@@ -416,8 +418,10 @@ public class StoreEditorEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
+                _fixture.SetupDispatchingStartAction();
                 _fixture.SetupDeletingStoreThrowsApiException();
                 _fixture.SetupDispatchingExceptionNotification();
+                _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -434,8 +438,10 @@ public class StoreEditorEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
+                _fixture.SetupDispatchingStartAction();
                 _fixture.SetupDeletingStoreThrowsHttpRequestException();
                 _fixture.SetupDispatchingErrorNotification();
+                _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -486,9 +492,19 @@ public class StoreEditorEffectsTests
                 SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
+            public void SetupDispatchingStartAction()
+            {
+                SetupDispatchingAction<DeleteStoreStartedAction>();
+            }
+
             public void SetupDispatchingFinishAction()
             {
                 SetupDispatchingAction<DeleteStoreFinishedAction>();
+            }
+
+            public void SetupDispatchingCloseDialogAction()
+            {
+                SetupDispatchingAction<CloseDeleteStoreDialogAction>();
             }
 
             public void SetupDispatchingLeaveAction()

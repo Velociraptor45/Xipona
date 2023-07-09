@@ -16,6 +16,7 @@
        CancelText="@("Cancel")"
        OnOk="OnOkClicked"
        OkButtonProps="CreateOkButtonProps()"
+       ConfirmLoading="@(State.Value.Editor.AddToShoppingList?.IsSaving ?? false)"
        OnCancel="OnCancelClicked">
     <div>
         @if (State.Value.Editor.AddToShoppingList is not null)
@@ -61,8 +62,7 @@
     {
         var props = new ButtonProps
         {
-            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false,
-            Loading = State.Value.Editor.AddToShoppingList?.IsSaving ?? false
+            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false
         };
         return props;
     }
