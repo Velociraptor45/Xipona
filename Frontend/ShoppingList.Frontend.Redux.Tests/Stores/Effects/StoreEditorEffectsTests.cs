@@ -1,9 +1,11 @@
-﻿using Moq.Contrib.InOrder;
+﻿using Moq;
+using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
 
@@ -154,6 +156,7 @@ public class StoreEditorEffectsTests
                 _fixture.SetupStoreId();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupModifyingStore();
+                _fixture.SetupSuccessModifyNotification();
                 _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
@@ -217,6 +220,7 @@ public class StoreEditorEffectsTests
                 _fixture.SetupStoreIdEmpty();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupCreatingStore();
+                _fixture.SetupSuccessCreateNotification();
                 _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingLeaveAction();
             });
@@ -273,6 +277,7 @@ public class StoreEditorEffectsTests
 
         private sealed class HandleSaveStoreActionFixture : StoreEditorEffectsFixture
         {
+            private readonly string _storeName = new DomainTestBuilder<string>().Create();
             private Guid? _storeId;
 
             public void SetupStoreNull()
@@ -307,7 +312,8 @@ public class StoreEditorEffectsTests
                     {
                         Store = State.Editor.Store! with
                         {
-                            Id = _storeId.Value
+                            Id = _storeId.Value,
+                            Name = _storeName
                         }
                     }
                 };
@@ -367,6 +373,16 @@ public class StoreEditorEffectsTests
             {
                 SetupDispatchingAction<LeaveStoreEditorAction>();
             }
+
+            public void SetupSuccessCreateNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created store {_storeName}");
+            }
+
+            public void SetupSuccessModifyNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified store {_storeName}");
+            }
         }
     }
 
@@ -397,11 +413,13 @@ public class StoreEditorEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
+                _fixture.SetupStore();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupDeletingStore();
                 _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseDialogAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -454,6 +472,22 @@ public class StoreEditorEffectsTests
 
         private sealed class HandleDeleteStoreConfirmedActionFixture : StoreEditorEffectsFixture
         {
+            private readonly string _storeName = new DomainTestBuilder<string>().Create();
+
+            public void SetupStore()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Store = State.Editor.Store with
+                        {
+                            Name = _storeName
+                        }
+                    }
+                };
+            }
+
             public void SetupStoreNull()
             {
                 State = State with
@@ -511,15 +545,24 @@ public class StoreEditorEffectsTests
             {
                 SetupDispatchingAction<LeaveStoreEditorAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted store {_storeName}");
+            }
         }
     }
 
     private abstract class StoreEditorEffectsFixture : StoreEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public StoreEditorEffects CreateSut()
         {
             SetupStateReturningState();
-            return new StoreEditorEffects(ApiClientMock.Object, StoreStateMock.Object, NavigationManagerMock.Object);
+            return new StoreEditorEffects(ApiClientMock.Object, StoreStateMock.Object, NavigationManagerMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }

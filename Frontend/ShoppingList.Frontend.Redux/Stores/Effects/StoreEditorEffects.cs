@@ -14,12 +14,15 @@ public class StoreEditorEffects
     private readonly IApiClient _client;
     private readonly IState<StoreState> _state;
     private readonly NavigationManager _navigationManager;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public StoreEditorEffects(IApiClient client, IState<StoreState> state, NavigationManager navigationManager)
+    public StoreEditorEffects(IApiClient client, IState<StoreState> state, NavigationManager navigationManager,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _state = state;
         _navigationManager = navigationManager;
+        _notificationService = notificationService;
     }
 
     [EffectMethod(typeof(LeaveStoreEditorAction))]
@@ -78,6 +81,7 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
+            _notificationService.NotifySuccess($"Successfully created store {store.Name}");
         }
         else
         {
@@ -97,6 +101,7 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
+            _notificationService.NotifySuccess($"Successfully modified store {store.Name}");
         }
 
         dispatcher.Dispatch(new SaveStoreFinishedAction());
@@ -132,5 +137,6 @@ public class StoreEditorEffects
         dispatcher.Dispatch(new DeleteStoreFinishedAction());
         dispatcher.Dispatch(new CloseDeleteStoreDialogAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
+        _notificationService.NotifySuccess($"Successfully deleted store {store.Name}");
     }
 }
