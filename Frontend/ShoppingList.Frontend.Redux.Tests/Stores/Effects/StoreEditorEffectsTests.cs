@@ -480,7 +480,7 @@ public class StoreEditorEffectsTests
                 {
                     Editor = State.Editor with
                     {
-                        Store = State.Editor.Store with
+                        Store = State.Editor.Store! with
                         {
                             Name = _storeName
                         }

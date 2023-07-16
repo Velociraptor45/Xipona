@@ -78,5 +78,9 @@
   {
     "outputFile": "Pages/Stores/StoreEditor.razor.css",
     "inputFile": "Pages/Stores/StoreEditor.razor.less"
+  },
+  {
+    "outputFile": "Pages/ItemCategories/ItemCategories.razor.css",
+    "inputFile": "Pages/ItemCategories/ItemCategories.razor.less"
   }
 ]
