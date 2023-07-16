@@ -1,0 +1,21 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States
+
+@inject IState<ItemCategoryState> State
+@inject IDispatcher Dispatcher
+
+<Button Danger="true"
+        Class="ml-auto"
+        OnClick="@OnDeleteButtonClicked">
+    <i class="bi bi-trash"></i>
+</Button>
+
+@code {
+    private void OnDeleteButtonClicked()
+    {
+        Dispatcher.Dispatch(new DeleteItemCategoryAction());
+    }
+}

@@ -82,5 +82,9 @@
   {
     "outputFile": "Pages/ItemCategories/ItemCategories.razor.css",
     "inputFile": "Pages/ItemCategories/ItemCategories.razor.less"
+  },
+  {
+    "outputFile": "Pages/ItemCategories/ItemCategoryEditor.razor.css",
+    "inputFile": "Pages/ItemCategories/ItemCategoryEditor.razor.less"
   }
 ]
