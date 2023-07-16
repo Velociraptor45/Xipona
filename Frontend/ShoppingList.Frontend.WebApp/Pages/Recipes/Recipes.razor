@@ -52,7 +52,7 @@
         </Tooltip>
     </div>
     <div class="mt-2">
-        @if(_searchTriggeredOnce && State.Value.Search.SearchResults.Count == 0)
+        @if(@State.Value.Search.TriggeredAtLeastOnce && State.Value.Search.SearchResults.Count == 0)
         {
             <div class="no-recipes-found-notice">
                 No recipes found
@@ -68,7 +68,6 @@
 @code {
     private string input = "";
     private Input<string> _searchInput;
-    private bool _searchTriggeredOnce = false;
 
     protected override void OnInitialized()
     {
@@ -87,13 +86,11 @@
 
     private void OnLoadByNameButtonClicked()
     {
-        _searchTriggeredOnce = true;
         Dispatcher.Dispatch(new SearchRecipeByNameAction(input));
     }
 
     private void OnLoadByTagsButtonClicked()
     {
-        _searchTriggeredOnce = true;
         Dispatcher.Dispatch(new SearchRecipeByTagsAction());
     }
 

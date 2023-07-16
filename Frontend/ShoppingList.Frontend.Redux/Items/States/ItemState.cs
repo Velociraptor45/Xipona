@@ -26,6 +26,7 @@ public class ItemFeatureState : Feature<ItemState>
             new ActiveStores(new List<ItemStore>()),
             new ItemSearch(
                 false,
+                false,
                 new List<ItemSearchResult>()),
             new ItemEditor(
                 null,

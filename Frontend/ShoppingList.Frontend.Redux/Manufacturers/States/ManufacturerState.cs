@@ -18,6 +18,7 @@ public class ManufacturerFeatureState : Feature<ManufacturerState>
         return new ManufacturerState(
             new ManufacturerSearch(
                 false,
+                false,
                 new List<ManufacturerSearchResult>()),
             new ManufacturerEditor(
                 null,

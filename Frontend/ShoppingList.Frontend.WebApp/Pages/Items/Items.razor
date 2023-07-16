@@ -26,6 +26,12 @@
         </div>
     </div>
     <div class="mt-2">
+        @if (@State.Value.Search.TriggeredAtLeastOnce && State.Value.Search.SearchResults.Count == 0)
+        {
+            <div class="no-items-found-notice">
+                No items found
+            </div>
+        }
         <!-- result item list -->
         @foreach (var item in State.Value.Search.SearchResults)
         {

@@ -39,6 +39,7 @@ public class RecipeFeatureState : Feature<RecipeState>
             new List<RecipeTag>(0),
             new RecipeSearch(
                 false,
+                false,
                 new List<RecipeSearchResult>(0),
                 new List<Guid>(0)),
             new RecipeEditor(

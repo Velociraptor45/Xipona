@@ -27,6 +27,7 @@ public static class ManufacturerReducer
             Search = state.Search with
             {
                 IsLoadingSearchResults = false,
+                TriggeredAtLeastOnce = true,
                 SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList()
             }
         };

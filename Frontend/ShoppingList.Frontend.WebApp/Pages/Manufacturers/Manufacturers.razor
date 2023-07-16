@@ -14,10 +14,10 @@
 <div class="manufacturers">
     <div class="d-flex mt-2 top-bar">
         <div class="d-flex search-bar">
-            <Input TValue="string" @bind-value="@input"
+            <Input TValue="string" @bind-value="@_input"
                    @ref="_searchInput"
                    OnPressEnter="@OnLoadButtonClicked"
-                   Placeholder="Manufacturer name ..."></Input>
+                   Placeholder="Manufacturer name"></Input>
             <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">
                 <i class="bi bi-search"></i>
             </Button>
@@ -28,6 +28,12 @@
         </Button>
     </div>
     <div class="mt-2">
+        @if (@State.Value.Search.TriggeredAtLeastOnce && State.Value.Search.SearchResults.Count == 0)
+        {
+            <div class="no-manufacturers-found-notice">
+                No manufacturers found
+            </div>
+        }
         @foreach (var searchResult in State.Value.Search.SearchResults)
         {
             <SearchResult Model="searchResult" TAction="EditManufacturerAction"></SearchResult>
@@ -36,7 +42,7 @@
 </div>
 
 @code {
-    private string input = "";
+    private string _input = "";
     private Input<string> _searchInput;
 
     protected override void OnAfterRender(bool firstRender)
@@ -49,7 +55,7 @@
     
     private void OnLoadButtonClicked()
     {
-        Dispatcher.Dispatch(new SearchManufacturersAction(input));
+        Dispatcher.Dispatch(new SearchManufacturersAction(_input));
     }
 
     private void OnCreateManufacturerButtonClicked()
