@@ -84,8 +84,11 @@
             @if (Model.DefaultItemId is not null)
             {
                 <div class="add-to-sl-wrapper align-items-center ml-4 mt-1">
-                    <Checkbox Value="@Model.AddToShoppingListByDefault!.Value"
-                              OnChange="OnAddToShoppingListByDefaultChanged">Add by default</Checkbox>
+                    <Tooltip Placement="Placement.BottomRight"
+                             Title="@("Select this item by default when adding recipe ingredients to shopping lists")">
+                        <Checkbox Value="@Model.AddToShoppingListByDefault!.Value"
+                                  OnChange="OnAddToShoppingListByDefaultChanged">Add by default</Checkbox>
+                    </Tooltip>
                 </div>
             }
         </div>
