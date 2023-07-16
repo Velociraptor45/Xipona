@@ -19,11 +19,11 @@
     <div class="@_textContentClasses text-content">
         @if (IsTextArea)
         {
-            <TextArea MinRows="4" Value="@Model.Name" ValueChanged="OnChanged"></TextArea>
+            <TextArea Placeholder="@Placeholder" MinRows="4" Value="@Model.Name" ValueChanged="OnChanged"></TextArea>
         }
         else
         {
-            <Input TValue="string" Value="@Model.Name" ValueChanged="OnChanged"/>
+            <Input Placeholder="@Placeholder" TValue="string" Value="@Model.Name" ValueChanged="OnChanged" />
         }
     </div>
     <div class="ml-2">
@@ -42,6 +42,8 @@
     public T Model { get; set; }
     [Parameter]
     public bool IsTextArea { get; set; } = false;
+    [Parameter]
+    public string Placeholder { get; set; } = string.Empty;
 
     [Parameter]
     public Action<T, string> OnTextChanged { get; set; }

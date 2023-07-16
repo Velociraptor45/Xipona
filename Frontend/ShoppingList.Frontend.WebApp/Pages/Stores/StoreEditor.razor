@@ -18,7 +18,8 @@
                 <i class="bi bi-arrow-left"></i>
             </Button>
             <div class="mx-3">
-                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"
+                       Placeholder="Store name"/>
             </div>
             @if (State.Value.Editor.Store.Id != Guid.Empty)
             {
