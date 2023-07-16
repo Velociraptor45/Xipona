@@ -86,5 +86,13 @@
   {
     "outputFile": "Pages/ItemCategories/ItemCategoryEditor.razor.css",
     "inputFile": "Pages/ItemCategories/ItemCategoryEditor.razor.less"
+  },
+  {
+    "outputFile": "Pages/Manufacturers/Manufacturers.razor.css",
+    "inputFile": "Pages/Manufacturers/Manufacturers.razor.less"
+  },
+  {
+    "outputFile": "Pages/Manufacturers/ManufacturerEditor.razor.css",
+    "inputFile": "Pages/Manufacturers/ManufacturerEditor.razor.less"
   }
 ]

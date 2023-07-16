@@ -5,15 +5,16 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Manufacturers
 
 @inject IState<ManufacturerState> State
 @inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
 
-@if (State.Value.Editor?.Manufacturer is not null)
+@if (State.Value.Editor.Manufacturer is not null)
 {
-    <div>
+    <div class="mt-2 manufacturer">
         <div class="d-flex">
             <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
                 <i class="bi bi-arrow-left"></i>
@@ -26,23 +27,21 @@
             </div>
             @if (State.Value.Editor.Manufacturer.Id != Guid.Empty)
             {
-                <Button Danger="true"
-                        Class="ml-auto"
-                        OnClick="@OnDeleteButtonClicked">
-                    Delete
-                </Button>
+                <DeleteManufacturer></DeleteManufacturer>
             }
         </div>
-        <div class="d-flex justify-content-end mt-2">
-
-            @if (State.Value.Editor.Manufacturer.Id == Guid.Empty)
-            {
-                <Button @onclick="@OnSaveButtonClicked">Create</Button>
-            }
-            else
-            {
-                <Button @onclick="@OnSaveButtonClicked">Save</Button>
-            }
+        <div class="d-flex justify-content-end mt-4">
+            <Button Type="@ButtonType.Primary" @onclick="@OnSaveButtonClicked"
+                    Loading="@State.Value.Editor.IsSaving">
+                @if (State.Value.Editor.Manufacturer.Id == Guid.Empty)
+                {
+                    @("Create")
+                }
+                else
+                {
+                    @("Save")
+                }
+            </Button>
         </div>
     </div>
 }
@@ -74,10 +73,5 @@
     private void OnSaveButtonClicked()
     {
         Dispatcher.Dispatch(new SaveManufacturerAction());
-    }
-
-    private void OnDeleteButtonClicked()
-    {
-        Dispatcher.Dispatch(new DeleteManufacturerAction());
     }
 }
