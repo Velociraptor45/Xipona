@@ -45,7 +45,7 @@
                                 TItem="AddToShoppingListAvailability"
                                 TValue="Guid"
                                 DataSource="item.Availabilities.ToList()"
-                                DefaultValue="item.SelectedStoreId"
+                                Value="item.SelectedStoreId"
                                 ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
                                 LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
                                 OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>

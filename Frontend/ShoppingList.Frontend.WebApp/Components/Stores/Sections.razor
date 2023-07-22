@@ -42,7 +42,7 @@
                   TValue="Guid"
                   ValueName="@nameof(EditedSection.Key)"
                   LabelName="@nameof(EditedSection.Name)"
-                  DefaultValue="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Key"
+                  Value="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Key"
                   DataSource="@State.Value.Editor.Store!.Sections.ToList()"
                   IgnoreItemChanges="false"
                   OnItemChanged="OnDefaultSectionChanged"></SingleSelect>

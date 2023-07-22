@@ -12,7 +12,7 @@
         AllowClear="@AllowClear"
         DropdownRender="@OnRender"
         IgnoreItemChanges="@IgnoreItemChanges"
-        @bind-Value="@selectedValue">
+        Value="Value">
 </Select>
 
 @code {
@@ -20,7 +20,7 @@
     [Parameter] public string Placeholder { get; set; }
 
     [Parameter] public List<TItem> DataSource { get; set; }
-    [Parameter] public TValue DefaultValue { get; set; }
+    [Parameter] public TValue Value { get; set; }
     [Parameter] public string ValueName { get; set; }
     [Parameter] public string LabelName { get; set; }
 
@@ -33,15 +33,6 @@
     [Parameter] public bool IgnoreItemChanges { get; set; } = true;
 
     private string newItemName = "";
-    private TValue selectedValue;
-    
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        if(selectedValue is null || selectedValue.Equals(default(TValue)))
-            selectedValue = DefaultValue;
-    }
 
     private async void OnSelectedItemChanged(TItem item)
     {
@@ -74,10 +65,5 @@
                     }
                 </div>
             </Template>;
-    }
-
-    public void ResetToDefaultValue()
-    {
-        selectedValue = DefaultValue;
     }
 }

@@ -47,9 +47,10 @@
                               DataSource="@Model.AvailableStoresOfItem.ToList()"
                               TItem="SearchItemByItemCategoryAvailability"
                               TValue="Guid"
-                              DefaultValue="@Model.DefaultStoreId!.Value"
+                              Value="@Model.DefaultStoreId!.Value"
                               ValueName="@nameof(SearchItemByItemCategoryAvailability.StoreId)"
                               LabelName="@nameof(SearchItemByItemCategoryAvailability.StoreName)"
+                              IgnoreItemChanges="false"
                               OnItemChanged="OnDefaultStoreChanged">
                 </SingleSelect>
             }
@@ -75,7 +76,7 @@
                                   ValueName="@nameof(IngredientQuantityType.Id)"
                                   LabelName="@nameof(IngredientQuantityType.QuantityLabel)"
                                   Placeholder="QuantityInPacketType"
-                                  DefaultValue="@Model.QuantityTypeId"
+                                  Value="@Model.QuantityTypeId"
                                   DataSource="@State.Value.IngredientQuantityTypes.ToList()"
                                   OnItemChanged="@OnIngredientQuantityTypeChanged">
                     </SingleSelect>
