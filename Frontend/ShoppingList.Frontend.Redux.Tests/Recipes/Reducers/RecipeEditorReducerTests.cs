@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
@@ -29,7 +30,10 @@ public class RecipeEditorReducerTests
             var result = RecipeEditorReducer.OnSetNewRecipe(_fixture.InitialState);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState,
+                opt => opt.Excluding(info =>
+                    info.Path == "Editor.Recipe.Ingredients[0].Key"
+                    || info.Path == "Editor.Recipe.PreparationSteps[0].Key"));
         }
 
         private sealed class OnSetNewRecipeFixture : RecipeEditorReducerFixture
@@ -56,8 +60,27 @@ public class RecipeEditorReducerTests
                             Guid.Empty,
                             string.Empty,
                             1,
-                            new List<EditedIngredient>(0),
-                            new SortedSet<EditedPreparationStep>(),
+                            new List<EditedIngredient>
+                            {
+                                new(
+                                    Guid.NewGuid(),
+                                    Guid.Empty,
+                                    Guid.Empty,
+                                    ExpectedState.IngredientQuantityTypes.First().Id,
+                                    1,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    new ItemCategorySelector(
+                                        new List<ItemCategorySearchResult>(0),
+                                        string.Empty),
+                                    new ItemSelector(new List<SearchItemByItemCategoryResult>(0)))
+                            },
+                            new SortedSet<EditedPreparationStep>
+                            {
+                                new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
+                            },
                             new List<Guid>(0)),
                         IsInEditMode = true
                     }

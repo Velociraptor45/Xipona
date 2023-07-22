@@ -376,4 +376,14 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.DeleteStoreAsync(storeId)).ThrowsAsync(ex);
     }
+
+    public void SetupGetAllIngredientQuantityTypes(IEnumerable<IngredientQuantityType> returnValue)
+    {
+        this.SetupInOrder(m => m.GetAllIngredientQuantityTypes()).ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetAllIngredientQuantityTypesThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllIngredientQuantityTypes()).ThrowsAsync(ex);
+    }
 }

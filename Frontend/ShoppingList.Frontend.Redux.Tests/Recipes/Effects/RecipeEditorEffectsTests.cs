@@ -1,7 +1,9 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
@@ -14,6 +16,216 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Recipes.Effects;
 
 public class RecipeEditorEffectsTests
 {
+    public class HandleInitializeRecipe
+    {
+        private readonly HandleInitializeRecipeFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithQuantityTypesAlreadyInState_ShouldNotLoadQuantityTypes()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupStateWithQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithApiCallSuccessful_WithRecipeId_ShouldLoadQuantityTypesAndDispatchActionForExistingRecipe()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithApiCallSuccessful_WithEmptyRecipeId_ShouldLoadQuantityTypesAndDispatchActionForNewRecipe()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForNewRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingSetNewRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithWithApiException_ShouldDispatchApiExceptionAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypesThrowsApiException();
+                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithWithHttpRequestException_ShouldDispatchErrorAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleInitializeRecipeFixture : RecipeEditorEffectsFixture
+        {
+            private readonly Guid _recipeId = Guid.NewGuid();
+            private IReadOnlyCollection<IngredientQuantityType>? _quantityTypes;
+
+            public InitializeRecipeAction? Action { get; private set; }
+
+            public void SetupStateWithoutQuantityTypes()
+            {
+                State = State with { IngredientQuantityTypes = new List<IngredientQuantityType>() };
+            }
+
+            public void SetupStateWithQuantityTypes()
+            {
+                State = State with
+                {
+                    IngredientQuantityTypes = new DomainTestBuilder<IngredientQuantityType>().CreateMany(2).ToList()
+                };
+            }
+
+            public void SetupGettingQuantityTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+                TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
+                ApiClientMock.SetupGetAllIngredientQuantityTypes(_quantityTypes);
+            }
+
+            public void SetupQuantityTypes()
+            {
+                _quantityTypes = new DomainTestBuilder<IngredientQuantityType>().CreateMany(2).ToList();
+            }
+
+            public void SetupGettingQuantityTypesThrowsApiException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+                ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingQuantityTypesThrowsHttpRequestException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+                ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingApiExceptionAction()
+            {
+                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+            }
+
+            public void SetupDispatchingErrorAction()
+            {
+                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
+                SetupDispatchingAction(new LoadIngredientQuantityTypesFinishedAction(_quantityTypes));
+            }
+
+            public void SetupDispatchingLoadRecipeTagsAction()
+            {
+                SetupDispatchingAnyAction<LoadRecipeTagsAction>();
+            }
+
+            public void SetupDispatchingSetNewRecipeAction()
+            {
+                SetupDispatchingAnyAction<SetNewRecipeAction>();
+            }
+
+            public void SetupDispatchingLoadRecipeAction()
+            {
+                SetupDispatchingAction(new LoadRecipeForEditingAction(_recipeId));
+            }
+
+            public void SetupActionForLoadingRecipe()
+            {
+                Action = new InitializeRecipeAction(_recipeId);
+            }
+
+            public void SetupActionForNewRecipe()
+            {
+                Action = new InitializeRecipeAction(Guid.Empty);
+            }
+        }
+    }
+
     public class HandleLoadRecipeForEditing
     {
         private readonly HandleLoadRecipeForEditingFixture _fixture = new();

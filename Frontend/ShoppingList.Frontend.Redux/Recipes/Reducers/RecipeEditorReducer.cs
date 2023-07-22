@@ -13,8 +13,14 @@ public static class RecipeEditorReducer
             Guid.Empty,
             string.Empty,
             1,
-            new List<EditedIngredient>(0),
-            new SortedSet<EditedPreparationStep>(),
+            new List<EditedIngredient>
+            {
+                EditedIngredient.GetInitial(state.IngredientQuantityTypes)
+            },
+            new SortedSet<EditedPreparationStep>
+            {
+                new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
+            },
             new List<Guid>(0));
 
         return state with
