@@ -64,9 +64,13 @@
                         <i class="bi bi-plus-lg"></i>
                     </Button>
                 </div>
-                @foreach (var ingredient in State.Value.Editor.Recipe.Ingredients)
+                @for (int i = 0; i < State.Value.Editor.Recipe.Ingredients.Count; i++)
                 {
-                    <IngredientEditor Model="@ingredient"></IngredientEditor>
+                    <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
+                    @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
+                    {
+                        <hr class="my-3"/>
+                    }
                 }
             </div>
             <div class="preparation-steps">
