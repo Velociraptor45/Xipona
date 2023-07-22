@@ -23,6 +23,7 @@ public class ItemCategoryFeatureState : Feature<ItemCategoryState>
                 null,
                 false,
                 false,
+                false,
                 false));
     }
 }

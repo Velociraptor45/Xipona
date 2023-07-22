@@ -14,8 +14,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
 public sealed class ItemEditorEffects
 {
-    private const float LeaveEditorAfterDeleteDelayInSeconds = 0.5f;
-
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
     private readonly NavigationManager _navigationManager;
@@ -314,7 +312,7 @@ public sealed class ItemEditorEffects
             _leaveEditorTimer.Dispose();
         }
 
-        _leaveEditorTimer = new Timer(TimeSpan.FromSeconds(LeaveEditorAfterDeleteDelayInSeconds));
+        _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
         _leaveEditorTimer.AutoReset = false;
         _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction());
         _leaveEditorTimer.Start();

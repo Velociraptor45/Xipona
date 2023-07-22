@@ -9,11 +9,30 @@
 
 <Button Danger="true"
         Class="ml-auto"
-        OnClick="@OnDeleteButtonClicked">
+        OnClick="@OnOpenDeleteDialogButtonClicked">
     <i class="bi bi-trash"></i>
 </Button>
+<Modal Title="@($"Delete {State.Value.Editor.ItemCategory!.Name}")"
+       Visible="@State.Value.Editor.IsDeleteDialogOpen"
+       OnCancel="OnCloseDeleteDialogButtonClicked"
+       OnOk="OnDeleteButtonClicked"
+       OkButtonProps="@(new ButtonProps { Danger = true })"
+       ConfirmLoading="State.Value.Editor.IsDeleting"
+       OkText="@($"Delete {State.Value.Editor.ItemCategory.Name}")">
+    Deleting this item category will also delete all items in this category
+</Modal>
 
 @code {
+    private void OnOpenDeleteDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new OpenDeleteItemCategoryDialogAction());
+    }
+
+    private void OnCloseDeleteDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new CloseDeleteItemCategoryDialogAction(false));
+    }
+
     private void OnDeleteButtonClicked()
     {
         Dispatcher.Dispatch(new DeleteItemCategoryAction());
