@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using RestEase;
+using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Effects;
 
@@ -16,6 +17,8 @@ public class ManufacturerEffects
     private readonly NavigationManager _navigationManager;
     private readonly IState<ManufacturerState> _state;
     private readonly IShoppingListNotificationService _notificationService;
+
+    private Timer? _leaveEditorTimer;
 
     public ManufacturerEffects(IApiClient client, NavigationManager navigationManager, IState<ManufacturerState> state,
         IShoppingListNotificationService notificationService)
@@ -177,7 +180,27 @@ public class ManufacturerEffects
         }
 
         dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
-        dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        dispatcher.Dispatch(new CloseDeleteManufacturerDialogAction(true));
         _notificationService.NotifySuccess($"Successfully deleted manufacturer {manufacturer.Name}");
+    }
+
+    [EffectMethod]
+    public Task HandleCloseDeleteManufacturerDialogAction(CloseDeleteManufacturerDialogAction action, IDispatcher dispatcher)
+    {
+        if (!action.LeaveEditor)
+            return Task.CompletedTask;
+
+        if (_leaveEditorTimer is not null)
+        {
+            _leaveEditorTimer.Stop();
+            _leaveEditorTimer.Dispose();
+        }
+
+        _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
+        _leaveEditorTimer.AutoReset = false;
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        _leaveEditorTimer.Start();
+
+        return Task.CompletedTask;
     }
 }

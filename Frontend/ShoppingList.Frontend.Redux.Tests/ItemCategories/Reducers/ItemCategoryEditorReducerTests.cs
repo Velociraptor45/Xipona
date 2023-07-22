@@ -542,7 +542,6 @@ public class ItemCategoryEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsDeleteDialogOpen = true,
                         IsDeleting = isDeleting
                     }
                 };
@@ -554,7 +553,6 @@ public class ItemCategoryEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsDeleteDialogOpen = false,
                         IsDeleting = false
                     }
                 };

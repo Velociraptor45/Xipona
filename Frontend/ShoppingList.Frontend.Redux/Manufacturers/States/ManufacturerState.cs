@@ -24,6 +24,7 @@ public class ManufacturerFeatureState : Feature<ManufacturerState>
                 null,
                 false,
                 false,
+                false,
                 false));
     }
 }

@@ -103,7 +103,6 @@ public static class ItemCategoryEditorReducer
         {
             Editor = state.Editor with
             {
-                IsDeleteDialogOpen = false,
                 IsDeleting = false
             }
         };

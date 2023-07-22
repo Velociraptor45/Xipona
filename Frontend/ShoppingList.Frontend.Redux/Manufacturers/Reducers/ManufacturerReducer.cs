@@ -169,4 +169,28 @@ public static class ManufacturerReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(OpenDeleteManufacturerDialogAction))]
+    public static ManufacturerState OnOpenDeleteManufacturerDialog(ManufacturerState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteManufacturerDialogAction))]
+    public static ManufacturerState OnCloseDeleteManufacturerDialog(ManufacturerState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = false
+            }
+        };
+    }
 }
