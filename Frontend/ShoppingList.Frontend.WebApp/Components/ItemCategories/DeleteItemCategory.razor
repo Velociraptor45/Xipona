@@ -19,7 +19,7 @@
        OkButtonProps="@(new ButtonProps { Danger = true })"
        ConfirmLoading="State.Value.Editor.IsDeleting"
        OkText="@($"Delete {State.Value.Editor.ItemCategory.Name}")">
-    Do you really want to delete this item category? Doing this will also <b>delete all items</b> in this item category.
+    Do you really want to delete this item category? Doing this will also <b>delete all items</b> in this item category and <b>all recipe ingredients</b> with this item category.
 </Modal>
 
 @code {
