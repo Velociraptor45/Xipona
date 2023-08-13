@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
@@ -126,6 +127,15 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.ChangeDefaultStore(item);
+        }
+    }
+
+    public void RemoveIngredientsOfItemCategory(ItemCategoryId itemCategoryId)
+    {
+        var ingredients = _ingredients.Values.Where(i => i.ItemCategoryId == itemCategoryId);
+        foreach (var ingredient in ingredients)
+        {
+            _ingredients.Remove(ingredient.Id);
         }
     }
 }
