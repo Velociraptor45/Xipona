@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
@@ -13,4 +14,6 @@ public interface IRecipeModificationService
 
     Task ModifyIngredientsAfterAvailabilityWasDeletedAsync(ItemId itemId, ItemTypeId? itemTypeId,
         StoreId deletedAvailabilityStoreId);
+
+    Task RemoveIngredientsOfItemCategoryAsync(ItemCategoryId itemCategoryId);
 }

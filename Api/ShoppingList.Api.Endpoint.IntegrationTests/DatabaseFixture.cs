@@ -7,6 +7,8 @@ using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Repositories;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
@@ -86,6 +88,14 @@ public abstract class DatabaseFixture : IDisposable
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<ItemCategory>> LoadAllItemCategoriesAsync(IServiceScope assertionScope)
+    {
+        await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(assertionScope);
+
+        return await itemCategoryContext.ItemCategories.AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Item>> LoadAllItemsAsync(IServiceScope assertionScope)
     {
         await using var itemContext = GetContextInstance<ItemContext>(assertionScope);
@@ -95,7 +105,7 @@ public abstract class DatabaseFixture : IDisposable
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
             .Include(item => item.ItemTypes)
-            .ToArrayAsync();
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Repositories.Stores.Entities.Store>> LoadAllStoresAsync(IServiceScope assertionScope)
@@ -104,7 +114,7 @@ public abstract class DatabaseFixture : IDisposable
 
         return await storeContext.Stores.AsNoTracking()
             .Include(s => s.Sections)
-            .ToArrayAsync();
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Repositories.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingListsAsync(
@@ -114,14 +124,14 @@ public abstract class DatabaseFixture : IDisposable
 
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
-            .ToArrayAsync();
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<RecipeTag>> LoadAllRecipeTagsAsync(IServiceScope assertionScope)
     {
         await using var dbContext = GetContextInstance<RecipeTagContext>(assertionScope);
 
-        return await dbContext.RecipeTags.ToListAsync();
+        return await dbContext.RecipeTags.AsNoTracking().ToListAsync();
     }
 
     protected virtual void Dispose(bool disposing)
