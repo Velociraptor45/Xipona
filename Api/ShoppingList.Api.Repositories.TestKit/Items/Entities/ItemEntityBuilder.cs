@@ -141,6 +141,12 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithItemTypes(new List<ItemType>());
     }
 
+    // TCG keep
+    public ItemEntityBuilder WithAvailableAt(AvailableAt availableAt)
+    {
+        return WithAvailableAt(new List<AvailableAt> { availableAt });
+    }
+
     public ItemEntityBuilder WithAvailableAt(ICollection<AvailableAt> availableAt)
     {
         FillPropertyWith(p => p.AvailableAt, availableAt);

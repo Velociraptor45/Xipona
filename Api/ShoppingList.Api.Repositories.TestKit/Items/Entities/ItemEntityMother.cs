@@ -10,6 +10,7 @@ public static class ItemEntityMother
             .WithDeleted(false)
             .WithIsTemporary(false)
             .WithoutCreatedFrom()
+            .WithoutUpdatedOn()
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithEmptyItemTypes()
