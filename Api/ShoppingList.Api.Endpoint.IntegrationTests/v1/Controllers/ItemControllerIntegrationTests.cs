@@ -1093,7 +1093,8 @@ public class ItemControllerIntegrationTests
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
             recipes.Should().HaveCount(1);
             recipes[0].Should().BeEquivalentTo(_fixture.ExpectedRecipe,
-                opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef());
+                opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef().Excluding(info => info.Path == "Ingredients[0].DefaultItemId"));
+            recipes[0].Ingredients.First().DefaultItemId.Should().NotBe(_fixture.ExpectedOldItem.Id);
         }
 
         private sealed class UpdateItemAsyncFixture : ItemControllerFixture
@@ -1192,9 +1193,8 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
 
                 var ingredient = new IngredientEntityBuilder()
-                    .WithDefaultItemId(ExpectedNewItem.Id)
-                    .WithDefaultStoreId(_expectedAvailability.StoreId)
                     .WithoutDefaultItemTypeId()
+                    .WithDefaultStoreId(_expectedAvailability.StoreId)
                     .Create();
                 ExpectedRecipe = new RecipeEntityBuilder()
                     .WithIngredient(ingredient)
@@ -1204,9 +1204,11 @@ public class ItemControllerIntegrationTests
             public void SetupExistingRecipe()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedRecipe);
+                TestPropertyNotSetException.ThrowIfNull(_existingItem);
                 TestPropertyNotSetException.ThrowIfNull(_existingAvailability);
 
                 _existingRecipe = ExpectedRecipe.DeepClone();
+                _existingRecipe.Ingredients.First().DefaultItemId = _existingItem.Id;
                 _existingRecipe.Ingredients.First().DefaultStoreId = _existingAvailability.StoreId;
             }
 

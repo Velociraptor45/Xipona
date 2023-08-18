@@ -17,6 +17,8 @@ public interface IRecipeRepository
 
     Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId);
 
+    Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId);
+
     Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId, StoreId defaultStoreId);
 
     Task<IEnumerable<IRecipe>> FindByAsync(ItemCategoryId itemCategoryId);

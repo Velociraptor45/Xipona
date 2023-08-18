@@ -61,6 +61,21 @@ public class RecipeModificationService : IRecipeModificationService
         }
     }
 
+    public async Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities)
+    {
+        var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId);
+        var item = await _itemRepository.FindActiveByAsync(itemId);
+        if (item is null)
+            throw new DomainException(new ItemNotFoundReason(itemId));
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
     public async Task ModifyIngredientsAfterAvailabilityWasDeletedAsync(ItemId itemId, ItemTypeId? itemTypeId,
         StoreId deletedAvailabilityStoreId)
     {
