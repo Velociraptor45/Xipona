@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
+﻿using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
@@ -17,17 +16,16 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.Common;
 internal class ItemEntityDatabaseService
 {
     private readonly DatabaseFixture _databaseFixture;
-    private readonly IServiceScope _scope;
 
-    public ItemEntityDatabaseService(DatabaseFixture databaseFixture, IServiceScope scope)
+    public ItemEntityDatabaseService(DatabaseFixture databaseFixture)
     {
         _databaseFixture = databaseFixture;
-        _scope = scope;
     }
 
     public async Task SaveAsync(params Item[] items)
     {
-        await using var itemDbContext = _databaseFixture.GetContextInstance<ItemContext>(_scope);
+        var scope = _databaseFixture.CreateServiceScope();
+        await using var itemDbContext = _databaseFixture.GetContextInstance<ItemContext>(scope);
         await itemDbContext.AddRangeAsync(items.ToList());
         await itemDbContext.SaveChangesAsync();
     }
@@ -38,9 +36,10 @@ internal class ItemEntityDatabaseService
         var itemCategories = CreateItemCategories(items);
         var stores = CreateStores(items);
 
-        await using var itemCategoryDbContext = _databaseFixture.GetContextInstance<ItemCategoryContext>(_scope);
-        await using var manufacturerDbContext = _databaseFixture.GetContextInstance<ManufacturerContext>(_scope);
-        await using var storeDbContext = _databaseFixture.GetContextInstance<StoreContext>(_scope);
+        var scope = _databaseFixture.CreateServiceScope();
+        await using var itemCategoryDbContext = _databaseFixture.GetContextInstance<ItemCategoryContext>(scope);
+        await using var manufacturerDbContext = _databaseFixture.GetContextInstance<ManufacturerContext>(scope);
+        await using var storeDbContext = _databaseFixture.GetContextInstance<StoreContext>(scope);
 
         await itemCategoryDbContext.AddRangeAsync(itemCategories);
         await manufacturerDbContext.AddRangeAsync(manufacturers);
@@ -77,16 +76,16 @@ internal class ItemEntityDatabaseService
 
         foreach (var item in items)
         {
-            if (item.AvailableAt is null || !item.AvailableAt.Any())
+            if (!item.AvailableAt.Any())
             {
-                if (item.ItemTypes is null || !item.ItemTypes.Any())
+                if (!item.ItemTypes.Any())
                     continue;
 
                 foreach (var type in item.ItemTypes)
                 {
                     foreach (var availability in type.AvailableAt)
                     {
-                        if (!stores.ContainsKey(availability!.StoreId))
+                        if (!stores.ContainsKey(availability.StoreId))
                             stores.Add(availability.StoreId, new List<Guid>());
 
                         stores[availability.StoreId].Add(availability.DefaultSectionId);
@@ -97,7 +96,7 @@ internal class ItemEntityDatabaseService
 
             foreach (var availability in item.AvailableAt)
             {
-                if (!stores.ContainsKey(availability!.StoreId))
+                if (!stores.ContainsKey(availability.StoreId))
                     stores.Add(availability.StoreId, new List<Guid>());
 
                 stores[availability.StoreId].Add(availability.DefaultSectionId);

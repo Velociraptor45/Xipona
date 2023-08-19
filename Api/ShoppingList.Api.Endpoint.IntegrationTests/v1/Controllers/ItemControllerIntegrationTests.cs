@@ -17,19 +17,13 @@ using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.Common;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
@@ -771,7 +765,7 @@ public class ItemControllerIntegrationTests
 
                 await ApplyMigrationsAsync(ArrangeScope);
 
-                var itemDatabaseService = new ItemEntityDatabaseService(this, ArrangeScope);
+                var itemDatabaseService = new ItemEntityDatabaseService(this);
                 await itemDatabaseService.CreateReferencesAsync(ExistingItem, ExpectedItem);
                 await itemDatabaseService.SaveAsync(ExistingItem);
 
@@ -800,7 +794,8 @@ public class ItemControllerIntegrationTests
             await _fixture.SetupSecondLevelPredecessorAsync();
             await _fixture.SetupFirstLevelPredecessorAsync();
             await _fixture.SetupCurrentItemAsync();
-            await _fixture.SetupContractAsync();
+            await _fixture.SetupExpectedNewItemAsync();
+            _fixture.SetupContract();
 
             var sut = _fixture.CreateSut();
 
@@ -808,13 +803,16 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.FirstLevelPredecessor);
             TestPropertyNotSetException.ThrowIfNull(_fixture.SecondLevelPredecessor);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
             var response = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
 
             // Assert
             response.Should().BeOfType<OkResult>();
-            var allEntities = (await _fixture.LoadAllItemEntities()).ToList();
+
+            using var assertScope = _fixture.CreateServiceScope();
+            var allEntities = (await _fixture.LoadAllItemsAsync(assertScope)).ToList();
 
             allEntities.Should().Contain(e => e.Id == _fixture.SecondLevelPredecessor.Id);
             allEntities.Should().Contain(e => e.Id == _fixture.FirstLevelPredecessor.Id);
@@ -833,224 +831,137 @@ public class ItemControllerIntegrationTests
                 && e.Id != _fixture.CurrentItem.Id);
 
             // second level item should not be altered
-            secondLevelEntity.Deleted.Should().BeTrue();
-            secondLevelEntity.Predecessor.Should().BeNull();
-            secondLevelEntity.AvailableAt.Should().BeEmpty();
-            secondLevelEntity.ItemTypes.Should().HaveCount(_fixture.SecondLevelPredecessor.ItemTypes.Count);
-            foreach (var type in _fixture.SecondLevelPredecessor.ItemTypes)
-            {
-                secondLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
-                var entityType = secondLevelEntity.ItemTypes.Single(e => e.Id == type.Id);
-                foreach (var av in type.Availabilities)
-                {
-                    entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
-                    entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id
-                        && eav.StoreId == av.StoreId
-                        && Math.Abs(eav.Price - av.Price) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId);
-                }
-            }
+            secondLevelEntity.Should().BeEquivalentTo(_fixture.SecondLevelPredecessor,
+                opt => opt.UsingDateTimeOffsetWithPrecision().ExcludeItemCycleRef());
 
             // first level item should not be altered
-            firstLevelEntity.Deleted.Should().BeTrue();
-            firstLevelEntity.PredecessorId.Should().Be(secondLevelEntity.Id);
-            firstLevelEntity.AvailableAt.Should().BeEmpty();
-            firstLevelEntity.ItemTypes.Should().HaveCount(_fixture.FirstLevelPredecessor.ItemTypes.Count);
-            foreach (var type in _fixture.FirstLevelPredecessor.ItemTypes)
-            {
-                firstLevelEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
-                var entityType = firstLevelEntity.ItemTypes.Single(e => e.Id == type.Id);
-                foreach (var av in type.Availabilities)
-                {
-                    entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
-                    entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id
-                        && eav.StoreId == av.StoreId
-                        && Math.Abs(eav.Price - av.Price) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId);
-                }
-            }
+            firstLevelEntity.Should().BeEquivalentTo(_fixture.FirstLevelPredecessor,
+                opt => opt.UsingDateTimeOffsetWithPrecision().ExcludeItemCycleRef());
 
-            // second level item should be deleted but not altered otherwise
+            // current item should be deleted but not altered otherwise
+            currentEntity.Should().BeEquivalentTo(_fixture.CurrentItem,
+                opt => opt
+                    .ExcludeItemCycleRef()
+                    .ExcludeRowVersion()
+                    .Excluding(info => info.Path == "Deleted" || info.Path == "UpdatedOn"));
             currentEntity.Deleted.Should().BeTrue();
-            currentEntity.PredecessorId.Should().Be(firstLevelEntity.Id);
-            currentEntity.AvailableAt.Should().BeEmpty();
-            currentEntity.ItemTypes.Should().HaveCount(_fixture.CurrentItem.ItemTypes.Count);
-            foreach (var type in _fixture.CurrentItem.ItemTypes)
-            {
-                currentEntity.ItemTypes.Should().Contain(e => e.Id == type.Id);
-                var entityType = currentEntity.ItemTypes.Single(e => e.Id == type.Id);
-                foreach (var av in type.Availabilities)
-                {
-                    entityType.AvailableAt.Should().HaveCount(type.Availabilities.Count);
-                    entityType.AvailableAt.Should().Contain(eav =>
-                        eav.ItemTypeId == type.Id
-                        && eav.StoreId == av.StoreId
-                        && Math.Abs(eav.Price - av.Price) < 0.01f
-                        && eav.DefaultSectionId == av.DefaultSectionId);
-                }
-            }
+            currentEntity.UpdatedOn.Should().NotBeNull();
+            (DateTimeOffset.UtcNow - currentEntity.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(20));
 
             // there should be a new entity with the CurrentItem as predecessor
-            // and the ItemTypes of the CurrentItem as predecessors of its ItemTypes
-            // and the correct values should be set in the ItemTypes
-            newEntity.Deleted.Should().BeFalse();
-            newEntity.PredecessorId.Should().Be(currentEntity.Id);
-            newEntity.AvailableAt.Should().BeEmpty();
-            newEntity.ItemTypes.Should().HaveCount(_fixture.Contract.ItemTypes.Count());
-            newEntity.ItemTypes.Select(t => t.PredecessorId).Should().NotContainNulls();
-            var contractItemTypes = _fixture.Contract.ItemTypes.ToList();
-            var entitiesAsContractTypes = newEntity.ItemTypes
-                .Select(t => new UpdateItemTypeContract(t.PredecessorId!.Value, t.Name,
-                    t.AvailableAt.Select(av => new ItemAvailabilityContract
-                    {
-                        DefaultSectionId = av.DefaultSectionId,
-                        Price = av.Price,
-                        StoreId = av.StoreId
-                    })))
-                .ToList();
-
-            entitiesAsContractTypes.Should().BeEquivalentTo(contractItemTypes);
+            newEntity.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
+                opt => opt.ExcludeItemCycleRef()
+                    .ExcludeRowVersion()
+                    .ExcludeItemTypeId()
+                    .Excluding(info => info.Path == "Id"));
         }
 
         private sealed class UpdateItemWithTypesAsyncFixture : ItemControllerFixture
         {
-            private List<IStore> _newStores = new();
-            private IManufacturer? _currentManufacturer;
-            private IItemCategory? _currentItemCategory;
-            private IManufacturer? _firstLevelManufacturer;
-            private IItemCategory? _firstLevelItemCategory;
-            private IManufacturer? _secondLevelManufacturer;
-            private IItemCategory? _secondLevelItemCategory;
-            private IManufacturer? _newManufacturer;
-            private IItemCategory? _newItemCategory;
+            private readonly ItemEntityDatabaseService _itemDatabaseService;
 
             public UpdateItemWithTypesAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
+                _itemDatabaseService = new ItemEntityDatabaseService(this);
             }
 
-            public IItem? CurrentItem { get; private set; }
-            public IItem? SecondLevelPredecessor { get; private set; }
-            public IItem? FirstLevelPredecessor { get; private set; }
+            public Item? CurrentItem { get; private set; }
+            public Item? SecondLevelPredecessor { get; private set; }
+            public Item? FirstLevelPredecessor { get; private set; }
             public UpdateItemWithTypesContract? Contract { get; private set; }
+            public Item? ExpectedNewItem { get; private set; }
 
             public async Task SetupCurrentItemAsync()
             {
-                var builder = ItemMother.InitialWithTypes();
+                var builder = ItemEntityMother.InitialWithTypes();
 
                 if (FirstLevelPredecessor is not null)
                 {
-                    var factory = ArrangeScope.ServiceProvider.GetRequiredService<IItemTypeFactory>();
                     var types = FirstLevelPredecessor.ItemTypes
                         .Select(t =>
                         {
-                            var type = new ItemTypeBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
+                            var type = new ItemTypeEntityBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
                             return type;
-                        });
-                    builder.WithTypes(new ItemTypes(types, factory));
+                        })
+                        .ToList();
+                    builder.WithItemTypes(types);
                 }
 
                 CurrentItem = builder
                     .WithPredecessorId(FirstLevelPredecessor?.Id)
                     .Create();
-                _currentItemCategory = ItemCategoryMother.NotDeleted()
-                    .WithId(CurrentItem.ItemCategoryId ?? ItemCategoryId.New)
-                    .Create();
-                _currentManufacturer = ManufacturerMother.NotDeleted()
-                    .WithId(CurrentItem.ManufacturerId ?? ManufacturerId.New)
-                    .Create();
 
-                await StoreAsync(CurrentItem, _currentManufacturer, _currentItemCategory);
+                await _itemDatabaseService.CreateReferencesAsync(CurrentItem);
+                await _itemDatabaseService.SaveAsync(CurrentItem);
             }
 
             public async Task SetupFirstLevelPredecessorAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(SecondLevelPredecessor);
 
-                var factory = ArrangeScope.ServiceProvider.GetRequiredService<IItemTypeFactory>();
                 var types = SecondLevelPredecessor.ItemTypes
                     .Select(t =>
                     {
-                        var type = new ItemTypeBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
+                        var type = new ItemTypeEntityBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
                         return type;
-                    });
+                    })
+                    .ToList();
 
-                FirstLevelPredecessor = ItemMother.InitialWithTypes()
-                    .WithIsDeleted(true)
-                    .WithTypes(new ItemTypes(types, factory))
+                FirstLevelPredecessor = ItemEntityMother.InitialWithTypes()
+                    .WithDeleted(true)
+                    .WithItemTypes(types)
                     .WithPredecessorId(SecondLevelPredecessor.Id)
                     .Create();
-                _firstLevelItemCategory = ItemCategoryMother.NotDeleted()
-                    .WithId(FirstLevelPredecessor.ItemCategoryId ?? ItemCategoryId.New)
-                    .Create();
-                _firstLevelManufacturer = ManufacturerMother.NotDeleted()
-                    .WithId(FirstLevelPredecessor.ManufacturerId ?? ManufacturerId.New)
-                    .Create();
 
-                await StoreAsync(FirstLevelPredecessor, _firstLevelManufacturer, _firstLevelItemCategory);
+                await _itemDatabaseService.CreateReferencesAsync(FirstLevelPredecessor);
+                await _itemDatabaseService.SaveAsync(FirstLevelPredecessor);
             }
 
             public async Task SetupSecondLevelPredecessorAsync()
             {
-                SecondLevelPredecessor = ItemMother.InitialWithTypes()
-                    .WithIsDeleted(true)
-                    .Create();
-                _secondLevelItemCategory = ItemCategoryMother.NotDeleted()
-                    .WithId(SecondLevelPredecessor.ItemCategoryId ?? ItemCategoryId.New)
-                    .Create();
-                _secondLevelManufacturer = ManufacturerMother.NotDeleted()
-                    .WithId(SecondLevelPredecessor.ManufacturerId ?? ManufacturerId.New)
-                    .Create();
+                SecondLevelPredecessor = ItemEntityMother.InitialWithTypes().WithDeleted(true).Create();
 
-                await StoreAsync(SecondLevelPredecessor, _secondLevelManufacturer, _secondLevelItemCategory);
+                await _itemDatabaseService.CreateReferencesAsync(SecondLevelPredecessor);
+                await _itemDatabaseService.SaveAsync(SecondLevelPredecessor);
             }
 
-            public async Task SetupContractAsync()
+            public async Task SetupExpectedNewItemAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(CurrentItem);
 
                 var itemTypes = CurrentItem.ItemTypes
-                    .Select(t => new TestBuilder<UpdateItemTypeContract>()
-                        .AfterCreation(c => c.OldId = t.Id)
-                        .Create())
+                    .Select(t => new ItemTypeEntityBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create())
                     .ToList();
 
-                Contract = new TestBuilder<UpdateItemWithTypesContract>()
-                    .AfterCreation(c => c.QuantityType = CurrentItem.ItemQuantity.Type.ToInt())
-                    .AfterCreation(c => c.QuantityTypeInPacket = CurrentItem.ItemQuantity.InPacket?.Type.ToInt())
-                    .AfterCreation(c => c.QuantityInPacket = CurrentItem.ItemQuantity.InPacket?.Quantity)
-                    .AfterCreation(c => c.ItemTypes = itemTypes)
+                ExpectedNewItem = ItemEntityMother.InitialWithTypes()
+                    .WithPredecessorId(CurrentItem.Id)
+                    .WithItemTypes(itemTypes)
                     .Create();
 
-                _newItemCategory = ItemCategoryMother.NotDeleted()
-                    .WithId(new ItemCategoryId(Contract.ItemCategoryId))
-                    .Create();
-                _newManufacturer = ManufacturerMother.NotDeleted()
-                    .WithId(Contract.ManufacturerId.HasValue
-                        ? new ManufacturerId(Contract.ManufacturerId.Value)
-                        : ManufacturerId.New)
-                    .Create();
+                await _itemDatabaseService.CreateReferencesAsync(ExpectedNewItem);
+            }
 
-                _newStores = new List<IStore>();
-                var factory = ArrangeScope.ServiceProvider.GetRequiredService<ISectionFactory>();
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
 
-                foreach (var av in Contract.ItemTypes.SelectMany(t => t.Availabilities))
-                {
-                    var section = new SectionBuilder()
-                        .WithId(new SectionId(av.DefaultSectionId))
-                        .CreateMany(1);
-
-                    var store = new StoreBuilder()
-                        .WithIsDeleted(false)
-                        .WithId(new StoreId(av.StoreId))
-                        .WithSections(new Sections(section, factory))
-                        .Create();
-
-                    _newStores.Add(store);
-                }
-
-                await StoreAsync(itemCategory: _newItemCategory, manufacturer: _newManufacturer, stores: _newStores);
+                Contract = new UpdateItemWithTypesContract(
+                    ExpectedNewItem.Name,
+                    ExpectedNewItem.Comment,
+                    ExpectedNewItem.QuantityType,
+                    ExpectedNewItem.QuantityInPacket,
+                    ExpectedNewItem.QuantityTypeInPacket,
+                    ExpectedNewItem.ItemCategoryId!.Value,
+                    ExpectedNewItem.ManufacturerId,
+                    ExpectedNewItem.ItemTypes.Select(t => new UpdateItemTypeContract(
+                        t.PredecessorId!.Value,
+                        t.Name,
+                        t.AvailableAt.Select(av => new ItemAvailabilityContract()
+                        {
+                            DefaultSectionId = av.DefaultSectionId,
+                            Price = av.Price,
+                            StoreId = av.StoreId
+                        }))));
             }
 
             public async Task ApplyMigrationsAsync()
@@ -1261,7 +1172,7 @@ public class ItemControllerIntegrationTests
 
                 await ApplyMigrationsAsync(ArrangeScope);
 
-                var itemDatabaseService = new ItemEntityDatabaseService(this, ArrangeScope);
+                var itemDatabaseService = new ItemEntityDatabaseService(this);
                 await itemDatabaseService.CreateReferencesAsync(ExpectedNewItem, ExpectedOldItem, _existingItem);
                 await itemDatabaseService.SaveAsync(_existingItem);
 
