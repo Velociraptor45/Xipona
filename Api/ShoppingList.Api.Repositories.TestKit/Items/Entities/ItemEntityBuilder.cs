@@ -130,6 +130,11 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithPredecessor(null);
     }
 
+    public ItemEntityBuilder WithItemType(ItemType itemType)
+    {
+        return WithItemTypes(itemType.ToMonoList());
+    }
+
     public ItemEntityBuilder WithItemTypes(ICollection<ItemType> itemTypes)
     {
         FillPropertyWith(p => p.ItemTypes, itemTypes);

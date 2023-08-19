@@ -787,15 +787,69 @@ public class ItemControllerIntegrationTests
         }
 
         [Fact]
+        public async Task UpdateItemWithTypesAsync_WithReferencedOnRecipe_ShouldUpdateRecipe()
+        {
+            // Arrange
+            _fixture.SetupCurrentItemWithoutPredecessor();
+            _fixture.SetupExpectedNewItemForItemWithoutPredecessor();
+            _fixture.SetupExpectedRecipe();
+            _fixture.SetupExistingRecipe();
+            _fixture.SetupContract();
+            await _fixture.ApplyMigrationsAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<OkResult>();
+
+            using var assertionScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
+            items.Should().HaveCount(2);
+
+            var oldItem = items.FirstOrDefault(i => i.Id == _fixture.CurrentItem.Id);
+            var newItem = items.FirstOrDefault(i => i.Id != _fixture.CurrentItem.Id);
+            oldItem.Should().NotBeNull();
+            newItem.Should().NotBeNull();
+
+            oldItem.Should().BeEquivalentTo(_fixture.CurrentItem,
+                opt => opt.ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "UpdatedOn" || info.Path == "Deleted")
+                    .ExcludeRowVersion());
+            oldItem!.Deleted.Should().BeTrue();
+            oldItem.UpdatedOn.Should().NotBeNull();
+            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(2000));
+
+            newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
+                opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeItemTypeId().ExcludeRowVersion());
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
+            recipes.Should().HaveCount(1);
+            recipes[0].Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt.ExcludeRowVersion()
+                    .ExcludeRecipeCycleRef()
+                    .Excluding(info => info.Path == "Ingredients[0].DefaultItemId"
+                                       || info.Path == "Ingredients[0].DefaultItemTypeId"));
+            recipes[0].Ingredients.First().DefaultItemId.Should().Be(newItem.Id);
+            recipes[0].Ingredients.First().DefaultItemTypeId.Should().Be(newItem.ItemTypes.First().Id);
+        }
+
+        [Fact]
         public async Task UpdateItemWithTypesAsync_WithItemUpdatedTwiceAlready_ShouldReturnOk()
         {
             // Arrange
-            await _fixture.ApplyMigrationsAsync();
-            await _fixture.SetupSecondLevelPredecessorAsync();
-            await _fixture.SetupFirstLevelPredecessorAsync();
-            await _fixture.SetupCurrentItemAsync();
-            await _fixture.SetupExpectedNewItemAsync();
+            _fixture.SetupSecondLevelPredecessor();
+            _fixture.SetupFirstLevelPredecessor();
+            _fixture.SetupCurrentItem();
+            _fixture.SetupExpectedNewItem();
             _fixture.SetupContract();
+            await _fixture.ApplyMigrationsAsync();
 
             var sut = _fixture.CreateSut();
 
@@ -806,10 +860,10 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            var response = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
+            var result = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
 
             // Assert
-            response.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<OkResult>();
 
             using var assertScope = _fixture.CreateServiceScope();
             var allEntities = (await _fixture.LoadAllItemsAsync(assertScope)).ToList();
@@ -859,6 +913,10 @@ public class ItemControllerIntegrationTests
         private sealed class UpdateItemWithTypesAsyncFixture : ItemControllerFixture
         {
             private readonly ItemEntityDatabaseService _itemDatabaseService;
+            private ItemTypeAvailableAt? _existingAvailability;
+            private ItemTypeAvailableAt? _expectedAvailability;
+            private Recipe? _existingRecipe;
+            private readonly List<Item> _itemsToSave = new();
 
             public UpdateItemWithTypesAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -870,19 +928,16 @@ public class ItemControllerIntegrationTests
             public Item? FirstLevelPredecessor { get; private set; }
             public UpdateItemWithTypesContract? Contract { get; private set; }
             public Item? ExpectedNewItem { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
 
-            public async Task SetupCurrentItemAsync()
+            public void SetupCurrentItem()
             {
                 var builder = ItemEntityMother.InitialWithTypes();
 
                 if (FirstLevelPredecessor is not null)
                 {
                     var types = FirstLevelPredecessor.ItemTypes
-                        .Select(t =>
-                        {
-                            var type = new ItemTypeEntityBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
-                            return type;
-                        })
+                        .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
                         .ToList();
                     builder.WithItemTypes(types);
                 }
@@ -891,20 +946,15 @@ public class ItemControllerIntegrationTests
                     .WithPredecessorId(FirstLevelPredecessor?.Id)
                     .Create();
 
-                await _itemDatabaseService.CreateReferencesAsync(CurrentItem);
-                await _itemDatabaseService.SaveAsync(CurrentItem);
+                _itemsToSave.Add(CurrentItem);
             }
 
-            public async Task SetupFirstLevelPredecessorAsync()
+            public void SetupFirstLevelPredecessor()
             {
                 TestPropertyNotSetException.ThrowIfNull(SecondLevelPredecessor);
 
                 var types = SecondLevelPredecessor.ItemTypes
-                    .Select(t =>
-                    {
-                        var type = new ItemTypeEntityBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create();
-                        return type;
-                    })
+                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
                     .ToList();
 
                 FirstLevelPredecessor = ItemEntityMother.InitialWithTypes()
@@ -913,32 +963,28 @@ public class ItemControllerIntegrationTests
                     .WithPredecessorId(SecondLevelPredecessor.Id)
                     .Create();
 
-                await _itemDatabaseService.CreateReferencesAsync(FirstLevelPredecessor);
-                await _itemDatabaseService.SaveAsync(FirstLevelPredecessor);
+                _itemsToSave.Add(FirstLevelPredecessor);
             }
 
-            public async Task SetupSecondLevelPredecessorAsync()
+            public void SetupSecondLevelPredecessor()
             {
                 SecondLevelPredecessor = ItemEntityMother.InitialWithTypes().WithDeleted(true).Create();
 
-                await _itemDatabaseService.CreateReferencesAsync(SecondLevelPredecessor);
-                await _itemDatabaseService.SaveAsync(SecondLevelPredecessor);
+                _itemsToSave.Add(SecondLevelPredecessor);
             }
 
-            public async Task SetupExpectedNewItemAsync()
+            public void SetupExpectedNewItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(CurrentItem);
 
                 var itemTypes = CurrentItem.ItemTypes
-                    .Select(t => new ItemTypeEntityBuilder().WithIsDeleted(false).WithPredecessorId(t.Id).Create())
+                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
                     .ToList();
 
                 ExpectedNewItem = ItemEntityMother.InitialWithTypes()
                     .WithPredecessorId(CurrentItem.Id)
                     .WithItemTypes(itemTypes)
                     .Create();
-
-                await _itemDatabaseService.CreateReferencesAsync(ExpectedNewItem);
             }
 
             public void SetupContract()
@@ -964,9 +1010,73 @@ public class ItemControllerIntegrationTests
                         }))));
             }
 
+            public void SetupExpectedNewItemForItemWithoutPredecessor()
+            {
+                TestPropertyNotSetException.ThrowIfNull(CurrentItem);
+
+                var itemTypes = CurrentItem.ItemTypes
+                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
+                    .ToList();
+
+                _expectedAvailability = itemTypes.First().AvailableAt.First();
+
+                ExpectedNewItem = ItemEntityMother.InitialWithTypes()
+                    .WithPredecessorId(CurrentItem.Id)
+                    .WithItemTypes(itemTypes)
+                    .Create();
+            }
+
+            public void SetupCurrentItemWithoutPredecessor()
+            {
+                var itemType = ItemTypeEntityMother.Initial().Create();
+                _existingAvailability = itemType.AvailableAt.First();
+                CurrentItem = ItemEntityMother.InitialWithTypes().WithItemType(itemType).Create();
+
+                _itemsToSave.Add(CurrentItem);
+            }
+
+            public void SetupExpectedRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedAvailability);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
+
+                var ingredient = new IngredientEntityBuilder()
+                    .WithDefaultStoreId(_expectedAvailability.StoreId)
+                    .WithDefaultItemId(ExpectedNewItem.Id)
+                    .WithDefaultItemTypeId(ExpectedNewItem.ItemTypes.First().Id)
+                    .Create();
+                ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithIngredient(ingredient)
+                    .Create();
+            }
+
+            public void SetupExistingRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedRecipe);
+                TestPropertyNotSetException.ThrowIfNull(CurrentItem);
+                TestPropertyNotSetException.ThrowIfNull(_existingAvailability);
+
+                _existingRecipe = ExpectedRecipe.DeepClone();
+                _existingRecipe.Ingredients.First().DefaultItemId = CurrentItem.Id;
+                _existingRecipe.Ingredients.First().DefaultItemTypeId = CurrentItem.ItemTypes.First().Id;
+                _existingRecipe.Ingredients.First().DefaultStoreId = _existingAvailability.StoreId;
+            }
+
             public async Task ApplyMigrationsAsync()
             {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
+
                 await ApplyMigrationsAsync(ArrangeScope);
+
+                await _itemDatabaseService.CreateReferencesAsync(_itemsToSave.Append(ExpectedNewItem).ToArray());
+                await _itemDatabaseService.SaveAsync(_itemsToSave.ToArray());
+
+                if (_existingRecipe is not null)
+                {
+                    await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+                    await recipeContext.AddAsync(_existingRecipe);
+                    await recipeContext.SaveChangesAsync();
+                }
             }
         }
     }
