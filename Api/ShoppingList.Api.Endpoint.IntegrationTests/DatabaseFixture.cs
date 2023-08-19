@@ -66,7 +66,7 @@ public abstract class DatabaseFixture : IDisposable
 
     public abstract IEnumerable<DbContext> GetDbContexts(IServiceScope scope);
 
-    protected TContext GetContextInstance<TContext>(IServiceScope scope) where TContext : DbContext
+    public TContext GetContextInstance<TContext>(IServiceScope scope) where TContext : DbContext
     {
         return scope.ServiceProvider.GetRequiredService<TContext>();
     }
