@@ -614,6 +614,11 @@ public class ItemControllerIntegrationTests
             // Arrange
             _fixture.SetupExistingItem();
             _fixture.SetupExpectedItem();
+            _fixture.SetupManufacturers();
+            _fixture.SetupItemCategories();
+            _fixture.SetupStores();
+            _fixture.SetupExpectedRecipe();
+            _fixture.SetupExistingRecipe();
             _fixture.SetupContractWithLessItemTypes();
             await _fixture.PrepareDatabaseAsync();
 
@@ -623,33 +628,55 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExistingItem);
 
             // Act
-            await sut.ModifyItemWithTypesAsync(_fixture.ExistingItem.Id, _fixture.Contract);
+            var result = await sut.ModifyItemWithTypesAsync(_fixture.ExistingItem.Id, _fixture.Contract);
 
             // Assert
-            await _fixture.VerifyMarkingAllItemTypesAsDeleted();
+            using var assertionScope = _fixture.CreateServiceScope();
+
+            result.Should().BeOfType<OkResult>();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
+            items.Should().HaveCount(1);
+            var item = items.SingleOrDefault(i => i.Id == _fixture.ExistingItem.Id);
+            item.Should().NotBeNull();
+            item.Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
+                .Excluding(info => info.Path == "UpdatedOn")
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion());
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
+            recipes.Should().HaveCount(1);
+            var recipe = recipes.First();
+            recipe.Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion());
         }
 
         private sealed class ModifyItemWithTypesAsyncFixture : ItemControllerFixture
         {
-            private IReadOnlyCollection<Store>? _existingStores;
-            private Manufacturer? _existingManufacturer;
-            private ItemCategory? _existingItemCategory;
-            private Item? _expectedItem;
+            private ItemTypeAvailableAt? _existingAvailability;
+            private ItemTypeAvailableAt? _expectedAvailability;
+            private Recipe? _existingRecipe;
+            private List<Manufacturer>? _manufacturers;
+            private List<ItemCategory>? _itemCategories;
+            private List<Store>? _stores;
 
             public ModifyItemWithTypesAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
             }
 
             public Item? ExistingItem { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
             public ModifyItemWithTypesContract? Contract { get; private set; }
 
             public void SetupExistingItem()
             {
+                _existingAvailability = new ItemTypeAvailableAtEntityBuilder().Create();
                 ExistingItem = ItemEntityMother
                     .InitialWithTypes()
                     .WithItemTypes(new List<ItemType>
                     {
-                        ItemTypeEntityMother.Initial().Create(),
+                        ItemTypeEntityMother.Initial().WithAvailableAt(_existingAvailability).Create(),
                         ItemTypeEntityMother.Initial().Create()
                     })
                     .Create();
@@ -658,62 +685,127 @@ public class ItemControllerIntegrationTests
                 {
                     type.ItemId = ExistingItem.Id;
                 }
-
-                _existingItemCategory = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(ExistingItem.ItemCategoryId!.Value)
-                    .Create();
-                _existingManufacturer = new ManufacturerEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(ExistingItem.ManufacturerId!.Value)
-                    .Create();
-
-                _existingStores = ExistingItem.ItemTypes
-                    .SelectMany(t => t.AvailableAt)
-                    .Select(av => StoreEntityMother.Initial()
-                        .WithId(av.StoreId)
-                        .WithSections(new SectionEntityBuilder()
-                            .WithId(av.DefaultSectionId)
-                            .WithIsDefaultSection(true)
-                            .CreateMany(1).ToList()).Create())
-                    .ToList();
             }
 
             public void SetupExpectedItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
 
-                _expectedItem = ExistingItem.DeepClone();
-                foreach (var type in _expectedItem.ItemTypes.Skip(1))
+                _expectedAvailability = new ItemTypeAvailableAtEntityBuilder().Create();
+
+                ExpectedItem = ItemEntityMother
+                    .InitialWithTypes()
+                    .WithId(ExistingItem.Id)
+                    .WithItemTypes(new List<ItemType>
+                    {
+                        ItemTypeEntityMother.Initial()
+                            .WithId(ExistingItem.ItemTypes.First().Id)
+                            .WithItemId(ExistingItem.Id)
+                            .WithAvailableAt(_expectedAvailability)
+                            .Create(),
+                        ExistingItem.ItemTypes.Last().DeepClone(),
+                    })
+                    .Create();
+
+                foreach (var type in ExpectedItem.ItemTypes.Skip(1))
                 {
                     type.IsDeleted = true;
                 }
             }
 
+            public void SetupManufacturers()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+
+                _manufacturers = new List<Manufacturer>()
+                {
+                    new ManufacturerEntityBuilder().WithId(ExpectedItem.ManufacturerId!.Value).WithDeleted(false).Create(),
+                    new ManufacturerEntityBuilder().WithId(ExistingItem.ManufacturerId!.Value).WithDeleted(false).Create()
+                };
+            }
+
+            public void SetupItemCategories()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+
+                _itemCategories = new List<ItemCategory>()
+                {
+                    new ItemCategoryEntityBuilder().WithId(ExpectedItem.ItemCategoryId!.Value).WithDeleted(false).Create(),
+                    new ItemCategoryEntityBuilder().WithId(ExistingItem.ItemCategoryId!.Value).WithDeleted(false).Create()
+                };
+            }
+
+            public void SetupStores()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedAvailability);
+                TestPropertyNotSetException.ThrowIfNull(_existingAvailability);
+
+                _stores = new List<Store>()
+                {
+                    StoreEntityMother.Initial()
+                        .WithId(_expectedAvailability!.StoreId)
+                        .WithSection(SectionEntityMother.Default().WithId(_expectedAvailability.DefaultSectionId).Create())
+                        .Create(),
+                    StoreEntityMother.Initial()
+                        .WithId(_existingAvailability!.StoreId)
+                        .WithSection(SectionEntityMother.Default().WithId(_existingAvailability.DefaultSectionId).Create())
+                        .Create(),
+                };
+            }
+
+            public void SetupExpectedRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedAvailability);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+
+                var ingredient = new IngredientEntityBuilder()
+                    .WithDefaultItemId(ExpectedItem.Id)
+                    .WithDefaultItemTypeId(ExpectedItem.ItemTypes.First().Id)
+                    .WithDefaultStoreId(_expectedAvailability.StoreId)
+                    .Create();
+                ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithIngredient(ingredient)
+                    .Create();
+            }
+
+            public void SetupExistingRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedRecipe);
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(_existingAvailability);
+
+                _existingRecipe = ExpectedRecipe.DeepClone();
+                _existingRecipe.Ingredients.First().DefaultStoreId = _existingAvailability.StoreId;
+            }
+
             public void SetupContractWithLessItemTypes()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+                TestPropertyNotSetException.ThrowIfNull(_expectedAvailability);
 
                 Contract = new ModifyItemWithTypesContract(
-                    ExistingItem.Name,
-                    ExistingItem.Comment,
-                    ExistingItem.QuantityType,
-                    ExistingItem.QuantityInPacket,
-                    ExistingItem.QuantityTypeInPacket,
-                    ExistingItem.ItemCategoryId!.Value,
-                    ExistingItem.ManufacturerId,
+                    ExpectedItem.Name,
+                    ExpectedItem.Comment,
+                    ExpectedItem.QuantityType,
+                    ExpectedItem.QuantityInPacket,
+                    ExpectedItem.QuantityTypeInPacket,
+                    ExpectedItem.ItemCategoryId!.Value,
+                    ExpectedItem.ManufacturerId,
                     new List<ModifyItemTypeContract>
                     {
                         new()
                         {
                             Id = ExistingItem.ItemTypes.First().Id,
-                            Name = ExistingItem.ItemTypes.First().Name,
-                            Availabilities = ExistingItem.ItemTypes.First().AvailableAt.Select(av => new ItemAvailabilityContract
+                            Name = ExpectedItem.ItemTypes.First().Name,
+                            Availabilities = new ItemAvailabilityContract
                             {
-                                StoreId = av.StoreId,
-                                DefaultSectionId = av.DefaultSectionId,
-                                Price = av.Price
-                            })
+                                StoreId = _expectedAvailability.StoreId,
+                                DefaultSectionId = _expectedAvailability.DefaultSectionId,
+                                Price = _expectedAvailability.Price
+                            }.ToMonoList()
                         }
                     });
             }
@@ -721,9 +813,10 @@ public class ItemControllerIntegrationTests
             public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
-                TestPropertyNotSetException.ThrowIfNull(_existingItemCategory);
-                TestPropertyNotSetException.ThrowIfNull(_existingManufacturer);
-                TestPropertyNotSetException.ThrowIfNull(_existingStores);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategories);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturers);
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
 
                 await ApplyMigrationsAsync(ArrangeScope);
 
@@ -731,31 +824,19 @@ public class ItemControllerIntegrationTests
                 await using var itemCategoryDbContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var manufacturerDbContext = GetContextInstance<ManufacturerContext>(ArrangeScope);
                 await using var storeDbContext = GetContextInstance<StoreContext>(ArrangeScope);
+                await using var recipeDbContext = GetContextInstance<RecipeContext>(ArrangeScope);
 
-                itemCategoryDbContext.Add(_existingItemCategory);
-                manufacturerDbContext.Add(_existingManufacturer);
-                itemDbContext.Add(ExistingItem);
-                await storeDbContext.AddRangeAsync(_existingStores);
+                await itemCategoryDbContext.AddRangeAsync(_itemCategories);
+                await manufacturerDbContext.AddRangeAsync(_manufacturers);
+                await itemDbContext.AddAsync(ExistingItem);
+                await storeDbContext.AddRangeAsync(_stores);
+                await recipeDbContext.AddAsync(_existingRecipe);
 
                 await itemCategoryDbContext.SaveChangesAsync();
                 await manufacturerDbContext.SaveChangesAsync();
                 await itemDbContext.SaveChangesAsync();
                 await storeDbContext.SaveChangesAsync();
-            }
-
-            public async Task VerifyMarkingAllItemTypesAsDeleted()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
-                TestPropertyNotSetException.ThrowIfNull(_expectedItem);
-
-                var items = (await LoadAllItemEntities()).ToList();
-                items.Should().HaveCount(1);
-                var item = items.SingleOrDefault(i => i.Id == ExistingItem.Id);
-                item.Should().NotBeNull();
-                item.Should().BeEquivalentTo(_expectedItem, opt => opt
-                    .Excluding(info => info.Path == "UpdatedOn")
-                    .ExcludeItemCycleRef()
-                    .ExcludeRowVersion());
+                await recipeDbContext.SaveChangesAsync();
             }
         }
     }
@@ -1049,7 +1130,7 @@ public class ItemControllerIntegrationTests
         }
 
         [Fact]
-        public async Task UpdateItemAsync_WithExistingItem_ShouldUpdateItem()
+        public async Task UpdateItemAsync_WithExistingItem_WithAvailableStoreChanged_ShouldUpdateItemAndRecipe()
         {
             // Arrange
             _fixture.SetupExpectedItems();
@@ -1138,7 +1219,7 @@ public class ItemControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
 
-                _existingItem = ExpectedOldItem.DeepClone();
+                _existingItem = ExpectedOldItem.DeepClone()!;
                 _existingItem.Deleted = false;
                 _existingItem!.UpdatedOn = null;
             }

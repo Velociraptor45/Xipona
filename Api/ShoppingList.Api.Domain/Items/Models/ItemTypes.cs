@@ -20,7 +20,7 @@ public class ItemTypes : IEnumerable<IItemType>
         _itemTypes = itemTypes.ToDictionary(t => t.Id);
     }
 
-    public async Task ModifyManyAsync(IEnumerable<ItemTypeModification> modifications, IValidator validator)
+    public async Task<IEnumerable<IDomainEvent>> ModifyManyAsync(IEnumerable<ItemTypeModification> modifications, IValidator validator)
     {
         var modificationsList = modifications.ToList();
 
@@ -32,6 +32,8 @@ public class ItemTypes : IEnumerable<IItemType>
             .Select(type => _itemTypeFactory.CreateNew(type.Name, type.Availabilities))
             .ToList();
 
+        var domainEvents = new List<IDomainEvent>();
+
         foreach (var typeId in typeIdsToDelete)
         {
             Delete(typeId);
@@ -39,10 +41,11 @@ public class ItemTypes : IEnumerable<IItemType>
 
         foreach (var type in typesToModify.Values)
         {
-            await ModifyAsync(type, validator);
+            domainEvents.AddRange(await ModifyAsync(type, validator));
         }
 
         AddMany(newTypes);
+        return domainEvents;
     }
 
     public async Task<ItemTypes> UpdateAsync(IEnumerable<ItemTypeUpdate> itemTypeUpdates, IValidator validator)
@@ -111,7 +114,7 @@ public class ItemTypes : IEnumerable<IItemType>
         _itemTypes[id] = type.Delete(out var _);
     }
 
-    private async Task ModifyAsync(ItemTypeModification modification, IValidator validator)
+    private async Task<IEnumerable<IDomainEvent>> ModifyAsync(ItemTypeModification modification, IValidator validator)
     {
         if (!modification.Id.HasValue)
             throw new ArgumentException("Id mustn't be null.");
@@ -121,8 +124,9 @@ public class ItemTypes : IEnumerable<IItemType>
             throw new DomainException(new ItemTypeNotFoundReason(modification.Id.Value));
         }
 
-        var modifiedType = await type.ModifyAsync(modification, validator);
+        var (modifiedType, domainEvents) = await type.ModifyAsync(modification, validator);
         _itemTypes[modifiedType.Id] = modifiedType;
+        return domainEvents;
     }
 
     private void AddMany(IEnumerable<IItemType> types)

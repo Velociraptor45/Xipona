@@ -140,7 +140,7 @@ public class Item : AggregateRoot, IItem
 
         // todo #404: comparison of availabilities
         if (_availabilities.Count != oldAvailabilities.Count
-           || _availabilities.Any(av => oldAvailabilities.Any(oldAv =>
+           || !_availabilities.All(av => oldAvailabilities.Any(oldAv =>
                oldAv.StoreId == av.StoreId
                && oldAv.Price == av.Price
                && oldAv.DefaultSectionId == av.DefaultSectionId)))
@@ -166,7 +166,8 @@ public class Item : AggregateRoot, IItem
         ItemCategoryId = modification.ItemCategoryId;
         ManufacturerId = modification.ManufacturerId;
 
-        await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
+        var domainEvents = await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
+        PublishDomainEvents(domainEvents);
     }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)

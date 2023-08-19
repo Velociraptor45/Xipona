@@ -114,7 +114,9 @@ public class Ingredient : IIngredient
         if (ShoppingListProperties is null)
             return this;
 
-        if (oldAvailabilities.Any(av => av.StoreId == ShoppingListProperties.DefaultStoreId))
+        var newAvailabilitiesList = newAvailabilities.ToList();
+
+        if (newAvailabilitiesList.Any(av => av.StoreId == ShoppingListProperties.DefaultStoreId))
             return this;
 
         return new Ingredient(
@@ -125,7 +127,7 @@ public class Ingredient : IIngredient
             new IngredientShoppingListProperties(
                 DefaultItemId!.Value,
                 DefaultItemTypeId,
-                newAvailabilities.First().StoreId,
+                newAvailabilitiesList[0].StoreId,
                 ShoppingListProperties.AddToShoppingListByDefault));
     }
 }
