@@ -84,6 +84,16 @@ public class RecipeRepository : IRecipeRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId)
+    {
+        var entities = await GetRecipeQuery()
+            .Where(r => r.Ingredients.Any(i => i.DefaultItemId == defaultItemId
+                && i.DefaultItemTypeId == defaultItemTypeId))
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
     public async Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId,
         StoreId defaultStoreId)
     {

@@ -50,21 +50,37 @@ public class ItemType : IItemType
         return Availabilities.Any(av => av.DefaultSectionId == sectionId);
     }
 
-    public async Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator)
+    public async Task<(IItemType ItemType, IEnumerable<IDomainEvent> DomainEvents)> ModifyAsync(
+        ItemTypeModification modification, IValidator validator)
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
         if (!modification.Availabilities.Any())
             throw new DomainException(new CannotModifyItemTypeWithoutAvailabilitiesReason());
 
+        var domainEvents = new List<IDomainEvent>();
+
         await validator.ValidateAsync(modification.Availabilities);
 
-        return new ItemType(
+        var newType = new ItemType(
             Id,
             modification.Name,
             modification.Availabilities,
             PredecessorId,
             IsDeleted);
+
+        // todo #404: comparison of availabilities
+        if (modification.Availabilities.Count != Availabilities.Count
+            || !modification.Availabilities.All(av => Availabilities.Any(oldAv =>
+                oldAv.StoreId == av.StoreId
+                && oldAv.Price == av.Price
+                && oldAv.DefaultSectionId == av.DefaultSectionId)))
+        {
+            domainEvents.Add(
+                new ItemAvailabilitiesChangedDomainEvent(Id, Availabilities, modification.Availabilities));
+        }
+
+        return (newType, domainEvents);
     }
 
     public async Task<IItemType> UpdateAsync(ItemTypeUpdate update, IValidator validator)

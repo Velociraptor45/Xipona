@@ -5,6 +5,13 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
 
 public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
 {
+    public ItemTypeEntityBuilder()
+    {
+        WithPredecessor(null);
+        WithItem(null!);
+        WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(3).ToList());
+    }
+
     public ItemTypeEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);
@@ -71,5 +78,11 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
     {
         FillPropertyWith(p => p.AvailableAt, availableAt);
         return this;
+    }
+
+    // TCG keep
+    public ItemTypeEntityBuilder WithAvailableAt(ItemTypeAvailableAt availableAt)
+    {
+        return WithAvailableAt(new List<ItemTypeAvailableAt> { availableAt });
     }
 }

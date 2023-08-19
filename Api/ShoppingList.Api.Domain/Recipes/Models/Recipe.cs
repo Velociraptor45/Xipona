@@ -57,6 +57,12 @@ public class Recipe : AggregateRoot, IRecipe
         _ingredients.ModifyAfterAvailabilityWasDeleted(itemId, itemTypeId, item, deletedAvailabilityStoreId);
     }
 
+    public void ModifyIngredientsAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities)
+    {
+        _ingredients.ModifyAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
+    }
+
     public void RemoveIngredientsOfItemCategory(ItemCategoryId itemCategoryId)
     {
         _ingredients.RemoveIngredientsOfItemCategory(itemCategoryId);

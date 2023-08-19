@@ -25,5 +25,8 @@ public interface IRecipe
     void ModifyIngredientsAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
         StoreId deletedAvailabilityStoreId);
 
+    void ModifyIngredientsAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities);
+
     void RemoveIngredientsOfItemCategory(ItemCategoryId itemCategoryId);
 }

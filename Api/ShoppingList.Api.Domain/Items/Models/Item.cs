@@ -131,10 +131,22 @@ public class Item : AggregateRoot, IItem
         ItemQuantity = itemChange.ItemQuantity;
         ItemCategoryId = itemChange.ItemCategoryId;
         ManufacturerId = itemChange.ManufacturerId;
+
+        var oldAvailabilities = _availabilities;
         _availabilities = availabilities.ToList();
 
         if (!_availabilities.Any())
             throw new DomainException(new CannotModifyItemWithoutAvailabilitiesReason());
+
+        // todo #404: comparison of availabilities
+        if (_availabilities.Count != oldAvailabilities.Count
+           || !_availabilities.All(av => oldAvailabilities.Any(oldAv =>
+               oldAv.StoreId == av.StoreId
+               && oldAv.Price == av.Price
+               && oldAv.DefaultSectionId == av.DefaultSectionId)))
+        {
+            PublishDomainEvent(new ItemAvailabilitiesChangedDomainEvent(null, oldAvailabilities, _availabilities));
+        }
     }
 
     public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
@@ -154,7 +166,8 @@ public class Item : AggregateRoot, IItem
         ItemCategoryId = modification.ItemCategoryId;
         ManufacturerId = modification.ManufacturerId;
 
-        await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
+        var domainEvents = await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
+        PublishDomainEvents(domainEvents);
     }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)

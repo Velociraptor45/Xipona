@@ -138,4 +138,16 @@ public class Ingredients : IEnumerable<IIngredient>
             _ingredients.Remove(ingredient.Id);
         }
     }
+
+    public void ModifyAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities)
+    {
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == itemId && i.DefaultItemTypeId == itemTypeId);
+
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ModifyAfterAvailabilitiesChanged(oldAvailabilities, newAvailabilities);
+        }
+    }
 }

@@ -56,12 +56,16 @@ public class Ingredient : IIngredient
 
         if (DefaultItemTypeId is null)
         {
+            var storeId = newItem.Availabilities.Any(av => av.StoreId == ShoppingListProperties.DefaultStoreId)
+                ? ShoppingListProperties.DefaultStoreId
+                : newItem.Availabilities.First().StoreId;
+
             return new Ingredient(
                 Id,
                 ItemCategoryId,
                 QuantityType,
                 Quantity,
-                new IngredientShoppingListProperties(newItem.Id, null, ShoppingListProperties.DefaultStoreId,
+                new IngredientShoppingListProperties(newItem.Id, null, storeId,
                     ShoppingListProperties.AddToShoppingListByDefault));
         }
 
@@ -70,12 +74,16 @@ public class Ingredient : IIngredient
             return RemoveDefaultItem();
         }
 
+        var typeStoreId = itemType!.Availabilities.Any(av => av.StoreId == ShoppingListProperties.DefaultStoreId)
+            ? ShoppingListProperties.DefaultStoreId
+            : itemType.Availabilities.First().StoreId;
+
         return new Ingredient(
             Id,
             ItemCategoryId,
             QuantityType,
             Quantity,
-            new IngredientShoppingListProperties(newItem.Id, itemType!.Id, ShoppingListProperties.DefaultStoreId,
+            new IngredientShoppingListProperties(newItem.Id, itemType.Id, typeStoreId,
                 ShoppingListProperties.AddToShoppingListByDefault));
     }
 
@@ -97,6 +105,29 @@ public class Ingredient : IIngredient
                 DefaultItemId!.Value,
                 DefaultItemTypeId,
                 availability.StoreId,
+                ShoppingListProperties.AddToShoppingListByDefault));
+    }
+
+    public IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<IItemAvailability> oldAvailabilities,
+        IEnumerable<IItemAvailability> newAvailabilities)
+    {
+        if (ShoppingListProperties is null)
+            return this;
+
+        var newAvailabilitiesList = newAvailabilities.ToList();
+
+        if (newAvailabilitiesList.Any(av => av.StoreId == ShoppingListProperties.DefaultStoreId))
+            return this;
+
+        return new Ingredient(
+            Id,
+            ItemCategoryId,
+            QuantityType,
+            Quantity,
+            new IngredientShoppingListProperties(
+                DefaultItemId!.Value,
+                DefaultItemTypeId,
+                newAvailabilitiesList[0].StoreId,
                 ShoppingListProperties.AddToShoppingListByDefault));
     }
 }

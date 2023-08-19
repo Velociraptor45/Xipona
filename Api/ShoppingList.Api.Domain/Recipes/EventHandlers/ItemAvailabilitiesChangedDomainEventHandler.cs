@@ -6,12 +6,12 @@ using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.EventHandlers;
 
-public class ItemAvailabilityDeletedDomainEventHandler : IDomainEventHandler<ItemAvailabilityDeletedDomainEvent>
+public class ItemAvailabilitiesChangedDomainEventHandler : IDomainEventHandler<ItemAvailabilitiesChangedDomainEvent>
 {
     private readonly Func<CancellationToken, IRecipeModificationService> _recipeModificationServiceDelegate;
     private readonly ILogger<ItemAvailabilityDeletedDomainEventHandler> _logger;
 
-    public ItemAvailabilityDeletedDomainEventHandler(
+    public ItemAvailabilitiesChangedDomainEventHandler(
         Func<CancellationToken, IRecipeModificationService> recipeModificationServiceDelegate,
         ILogger<ItemAvailabilityDeletedDomainEventHandler> logger)
     {
@@ -19,16 +19,16 @@ public class ItemAvailabilityDeletedDomainEventHandler : IDomainEventHandler<Ite
         _logger = logger;
     }
 
-    public async Task HandleAsync(ItemAvailabilityDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
+    public async Task HandleAsync(ItemAvailabilitiesChangedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         _logger.LogDebug(
-            () => $"Started handling {nameof(ItemAvailabilityDeletedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");
+            () => $"Started handling {nameof(ItemAvailabilitiesChangedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");
 
         var service = _recipeModificationServiceDelegate(cancellationToken);
-        await service.ModifyIngredientsAfterAvailabilityWasDeletedAsync(domainEvent.ItemId, null,
-            domainEvent.Availability.StoreId);
+        await service.ModifyIngredientsAfterAvailabilitiesChangedAsync(domainEvent.ItemId, domainEvent.ItemTypeId,
+            domainEvent.OldAvailabilities, domainEvent.NewAvailabilities);
 
         _logger.LogDebug(
-            () => $"Finished handling {nameof(ItemAvailabilityDeletedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");
+            () => $"Finished handling {nameof(ItemAvailabilitiesChangedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");
     }
 }

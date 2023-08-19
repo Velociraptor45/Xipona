@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Items.DomainEvents;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -78,10 +79,13 @@ public class ItemTypeTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+            var (resultItemType, resultDomainEvents) = await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            resultItemType.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            resultDomainEvents.Should().HaveCount(1);
+            var resultDomainEvent = resultDomainEvents.First();
+            resultDomainEvent.Should().BeOfType<ItemAvailabilitiesChangedDomainEvent>();
         }
 
         [Fact]
