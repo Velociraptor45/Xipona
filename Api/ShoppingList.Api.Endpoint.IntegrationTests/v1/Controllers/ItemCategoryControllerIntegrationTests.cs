@@ -21,8 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ItemCategoryControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public sealed class DeleteItemCategoryAsync
+    public sealed class DeleteItemCategoryAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly DeleteItemCategoryAsyncFixture _fixture;
 

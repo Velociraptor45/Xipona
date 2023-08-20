@@ -49,8 +49,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ItemControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public sealed class SearchItemsForShoppingListAsync
+    public sealed class SearchItemsForShoppingListAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly SearchItemsForShoppingListAsyncFixture _fixture;
 
@@ -585,8 +584,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class ModifyItemAsync
+    public sealed class ModifyItemAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly ModifyItemAsyncFixture _fixture;
 
@@ -737,8 +735,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class ModifyItemWithTypesAsync
+    public sealed class ModifyItemWithTypesAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly ModifyItemWithTypesAsyncFixture _fixture;
 
@@ -920,8 +917,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class UpdateItemWithTypesAsync
+    public sealed class UpdateItemWithTypesAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly UpdateItemWithTypesAsyncFixture _fixture;
 
@@ -1225,8 +1221,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class UpdateItemAsync
+    public sealed class UpdateItemAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly UpdateItemAsyncFixture _fixture;
 
@@ -1270,7 +1265,7 @@ public class ItemControllerIntegrationTests
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "UpdatedOn").ExcludeRowVersion());
             oldItem!.UpdatedOn.Should().NotBeNull();
-            (oldItem.UpdatedOn - _fixture.ExpectedOldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
+            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeRowVersion());
 
@@ -1390,8 +1385,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class UpdateItemPriceAsync
+    public sealed class UpdateItemPriceAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly UpdateItemPriceAsyncFixture _fixture;
 
@@ -1432,7 +1426,8 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(20)));
+                    .Excluding(info => info.Path == "UpdatedOn"));
+            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -1474,7 +1469,8 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .UsingDateTimeOffsetWithPrecision(item => item.UpdatedOn, TimeSpan.FromSeconds(20)));
+                    .Excluding(info => info.Path == "UpdatedOn"));
+            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -1650,8 +1646,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class SearchItemsByItemCategoryAsync
+    public sealed class SearchItemsByItemCategoryAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly SearchItemsByItemCategoryAsyncFixture _fixture;
 
@@ -1770,8 +1765,7 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class DeleteItemAsync
+    public sealed class DeleteItemAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly DeleteItemAsyncFixture _fixture;
 

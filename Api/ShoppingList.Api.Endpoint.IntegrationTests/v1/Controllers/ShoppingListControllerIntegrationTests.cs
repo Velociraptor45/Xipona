@@ -24,8 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ShoppingListControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public sealed class FinishListAsync
+    public sealed class FinishListAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly FinishListAsyncFixture _fixture;
 
@@ -139,8 +138,7 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class AddTemporaryItemToShoppingListAsync
+    public sealed class AddTemporaryItemToShoppingListAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly AddTemporaryItemToShoppingListAsyncFixture _fixture;
 

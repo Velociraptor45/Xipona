@@ -33,8 +33,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class StoreControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public class GetStoreByIdAsync
+    public class GetStoreByIdAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly GetStoreByIdAsyncFixture _fixture;
 
@@ -148,8 +147,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class GetActiveStoresForShoppingAsync
+    public class GetActiveStoresForShoppingAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly GetActiveStoresForShoppingAsyncFixture _fixture;
 
@@ -237,8 +235,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class GetActiveStoresForItemAsync
+    public class GetActiveStoresForItemAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly GetActiveStoresForItemAsyncFixture _fixture;
 
@@ -326,8 +323,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class GetActiveStoresOverviewAsync
+    public class GetActiveStoresOverviewAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly GetActiveStoresOverviewAsyncFixture _fixture;
 
@@ -409,8 +405,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class CreateStoreAsync
+    public class CreateStoreAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly CreateStoreAsyncFixture _fixture;
 
@@ -522,8 +517,7 @@ public class StoreControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class UpdateStoreAsync
+    public class UpdateStoreAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly UpdateStoreAsyncFixture _fixture;
 
