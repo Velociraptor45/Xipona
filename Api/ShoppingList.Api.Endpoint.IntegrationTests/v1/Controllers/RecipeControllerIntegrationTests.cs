@@ -44,8 +44,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class RecipeControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public class CreateRecipeAsync
+    public class CreateRecipeAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly CreateRecipeAsyncFixture _fixture;
 
@@ -235,8 +234,7 @@ public class RecipeControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class SearchRecipesByNameAsync
+    public class SearchRecipesByNameAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly SearchRecipesByNameAsyncFixture _fixture;
 
@@ -367,8 +365,7 @@ public class RecipeControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class ModifyRecipeAsync
+    public class ModifyRecipeAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly ModifyRecipeAsyncFixture _fixture;
 
@@ -634,8 +631,7 @@ public class RecipeControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public class GetItemAmountsForOneServingAsync
+    public class GetItemAmountsForOneServingAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly GetItemAmountsForOneServingAsyncFixture _fixture;
 

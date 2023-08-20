@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain;
@@ -23,12 +24,32 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
 public abstract class DatabaseFixture : IDisposable
 {
+    private static readonly object _lock = new();
     protected readonly DockerFixture DockerFixture;
     private readonly IServiceProvider _provider;
+    private static int _databaseNameCounter = 0;
+    private readonly string _connectionString;
 
     protected DatabaseFixture(DockerFixture dockerFixture)
     {
         DockerFixture = dockerFixture;
+
+        string databaseName;
+        lock (_lock)
+        {
+            _databaseNameCounter++;
+            databaseName = $"{DockerFixture.DatabaseName}-{_databaseNameCounter}";
+            _connectionString = DockerFixture.ConnectionString.Replace("{DatabaseName}", databaseName);
+        }
+
+        using var connection = new MySqlConnection(DockerFixture.ConnectionStringWithoutDb);
+        connection.Open();
+
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}`;";
+        cmd.ExecuteNonQuery();
+
+        connection.Close();
 
         _provider = CreateServiceProvider();
     }
@@ -39,7 +60,7 @@ public abstract class DatabaseFixture : IDisposable
         services.AddCore();
         services.AddDomain();
         services.AddEndpointControllers();
-        services.AddRepositories(DockerFixture.ConnectionString);
+        services.AddRepositories(_connectionString);
         services.AddApplicationServices();
 
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
@@ -55,8 +76,6 @@ public abstract class DatabaseFixture : IDisposable
     public async Task ApplyMigrationsAsync(IServiceScope scope)
     {
         var contexts = GetDbContexts(scope).ToList();
-
-        await contexts.First().Database.EnsureDeletedAsync();
 
         foreach (DbContext context in contexts)
         {
