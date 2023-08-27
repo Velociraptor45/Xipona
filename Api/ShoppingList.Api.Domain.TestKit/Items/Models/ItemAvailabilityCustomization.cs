@@ -8,11 +8,11 @@ public class ItemAvailabilityCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customizations.Add(new ItemAvailabilityBuilder());
-        fixture.Customizations.Add(new ItemAvailabilityEnumeratorBuilder());
+        fixture.Customizations.Add(new ItemAvailabilitySpecimenBuilder());
+        fixture.Customizations.Add(new ItemAvailabilityEnumeratorSpecimenBuilder());
     }
 
-    public class ItemAvailabilityBuilder : ISpecimenBuilder
+    public class ItemAvailabilitySpecimenBuilder : ISpecimenBuilder
     {
         public object Create(object request, ISpecimenContext context)
         {
@@ -30,11 +30,11 @@ public class ItemAvailabilityCustomization : ICustomization
                 return true;
 
             var seededRequest = request as SeededRequest;
-            if (expectedType == seededRequest?.Request)
+            if (expectedType == seededRequest?.Request as Type)
                 return true;
 
             var multipleRequest = request as MultipleRequest;
-            if (expectedType == multipleRequest?.Request)
+            if (expectedType == multipleRequest?.Request as Type)
                 return true;
 
             return false;
@@ -49,7 +49,7 @@ public class ItemAvailabilityCustomization : ICustomization
         }
     }
 
-    public class ItemAvailabilityEnumeratorBuilder : ISpecimenBuilder
+    public class ItemAvailabilityEnumeratorSpecimenBuilder : ISpecimenBuilder
     {
         public object Create(object request, ISpecimenContext context)
         {
@@ -62,10 +62,10 @@ public class ItemAvailabilityCustomization : ICustomization
         private static bool MatchesType(object request)
         {
             var type = typeof(IEnumerator<ItemAvailability>);
-            if (request == type)
+            if (request as Type == type)
                 return true;
 
-            if ((request as SeededRequest)?.Request == type)
+            if ((request as SeededRequest)?.Request as Type == type)
                 return true;
 
             return false;

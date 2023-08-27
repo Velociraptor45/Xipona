@@ -3,22 +3,17 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
-public class ItemQuantityInPacketBuilder : DomainTestBuilderBase<ItemQuantityInPacket>
+public class ItemQuantityInPacketBuilder : DomainRecordTestBuilderBase<ItemQuantityInPacket>
 {
-    public ItemQuantityInPacketBuilder()
-    {
-        Customize(new QuantityCustomization());
-    }
-
     public ItemQuantityInPacketBuilder WithQuantity(Quantity quantity)
     {
-        FillConstructorWith(nameof(quantity), quantity);
+        Modifiers.Add(itemQuantityInPacket => itemQuantityInPacket with { Quantity = quantity });
         return this;
     }
 
     public ItemQuantityInPacketBuilder WithQuantityType(QuantityTypeInPacket type)
     {
-        FillConstructorWith(nameof(type), type);
+        Modifiers.Add(itemQuantityInPacket => itemQuantityInPacket with { Type = type });
         return this;
     }
 }
