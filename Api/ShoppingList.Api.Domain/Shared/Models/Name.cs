@@ -12,7 +12,7 @@ public abstract record Name
 
     public string Value { get; }
 
-    public override string ToString()
+    public sealed override string ToString()
     {
         return Value;
     }
