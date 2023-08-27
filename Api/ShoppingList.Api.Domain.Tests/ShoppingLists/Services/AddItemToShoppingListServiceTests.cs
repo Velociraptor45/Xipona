@@ -1089,7 +1089,7 @@ public class AddItemToShoppingListServiceTests
 
         private IStore? _store;
         private IShoppingListSection? _shoppingListSection;
-        protected IItemAvailability? Availability;
+        protected ItemAvailability? Availability;
 
         public ShoppingListMock? ShoppingListMock { get; protected set; }
         public SectionId? SectionId { get; private set; }

@@ -6,10 +6,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
 
 public class PermanentItem
 {
-    private readonly IEnumerable<IItemAvailability> _availabilities;
+    private readonly IEnumerable<ItemAvailability> _availabilities;
 
     public PermanentItem(ItemId id, ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
-        ManufacturerId? manufacturerId, IEnumerable<IItemAvailability> availabilities)
+        ManufacturerId? manufacturerId, IEnumerable<ItemAvailability> availabilities)
     {
         Id = id;
         Name = name;
@@ -20,7 +20,7 @@ public class PermanentItem
         _availabilities = availabilities;
     }
 
-    public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
+    public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 
     public ItemId Id { get; }
     public ItemName Name { get; }

@@ -11,10 +11,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Items;
 
 public class ItemCreationConverter : IToDomainConverter<CreateItemContract, ItemCreation>
 {
-    private readonly IToDomainConverter<ItemAvailabilityContract, IItemAvailability> _itemAvailabilityConverter;
+    private readonly IToDomainConverter<ItemAvailabilityContract, ItemAvailability> _itemAvailabilityConverter;
 
     public ItemCreationConverter(
-        IToDomainConverter<ItemAvailabilityContract, IItemAvailability> itemAvailabilityConverter)
+        IToDomainConverter<ItemAvailabilityContract, ItemAvailability> itemAvailabilityConverter)
     {
         _itemAvailabilityConverter = itemAvailabilityConverter;
     }

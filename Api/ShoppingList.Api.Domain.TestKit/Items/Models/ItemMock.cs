@@ -75,7 +75,7 @@ public class ItemMock : Mock<IItem>
             .Returns(manufacturerId);
     }
 
-    public void SetupAvailabilities(IEnumerable<IItemAvailability> returnValue)
+    public void SetupAvailabilities(IEnumerable<ItemAvailability> returnValue)
     {
         Setup(i => i.Availabilities)
             .Returns(returnValue.ToList().AsReadOnly());
@@ -93,10 +93,10 @@ public class ItemMock : Mock<IItem>
         Setup(i => i.Delete());
     }
 
-    public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
+    public void SetupMakePermanent(PermanentItem permanentItem, IEnumerable<ItemAvailability> availabilities)
     {
         Setup(i => i.MakePermanent(permanentItem,
-            It.Is<IEnumerable<IItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
+            It.Is<IEnumerable<ItemAvailability>>(avs => avs.IsEquivalentTo(availabilities))));
     }
 
     public void SetupUpdate(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService,
@@ -143,12 +143,12 @@ public class ItemMock : Mock<IItem>
     }
 
     public void VerifyMakePermanentOnce(PermanentItem permanentItem,
-        IEnumerable<IItemAvailability> availabilities)
+        IEnumerable<ItemAvailability> availabilities)
     {
         Verify(
             i => i.MakePermanent(
                 It.Is<PermanentItem>(pi => pi == permanentItem),
-                It.Is<IEnumerable<IItemAvailability>>(list => list.SequenceEqual(availabilities))),
+                It.Is<IEnumerable<ItemAvailability>>(list => list.SequenceEqual(availabilities))),
             Times.Once);
     }
 

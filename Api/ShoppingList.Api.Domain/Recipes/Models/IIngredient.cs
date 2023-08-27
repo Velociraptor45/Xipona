@@ -23,6 +23,6 @@ public interface IIngredient
 
     IIngredient ChangeDefaultStore(IItem item);
 
-    IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<IItemAvailability> oldAvailabilities,
-        IEnumerable<IItemAvailability> newAvailabilities);
+    IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<ItemAvailability> oldAvailabilities,
+        IEnumerable<ItemAvailability> newAvailabilities);
 }

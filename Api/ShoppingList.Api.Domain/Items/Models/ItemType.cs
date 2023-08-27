@@ -12,7 +12,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 public class ItemType : IItemType
 {
-    public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
+    public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<ItemAvailability> availabilities,
         ItemTypeId? predecessorId, bool isDeleted)
     {
         Id = id;
@@ -27,7 +27,7 @@ public class ItemType : IItemType
 
     public ItemTypeId Id { get; }
     public ItemTypeName Name { get; }
-    public IReadOnlyCollection<IItemAvailability> Availabilities { get; }
+    public IReadOnlyCollection<ItemAvailability> Availabilities { get; }
     public ItemTypeId? PredecessorId { get; }
     public bool IsDeleted { get; }
 
@@ -142,7 +142,7 @@ public class ItemType : IItemType
         if (!IsAvailableAt(oldSectionId))
             return this;
 
-        var availabilities = new List<IItemAvailability>();
+        var availabilities = new List<ItemAvailability>();
         for (int i = 0; i < Availabilities.Count; i++)
         {
             var availability = Availabilities.ElementAt(i);

@@ -12,7 +12,7 @@ public static class ItemTypeMother
             .WithoutPredecessorId();
     }
 
-    public static ItemTypeBuilder InitialAvailableAt(IItemAvailability availability)
+    public static ItemTypeBuilder InitialAvailableAt(ItemAvailability availability)
     {
         return new ItemTypeBuilder()
             .WithAvailabilities(availability.ToMonoList())

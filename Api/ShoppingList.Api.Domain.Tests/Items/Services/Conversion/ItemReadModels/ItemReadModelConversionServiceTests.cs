@@ -427,7 +427,7 @@ public class ItemReadModelConversionServiceTests
         }
 
         private static ItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
-            IItemAvailability availability)
+            ItemAvailability availability)
         {
             var section = store.Sections.First();
             var sectionReadModel = new ItemSectionReadModel(

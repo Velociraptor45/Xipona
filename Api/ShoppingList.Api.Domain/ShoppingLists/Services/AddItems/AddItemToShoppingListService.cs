@@ -127,7 +127,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     private void ValidateItemIsAvailableAtStore(IItem item, StoreId storeId,
-        out IItemAvailability availability)
+        out ItemAvailability availability)
     {
         var av = item.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 
@@ -135,7 +135,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     private static void ValidateItemTypeIsAvailableAtStore(IItemType itemType, StoreId storeId,
-        out IItemAvailability availability)
+        out ItemAvailability availability)
     {
         var av = itemType.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 

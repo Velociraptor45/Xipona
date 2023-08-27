@@ -17,12 +17,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 public class Item : AggregateRoot, IItem
 {
-    private List<IItemAvailability> _availabilities;
+    private List<ItemAvailability> _availabilities;
     private readonly ItemTypes? _itemTypes;
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
+        IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
         ItemId? predecessorId)
     {
         Id = id;
@@ -59,7 +59,7 @@ public class Item : AggregateRoot, IItem
         PredecessorId = predecessorId;
         TemporaryId = null;
         _itemTypes = itemTypes;
-        _availabilities = new List<IItemAvailability>();
+        _availabilities = new List<ItemAvailability>();
 
         if (!_itemTypes.Any())
             throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
@@ -80,7 +80,7 @@ public class Item : AggregateRoot, IItem
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
 
-    public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.AsReadOnly();
+    public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.AsReadOnly();
     public bool HasItemTypes => _itemTypes?.Any() ?? false;
 
     protected override IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
@@ -107,7 +107,7 @@ public class Item : AggregateRoot, IItem
         return Availabilities.Any(av => av.StoreId == storeId);
     }
 
-    public void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
+    public void MakePermanent(PermanentItem permanentItem, IEnumerable<ItemAvailability> availabilities)
     {
         if (IsDeleted)
             throw new DomainException(new CannotMakeDeletedItemPermanentReason(Id));
@@ -121,7 +121,7 @@ public class Item : AggregateRoot, IItem
         IsTemporary = false;
     }
 
-    public void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities)
+    public void Modify(ItemModification itemChange, IEnumerable<ItemAvailability> availabilities)
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemReason(Id));

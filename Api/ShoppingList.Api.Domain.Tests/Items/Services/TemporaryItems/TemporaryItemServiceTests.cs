@@ -74,7 +74,7 @@ public class TemporaryItemServiceTests
             _fixture.SetupTemporaryItemMock();
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemMock);
 
-            List<IItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
+            List<ItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
             _fixture.SetupPermanentItem(availabilities);
             _fixture.SetupValidatingAvailabilities();
             _fixture.SetupValidatingItemCategory();
@@ -107,7 +107,7 @@ public class TemporaryItemServiceTests
             _fixture.SetupTemporaryItemMock();
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemMock);
 
-            List<IItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
+            List<ItemAvailability> availabilities = _fixture.ItemMock.Object.Availabilities.ToList();
             _fixture.SetupCommandWithoutManufacturerId(availabilities);
             _fixture.SetupValidatingAvailabilities();
             _fixture.SetupValidatingItemCategory();
@@ -141,18 +141,18 @@ public class TemporaryItemServiceTests
                 PermanentItem = Fixture.Create<PermanentItem>();
             }
 
-            public void SetupPermanentItem(IEnumerable<IItemAvailability> availabilities)
+            public void SetupPermanentItem(IEnumerable<ItemAvailability> availabilities)
             {
-                Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IItemAvailability>>(
+                Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<ItemAvailability>>(
                     nameof(availabilities), availabilities);
 
                 PermanentItem = Fixture.Create<PermanentItem>();
             }
 
-            public void SetupCommandWithoutManufacturerId(IEnumerable<IItemAvailability> availabilities)
+            public void SetupCommandWithoutManufacturerId(IEnumerable<ItemAvailability> availabilities)
             {
                 Fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId?>("manufacturerId", null);
-                Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<IItemAvailability>>(
+                Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<ItemAvailability>>(
                     nameof(availabilities), availabilities);
 
                 PermanentItem = Fixture.Create<PermanentItem>();

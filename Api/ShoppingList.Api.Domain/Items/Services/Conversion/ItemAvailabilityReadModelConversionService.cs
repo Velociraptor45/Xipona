@@ -20,7 +20,7 @@ public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadM
     public async Task<IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailabilityReadModel>>> ConvertAsync(
         IEnumerable<IItem> items)
     {
-        var availabilities = new Dictionary<(ItemId, ItemTypeId?), IEnumerable<IItemAvailability>>();
+        var availabilities = new Dictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailability>>();
         foreach (IItem item in items)
         {
             if (item.HasItemTypes)
@@ -40,7 +40,7 @@ public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadM
     }
 
     public async Task<IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailabilityReadModel>>> ConvertAsync(
-        IDictionary<(ItemId, ItemTypeId?), IEnumerable<IItemAvailability>> availabilitiesDict)
+        IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailability>> availabilitiesDict)
     {
         var availabilitiesList = availabilitiesDict.ToList();
         var storeIds = availabilitiesDict.Values

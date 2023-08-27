@@ -100,7 +100,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
     }
 
     private static IEnumerable<ItemAvailabilityReadModel> ToAvailabilityReadModel(
-        IEnumerable<IItemAvailability> availabilities, IReadOnlyDictionary<StoreId, IStore> stores)
+        IEnumerable<ItemAvailability> availabilities, IReadOnlyDictionary<StoreId, IStore> stores)
     {
         foreach (var av in availabilities)
         {

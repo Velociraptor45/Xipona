@@ -10,7 +10,7 @@ public interface IItemType
 {
     ItemTypeId Id { get; }
     ItemTypeName Name { get; }
-    IReadOnlyCollection<IItemAvailability> Availabilities { get; }
+    IReadOnlyCollection<ItemAvailability> Availabilities { get; }
     ItemTypeId? PredecessorId { get; }
     bool IsDeleted { get; }
 
