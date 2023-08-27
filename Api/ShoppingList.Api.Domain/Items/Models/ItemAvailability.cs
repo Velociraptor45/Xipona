@@ -6,9 +6,6 @@ public sealed record ItemAvailability(StoreId StoreId, Price Price, SectionId De
 {
     public ItemAvailability TransferToDefaultSection(SectionId sectionId)
     {
-        return new ItemAvailability(
-            StoreId,
-            Price,
-            sectionId);
+        return this with { DefaultSectionId = sectionId };
     }
 }
