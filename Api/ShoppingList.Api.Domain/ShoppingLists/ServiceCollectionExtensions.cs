@@ -20,7 +20,6 @@ public static class ServiceCollectionExtensions
 {
     internal static void AddShoppingLists(this IServiceCollection services)
     {
-        services.AddTransient<IShoppingListItemFactory, ShoppingListItemFactory>();
         services.AddTransient<IShoppingListFactory, ShoppingListFactory>();
         services.AddTransient<IShoppingListSectionFactory, ShoppingListSectionFactory>();
 
@@ -38,11 +37,10 @@ public static class ServiceCollectionExtensions
             var shoppingListSectionFactory = provider.GetRequiredService<IShoppingListSectionFactory>();
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
-            var itemFactory = provider.GetRequiredService<IShoppingListItemFactory>();
             var shoppingListRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             return token => new AddItemToShoppingListService(shoppingListSectionFactory, storeRepositoryDelegate,
-                itemRepositoryDelegate, itemFactory, shoppingListRepositoryDelegate, token);
+                itemRepositoryDelegate, shoppingListRepositoryDelegate, token);
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListReadModelConversionService>>(provider =>

@@ -11,11 +11,11 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
 {
     private readonly IShoppingListFactory _shoppingListFactory;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
-    private readonly IToDomainConverter<ItemsOnList, IShoppingListItem> _shoppingListItemConverter;
+    private readonly IToDomainConverter<ItemsOnList, ShoppingListItem> _shoppingListItemConverter;
 
     public ShoppingListConverter(IShoppingListFactory shoppingListFactory,
         IShoppingListSectionFactory shoppingListSectionFactory,
-        IToDomainConverter<ItemsOnList, IShoppingListItem> shoppingListItemConverter)
+        IToDomainConverter<ItemsOnList, ShoppingListItem> shoppingListItemConverter)
     {
         _shoppingListFactory = shoppingListFactory;
         _shoppingListSectionFactory = shoppingListSectionFactory;
@@ -53,7 +53,7 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
         return (list as IShoppingList)!;
     }
 
-    public IShoppingListSection CreateSection(Guid sectionId, IEnumerable<IShoppingListItem> items)
+    public IShoppingListSection CreateSection(Guid sectionId, IEnumerable<ShoppingListItem> items)
     {
         return _shoppingListSectionFactory.Create(
             new SectionId(sectionId),

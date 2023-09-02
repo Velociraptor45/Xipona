@@ -137,7 +137,7 @@ public class ShoppingListSectionTests
 
         private sealed class AddItemFixture : ShoppingListSectionFixture
         {
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
             public ShoppingListSection? ExpectedResult { get; private set; }
 
             public void SetupItemNotAlreadyExisting()
@@ -286,7 +286,7 @@ public class ShoppingListSectionTests
         private sealed class PutItemInBasketFixture : ShoppingListSectionFixture
         {
             public ShoppingListSection? ExpectedResult { get; private set; }
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
 
             public void SetupItemNotAlreadyInBasket()
             {
@@ -405,7 +405,7 @@ public class ShoppingListSectionTests
         private sealed class RemoveItemFromBasketFixture : ShoppingListSectionFixture
         {
             public ShoppingListSection? ExpectedResult { get; private set; }
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
 
             public void SetupItemNotAlreadyInBasket()
             {
@@ -515,7 +515,7 @@ public class ShoppingListSectionTests
         private sealed class ChangeItemQuantityFixture : ShoppingListSectionFixture
         {
             public ShoppingListSection? ExpectedResult { get; private set; }
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
             public QuantityInBasket? Quantity { get; private set; }
 
             public void SetupItemQuantity()
@@ -559,7 +559,7 @@ public class ShoppingListSectionTests
     {
         private readonly ShoppingListSectionBuilder _builder = new();
 
-        protected void SetupSectionContainingItem(IShoppingListItem item)
+        protected void SetupSectionContainingItem(ShoppingListItem item)
         {
             _builder.WithItem(item);
         }

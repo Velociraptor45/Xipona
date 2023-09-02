@@ -58,6 +58,5 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
         serviceCollection.AddImplementationOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToDomainConverter<,>));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListFactory).Assembly, typeof(IShoppingListFactory));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListSectionFactory).Assembly, typeof(IShoppingListSectionFactory));
-        serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListItemFactory).Assembly, typeof(IShoppingListItemFactory));
     }
 }

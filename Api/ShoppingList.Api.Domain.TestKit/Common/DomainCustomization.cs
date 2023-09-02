@@ -20,8 +20,6 @@ public class DomainCustomization : ICustomization
     public void Customize(IFixture fixture)
     {
         fixture.Customizations.Add(new EnumSpecimenBuilder<QuantityType>());
-        fixture.Customizations.Add(new TypeRelay(typeof(ItemAvailability), typeof(ItemAvailability)));
-        fixture.Customizations.Add(new TypeRelay(typeof(IShoppingListItem), typeof(ShoppingListItem)));
         fixture.Customizations.Add(new TypeRelay(typeof(IShoppingListSection), typeof(ShoppingListSection)));
         fixture.Customizations.Add(new TypeRelay(typeof(IItem), typeof(Item)));
         fixture.Customizations.Add(new TypeRelay(typeof(IItemType), typeof(ItemType)));
