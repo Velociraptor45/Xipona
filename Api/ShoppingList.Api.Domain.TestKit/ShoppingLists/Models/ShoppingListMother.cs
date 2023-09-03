@@ -61,7 +61,7 @@ public static class ShoppingListMother
         return new ShoppingListBuilder();
     }
 
-    public static ShoppingListBuilder OneSection(IEnumerable<IShoppingListItem> items)
+    public static ShoppingListBuilder OneSection(IEnumerable<ShoppingListItem> items)
     {
         return new ShoppingListBuilder()
             .WithSection(ShoppingListSectionMother.Items(items).Create())

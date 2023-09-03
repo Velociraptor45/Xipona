@@ -16,7 +16,7 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        ItemId? predecessorId, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId,
+        ItemId? predecessorId, IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId,
         DateTimeOffset? updatedOn)
     {
         var item = new Item(
@@ -91,7 +91,7 @@ public class ItemFactory : IItemFactory
             itemQuantity,
             null,
             null,
-            new List<IItemAvailability>
+            new List<ItemAvailability>
             {
                 new ItemAvailability(storeId, price, defaultSectionId)
             },

@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
-public class ItemAvailabilityBuilder : DomainTestBuilderBase<ItemAvailability>
+public class ItemAvailabilityBuilder : DomainRecordTestBuilderBase<ItemAvailability>
 {
     public ItemAvailabilityBuilder()
     {
@@ -13,19 +13,19 @@ public class ItemAvailabilityBuilder : DomainTestBuilderBase<ItemAvailability>
 
     public ItemAvailabilityBuilder WithStoreId(StoreId storeId)
     {
-        FillConstructorWith("storeId", storeId);
+        Modifiers.Add(itemAvailability => itemAvailability with { StoreId = storeId });
         return this;
     }
 
-    public ItemAvailabilityBuilder WithPrice(float price)
+    public ItemAvailabilityBuilder WithPrice(Price price)
     {
-        FillConstructorWith("price", price);
+        Modifiers.Add(itemAvailability => itemAvailability with { Price = price });
         return this;
     }
 
     public ItemAvailabilityBuilder WithDefaultSectionId(SectionId defaultSectionId)
     {
-        FillConstructorWith("defaultSectionId", defaultSectionId);
+        Modifiers.Add(itemAvailability => itemAvailability with { DefaultSectionId = defaultSectionId });
         return this;
     }
 }

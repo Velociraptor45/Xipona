@@ -18,19 +18,19 @@ public class ShoppingListSectionBuilder : DomainTestBuilderBase<ShoppingListSect
         return this;
     }
 
-    public ShoppingListSectionBuilder WithItems(IEnumerable<IShoppingListItem> items)
+    public ShoppingListSectionBuilder WithItems(IEnumerable<ShoppingListItem> items)
     {
         FillConstructorWith("shoppingListItems", items);
         return this;
     }
 
-    public ShoppingListSectionBuilder WithItem(IShoppingListItem item)
+    public ShoppingListSectionBuilder WithItem(ShoppingListItem item)
     {
         return WithItems(item.ToMonoList());
     }
 
     public ShoppingListSectionBuilder WithoutItems()
     {
-        return WithItems(Enumerable.Empty<IShoppingListItem>());
+        return WithItems(Enumerable.Empty<ShoppingListItem>());
     }
 }

@@ -2,4 +2,4 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.DomainEvents;
 
-public sealed record ItemAvailabilityDeletedDomainEvent(IItemAvailability Availability) : ItemDomainEvent;
+public sealed record ItemAvailabilityDeletedDomainEvent(ItemAvailability Availability) : ItemDomainEvent;

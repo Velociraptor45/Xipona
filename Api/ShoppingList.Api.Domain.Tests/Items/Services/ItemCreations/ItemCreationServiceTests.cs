@@ -225,7 +225,7 @@ public class ItemCreationServiceTests
         {
             private IItem? _item;
             private ManufacturerId? _manufacturerId;
-            private List<IItemAvailability>? _availabilities;
+            private List<ItemAvailability>? _availabilities;
             private ItemReadModel? _itemReadModel;
 
             public ItemCreation? ItemCreation { get; private set; }
@@ -234,7 +234,7 @@ public class ItemCreationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_availabilities);
                 Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", _manufacturerId);
-                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<IItemAvailability>>(
+                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<ItemAvailability>>(
                     "availabilities", _availabilities);
 
                 ItemCreation = Fixture.Create<ItemCreation>();

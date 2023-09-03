@@ -58,7 +58,7 @@ public class Recipe : AggregateRoot, IRecipe
     }
 
     public void ModifyIngredientsAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
-        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities)
+        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
     {
         _ingredients.ModifyAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
     }

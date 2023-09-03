@@ -140,7 +140,7 @@ public class Ingredients : IEnumerable<IIngredient>
     }
 
     public void ModifyAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
-        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities)
+        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
     {
         var ingredientsWithItem = _ingredients.Values
             .Where(i => i.DefaultItemId == itemId && i.DefaultItemTypeId == itemTypeId);

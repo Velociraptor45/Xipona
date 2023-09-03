@@ -17,7 +17,7 @@ public class AvailabilityValidationService : IAvailabilityValidationService
         _storeRepository = storeRepositoryDelegate(cancellationToken);
     }
 
-    public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities)
+    public async Task ValidateAsync(IEnumerable<ItemAvailability> availabilities)
     {
         var availabilitiesList = availabilities.ToList();
 

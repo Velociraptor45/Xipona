@@ -115,7 +115,7 @@ public class AvailabilityValidationServiceTests
             _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
         }
 
-        public List<IItemAvailability>? Availabilities { get; private set; }
+        public List<ItemAvailability>? Availabilities { get; private set; }
 
         public AvailabilityValidationService CreateSut()
         {
@@ -124,7 +124,7 @@ public class AvailabilityValidationServiceTests
 
         public void SetupAvailabilitiesWithDuplicatedStoreIds()
         {
-            Availabilities = new List<IItemAvailability>();
+            Availabilities = new List<ItemAvailability>();
             var availability = ItemAvailabilityMother.Initial().Create();
             var availability2 = ItemAvailabilityMother.Initial().WithStoreId(availability.StoreId).Create();
             Availabilities.Add(availability);
@@ -134,7 +134,7 @@ public class AvailabilityValidationServiceTests
         public void SetupAvailabilities()
         {
             Availabilities =
-                ((IEnumerable<IItemAvailability>)ItemAvailabilityMother.Initial().CreateMany(3))
+                ((IEnumerable<ItemAvailability>)ItemAvailabilityMother.Initial().CreateMany(3))
                 .ToList();
         }
 

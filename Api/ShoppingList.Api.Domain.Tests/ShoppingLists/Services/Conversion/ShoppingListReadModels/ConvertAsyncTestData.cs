@@ -167,7 +167,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
     }
 
-    private IItemAvailability GetAvailabilityFrom(IStore store)
+    private ItemAvailability GetAvailabilityFrom(IStore store)
     {
         return new ItemAvailabilityBuilder()
             .WithStoreId(store.Id)

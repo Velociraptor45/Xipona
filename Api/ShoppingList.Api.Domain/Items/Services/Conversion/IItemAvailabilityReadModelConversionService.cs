@@ -9,5 +9,5 @@ public interface IItemAvailabilityReadModelConversionService
         IEnumerable<IItem> items);
 
     Task<IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailabilityReadModel>>> ConvertAsync(
-        IDictionary<(ItemId, ItemTypeId?), IEnumerable<IItemAvailability>> availabilitiesDict);
+        IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailability>> availabilitiesDict);
 }

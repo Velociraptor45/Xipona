@@ -46,7 +46,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
         var addItemToShoppingListService = _addItemToShoppingListServiceDelegate(_cancellationToken);
         foreach (var list in shoppingLists)
         {
-            IShoppingListItem oldListItem = list.Items
+            ShoppingListItem oldListItem = list.Items
                 .First(i => i.Id == oldItemId);
             if (oldListItem.TypeId != null)
                 throw new DomainException(new ShoppingListItemHasTypeReason(list.Id, oldListItem.Id));

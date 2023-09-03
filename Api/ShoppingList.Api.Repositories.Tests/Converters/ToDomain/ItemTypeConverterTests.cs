@@ -45,7 +45,5 @@ public class ItemTypeConverterTests : ToDomainConverterTestBase<ItemType, IItemT
     {
         serviceCollection.AddImplementationOfGenericType(typeof(ItemTypeConverter).Assembly, typeof(IToDomainConverter<,>));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IItemTypeFactory).Assembly, typeof(IItemTypeFactory));
-
-        ItemTypeAvailabilityConverterTests.AddDependencies(serviceCollection);
     }
 }

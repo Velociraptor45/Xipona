@@ -126,7 +126,7 @@ public class ItemTests
             // Arrange
             IItem sut = ItemMother.Initial().Create();
             PermanentItem permanentItem = new DomainTestBuilder<PermanentItem>().Create();
-            IEnumerable<IItemAvailability> availabilities =
+            IEnumerable<ItemAvailability> availabilities =
                 ItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
             // Act
@@ -151,7 +151,7 @@ public class ItemTests
             // Arrange
             IItem sut = ItemMother.Initial().WithIsDeleted(true).Create();
             PermanentItem permanentItem = new DomainTestBuilder<PermanentItem>().Create();
-            IEnumerable<IItemAvailability> availabilities =
+            IEnumerable<ItemAvailability> availabilities =
                 ItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
             // Act
@@ -172,7 +172,7 @@ public class ItemTests
             // Arrange
             IItem sut = ItemMother.Initial().WithIsTemporary(isTemporary).Create();
             ItemModification itemModify = new DomainTestBuilder<ItemModification>().Create();
-            IEnumerable<IItemAvailability> availabilities =
+            IEnumerable<ItemAvailability> availabilities =
                 ItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
             // Act
@@ -199,7 +199,7 @@ public class ItemTests
             // Arrange
             IItem sut = ItemMother.Initial().WithIsTemporary(isTemporary).WithIsDeleted(true).Create();
             ItemModification itemModify = new DomainTestBuilder<ItemModification>().Create();
-            IEnumerable<IItemAvailability> availabilities =
+            IEnumerable<ItemAvailability> availabilities =
                 ItemAvailabilityMother.Initial().CreateMany(3).ToList();
 
             // Act
@@ -1047,7 +1047,7 @@ public class ItemTests
             ValidatorMock.SetupValidateAsync(manufacturerId);
         }
 
-        protected void SetupValidatingAvailabilitiesSuccess(IEnumerable<IItemAvailability> availabilities)
+        protected void SetupValidatingAvailabilitiesSuccess(IEnumerable<ItemAvailability> availabilities)
         {
             ValidatorMock.SetupValidateAsync(availabilities);
         }
@@ -1618,7 +1618,7 @@ public class ItemTests
         private sealed class RemoveAvailabilitiesForFixture : ItemFixture
         {
             public StoreId? StoreId { get; private set; }
-            public IReadOnlyCollection<IItemAvailability>? ExpectedItemAvailabilities { get; private set; }
+            public IReadOnlyCollection<ItemAvailability>? ExpectedItemAvailabilities { get; private set; }
             public ItemDeletedDomainEvent? ExpectedItemDeletedDomainEvent { get; private set; }
             public ItemTypeDeletedDomainEvent? ExpectedItemTypeDeletedDomainEvent { get; private set; }
             public ItemAvailabilityDeletedDomainEvent? ExpectedItemAvailabilityDeletedDomainEvent { get; private set; }
@@ -1690,7 +1690,7 @@ public class ItemTests
 
                 Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
-                ExpectedItemAvailabilities = new List<IItemAvailability> { itemTypes.First().Availabilities.Last() };
+                ExpectedItemAvailabilities = new List<ItemAvailability> { itemTypes.First().Availabilities.Last() };
                 ExpectedItemTypeAvailabilityDeletedDomainEvent =
                     new ItemTypeAvailabilityDeletedDomainEvent(itemTypes.First().Id, itemTypes.First().Availabilities.First())
                     {

@@ -26,9 +26,9 @@ public class ShoppingList : AggregateRoot, IShoppingList
     public DateTimeOffset? CompletionDate { get; private set; }
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
-    public IReadOnlyCollection<IShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
+    public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
 
-    public void AddItem(IShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
+    public void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
         if (throwIfAlreadyPresent && Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
             throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));

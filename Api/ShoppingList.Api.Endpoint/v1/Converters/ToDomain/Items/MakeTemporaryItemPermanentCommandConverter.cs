@@ -13,10 +13,10 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToDomain.Items;
 public class MakeTemporaryItemPermanentCommandConverter :
     IToDomainConverter<(Guid id, MakeTemporaryItemPermanentContract contract), MakeTemporaryItemPermanentCommand>
 {
-    private readonly IToDomainConverter<ItemAvailabilityContract, IItemAvailability> _itemAvailabilityConverter;
+    private readonly IToDomainConverter<ItemAvailabilityContract, ItemAvailability> _itemAvailabilityConverter;
 
     public MakeTemporaryItemPermanentCommandConverter(
-        IToDomainConverter<ItemAvailabilityContract, IItemAvailability> itemAvailabilityConverter)
+        IToDomainConverter<ItemAvailabilityContract, ItemAvailability> itemAvailabilityConverter)
     {
         _itemAvailabilityConverter = itemAvailabilityConverter;
     }

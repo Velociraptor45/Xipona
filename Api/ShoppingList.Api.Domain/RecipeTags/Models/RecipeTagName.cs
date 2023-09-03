@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
-public class RecipeTagName : Name
+public record RecipeTagName : Name
 {
     public RecipeTagName(string value) : base(value)
     {

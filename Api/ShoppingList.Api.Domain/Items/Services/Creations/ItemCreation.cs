@@ -6,10 +6,10 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 
 public class ItemCreation
 {
-    private readonly IEnumerable<IItemAvailability> _availabilities;
+    private readonly IEnumerable<ItemAvailability> _availabilities;
 
     public ItemCreation(ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
-        ManufacturerId? manufacturerId, IEnumerable<IItemAvailability> availabilities)
+        ManufacturerId? manufacturerId, IEnumerable<ItemAvailability> availabilities)
     {
         Name = name;
         Comment = comment;
@@ -25,5 +25,5 @@ public class ItemCreation
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
 
-    public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
+    public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 }

@@ -62,7 +62,7 @@ public class RecipeModificationService : IRecipeModificationService
     }
 
     public async Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
-        IEnumerable<IItemAvailability> oldAvailabilities, IEnumerable<IItemAvailability> newAvailabilities)
+        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
     {
         var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId);
         var item = await _itemRepository.FindActiveByAsync(itemId);
