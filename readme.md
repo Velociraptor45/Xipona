@@ -73,7 +73,7 @@ Configure the webserver address & the frontend's environment in shoppinglist.con
 ### yml files
 Under *Docker/Compose/* are yml files for development and production. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
 
-Now start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. Your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
+Now start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. If you use the key vault, your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
 
 ### https
 If you don't want to run the application behind a reverse proxy that handles the certificate for you, you can also configure the application for https.
@@ -96,8 +96,6 @@ If you don't want to run the application behind a reverse proxy that handles the
     }
     ```
 
-***
-
 ## Local Development Setup
 To get the everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the dev database.
 
@@ -111,10 +109,8 @@ If you don't want to use the key vault, create a PH_SL_DB_CONNECTION_STRING_FILE
 ### Frontend
 No further actions are required
 
-***
-
 ## General Setup
-Before performing the general setup, make sure you did the local development setup and/or the Docker setup before. This step required a running DB container and a running Vault container (if you want to use the key vault).
+Before performing the general setup, make sure you did the the Docker setup before. This step requires a running DB container and a running Vault container (if you want to use the key vault).
 
 ### Key Vault
 Make sure your key vault container is running and go to https://\<vault-address\>:\<vault-port\>/ui where you'll initialize the vault. Specify that the root key should be split into 1 shared key and that 1 key is needed to unseal the vault. After that, this shared key (used to unseal the vault) and the root token (used to login) are displayed. Store both of them somewhere safe and login using the Token method and your root token.
