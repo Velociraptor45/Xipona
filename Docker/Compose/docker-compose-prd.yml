@@ -44,7 +44,7 @@ services:
       - Vault
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - prd-ph-shoppinglist-api-tls:/app/ssl
+      # - prd-ph-shoppinglist-api-tls:/app/ssl # uncomment this for https support, see readme
       - prd-ph-shoppinglist-api-logs:/app/logs
       - prd-ph-shoppinglist-api-config:/app/config
     networks: 

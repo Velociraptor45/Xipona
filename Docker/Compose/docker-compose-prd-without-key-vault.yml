@@ -25,7 +25,7 @@ services:
     depends_on:
       - Database
     volumes:
-      - prd-ph-shoppinglist-api-tls:/app/ssl
+      # - prd-ph-shoppinglist-api-tls:/app/ssl # uncomment this for https support, see readme
       - prd-ph-shoppinglist-api-logs:/app/logs
       - prd-ph-shoppinglist-api-config:/app/config
     networks: 

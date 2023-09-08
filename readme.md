@@ -25,11 +25,6 @@ The ProjectHermes ShoppingList comes with the option to connecto to a Hashicorp 
 Prepare the following things:
 - Certificates<br/>
   You need a root certificate (with .crt file ending) and generate the follwing certificates with it
-  - Api
-    - shoppinglist-api.crt
-    - shoppinglist-api.key
-    - shoppinglist-api-local.crt (only for local development)
-    - shoppinglist-api-local.key (only for local development)
   - Frontend
     - shoppinglist-frontend.crt
     - shoppinglist-frontend.key
@@ -38,7 +33,6 @@ Prepare the following things:
     - vault-key.pem (the certificate key)
 - Docker Volumes
   - Api
-    - (prd/dev)-ph-shoppinglist-api-tls
     - (prd/dev)-ph-shoppinglist-api-logs
     - (prd/dev)-ph-shoppinglist-api-config
   - Frontend
@@ -68,7 +62,6 @@ If you don't want to use the key vault, you can skip this section.
 - Set the vault address in the api's appsettings files (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*)
 
 ### Api
-Copy the api certificate files (shoppinglist-api.crt & shoppinglist-api.key) into the root directory of the (prd/dev)-ph-shoppinglist-api-**tls** volume.
 The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume.
 
 ### Frontend
@@ -82,15 +75,33 @@ Under *Docker/Compose/* are yml files for development and production. You have t
 
 Now start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. Your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
 
+### https
+If you don't want to run the application behind a reverse proxy that handles the certificate for you, you can also configure the application for https.
+
+#### Api
+1. Create the docker volume (prd/dev)-ph-shoppinglist-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
+2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the (prd/dev)-ph-shoppinglist-api-**tls** volume.
+3. Replace the existing kestrel http endpoint in your `appsettings.{env}.json` with an https configuration like the following or [any other valid one](Api/ShoppingList.Api.WebApp/appsettings.Production.json). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
+    ```
+    "Kestrel": {
+      "Endpoints": {
+        "HttpsInlineCertAndKeyFile": {
+          "Url": "https://localhost:5002",
+          "Certificate": {
+            "Path": "ssl/<cert-name>.crt",
+            "KeyPath": "ssl/<cert-key-name>.key"
+          }
+        }
+      }
+    }
+    ```
+
 ***
 
 ## Local Development Setup
 To get the everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the dev database.
 
 ### API
-
-#### Certificate
-The API is running via https and needs the local certificate files (shoppinglist-api-local.crt & shoppinglist-api-local.key) in the *Api/ShoppingList.Api.WebApp/ssl/* directory (you might have to create the folder).
 
 #### Database connection
 To mimic Docker Secrets, there are two variables in the *Api/ShoppingList.Api.WebApp/Properties/launchSettings.json*: PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE. If you want to use the key vault, create two files with username and password to your dev key vault, respectively and specify their full absolute file path here. A normal .txt is enough. Fill the files with the same values you chose for the respective secrets during the [Prerequisits](#prerequisits) step.

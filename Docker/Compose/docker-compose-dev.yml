@@ -44,7 +44,7 @@ services:
       - Vault
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - dev-ph-shoppinglist-api-tls:/app/ssl
+      # - dev-ph-shoppinglist-api-tls:/app/ssl # uncomment this for https support, see readme
       - dev-ph-shoppinglist-api-logs:/app/logs
       - dev-ph-shoppinglist-api-config:/app/config
     networks:
