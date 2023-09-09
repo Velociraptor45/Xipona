@@ -38,13 +38,13 @@ services:
       PH_SL_VAULT_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-username
       PH_SL_VAULT_PASSWORD_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-password
     ports:
-      - "12489:443"
+      - "12489:80"
     depends_on:
       - Database
       - Vault
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - prd-ph-shoppinglist-api-tls:/app/ssl
+      # - prd-ph-shoppinglist-api-tls:/app/ssl # uncomment this for https support, see readme
       - prd-ph-shoppinglist-api-logs:/app/logs
       - prd-ph-shoppinglist-api-config:/app/config
     networks: 
@@ -56,14 +56,14 @@ services:
   Frontend:
     image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
     ports: 
-      - "14000:443"
+      - "14000:80"
     depends_on:
       - Api
     volumes:
       - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
       - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
       - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json
-      - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
+      # - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl # uncomment this for https support, see readme
     networks: 
       - prd-ph-shoppinglist
 

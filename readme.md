@@ -13,37 +13,24 @@ The API contains all the application's business logic.
 ### Frontend
 The frontend can show and edit active shopping lists, items & shops. Thanks to retry and queuing logic, it is possible to use the front page while shopping even if there's currently no internet connection. When the connection is re-established, the client syncs with the API.
 
-***
-
 ## Docker
 To run all required services in containers, Dockerfiles and docker-compose files are provided. Since v0.7.0 Docker Secrets are being used and thus the services must be started via a stack deploy on a Docker Swarm. Starting via docker-compose is not supported anymore.
 
 In general, all above descriptions apply, plus some additions specified in the following sections.
-The ProjectHermes ShoppingList comes with the option to connecto to a Hashicorp KeyVault. The setup for it is, however, a bit complicated. That's why there's an alternative option to provide the db connection string to the api via a Docker Secret.
+The ProjectHermes ShoppingList comes with the option to connect to to a Hashicorp KeyVault. The setup for it is, however, a bit complicated. That's why there's an alternative option to provide the db connection string to the api via a Docker Secret.
 
 ### Prerequisits
 Prepare the following things:
-- Certificates<br/>
-  You need a root certificate (with .crt file ending) and generate the follwing certificates with it
-  - Api
-    - shoppinglist-api.crt
-    - shoppinglist-api.key
-    - shoppinglist-api-local.crt (only for local development)
-    - shoppinglist-api-local.key (only for local development)
-  - Frontend
-    - shoppinglist-frontend.crt
-    - shoppinglist-frontend.key
+- Certificates
   - Vault (only if you want to use the key vault)
     - vault-cert.pem (the certificate)
     - vault-key.pem (the certificate key)
 - Docker Volumes
   - Api
-    - (prd/dev)-ph-shoppinglist-api-tls
     - (prd/dev)-ph-shoppinglist-api-logs
     - (prd/dev)-ph-shoppinglist-api-config
   - Frontend
     - (prd/dev)-ph-shoppinglist-frontend-config
-    - (prd/dev)-ph-shoppinglist-frontend-tls
   - Vault (only if you want to use the key vault)
     - (prd/dev)-ph-shoppinglist-vault-tls
     - (prd/dev)-ph-shoppinglist-vault-file
@@ -68,42 +55,78 @@ If you don't want to use the key vault, you can skip this section.
 - Set the vault address in the api's appsettings files (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*)
 
 ### Api
-Copy the api certificate files (shoppinglist-api.crt & shoppinglist-api.key) into the root directory of the (prd/dev)-ph-shoppinglist-api-**tls** volume.
-The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume.
+- The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume.
 
 ### Frontend
-- Copy the api certificate files (shoppinglist-frontend.crt & shoppinglist-frontend.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
-Configure the webserver address & the frontend's environment in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**.
+- Configure the webserver address & the frontend's environment in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**.
 - Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) into a directory of your choice on your host and set the api's address in the files.
 - Make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
 
 ### yml files
-Under *Docker/Compose/* are yml files for development and production. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
+- Under *Docker/Compose/* are yml files for development and production. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
+- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. If you use the key vault, your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
 
-Now start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`. Your Api container will probably fail because the key vault hasn't been initialized yet. This will be done in the [General Setup](#general-setup) section.
+### https
+If you don't want to run the application behind a reverse proxy that handles the certificate for you, you can also configure the application for https.
 
-***
+#### Api
+1. Create the docker volume (prd/dev)-ph-shoppinglist-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
+2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the (prd/dev)-ph-shoppinglist-api-**tls** volume.
+3. Replace the existing kestrel http endpoint in your `appsettings.{env}.json` with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
+    ```
+    "Kestrel": {
+      "Endpoints": {
+        "HttpsInlineCertAndKeyFile": {
+          "Url": "https://localhost:5002",
+          "Certificate": {
+            "Path": "ssl/<cert-name>.crt",
+            "KeyPath": "ssl/<cert-key-name>.key"
+          }
+        }
+      }
+    }
+    ```
+
+#### Frontend
+
+1. Create the docker volume (prd/dev)-ph-shoppinglist-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
+2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**tls** volume.
+3. Replace the `shoppinglist.conf` (under *Frontend/Docker*) with:
+    ```
+    server {
+        listen 80 default_server;
+        server_name <webserver-address>; # set your webserver address here (without port)
+        return 301 https://$server_name$request_uri;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name <webserver-address>; # set your webserver address here (without port)
+        
+        ssl_certificate /etc/nginx/ssl/<cert-name>.crt;
+        ssl_certificate_key /etc/nginx/ssl/<cert-key-name>.key;
+
+        add_header blazor-environment "Development"; # set this to Development or Production
+
+        location / {
+            root /usr/share/nginx/html/wwwroot;
+            index index.html index.htm;
+        }
+    }
+    ```
 
 ## Local Development Setup
 To get the everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the dev database.
 
 ### API
 
-#### Certificate
-The API is running via https and needs the local certificate files (shoppinglist-api-local.crt & shoppinglist-api-local.key) in the *Api/ShoppingList.Api.WebApp/ssl/* directory (you might have to create the folder).
-
 #### Database connection
 To mimic Docker Secrets, there are two variables in the *Api/ShoppingList.Api.WebApp/Properties/launchSettings.json*: PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE. If you want to use the key vault, create two files with username and password to your dev key vault, respectively and specify their full absolute file path here. A normal .txt is enough. Fill the files with the same values you chose for the respective secrets during the [Prerequisits](#prerequisits) step.
 
 If you don't want to use the key vault, create a PH_SL_DB_CONNECTION_STRING_FILE variable in the launchSettings.json file and remove the other two and specify the location of the file holding the connection string there (after you created the file). An example for the connection string can be found in the [General Setup](#general-setup) section.
 
-### Frontend
-No further actions are required
-
-***
-
 ## General Setup
-Before performing the general setup, make sure you did the local development setup and/or the Docker setup before. This step required a running DB container and a running Vault container (if you want to use the key vault).
+Before performing the general setup, make sure you did the the Docker setup before. This step requires a running DB container and a running Vault container (if you want to use the key vault).
 
 ### Key Vault
 Make sure your key vault container is running and go to https://\<vault-address\>:\<vault-port\>/ui where you'll initialize the vault. Specify that the root key should be split into 1 shared key and that 1 key is needed to unseal the vault. After that, this shared key (used to unseal the vault) and the root token (used to login) are displayed. Store both of them somewhere safe and login using the Token method and your root token.
