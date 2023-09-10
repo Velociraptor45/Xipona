@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectHermes.ShoppingList.Api.Core.Files;
+using ProjectHermes.ShoppingList.Api.Repositories.Common.Services;
 using ProjectHermes.ShoppingList.Api.Vault;
 using System.IO;
 
@@ -23,16 +24,11 @@ public class ContextFactoryBase
             .AddJsonFile($"appsettings.{env}.json", optional: false, true)
             .Build();
 
-        var connectionStringFile = Environment.GetEnvironmentVariable("PH_SL_DB_CONNECTION_STRING_FILE");
-
         var fileLoadingService = new FileLoadingService();
-        if (connectionStringFile is null)
-        {
-            var vaultService = new VaultService(config, fileLoadingService);
-            return vaultService.LoadConnectionStringsAsync().GetAwaiter().GetResult().ShoppingDatabase;
-        }
+        var configurationLoadingService = new DatabaseConfigurationLoadingService(
+            fileLoadingService, new VaultService(config, fileLoadingService));
 
-        return fileLoadingService.ReadFile(connectionStringFile);
+        return configurationLoadingService.LoadAsync(config).GetAwaiter().GetResult().ShoppingDatabase;
     }
 
     protected MySqlServerVersion GetVersion()

@@ -16,9 +16,8 @@
       "applicationUrl": "https://localhost:5050",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "PH_SL_VAULT_USERNAME_FILE": "E:\\dev-ph-shoppinglist-vault-api-username.txt",
-        "PH_SL_VAULT_PASSWORD_FILE": "E:\\dev-ph-shoppinglist-vault-api-password.txt",
-        //"PH_SL_DB_CONNECTION_STRING_FILE": "E:\\dev-ph-shoppinglist-connection-string.txt"
+        "PH_SL_DB_USERNAME_FILE": "E:\\dev-ph-shoppinglist-db-username.txt",
+        "PH_SL_DB_PASSWORD_FILE": "E:\\dev-ph-shoppinglist-db-password.txt"
       }
     },
     "http": {
@@ -28,9 +27,8 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "PH_SL_VAULT_USERNAME_FILE": "E:\\dev-ph-shoppinglist-vault-api-username.txt",
-        "PH_SL_VAULT_PASSWORD_FILE": "E:\\dev-ph-shoppinglist-vault-api-password.txt",
-        //"PH_SL_DB_CONNECTION_STRING_FILE": "E:\\dev-ph-shoppinglist-connection-string.txt"
+        "PH_SL_DB_USERNAME_FILE": "E:\\dev-ph-shoppinglist-db-username.txt",
+        "PH_SL_DB_PASSWORD_FILE": "E:\\dev-ph-shoppinglist-db-password.txt"
       }
     }
   }

@@ -19,7 +19,8 @@ services:
     image: velocir4ptor/ph-shoppinglist-api:0.10.2
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      PH_SL_DB_CONNECTION_STRING_FILE: /run/secrets/dev-ph-shoppinglist-db-connection-string
+      PH_SL_DB_USERNAME_FILE: /run/secrets/dev-ph-shoppinglist-db-username
+      PH_SL_DB_PASSWORD_FILE: /run/secrets/dev-ph-shoppinglist-db-password
     ports:
       - "12486:80"
     depends_on:
@@ -31,7 +32,8 @@ services:
     networks:
       - dev-ph-shoppinglist
     secrets:
-      - dev-ph-shoppinglist-db-connection-string
+      - dev-ph-shoppinglist-db-username
+      - dev-ph-shoppinglist-db-password
 
   Frontend:
     image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
@@ -65,7 +67,9 @@ networks:
     name: dev-ph-shoppinglist
 
 secrets:
-  dev-ph-shoppinglist-db-connection-string:
+  dev-ph-shoppinglist-db-username:
+    external: true
+  dev-ph-shoppinglist-db-password:
     external: true
   dev-ph-shoppinglist-db-root-pwd:
     external: true

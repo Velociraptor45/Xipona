@@ -31,6 +31,10 @@
     <Folder Include="Migrations\Stores\" />
     <Folder Include="Migrations\ShoppingLists\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+  </ItemGroup>
   
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
