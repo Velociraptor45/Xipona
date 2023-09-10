@@ -25,9 +25,9 @@ services:
     depends_on:
       - Database
     volumes:
-      # - prd-ph-shoppinglist-api-tls:/app/ssl # uncomment this for https support, see readme
+      # - prd-ph-shoppinglist-api-tls:/app/ssl:ro # uncomment this for https support, see readme
       - prd-ph-shoppinglist-api-logs:/app/logs
-      - prd-ph-shoppinglist-api-config:/app/config
+      - prd-ph-shoppinglist-api-config:/app/config:ro
     networks: 
       - prd-ph-shoppinglist
     secrets:
@@ -40,19 +40,18 @@ services:
     depends_on:
       - Api
     volumes:
-      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
-      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json
-      # - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl # uncomment this for https support, see readme
+      - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d:ro
+      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
+      # - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks: 
       - prd-ph-shoppinglist
 
 volumes:
-  prd-ph-shoppinglist-frontend-tls:
-    external: true
+  # prd-ph-shoppinglist-frontend-tls: # uncomment this for https support, see readme
+  #   external: true
+  # prd-ph-shoppinglist-api-tls:
+  #   external: true
   prd-ph-shoppinglist-frontend-config:
-    external: true
-  prd-ph-shoppinglist-api-tls:
     external: true
   prd-ph-shoppinglist-api-logs:
     external: true
