@@ -43,10 +43,9 @@ services:
       - Database
       - Vault
     volumes:
-      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      # - dev-ph-shoppinglist-api-tls:/app/ssl # uncomment this for https support, see readme
+      # - dev-ph-shoppinglist-api-tls:/app/ssl:ro # uncomment this for https support, see readme
       - dev-ph-shoppinglist-api-logs:/app/logs
-      - dev-ph-shoppinglist-api-config:/app/config
+      - dev-ph-shoppinglist-api-config:/app/config:ro
     networks:
       - dev-ph-shoppinglist
     secrets:
@@ -60,19 +59,18 @@ services:
     depends_on:
       - Api
     volumes:
-      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - dev-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
-      - {CONFIG_FOLDER_PATH}/appsettings.Development.json:/usr/share/nginx/html/wwwroot/appsettings.Development.json
-      # - dev-ph-shoppinglist-frontend-tls:/etc/nginx/ssl # uncomment this for https support, see readme
+      - dev-ph-shoppinglist-frontend-config:/etc/nginx/conf.d:ro
+      - {CONFIG_FOLDER_PATH}/appsettings.Development.json:/usr/share/nginx/html/wwwroot/appsettings.Development.json:ro
+      # - dev-ph-shoppinglist-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks:
       - dev-ph-shoppinglist
 
 volumes:
-  dev-ph-shoppinglist-frontend-tls:
-    external: true
+  # dev-ph-shoppinglist-frontend-tls: # uncomment this for https support, see readme
+  #   external: true
+  # dev-ph-shoppinglist-api-tls:
+  #   external: true
   dev-ph-shoppinglist-frontend-config:
-    external: true
-  dev-ph-shoppinglist-api-tls:
     external: true
   dev-ph-shoppinglist-api-logs:
     external: true

@@ -60,7 +60,6 @@ If you don't want to use the key vault, you can skip this section.
 ### Frontend
 - Configure the webserver address & the frontend's environment in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**.
 - Copy the appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) into a directory of your choice on your host and set the api's address in the files.
-- Make sure your root certificate is inside your host's */usr/local/share/ca-certificates/* directory so that the frontend will be able to verify the api's certificate.
 
 ### yml files
 - Under *Docker/Compose/* are yml files for development and production. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings-files are
