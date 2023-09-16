@@ -41,15 +41,20 @@ public class VaultService : IVaultService
 
     public async Task<(string Username, string Password)> LoadCredentialsAsync()
     {
-        var userName = await ReadValueAsync(_keyVaultConfig.Value.Paths.Username);
-        Console.WriteLine("Successfully retrieved user name from vault");
-        var password = await ReadValueAsync(_keyVaultConfig.Value.Paths.Password);
-        Console.WriteLine("Successfully retrieved password from vault");
+        return await _policy.ExecuteAsync(async () =>
+        {
+            var client = GetClient();
+            var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<DatabaseSecret>(
+                _keyVaultConfig.Value.Paths.Database,
+                mountPoint: _keyVaultConfig.Value.MountPoint);
+            Console.WriteLine("Successfully retrieved user name from vault");
 
-        return (userName, password);
+            var data = result.Data.Data;
+            return (data.username, data.password);
+        });
     }
 
-    private VaultClient GetClient()
+    private IVaultClient GetClient()
     {
         var authMethod = new UserPassAuthMethodInfo(_username, _password);
 
@@ -58,17 +63,12 @@ public class VaultService : IVaultService
         return new VaultClient(clientSettings);
     }
 
-    private async Task<string> ReadValueAsync(string path)
+    private class DatabaseSecret
     {
-        return await _policy.ExecuteAsync(async () =>
-        {
-            var client = GetClient();
-            var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<string>(
-                path,
-                mountPoint: _keyVaultConfig.Value.MountPoint);
+        // leave those lowercase, they are mapped to the key vault secret keys
+        public string username { get; set; } = string.Empty;
 
-            return result.Data.Data;
-        });
+        public string password { get; set; } = string.Empty;
     }
 
     private class KeyVaultConfig
@@ -80,7 +80,6 @@ public class VaultService : IVaultService
 
     private class PathsConfig
     {
-        public string Username { get; init; } = string.Empty;
-        public string Password { get; init; } = string.Empty;
+        public string Database { get; init; } = string.Empty;
     }
 }
