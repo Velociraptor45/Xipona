@@ -63,7 +63,7 @@ public class VaultService : IVaultService
         return new VaultClient(clientSettings);
     }
 
-    private class DatabaseSecret
+    private sealed class DatabaseSecret
     {
         // leave those lowercase, they are mapped to the key vault secret keys
         public string username { get; set; } = string.Empty;
@@ -71,14 +71,14 @@ public class VaultService : IVaultService
         public string password { get; set; } = string.Empty;
     }
 
-    private class KeyVaultConfig
+    private sealed class KeyVaultConfig
     {
         public string Uri { get; init; } = string.Empty;
         public string MountPoint { get; init; } = string.Empty;
         public PathsConfig Paths { get; init; } = new();
     }
 
-    private class PathsConfig
+    private sealed class PathsConfig
     {
         public string Database { get; init; } = string.Empty;
     }
