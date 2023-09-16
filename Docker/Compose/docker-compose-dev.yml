@@ -15,42 +15,25 @@ services:
     secrets:
       - dev-ph-shoppinglist-db-root-pwd
 
-  Vault:
-    image: hashicorp/vault:latest
-    environment:
-      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
-    ports:
-      - "14776:8200"
-    volumes:
-      - dev-ph-shoppinglist-vault-file:/vault/file
-      - dev-ph-shoppinglist-vault-config:/vault/config
-      - dev-ph-shoppinglist-vault-tls:/opt/vault/tls
-    networks:
-      - dev-ph-shoppinglist
-    cap_add:
-      - IPC_LOCK
-    command: server
-
   Api:
     image: velocir4ptor/ph-shoppinglist-api:0.10.2
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      PH_SL_VAULT_USERNAME_FILE: /run/secrets/dev-ph-shoppinglist-vault-api-username
-      PH_SL_VAULT_PASSWORD_FILE: /run/secrets/dev-ph-shoppinglist-vault-api-password
+      PH_SL_DB_USERNAME_FILE: /run/secrets/dev-ph-shoppinglist-db-username
+      PH_SL_DB_PASSWORD_FILE: /run/secrets/dev-ph-shoppinglist-db-password
     ports:
       - "12486:80"
     depends_on:
       - Database
-      - Vault
     volumes:
-      # - dev-ph-shoppinglist-api-tls:/app/ssl:ro # uncomment this for https support, see readme
+    #  - dev-ph-shoppinglist-api-tls:/app/ssl:ro # uncomment this for https support, see readme
       - dev-ph-shoppinglist-api-logs:/app/logs
       - dev-ph-shoppinglist-api-config:/app/config:ro
     networks:
       - dev-ph-shoppinglist
     secrets:
-      - dev-ph-shoppinglist-vault-api-password
-      - dev-ph-shoppinglist-vault-api-username
+      - dev-ph-shoppinglist-db-username
+      - dev-ph-shoppinglist-db-password
 
   Frontend:
     image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
@@ -78,21 +61,15 @@ volumes:
     external: true
   dev-ph-shoppinglist-database:
     external: true
-  dev-ph-shoppinglist-vault-file:
-    external: true
-  dev-ph-shoppinglist-vault-config:
-    external: true
-  dev-ph-shoppinglist-vault-tls:
-    external: true
 
 networks:
   dev-ph-shoppinglist:
     name: dev-ph-shoppinglist
 
 secrets:
-  dev-ph-shoppinglist-vault-api-password:
+  dev-ph-shoppinglist-db-username:
     external: true
-  dev-ph-shoppinglist-vault-api-username:
+  dev-ph-shoppinglist-db-password:
     external: true
   dev-ph-shoppinglist-db-root-pwd:
     external: true
