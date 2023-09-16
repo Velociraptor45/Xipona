@@ -1,5 +1,0 @@
-setx ASPNETCORE_ENVIRONMENT "production"
-setx PH_SL_DB_USERNAME_FILE "E:\\prd-ph-shoppinglist-db-username.txt"
-setx PH_SL_DB_PASSWORD_FILE "E:\\prd-ph-shoppinglist-db-password.txt"
-# setx PH_SL_VAULT_USERNAME_FILE "E:\\prd-ph-shoppinglist-vault-api-username.txt"
-# setx PH_SL_VAULT_PASSWORD_FILE "E:\\prd-ph-shoppinglist-vault-api-password.txt"
