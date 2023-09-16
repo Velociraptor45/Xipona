@@ -47,7 +47,7 @@ public class VaultService : IVaultService
             var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<DatabaseSecret>(
                 _keyVaultConfig.Value.Paths.Database,
                 mountPoint: _keyVaultConfig.Value.MountPoint);
-            Console.WriteLine("Successfully retrieved user name from vault");
+            Console.WriteLine("Successfully retrieved database credentials from vault");
 
             var data = result.Data.Data;
             return (data.username, data.password);
