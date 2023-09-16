@@ -14,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Repositories;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Services;
 using ProjectHermes.ShoppingList.Api.Vault;
+using ProjectHermes.ShoppingList.Api.WebApp.BackgroundServices;
 using ProjectHermes.ShoppingList.Api.WebApp.Extensions;
 using Serilog;
 using System.Collections.Generic;
@@ -56,6 +57,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
+builder.Services.AddHostedService<DatabaseMigrationBackgroundService>();
 
 var app = builder.Build();
 

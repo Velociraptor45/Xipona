@@ -63,8 +63,7 @@ public static class ServiceCollectionExtensions
             return connection;
         });
 
-        services.AddScoped<IList<DbContext>>(
-            serviceProvider => GetAllDbContextInstances(serviceProvider, assembly).ToList());
+        services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
 
         services.AddDbContext<ShoppingListContext>(SetDbConnection);
         services.AddDbContext<ItemCategoryContext>(SetDbConnection);
@@ -163,9 +162,9 @@ public static class ServiceCollectionExtensions
         options.UseMySql(connection, _sqlServerVersion);
     }
 
-    private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider, Assembly assembly)
+    private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)
     {
-        var types = GetAllDbContextTypes(assembly);
+        var types = GetAllDbContextTypes();
         var instances = types.Select(serviceProvider.GetRequiredService);
         foreach (var instance in instances)
         {
@@ -173,9 +172,16 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    private static IEnumerable<Type> GetAllDbContextTypes(Assembly assembly)
+    private static IEnumerable<Type> GetAllDbContextTypes()
     {
-        var baseType = typeof(DbContext);
-        return assembly.GetTypes().Where(t => t.BaseType == baseType).ToList();
+        // The order of the types is important, because the migrations are applied in the same order
+        // and some of them depend on others
+        yield return typeof(ManufacturerContext);
+        yield return typeof(ItemCategoryContext);
+        yield return typeof(StoreContext);
+        yield return typeof(ItemContext);
+        yield return typeof(ShoppingListContext);
+        yield return typeof(RecipeTagContext);
+        yield return typeof(RecipeContext);
     }
 }

@@ -42,12 +42,9 @@ Prepare the following things:
 - Under *Docker/Compose/* are yml files for development and production. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings file is
 - Start the containers via e.g. `docker stack deploy --compose-file docker-compose-prd.yml prd-ph-shoppinglist`
 
-### Database migration
-The API follows the **code first** approach, which means that you have to deploy the provided migrations to your database. Under *Api/Scripts/* are two shell scripts that deploy the migrations to the respective database. Before you execute them, open the `set-env-variables-(prd/dev).sh` file and check if the PH_SL_DB_USERNAME_FILE and PH_SL_DB_PASSWORD_FILE paths are set correctly. Execute said setup script and then the `database-update-(prd/dev).sh`.
-
 And now you're done. Happy shopping!
 
-## Optional
+## Optional Setup
 
 ### https
 If you don't want to run the application behind a reverse proxy that handles the certificate for you, you can also configure the application for https.
