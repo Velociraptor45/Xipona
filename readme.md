@@ -41,8 +41,9 @@ Prepare the following things:
   You can choose the username & password, but 'api' (without the ') for the username is recommeded
   - (prd/dev)-ph-shoppinglist-vault-api-username 
   - (prd/dev)-ph-shoppinglist-vault-api-password
-- Docker Secrets (if you don't want to use the key vault; see [here](#key-vault) for connection string dummy)
-  - (prd/dev)-ph-shoppinglist-db-connection-string
+- Docker Secrets (if you don't want to use the key vault)
+  - (prd/dev)-ph-shoppinglist-db-username
+  - (prd/dev)-ph-shoppinglist-db-password
 - Docker Secrets (no matter if you're using the key vault or not)
   - (prd/dev)-ph-shoppinglist-db-root-pwd
 
@@ -120,9 +121,9 @@ To get the everything running at your dev machine, at least a running dev DB is 
 ### API
 
 #### Database connection
-To mimic Docker Secrets, there are two variables in the *Api/ShoppingList.Api.WebApp/Properties/launchSettings.json*: PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE. If you want to use the key vault, create two files with username and password to your dev key vault, respectively and specify their full absolute file path here. A normal .txt is enough. Fill the files with the same values you chose for the respective secrets during the [Prerequisits](#prerequisits) step.
+To mimic Docker Secrets, there are two variables in the *Api/ShoppingList.Api.WebApp/Properties/launchSettings.json*: PH_SL_DB_USERNAME_FILE & PH_SL_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. Fill the files with the same values you chose for the respective secrets during the [Prerequisits](#prerequisits) step.
 
-If you don't want to use the key vault, create a PH_SL_DB_CONNECTION_STRING_FILE variable in the launchSettings.json file and remove the other two and specify the location of the file holding the connection string there (after you created the file). An example for the connection string can be found in the [General Setup](#general-setup) section.
+If you want to use the key vault, create PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the kev vault username & password.
 
 ## General Setup
 Before performing the general setup, make sure you did the the Docker setup before. This step requires a running DB container and a running Vault container (if you want to use the key vault).
@@ -131,13 +132,12 @@ Before performing the general setup, make sure you did the the Docker setup befo
 Make sure your key vault container is running and go to https://\<vault-address\>:\<vault-port\>/ui where you'll initialize the vault. Specify that the root key should be split into 1 shared key and that 1 key is needed to unseal the vault. After that, this shared key (used to unseal the vault) and the root token (used to login) are displayed. Store both of them somewhere safe and login using the Token method and your root token.
 > **Caution: The key vault must be unsealed each time the vault container starts. If you redeploy the stack, the vault is automatically sealed again. There is, however, an option for automatic unseal but it's not part of the stack yet. Also, the api has a built-in retry mechanism to connect to the key vault at startup, so that you have time to unseal it.**
 
-Create a new KV engine with path name "ph-shoppinglist-api" with a secret "ConnectionStrings" holding a key "ShoppingDatabase" with your DB connection string as the value:
-> server=\<server-ip-address\>;port=\<prd-port: 15909, dev-port: 15906\>;database=(prd/dev)-shoppinglist;user id=root;pwd=\<root-pwd\>;AllowUserVariables=true;UseAffectedRows=false
+Create a new KV engine with path name "(prd/dev)-ph-shoppinglist" with a secret "database" holding the keys "username" and "password" (all lowercase).
 
 Now click on "Access" in the toolbar and create a new auth method "Username & Password" under the path "userpass". In there, create a user (for the api) with the name and password you chose in the [Prerequisits](#prerequisits) step and save it.
 
 After that, click on "Policies" in the toolbar, open the default policy, click "Edit policy" and append the following at the bottom and save it.
-> path "ph-shoppinglist-api/*" {
+> path "(prd/dev)-ph-shoppinglist/*" {
 >    capabilities = ["read", "list"]
 >}
 

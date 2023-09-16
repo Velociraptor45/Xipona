@@ -1,8 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Vault.Configs;
-
-namespace ProjectHermes.ShoppingList.Api.Vault;
+﻿namespace ProjectHermes.ShoppingList.Api.Vault;
 
 public interface IVaultService
 {
-    Task<ConnectionStrings> LoadConnectionStringsAsync();
+    Task<(string Username, string Password)> LoadCredentialsAsync();
 }

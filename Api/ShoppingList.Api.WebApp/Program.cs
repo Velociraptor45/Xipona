@@ -12,9 +12,9 @@ using ProjectHermes.ShoppingList.Api.Core.Files;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Repositories;
+using ProjectHermes.ShoppingList.Api.Repositories.Common.Services;
 using ProjectHermes.ShoppingList.Api.Vault;
 using ProjectHermes.ShoppingList.Api.WebApp.Extensions;
-using ProjectHermes.ShoppingList.Api.WebApp.Services;
 using Serilog;
 using System.Collections.Generic;
 using System.IO;
@@ -33,8 +33,8 @@ Log.Logger = new LoggerConfiguration()
 
 var fileLoadingService = new FileLoadingService();
 var vaultService = new VaultService(builder.Configuration, fileLoadingService);
-var configurationLoadingService = new ConfigurationLoadingService(fileLoadingService, vaultService);
-var connectionStrings = await configurationLoadingService.LoadAsync();
+var configurationLoadingService = new DatabaseConfigurationLoadingService(fileLoadingService, vaultService);
+var connectionStrings = await configurationLoadingService.LoadAsync(builder.Configuration);
 builder.Services.AddSingleton(connectionStrings);
 
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
