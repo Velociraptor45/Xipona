@@ -13,6 +13,7 @@ using ProjectHermes.ShoppingList.Api.Repositories;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Services;
 using ProjectHermes.ShoppingList.Api.Vault;
 using ProjectHermes.ShoppingList.Api.WebApp.BackgroundServices;
+using ProjectHermes.ShoppingList.Api.WebApp.Configs;
 using ProjectHermes.ShoppingList.Api.WebApp.Extensions;
 using Serilog;
 using System.IO;
@@ -80,8 +81,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.RunAsync();
-
-internal class CorsConfig
-{
-    public string[] AllowedOrigins { get; init; } = Array.Empty<string>();
-}
