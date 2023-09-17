@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
+using Polly;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
@@ -50,6 +51,10 @@ public static class ServiceCollectionExtensions
     public static void AddRepositories(this IServiceCollection services, string? connectionString = null)
     {
         var assembly = Assembly.GetExecutingAssembly();
+        var connectionRetryPolicy = Policy.Handle<Exception>().WaitAndRetry(
+                5,
+                _ => TimeSpan.FromSeconds(5),
+                (e, _, tryNo, _) => Console.WriteLine($"Failed to open DB connection (Try no. {tryNo}): {e}"));
 
         services.AddScoped<DbConnection>(provider =>
         {
@@ -58,9 +63,13 @@ public static class ServiceCollectionExtensions
                 var cs = provider.GetRequiredService<ConnectionStrings>();
                 connectionString = cs.ShoppingDatabase;
             }
-            var connection = new MySqlConnection(connectionString);
-            connection.Open();
-            return connection;
+
+            return connectionRetryPolicy.Execute(() =>
+            {
+                var connection = new MySqlConnection(connectionString);
+                connection.Open();
+                return connection;
+            });
         });
 
         services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());

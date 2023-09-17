@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -10,22 +11,25 @@ namespace ProjectHermes.ShoppingList.Api.WebApp.BackgroundServices;
 
 public class DatabaseMigrationBackgroundService : BackgroundService
 {
-    private readonly IList<DbContext> _dbContexts;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<DatabaseMigrationBackgroundService> _logger;
 
-    public DatabaseMigrationBackgroundService(IList<DbContext> dbContexts,
+    public DatabaseMigrationBackgroundService(IServiceProvider serviceProvider,
         ILogger<DatabaseMigrationBackgroundService> logger)
     {
-        _dbContexts = dbContexts;
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        using var scope = _serviceProvider.CreateScope();
+        var dbContexts = scope.ServiceProvider.GetRequiredService<IList<DbContext>>();
+
         _logger.LogInformation("Starting database migration");
         var sw = Stopwatch.StartNew();
 
-        foreach (var dbContext in _dbContexts)
+        foreach (var dbContext in dbContexts)
         {
             await dbContext.Database.MigrateAsync(stoppingToken);
         }
