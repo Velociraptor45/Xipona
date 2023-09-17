@@ -32,7 +32,9 @@ Prepare the following things:
   - (prd/dev)-ph-shoppinglist-db-root-pwd
 
 ### Api
-- The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume. Specify the DB's address and port in there.
+- The appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the (prd/dev)-ph-shoppinglist-api-**config** volume. Specify the following things there:
+  - The DB's address and port
+  - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
 
 ### Frontend
 - Configure the webserver address & the frontend's environment in shoppinglist.conf under *Frontend/Docker* and copy it into the root directory of the (prd/dev)-ph-shoppinglist-frontend-**config**.
