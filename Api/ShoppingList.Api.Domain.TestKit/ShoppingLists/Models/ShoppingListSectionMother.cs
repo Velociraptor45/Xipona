@@ -23,7 +23,7 @@ public static class ShoppingListSectionMother
 
     public static ShoppingListSectionBuilder OneItemInBasketAndOneNot()
     {
-        var items = new List<IShoppingListItem>
+        var items = new List<ShoppingListItem>
         {
             ShoppingListItemMother.NotInBasket().WithoutTypeId().Create(),
             ShoppingListItemMother.InBasket().WithoutTypeId().Create()
@@ -39,7 +39,7 @@ public static class ShoppingListSectionMother
             .WithoutItems();
     }
 
-    public static ShoppingListSectionBuilder Items(IEnumerable<IShoppingListItem> items)
+    public static ShoppingListSectionBuilder Items(IEnumerable<ShoppingListItem> items)
     {
         return new ShoppingListSectionBuilder()
             .WithItems(items);

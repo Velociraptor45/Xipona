@@ -27,7 +27,6 @@ public static class ServiceCollectionExtensions
     internal static void AddItems(this IServiceCollection services)
     {
         services.AddTransient<IItemFactory, ItemFactory>();
-        services.AddTransient<IItemAvailabilityFactory, ItemAvailabilityFactory>();
 
         services.AddTransient<Func<CancellationToken, IAvailabilityValidationService>>(provider =>
         {

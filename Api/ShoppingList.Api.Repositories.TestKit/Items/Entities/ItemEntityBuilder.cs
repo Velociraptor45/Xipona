@@ -130,6 +130,11 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithPredecessor(null);
     }
 
+    public ItemEntityBuilder WithItemType(ItemType itemType)
+    {
+        return WithItemTypes(itemType.ToMonoList());
+    }
+
     public ItemEntityBuilder WithItemTypes(ICollection<ItemType> itemTypes)
     {
         FillPropertyWith(p => p.ItemTypes, itemTypes);
@@ -139,6 +144,12 @@ public class ItemEntityBuilder : TestBuilder<Item>
     public ItemEntityBuilder WithEmptyItemTypes()
     {
         return WithItemTypes(new List<ItemType>());
+    }
+
+    // TCG keep
+    public ItemEntityBuilder WithAvailableAt(AvailableAt availableAt)
+    {
+        return WithAvailableAt(new List<AvailableAt> { availableAt });
     }
 
     public ItemEntityBuilder WithAvailableAt(ICollection<AvailableAt> availableAt)

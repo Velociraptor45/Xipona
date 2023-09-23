@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
@@ -17,16 +19,19 @@ public class ItemCategoryRepository : IItemCategoryRepository
     private readonly IToEntityConverter<IItemCategory, Entities.ItemCategory> _toEntityConverter;
     private readonly ILogger<ItemCategoryRepository> _logger;
     private readonly CancellationToken _cancellationToken;
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     public ItemCategoryRepository(ItemCategoryContext dbContext,
         IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
         IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter,
+        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
         ILogger<ItemCategoryRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
+        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
         _logger = logger;
         _cancellationToken = cancellationToken;
     }
@@ -118,6 +123,9 @@ public class ItemCategoryRepository : IItemCategoryRepository
                 () => $"Saving item category {model.Id.Value} failed due to concurrency violation");
             throw new DomainException(new ModelOutOfDateReason());
         }
+
+        await ((AggregateRoot)model).DispatchDomainEvents(_domainEventDispatcher);
+
         return _toModelConverter.ToDomain(convertedEntity);
     }
 

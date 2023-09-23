@@ -16,8 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class RecipeTagControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public sealed class CreateRecipeTagAsync
+    public sealed class CreateRecipeTagAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly CreateRecipeTagAsyncFixture _fixture;
 

@@ -32,7 +32,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
         };
     }
 
-    private static AvailableAt ToAvailableAt(IItemAvailability availability, IItem source)
+    private static AvailableAt ToAvailableAt(ItemAvailability availability, IItem source)
     {
         return new AvailableAt
         {
@@ -56,7 +56,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
         };
     }
 
-    private static ItemTypeAvailableAt ToItemTypeAvailableAt(IItemAvailability availability, IItemType itemType)
+    private static ItemTypeAvailableAt ToItemTypeAvailableAt(ItemAvailability availability, IItemType itemType)
     {
         return new ItemTypeAvailableAt
         {

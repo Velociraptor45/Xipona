@@ -43,7 +43,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                 IItemCategory? itemCategory =
                     item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
-                IItemAvailability storeAvailability = item.Availabilities
+                ItemAvailability storeAvailability = item.Availabilities
                     .Single(av => av.StoreId == store.Id);
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
@@ -87,7 +87,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             var requiredItemTypes = item.ItemTypes.Where(t => !t.IsDeleted && itemTypeIdsSet.Contains(t.Id));
             return requiredItemTypes.Select(type =>
             {
-                IItemAvailability storeAvailability = type.Availabilities
+                ItemAvailability storeAvailability = type.Availabilities
                     .Single(av => av.StoreId == store.Id);
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);

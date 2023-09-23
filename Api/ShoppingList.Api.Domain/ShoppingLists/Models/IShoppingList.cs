@@ -9,9 +9,9 @@ public interface IShoppingList
     public StoreId StoreId { get; }
     public DateTimeOffset? CompletionDate { get; }
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
-    public IReadOnlyCollection<IShoppingListItem> Items { get; }
+    public IReadOnlyCollection<ShoppingListItem> Items { get; }
 
-    void AddItem(IShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
+    void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
 
     void RemoveItem(ItemId itemId);
 

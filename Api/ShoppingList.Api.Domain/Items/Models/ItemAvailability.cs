@@ -2,24 +2,10 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
-public class ItemAvailability : IItemAvailability
+public sealed record ItemAvailability(StoreId StoreId, Price Price, SectionId DefaultSectionId)
 {
-    public ItemAvailability(StoreId storeId, Price price, SectionId defaultSectionId)
+    public ItemAvailability TransferToDefaultSection(SectionId sectionId)
     {
-        StoreId = storeId;
-        Price = price;
-        DefaultSectionId = defaultSectionId;
-    }
-
-    public StoreId StoreId { get; }
-    public Price Price { get; }
-    public SectionId DefaultSectionId { get; }
-
-    public IItemAvailability TransferToDefaultSection(SectionId sectionId)
-    {
-        return new ItemAvailability(
-            StoreId,
-            Price,
-            sectionId);
+        return this with { DefaultSectionId = sectionId };
     }
 }

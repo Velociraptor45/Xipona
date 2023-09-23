@@ -943,7 +943,7 @@ public class ShoppingListExchangeServiceTests
         }
 
         public IItem? NewItem { get; protected set; }
-        public IShoppingListItem? OldShoppingListItem { get; protected set; }
+        public ShoppingListItem? OldShoppingListItem { get; protected set; }
 
         public void SetupNewItemMatchingShoppingList()
         {

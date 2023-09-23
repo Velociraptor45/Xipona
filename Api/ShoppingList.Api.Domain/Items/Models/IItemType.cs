@@ -10,7 +10,7 @@ public interface IItemType
 {
     ItemTypeId Id { get; }
     ItemTypeName Name { get; }
-    IReadOnlyCollection<IItemAvailability> Availabilities { get; }
+    IReadOnlyCollection<ItemAvailability> Availabilities { get; }
     ItemTypeId? PredecessorId { get; }
     bool IsDeleted { get; }
 
@@ -20,7 +20,8 @@ public interface IItemType
 
     bool IsAvailableAt(SectionId sectionId);
 
-    Task<IItemType> ModifyAsync(ItemTypeModification modification, IValidator validator);
+    Task<(IItemType ItemType, IEnumerable<IDomainEvent> DomainEvents)> ModifyAsync(ItemTypeModification modification,
+        IValidator validator);
 
     Task<IItemType> UpdateAsync(ItemTypeUpdate update, IValidator validator);
 

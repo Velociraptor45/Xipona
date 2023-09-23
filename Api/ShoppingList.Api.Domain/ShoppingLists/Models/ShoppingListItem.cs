@@ -2,38 +2,25 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 
-public class ShoppingListItem : IShoppingListItem
+public record ShoppingListItem(ItemId Id, ItemTypeId? TypeId, bool IsInBasket, QuantityInBasket Quantity)
 {
-    public ShoppingListItem(ItemId id, ItemTypeId? typeId, bool isInBasket, QuantityInBasket quantity)
+    public ShoppingListItem PutInBasket()
     {
-        Id = id;
-        TypeId = typeId;
-        IsInBasket = isInBasket;
-        Quantity = quantity;
+        return this with { IsInBasket = true };
     }
 
-    public ItemId Id { get; }
-    public ItemTypeId? TypeId { get; }
-    public bool IsInBasket { get; }
-    public QuantityInBasket Quantity { get; }
-
-    public IShoppingListItem PutInBasket()
+    public ShoppingListItem RemoveFromBasket()
     {
-        return new ShoppingListItem(Id, TypeId, true, Quantity);
+        return this with { IsInBasket = false };
     }
 
-    public IShoppingListItem RemoveFromBasket()
+    public ShoppingListItem ChangeQuantity(QuantityInBasket quantity)
     {
-        return new ShoppingListItem(Id, TypeId, false, Quantity);
+        return this with { Quantity = quantity };
     }
 
-    public IShoppingListItem ChangeQuantity(QuantityInBasket quantity)
+    public ShoppingListItem AddQuantity(QuantityInBasket quantity)
     {
-        return new ShoppingListItem(Id, TypeId, IsInBasket, quantity);
-    }
-
-    public IShoppingListItem AddQuantity(QuantityInBasket quantity)
-    {
-        return new ShoppingListItem(Id, TypeId, IsInBasket, Quantity + quantity);
+        return this with { Quantity = Quantity + quantity };
     }
 }

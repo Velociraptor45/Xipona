@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
@@ -54,5 +55,16 @@ public class Recipe : AggregateRoot, IRecipe
         StoreId deletedAvailabilityStoreId)
     {
         _ingredients.ModifyAfterAvailabilityWasDeleted(itemId, itemTypeId, item, deletedAvailabilityStoreId);
+    }
+
+    public void ModifyIngredientsAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
+    {
+        _ingredients.ModifyAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
+    }
+
+    public void RemoveIngredientsOfItemCategory(ItemCategoryId itemCategoryId)
+    {
+        _ingredients.RemoveIngredientsOfItemCategory(itemCategoryId);
     }
 }
