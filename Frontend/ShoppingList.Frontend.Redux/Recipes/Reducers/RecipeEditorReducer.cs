@@ -165,50 +165,28 @@ public static class RecipeEditorReducer
     [ReducerMethod(typeof(ModifyRecipeStartedAction))]
     public static RecipeState OnModifyRecipeStarted(RecipeState state)
     {
-        if (state.Editor.Recipe is null)
-            return state;
-
-        return state with
-        {
-            Editor = state.Editor with
-            {
-                IsSaving = true
-            }
-        };
+        return SetSaving(state, true);
     }
 
     [ReducerMethod(typeof(ModifyRecipeFinishedAction))]
     public static RecipeState OnModifyRecipeFinished(RecipeState state)
     {
-        if (state.Editor.Recipe is null)
-            return state;
-
-        return state with
-        {
-            Editor = state.Editor with
-            {
-                IsSaving = false
-            }
-        };
+        return SetSaving(state, false);
     }
 
     [ReducerMethod(typeof(CreateRecipeStartedAction))]
     public static RecipeState OnCreateRecipeStarted(RecipeState state)
     {
-        if (state.Editor.Recipe is null)
-            return state;
-
-        return state with
-        {
-            Editor = state.Editor with
-            {
-                IsSaving = true
-            }
-        };
+        return SetSaving(state, true);
     }
 
     [ReducerMethod(typeof(CreateRecipeFinishedAction))]
     public static RecipeState OnCreateRecipeFinished(RecipeState state)
+    {
+        return SetSaving(state, false);
+    }
+
+    private static RecipeState SetSaving(RecipeState state, bool isSaving)
     {
         if (state.Editor.Recipe is null)
             return state;
@@ -217,7 +195,7 @@ public static class RecipeEditorReducer
         {
             Editor = state.Editor with
             {
-                IsSaving = false
+                IsSaving = isSaving
             }
         };
     }
