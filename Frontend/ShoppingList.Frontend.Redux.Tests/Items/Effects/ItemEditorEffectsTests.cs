@@ -1439,14 +1439,34 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleDeleteItemAction_WithCallFailed_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleDeleteItemAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailed();
+                _fixture.SetupMakingItemPermanentFailedWithErrorInApi();
                 _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleDeleteItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleDeleteItemAction_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1479,7 +1499,7 @@ public class ItemEditorEffectsTests
                 ApiClientMock.SetupDeleteItemAsync(request);
             }
 
-            public void SetupMakingItemPermanentFailed()
+            public void SetupMakingItemPermanentFailedWithErrorInApi()
             {
                 State = State with
                 {
@@ -1494,6 +1514,23 @@ public class ItemEditorEffectsTests
                 var item = State.Editor.Item!;
                 var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
                 ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            Name = _itemName
+                        }
+                    }
+                };
+                var item = State.Editor.Item!;
+                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
+                ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
