@@ -622,7 +622,7 @@ public class ManufacturerEffectsTests
         }
 
         [Fact]
-        public async Task HandleDeleteManufacturerAction_WithWithApiException_ShouldDispatchExceptionNotification()
+        public async Task HandleDeleteManufacturerAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -643,7 +643,7 @@ public class ManufacturerEffectsTests
         }
 
         [Fact]
-        public async Task HandleDeleteManufacturerAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
+        public async Task HandleDeleteManufacturerAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
