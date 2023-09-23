@@ -1,9 +1,11 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -444,5 +446,62 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupDeleteManufacturerAsyncThrowing(Guid manufacturerId, Exception ex)
     {
         this.SetupInOrder(m => m.DeleteManufacturerAsync(manufacturerId)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetItemCategorySearchResultsAsync(string searchInput,
+        IEnumerable<ItemCategorySearchResult> returnValue)
+    {
+        this.SetupInOrder(m => m.GetItemCategorySearchResultsAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetItemCategorySearchResultsAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetItemCategorySearchResultsAsync(searchInput)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetItemCategoryByIdAsync(Guid manufacturerId, EditedItemCategory returnValue)
+    {
+        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(manufacturerId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetItemCategoryByIdAsyncThrowing(Guid manufacturerId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(manufacturerId)).ThrowsAsync(ex);
+    }
+
+    public void SetupCreateItemCategoryAsync(string name, EditedItemCategory returnValue)
+    {
+        this.SetupInOrder(m => m.CreateItemCategoryAsync(name)).ReturnsAsync(returnValue);
+    }
+
+    public void SetupCreateItemCategoryAsyncThrowing(string name, Exception ex)
+    {
+        this.SetupInOrder(m => m.CreateItemCategoryAsync(name)).ThrowsAsync(ex);
+    }
+
+    public void SetupModifyItemCategoryAsync(ModifyItemCategoryRequest request)
+    {
+        this.SetupInOrder(m => m.ModifyItemCategoryAsync(
+                It.Is<ModifyItemCategoryRequest>(r => r.IsRequestEquivalentTo(request))))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupModifyItemCategoryAsyncThrowing(ModifyItemCategoryRequest request, Exception ex)
+    {
+        this.SetupInOrder(m => m.ModifyItemCategoryAsync(
+                It.Is<ModifyItemCategoryRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupDeleteItemCategoryAsync(Guid manufacturerId)
+    {
+        this.SetupInOrder(m => m.DeleteItemCategoryAsync(manufacturerId)).Returns(Task.CompletedTask);
+    }
+
+    public void SetupDeleteItemCategoryAsyncThrowing(Guid manufacturerId, Exception ex)
+    {
+        this.SetupInOrder(m => m.DeleteItemCategoryAsync(manufacturerId)).ThrowsAsync(ex);
     }
 }
