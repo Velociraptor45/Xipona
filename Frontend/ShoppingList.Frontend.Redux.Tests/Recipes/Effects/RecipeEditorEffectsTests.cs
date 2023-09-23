@@ -6,7 +6,6 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShop
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
@@ -100,7 +99,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupStateWithoutQuantityTypes();
                 _fixture.SetupDispatchingLoadRecipeTagsAction();
                 _fixture.SetupGettingQuantityTypesThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingLoadRecipeAction();
             });
 
@@ -124,7 +123,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupStateWithoutQuantityTypes();
                 _fixture.SetupDispatchingLoadRecipeTagsAction();
                 _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingLoadRecipeAction();
             });
 
@@ -181,16 +180,6 @@ public class RecipeEditorEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
                     new DomainTestBuilder<HttpRequestException>().Create());
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingFinishedAction()
@@ -260,7 +249,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
                 _fixture.SetupGettingRecipeByIdThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -281,7 +270,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
                 _fixture.SetupGettingRecipeByIdThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -325,16 +314,6 @@ public class RecipeEditorEffectsTests
                 ApiClientMock.SetupGetRecipeByIdAsyncThrowing(
                     Action.RecipeId,
                     new DomainTestBuilder<HttpRequestException>().Create());
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingFinishedAction()
@@ -386,7 +365,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingRecipeThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -407,7 +386,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingRecipeThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -458,16 +437,6 @@ public class RecipeEditorEffectsTests
                         Recipe = _recipe
                     }
                 };
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingStartedAction()
@@ -529,7 +498,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingRecipeThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -550,7 +519,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingRecipeThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -604,16 +573,6 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingStartedAction()
             {
                 SetupDispatchingAction<CreateRecipeStartedAction>();
@@ -650,9 +609,10 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInputEmpty();
                 _fixture.SetupState();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -669,9 +629,10 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupCreatingRecipeTag();
                 _fixture.SetupDispatchingFinishedAction();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -686,11 +647,12 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupCreatingRecipeTagThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -705,11 +667,12 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupCreatingRecipeTagThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -764,16 +727,6 @@ public class RecipeEditorEffectsTests
                         RecipeTagCreateInput = _recipeTagInput
                     }
                 };
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingFinishedAction()
@@ -832,7 +785,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupGettingItemAmountsThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
 
             // Act
@@ -851,7 +804,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupGettingItemAmountsThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
 
             // Act
@@ -921,16 +874,6 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemAmounts);
@@ -991,7 +934,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupAddingToShoppingListThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -1012,7 +955,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupAddingToShoppingListThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -1084,16 +1027,6 @@ public class RecipeEditorEffectsTests
                         AddToShoppingList = null
                     }
                 };
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingStartedAction()

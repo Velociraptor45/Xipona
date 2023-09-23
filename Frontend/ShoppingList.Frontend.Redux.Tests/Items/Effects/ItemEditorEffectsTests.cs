@@ -5,7 +5,6 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
@@ -61,7 +60,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupGettingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             }, _logger);
 
             var sut = _fixture.CreateSut();
@@ -116,11 +115,6 @@ public class ItemEditorEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
                 SetupDispatchingAction(new LoadItemForEditingFinishedAction(_item));
-            }
-
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
         }
     }
@@ -597,7 +591,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -662,7 +656,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingItemWithTypesFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -779,11 +773,6 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
             public void SetupSuccessNotification()
             {
                 ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item {_itemName}");
@@ -831,7 +820,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupUpdatingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -874,7 +863,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupUpdatingItemWithTypesFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -959,11 +948,6 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
             public void SetupSuccessNotification()
             {
                 ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully updated item {_itemName}");
@@ -1011,7 +995,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1054,7 +1038,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingItemWithTypesFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1139,11 +1123,6 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
             public void SetupSuccessNotification()
             {
                 ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item {_itemName}");
@@ -1191,7 +1170,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupMakingItemPermanentFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1272,11 +1251,6 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
             public void SetupSuccessNotification()
             {
                 ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully made item {_itemName} permanent");
@@ -1322,7 +1296,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupMakingItemPermanentFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1385,11 +1359,6 @@ public class ItemEditorEffectsTests
             public void SetupDispatchingCloseDialogAction()
             {
                 SetupDispatchingAction(new CloseDeleteItemDialogAction(true));
-            }
-
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
 
             public void SetupSuccessNotification()

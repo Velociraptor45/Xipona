@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
@@ -48,5 +49,15 @@ public abstract class EffectsFixtureBase
     protected void VerifyNotDispatchingAction<TAction>()
     {
         DispatcherMock.Verify(m => m.Dispatch(It.IsAny<TAction>()), Times.Never);
+    }
+
+    public void SetupDispatchingExceptionNotificationAction()
+    {
+        SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+    }
+
+    public void SetupDispatchingErrorNotificationAction()
+    {
+        SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
     }
 }

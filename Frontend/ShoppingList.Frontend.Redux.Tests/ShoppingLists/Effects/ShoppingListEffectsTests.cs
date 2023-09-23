@@ -1,6 +1,5 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
@@ -50,7 +49,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -68,7 +67,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -114,16 +113,6 @@ public class ShoppingListEffectsTests
                 _expectedLoadFinishedAction = new LoadQuantityTypesFinishedAction(_expectedQuantityTypes);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
             }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
         }
     }
 
@@ -157,7 +146,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -175,7 +164,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -220,16 +209,6 @@ public class ShoppingListEffectsTests
 
                 _expectedLoadFinishedAction = new LoadQuantityTypesInPacketFinishedAction(_expectedQuantityTypesInPacket);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
         }
     }
@@ -375,7 +354,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupAction();
                 _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -396,7 +375,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupAction();
                 _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -451,16 +430,6 @@ public class ShoppingListEffectsTests
             public void SetupAction()
             {
                 Action = new SelectedStoreChangedAction(_storeId);
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
         }
     }

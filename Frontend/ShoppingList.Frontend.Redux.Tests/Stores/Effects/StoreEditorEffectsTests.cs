@@ -1,6 +1,5 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
@@ -46,7 +45,7 @@ public class StoreEditorEffectsTests
             {
                 _fixture.SetupAction();
                 _fixture.SetupGettingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotification();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -67,7 +66,7 @@ public class StoreEditorEffectsTests
             {
                 _fixture.SetupAction();
                 _fixture.SetupGettingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotification();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -101,16 +100,6 @@ public class StoreEditorEffectsTests
             public void SetupGettingStoreThrowsHttpRequestException()
             {
                 ApiClientMock.SetupGetStoreByIdAsyncThrowing(_storeId, new DomainTestBuilder<HttpRequestException>().Create());
-            }
-
-            public void SetupDispatchingExceptionNotification()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorNotification()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupAction()
@@ -178,7 +167,7 @@ public class StoreEditorEffectsTests
                 _fixture.SetupStoreId();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupModifyingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotification();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
@@ -199,7 +188,7 @@ public class StoreEditorEffectsTests
                 _fixture.SetupStoreId();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupModifyingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotification();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
@@ -242,7 +231,7 @@ public class StoreEditorEffectsTests
                 _fixture.SetupStoreIdEmpty();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupCreatingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotification();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
@@ -263,7 +252,7 @@ public class StoreEditorEffectsTests
                 _fixture.SetupStoreIdEmpty();
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupCreatingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotification();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
@@ -349,16 +338,6 @@ public class StoreEditorEffectsTests
                 ApiClientMock.SetupModifyStoreAsyncThrowing(State.Editor.Store!, new DomainTestBuilder<HttpRequestException>().Create());
             }
 
-            public void SetupDispatchingExceptionNotification()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorNotification()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingStartAction()
             {
                 SetupDispatchingAction<SaveStoreStartedAction>();
@@ -438,7 +417,7 @@ public class StoreEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupDeletingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotification();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
@@ -458,7 +437,7 @@ public class StoreEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupDeletingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotification();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishAction();
             });
             var sut = _fixture.CreateSut();
@@ -514,16 +493,6 @@ public class StoreEditorEffectsTests
             {
                 ApiClientMock.SetupDeleteStoreAsyncThrowing(State.Editor.Store!.Id,
                     new DomainTestBuilder<HttpRequestException>().Create());
-            }
-
-            public void SetupDispatchingExceptionNotification()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorNotification()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingStartAction()

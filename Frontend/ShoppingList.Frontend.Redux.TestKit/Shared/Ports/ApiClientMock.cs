@@ -1,9 +1,11 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
@@ -385,5 +387,62 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetAllIngredientQuantityTypesThrowing(Exception ex)
     {
         this.SetupInOrder(m => m.GetAllIngredientQuantityTypes()).ThrowsAsync(ex);
+    }
+
+    public void SetupGetManufacturerSearchResultsAsync(string searchInput,
+        IEnumerable<ManufacturerSearchResult> returnValue)
+    {
+        this.SetupInOrder(m => m.GetManufacturerSearchResultsAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetManufacturerSearchResultsAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetManufacturerSearchResultsAsync(searchInput)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetManufacturerByIdAsync(Guid manufacturerId, EditedManufacturer returnValue)
+    {
+        this.SetupInOrder(m => m.GetManufacturerByIdAsync(manufacturerId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetManufacturerByIdAsyncThrowing(Guid manufacturerId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetManufacturerByIdAsync(manufacturerId)).ThrowsAsync(ex);
+    }
+
+    public void SetupCreateManufacturerAsync(string name, EditedManufacturer returnValue)
+    {
+        this.SetupInOrder(m => m.CreateManufacturerAsync(name)).ReturnsAsync(returnValue);
+    }
+
+    public void SetupCreateManufacturerAsyncThrowing(string name, Exception ex)
+    {
+        this.SetupInOrder(m => m.CreateManufacturerAsync(name)).ThrowsAsync(ex);
+    }
+
+    public void SetupModifyManufacturerAsync(ModifyManufacturerRequest request)
+    {
+        this.SetupInOrder(m => m.ModifyManufacturerAsync(
+                It.Is<ModifyManufacturerRequest>(r => r.IsRequestEquivalentTo(request))))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupModifyManufacturerAsyncThrowing(ModifyManufacturerRequest request, Exception ex)
+    {
+        this.SetupInOrder(m => m.ModifyManufacturerAsync(
+                It.Is<ModifyManufacturerRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupDeleteManufacturerAsync(Guid manufacturerId)
+    {
+        this.SetupInOrder(m => m.DeleteManufacturerAsync(manufacturerId)).Returns(Task.CompletedTask);
+    }
+
+    public void SetupDeleteManufacturerAsyncThrowing(Guid manufacturerId, Exception ex)
+    {
+        this.SetupInOrder(m => m.DeleteManufacturerAsync(manufacturerId)).ThrowsAsync(ex);
     }
 }

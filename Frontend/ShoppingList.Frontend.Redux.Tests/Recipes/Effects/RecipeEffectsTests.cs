@@ -2,7 +2,6 @@
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
@@ -158,16 +157,6 @@ public class RecipeEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
                 SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
             }
-
-            public void SetupDispatchingExceptionNotificationAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorNotificationAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
         }
     }
 
@@ -310,16 +299,6 @@ public class RecipeEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
                 SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
             }
-
-            public void SetupDispatchingExceptionNotificationAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorNotificationAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
         }
     }
 
@@ -405,16 +384,6 @@ public class RecipeEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
                 SetupDispatchingAction(new LoadRecipeTagsFinishedAction(_expectedRecipeSearchResults));
-            }
-
-            public void SetupDispatchingExceptionNotificationAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorNotificationAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
         }
     }
