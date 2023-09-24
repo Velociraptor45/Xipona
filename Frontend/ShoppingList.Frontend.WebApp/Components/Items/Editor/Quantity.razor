@@ -18,7 +18,7 @@
             ValueName="@nameof(QuantityType.Id)"
             LabelName="@nameof(QuantityType.Name)"
             Placeholder="QuantityType"
-            DefaultValue="@State.Value.Editor.Item!.QuantityType.Id"
+            Value="@State.Value.Editor.Item!.QuantityType.Id"
             DataSource="@State.Value.QuantityTypes.ToList()"
             OnSelectedItemChanged="@OnQuantityTypeChanged">
         </Select>
