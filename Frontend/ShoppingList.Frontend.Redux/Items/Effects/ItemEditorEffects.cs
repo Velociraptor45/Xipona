@@ -58,7 +58,7 @@ public sealed class ItemEditorEffects
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new StoreAddedToItemAction());
         if (action.Available is EditedItemType itemType)
-            dispatcher.Dispatch(new StoreAddedToItemTypeAction(itemType.Id));
+            dispatcher.Dispatch(new StoreAddedToItemTypeAction(itemType.Key));
 
         return Task.CompletedTask;
     }

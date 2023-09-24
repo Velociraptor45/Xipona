@@ -204,8 +204,9 @@ public static class ItemEditorReducer
     [ReducerMethod]
     public static ItemState OnStoreAddedToItemType(ItemState state, StoreAddedToItemTypeAction action)
     {
+        Console.WriteLine(action.ItemTypeKey);
         var types = state.Editor.Item!.ItemTypes.ToList();
-        var type = types.FirstOrDefault(t => t.Id == action.ItemTypeId);
+        var type = types.FirstOrDefault(t => t.Key == action.ItemTypeKey);
         if (type == null)
             return state;
 
@@ -482,7 +483,7 @@ public static class ItemEditorReducer
     public static ItemState OnItemTypeAdded(ItemState state)
     {
         var types = state.Editor.Item!.ItemTypes.ToList();
-        types.Insert(0, new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
+        types.Insert(0, new(Guid.Empty, Guid.NewGuid(), string.Empty, new List<EditedItemAvailability>()));
 
         return state with
         {

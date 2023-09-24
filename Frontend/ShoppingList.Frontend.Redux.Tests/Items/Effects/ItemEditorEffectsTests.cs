@@ -211,7 +211,7 @@ public class ItemEditorEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Id));
+                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Key));
             }
 
             public void SetupActionForItem()
