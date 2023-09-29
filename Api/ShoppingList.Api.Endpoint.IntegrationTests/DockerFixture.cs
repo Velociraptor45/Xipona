@@ -26,8 +26,11 @@ public sealed class DockerFixture : IDisposable
         Task.Delay(10000).GetAwaiter().GetResult();
     }
 
+    public const string ConnectionStringWithoutDb =
+        "server=127.0.0.1;port=15906;user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
+
     public const string ConnectionString =
-        $"server=127.0.0.1;port=15906;database={DatabaseName};user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
+        "server=127.0.0.1;port=15906;database={DatabaseName};user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
 
     public const string DatabaseName = "test-shoppinglist";
 

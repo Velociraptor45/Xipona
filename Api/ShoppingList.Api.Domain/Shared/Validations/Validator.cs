@@ -32,7 +32,7 @@ public class Validator : IValidator
         _recipeTagValidationService = recipeTagValidationServiceDelegate(cancellationToken);
     }
 
-    public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities)
+    public async Task ValidateAsync(IEnumerable<ItemAvailability> availabilities)
     {
         await _availabilityValidationService.ValidateAsync(availabilities);
     }

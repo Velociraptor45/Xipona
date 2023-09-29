@@ -11,6 +11,11 @@ public static class StoreEditorReducer
     [ReducerMethod(typeof(SetNewStoreAction))]
     public static StoreState OnSetNewStore(StoreState state)
     {
+        var sections = new List<EditedSection>
+        {
+            new(Guid.NewGuid(), Guid.Empty, "Default", true, 0)
+        };
+
         return state with
         {
             Editor = state.Editor with
@@ -18,7 +23,7 @@ public static class StoreEditorReducer
                 Store = new EditedStore(
                     Guid.Empty,
                     string.Empty,
-                    new SortedSet<EditedSection>())
+                    new SortedSet<EditedSection>(sections, new SortingIndexComparer()))
             }
         };
     }
@@ -233,6 +238,66 @@ public static class StoreEditorReducer
                 {
                     Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
                 }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteStoreButtonClickedAction))]
+    public static StoreState OnDeleteStoreButtonClicked(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsShowingDeletionNotice = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteStoreAbortedAction))]
+    public static StoreState OnDeleteStoreAborted(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsShowingDeletionNotice = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteStoreStartedAction))]
+    public static StoreState OnDeleteStoreStarted(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(DeleteStoreFinishedAction))]
+    public static StoreState OnDeleteStoreFinished(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteStoreDialogAction))]
+    public static StoreState OnCloseDeleteStoreDialog(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsShowingDeletionNotice = false
             }
         };
     }

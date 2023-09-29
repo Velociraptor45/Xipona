@@ -2,8 +2,13 @@
 
 public record ActiveStores(IReadOnlyCollection<ItemStore> Stores)
 {
-    public IReadOnlyCollection<ItemStoreSection> GetSections(Guid StoreId)
+    public IReadOnlyCollection<ItemStoreSection> GetSections(Guid storeId)
     {
-        return Stores.FirstOrDefault(s => s.Id == StoreId)?.Sections ?? new List<ItemStoreSection>();
+        return Stores
+                   .FirstOrDefault(s => s.Id == storeId)?
+                   .Sections
+                   .OrderBy(s => s.SortingIndex)
+                   .ToList() 
+               ?? new List<ItemStoreSection>();
     }
 }

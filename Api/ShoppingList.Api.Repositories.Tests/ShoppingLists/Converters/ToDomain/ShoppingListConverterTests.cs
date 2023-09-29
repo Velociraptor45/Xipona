@@ -15,7 +15,7 @@ public class ShoppingListConverterTests
     public override ShoppingListConverter CreateSut()
     {
         return new(new ShoppingListFactory(new ShoppingListSectionFactory()), new ShoppingListSectionFactory(),
-            new ShoppingListItemConverter(new ShoppingListItemFactory()));
+            new ShoppingListItemConverter());
     }
 
     protected override Repositories.ShoppingLists.Entities.ShoppingList CreateSource()
@@ -41,7 +41,7 @@ public class ShoppingListConverterTests
                     (sectionId, maps) => new
                     {
                         SectionId = sectionId,
-                        Items = maps.Select(i => ctx.Mapper.Map<IShoppingListItem>(i))
+                        Items = maps.Select(i => ctx.Mapper.Map<ShoppingListItem>(i))
                     })
                     .Select(g => new ShoppingListSection(
                         new SectionId(g.SectionId),

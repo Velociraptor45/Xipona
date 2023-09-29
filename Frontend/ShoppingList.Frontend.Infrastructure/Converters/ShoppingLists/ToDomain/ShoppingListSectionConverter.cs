@@ -22,7 +22,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Shopping
                 source.Name,
                 source.SortingIndex,
                 true,
-                source.Items.Select(_itemConverter.ToDomain));
+                source.Items.Select(_itemConverter.ToDomain).ToList());
         }
     }
 }

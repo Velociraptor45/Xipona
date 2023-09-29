@@ -20,7 +20,7 @@ public interface IItem
     ItemCategoryId? ItemCategoryId { get; }
     ManufacturerId? ManufacturerId { get; }
     TemporaryItemId? TemporaryId { get; }
-    IReadOnlyCollection<IItemAvailability> Availabilities { get; }
+    IReadOnlyCollection<ItemAvailability> Availabilities { get; }
     IReadOnlyCollection<IItemType> ItemTypes { get; }
     bool HasItemTypes { get; }
     DateTimeOffset? UpdatedOn { get; }
@@ -34,9 +34,9 @@ public interface IItem
 
     bool IsAvailableInStore(StoreId storeId);
 
-    void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities);
+    void MakePermanent(PermanentItem permanentItem, IEnumerable<ItemAvailability> availabilities);
 
-    void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities);
+    void Modify(ItemModification itemChange, IEnumerable<ItemAvailability> availabilities);
 
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 
@@ -56,4 +56,6 @@ public interface IItem
     IItem Update(StoreId storeId, ItemTypeId? itemTypeId, Price price, IDateTimeService dateTimeService);
 
     void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
+
+    void RemoveAvailabilitiesFor(StoreId storeId);
 }

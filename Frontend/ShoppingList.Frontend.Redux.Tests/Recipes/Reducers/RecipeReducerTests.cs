@@ -94,6 +94,7 @@ public class RecipeReducerTests
                 {
                     Search = ExpectedState.Search with
                     {
+                        TriggeredAtLeastOnce = false,
                         SearchResults = new DomainTestBuilder<RecipeSearchResult>().CreateMany(2).ToList()
                     }
                 };
@@ -105,6 +106,7 @@ public class RecipeReducerTests
                 {
                     Search = ExpectedState.Search with
                     {
+                        TriggeredAtLeastOnce = true,
                         SearchResults = new List<RecipeSearchResult>
                         {
                             new DomainTestBuilder<RecipeSearchResult>()

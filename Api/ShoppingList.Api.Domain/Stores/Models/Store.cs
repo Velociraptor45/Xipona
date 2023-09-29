@@ -1,6 +1,9 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.DomainEvents;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -19,7 +22,7 @@ public class Store : AggregateRoot, IStore
 
     public StoreId Id { get; }
     public StoreName Name { get; private set; }
-    public bool IsDeleted { get; }
+    public bool IsDeleted { get; private set; }
     public IReadOnlyCollection<ISection> Sections => _sections.AsReadOnly();
 
     public ISection GetDefaultSection()
@@ -34,6 +37,9 @@ public class Store : AggregateRoot, IStore
 
     public void ChangeName(StoreName name)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedStoreReason(Id));
+
         Name = name;
     }
 
@@ -41,6 +47,18 @@ public class Store : AggregateRoot, IStore
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedStoreReason(Id));
+
         await _sections.ModifyManyAsync(sectionModifications, itemModificationService, shoppingListModificationService);
+    }
+
+    public void Delete()
+    {
+        if (IsDeleted)
+            return;
+
+        IsDeleted = true;
+        PublishDomainEvent(new StoreDeletedDomainEvent(Id));
     }
 }

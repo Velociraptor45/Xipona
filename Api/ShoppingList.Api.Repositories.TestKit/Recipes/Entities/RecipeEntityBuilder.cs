@@ -24,6 +24,12 @@ public class RecipeEntityBuilder : TestBuilderBase<Recipe>
         return this;
     }
 
+    // TCG keep
+    public RecipeEntityBuilder WithIngredient(Ingredient ingredient)
+    {
+        return WithIngredients(new List<Ingredient> { ingredient });
+    }
+
     public RecipeEntityBuilder WithIngredients(ICollection<Ingredient> ingredients)
     {
         FillPropertyWith(p => p.Ingredients, ingredients);

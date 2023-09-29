@@ -14,11 +14,11 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
 {
     private readonly IItemFactory _itemFactory;
     private readonly IToDomainConverter<Entities.ItemType, IItemType> _itemTypeConverter;
-    private readonly IToDomainConverter<AvailableAt, IItemAvailability> _itemAvailabilityConverter;
+    private readonly IToDomainConverter<AvailableAt, ItemAvailability> _itemAvailabilityConverter;
 
     public ItemConverter(IItemFactory itemFactory,
         IToDomainConverter<Entities.ItemType, IItemType> itemTypeConverter,
-        IToDomainConverter<AvailableAt, IItemAvailability> itemAvailabilityConverter)
+        IToDomainConverter<AvailableAt, ItemAvailability> itemAvailabilityConverter)
     {
         _itemFactory = itemFactory;
         _itemTypeConverter = itemTypeConverter;
@@ -77,7 +77,7 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
         }
         else
         {
-            List<IItemAvailability> availabilities = _itemAvailabilityConverter.ToDomain(source.AvailableAt)
+            List<ItemAvailability> availabilities = _itemAvailabilityConverter.ToDomain(source.AvailableAt)
                 .ToList();
             var temporaryId = source.CreatedFrom.HasValue
                 ? new TemporaryItemId(source.CreatedFrom.Value)

@@ -1,34 +1,68 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.DomainEvents;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ItemCategories.Models;
 
 public class ItemCategoryTests
 {
-    private readonly CommonFixture _commonFixture;
-
-    public ItemCategoryTests()
+    public class Delete
     {
-        _commonFixture = new CommonFixture();
-    }
+        private readonly DeleteFixture _fixture = new();
 
-    [Fact]
-    public void Delete_WithValidData_ShouldMarkItemCategoryAsDeleted()
-    {
-        // Arrange
-        var itemCategory = ItemCategoryMother.NotDeleted().Create();
-
-        // Act
-        itemCategory.Delete();
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void Delete_WithNotDeleted_ShouldMarkItemCategoryAsDeleted()
         {
-            itemCategory.IsDeleted.Should().BeTrue();
+            // Arrange
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedDomainEvent(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedDomainEvent);
+
+            // Act
+            sut.Delete();
+
+            // Assert
+            using (new AssertionScope())
+            {
+                sut.IsDeleted.Should().BeTrue();
+                sut.DomainEvents.Should().HaveCount(1);
+                var domainEvent = sut.DomainEvents.Single();
+                domainEvent.Should().BeEquivalentTo(_fixture.ExpectedDomainEvent);
+            }
+        }
+
+        [Fact]
+        public void Delete_WithDeleted_ShouldMarkItemCategoryAsDeleted()
+        {
+            // Arrange
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            sut.Delete();
+
+            // Assert
+            using (new AssertionScope())
+            {
+                sut.IsDeleted.Should().BeTrue();
+                sut.DomainEvents.Should().BeEmpty();
+            }
+        }
+
+        private sealed class DeleteFixture : ItemCategoryFixture
+        {
+            public ItemCategoryDeletedDomainEvent? ExpectedDomainEvent { get; private set; }
+
+            public void SetupExpectedDomainEvent(ItemCategory sut)
+            {
+                ExpectedDomainEvent = new ItemCategoryDeletedDomainEvent(sut.Id);
+            }
         }
     }
 
@@ -59,6 +93,23 @@ public class ItemCategoryTests
             sut.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
+        [Fact]
+        public void Modify_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupModification();
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = () => sut.Modify(_fixture.Modification);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotModifyDeletedItemCategory);
+        }
+
         private class ModifyFixture : ItemCategoryFixture
         {
             public ItemCategoryModification? Modification { get; set; }
@@ -80,9 +131,21 @@ public class ItemCategoryTests
 
     private abstract class ItemCategoryFixture
     {
+        private ItemCategoryBuilder _itemCategoryBuilder = new();
+
+        protected ItemCategoryFixture()
+        {
+            _itemCategoryBuilder.WithIsDeleted(false);
+        }
+
+        public void SetupDeleted()
+        {
+            _itemCategoryBuilder = _itemCategoryBuilder.WithIsDeleted(true);
+        }
+
         public ItemCategory CreateSut()
         {
-            return new ItemCategoryBuilder().Create();
+            return _itemCategoryBuilder.Create();
         }
     }
 }

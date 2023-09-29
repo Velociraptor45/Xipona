@@ -13,8 +13,14 @@ public static class RecipeEditorReducer
             Guid.Empty,
             string.Empty,
             1,
-            new List<EditedIngredient>(0),
-            new SortedSet<EditedPreparationStep>(),
+            new List<EditedIngredient>
+            {
+                EditedIngredient.GetInitial(state.IngredientQuantityTypes)
+            },
+            new SortedSet<EditedPreparationStep>
+            {
+                new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
+            },
             new List<Guid>(0));
 
         return state with
@@ -22,7 +28,7 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = recipe,
-                IsInEditMode = false
+                IsInEditMode = true
             }
         };
     }
@@ -152,6 +158,44 @@ public static class RecipeEditorReducer
                 {
                     NumberOfServings = action.NumberOfServings
                 }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(ModifyRecipeStartedAction))]
+    public static RecipeState OnModifyRecipeStarted(RecipeState state)
+    {
+        return SetSaving(state, true);
+    }
+
+    [ReducerMethod(typeof(ModifyRecipeFinishedAction))]
+    public static RecipeState OnModifyRecipeFinished(RecipeState state)
+    {
+        return SetSaving(state, false);
+    }
+
+    [ReducerMethod(typeof(CreateRecipeStartedAction))]
+    public static RecipeState OnCreateRecipeStarted(RecipeState state)
+    {
+        return SetSaving(state, true);
+    }
+
+    [ReducerMethod(typeof(CreateRecipeFinishedAction))]
+    public static RecipeState OnCreateRecipeFinished(RecipeState state)
+    {
+        return SetSaving(state, false);
+    }
+
+    private static RecipeState SetSaving(RecipeState state, bool isSaving)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsSaving = isSaving
             }
         };
     }

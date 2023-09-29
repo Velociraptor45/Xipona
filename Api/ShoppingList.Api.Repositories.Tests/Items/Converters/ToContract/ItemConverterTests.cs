@@ -40,7 +40,7 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
 
     protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
     {
-        cfg.CreateMap<(Item, IItemAvailability), AvailableAt>(MemberList.Destination)
+        cfg.CreateMap<(Item, ItemAvailability), AvailableAt>(MemberList.Destination)
             .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Item1.Id.Value))
             .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.Item2.StoreId.Value))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item2.Price.Value))
@@ -57,7 +57,7 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
             .ForMember(dest => dest.Predecessor, opt => opt.Ignore())
             .ForMember(dest => dest.Item, opt => opt.Ignore());
 
-        cfg.CreateMap<(IItemType, IItemAvailability), ItemTypeAvailableAt>(MemberList.Destination)
+        cfg.CreateMap<(IItemType, ItemAvailability), ItemTypeAvailableAt>(MemberList.Destination)
            .ForMember(dest => dest.ItemTypeId, opt => opt.MapFrom(src => src.Item1.Id.Value))
            .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.Item2.StoreId.Value))
            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item2.Price.Value))
@@ -70,12 +70,12 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
         return item.ItemTypes.Select(it => (item, it));
     }
 
-    private static IEnumerable<(Item, IItemAvailability)> CreateItemAvailabilityTuple(Item item)
+    private static IEnumerable<(Item, ItemAvailability)> CreateItemAvailabilityTuple(Item item)
     {
         return item.Availabilities.Select(av => (item, av));
     }
 
-    private static IEnumerable<(IItemType, IItemAvailability)> CreateItemTypeAvailabilityTuple(IItemType itemType)
+    private static IEnumerable<(IItemType, ItemAvailability)> CreateItemTypeAvailabilityTuple(IItemType itemType)
     {
         return itemType.Availabilities.Select(av => (itemType, av));
     }

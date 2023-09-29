@@ -1,53 +1,81 @@
-﻿@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants
-<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">ShoppingList.Frontend</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-cart" aria-hidden="true"></span> Shopping List
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
+
+@inject IState<SharedState> State
+@inject IDispatcher Dispatcher
+@inject IJSRuntime JsRuntime
+
+<div class="nav-menu pt-2 pb-3">
+    <ul class="nav d-flex justify-content-around">
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex" href="" Match="NavLinkMatch.All" @onclick="OnMenuItemClicked">
+                <i class="bi bi-bag align-self-center"></i>
+                <div class="align-self-center">Shopping</div>
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="@PageRoutes.Items">
-                <span class="oi oi-clipboard" aria-hidden="true"></span> Items
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Items" @onclick="OnMenuItemClicked">
+                <i class="bi bi-clipboard align-self-center"></i>
+                <div class="align-self-center">Items</div>
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="@PageRoutes.Stores">
-                <span class="oi oi-basket" aria-hidden="true"></span> Stores
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Recipes" @onclick="OnMenuItemClicked">
+                <i class="bi bi-book align-self-center"></i>
+                <div class="align-self-center">Recipes</div>
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="@PageRoutes.Manufacturers">
-                <span class="oi oi-briefcase" aria-hidden="true"></span> Manufacturers
+        <li class="nav-item">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Stores" @onclick="OnMenuItemClicked">
+                <i class="bi bi-shop align-self-center"></i>
+                <div class="align-self-center">Stores</div>
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="@PageRoutes.ItemCategories">
-                <span class="oi oi-spreadsheet" aria-hidden="true"></span> Item Categories
-            </NavLink>
+        <li class="nav-item nav-item-menu">
+            <div class="nav-link d-flex" onclick="@ToggleNavMenu">
+                <i class="bi bi-list align-self-center"></i>
+                <div class="align-self-center">Others</div>
+            </div>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="@PageRoutes.Recipes">
-                <span class="oi oi-book" aria-hidden="true"></span> Recipes
-            </NavLink>
-        </li>
+        <div class="@NavMenuCssClass nav-menu-ext">
+            <li class="nav-item-ext">
+                <NavLink class="nav-link d-flex" href="@PageRoutes.Manufacturers" @onclick="OnMenuItemClicked">
+                    <i class="bi bi-briefcase align-self-center"></i>
+                    <div class="align-self-center">Manufacturers</div>
+                </NavLink>
+            </li>
+            <li class="nav-item-ext">
+                <NavLink class="nav-link d-flex" href="@PageRoutes.ItemCategories" @onclick="OnMenuItemClicked">
+                    <i class="bi bi-tag align-self-center"></i>
+                    <div class="align-self-center">Categories</div>
+                </NavLink>
+            </li>
+        </div>
     </ul>
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+    private string NavMenuCssClass => State.Value.IsMobileNavMenuExpanded ? null : "nav-menu-ext-collapse";
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var isMobile = await JsRuntime.InvokeAsync<bool>("isMobile");
+        Dispatcher.Dispatch(new ApplicationInitializedAction(isMobile));
+    }
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        Dispatcher.Dispatch(new ToggleMobileNavMenuExpansionAction());
+    }
+
+    private void OnMenuItemClicked()
+    {
+        Dispatcher.Dispatch(new NavMenuItemClickedAction());
     }
 }

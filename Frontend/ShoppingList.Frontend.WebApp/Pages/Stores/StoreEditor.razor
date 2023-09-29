@@ -12,14 +12,23 @@
 
 @if (State.Value.Editor.Store is not null)
 {
-    <div class="px-2">
+    <div class="pt-2 editor">
         <div class="d-flex">
-            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClickedAsync">
-                <Icon Type="arrow-left"></Icon>
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <i class="bi bi-arrow-left"></i>
             </Button>
             <div class="mx-3">
-                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"
+                       Placeholder="Store name"/>
             </div>
+            @if (State.Value.Editor.Store.Id != Guid.Empty)
+            {
+                <div class="ml-auto">
+                    <Button Danger="true" OnClick="@OnDeleteButtonClicked">
+                        <i class="bi bi-trash"></i>
+                    </Button>
+                </div>
+            }
         </div>
 
         <Sections></Sections>
@@ -27,14 +36,21 @@
         <div class="d-flex justify-content-end mt-2">
             @if (State.Value.Editor.Store.Id == Guid.Empty)
             {
-                <Button @onclick="@OnSaveButtonClickedAsync" Loading="State.Value.Editor.IsSaving">Create</Button>
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving" 
+                        Type="@ButtonType.Primary">
+                    Create
+                </Button>
             }
             else
             {
-                <Button @onclick="@OnSaveButtonClickedAsync" Loading="State.Value.Editor.IsSaving">Save</Button>
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving" 
+                        Type="@ButtonType.Primary">
+                    Save
+                </Button>
             }
         </div>
     </div>
+    <DeleteStoreDialog></DeleteStoreDialog>
 }
 
 @code {
@@ -50,7 +66,7 @@
             Dispatcher.Dispatch(new LoadStoreForEditingAction(StoreId));
     }
 
-    private void OnBackButtonClickedAsync()
+    private void OnBackButtonClicked()
     {
         Dispatcher.Dispatch(new LeaveStoreEditorAction());
     }
@@ -60,8 +76,13 @@
         Dispatcher.Dispatch(new StoreNameChangedAction(name ?? string.Empty));
     }
     
-    private void OnSaveButtonClickedAsync()
+    private void OnSaveButtonClicked()
     {
         Dispatcher.Dispatch(new SaveStoreAction());
+    }
+
+    private void OnDeleteButtonClicked()
+    {
+        Dispatcher.Dispatch(new DeleteStoreButtonClickedAction());
     }
 }

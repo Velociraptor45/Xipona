@@ -29,7 +29,7 @@ public class ShoppingListConverterTests
 
     protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
     {
-        cfg.CreateMap<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, IShoppingListItem), ItemsOnList>(MemberList.Destination)
+        cfg.CreateMap<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem), ItemsOnList>(MemberList.Destination)
             .ForMember(dest => dest.ItemId, opt => opt.MapFrom(si => si.Item3.Id.Value))
             .ForMember(dest => dest.ItemTypeId, opt => opt.MapFrom(si => si.Item3.TypeId.HasValue ? si.Item3.TypeId.Value : (Guid?)null))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(si => si.Item3.Quantity.Value))
@@ -40,10 +40,10 @@ public class ShoppingListConverterTests
             .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 
-    private static IEnumerable<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, IShoppingListItem)> Convert(
+    private static IEnumerable<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> Convert(
         Domain.ShoppingLists.Models.ShoppingList src)
     {
-        List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, IShoppingListItem)> list = new();
+        List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> list = new();
         foreach (var section in src.Sections)
         {
             foreach (var item in section.Items)

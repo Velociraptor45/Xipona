@@ -1,6 +1,6 @@
 {
-  "name": "ShoppingList.Frontend",
-  "short_name": "ShoppingList.Frontend",
+  "name": "Shopping List",
+  "short_name": "Shopping List",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",

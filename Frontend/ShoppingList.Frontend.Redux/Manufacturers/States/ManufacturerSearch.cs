@@ -2,4 +2,5 @@
 
 public record ManufacturerSearch(
     bool IsLoadingSearchResults,
+    bool TriggeredAtLeastOnce,
     IList<ManufacturerSearchResult> SearchResults);

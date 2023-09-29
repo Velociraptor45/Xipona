@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
+using Polly;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
@@ -50,6 +51,10 @@ public static class ServiceCollectionExtensions
     public static void AddRepositories(this IServiceCollection services, string? connectionString = null)
     {
         var assembly = Assembly.GetExecutingAssembly();
+        var connectionRetryPolicy = Policy.Handle<Exception>().WaitAndRetry(
+                5,
+                _ => TimeSpan.FromSeconds(5),
+                (e, _, tryNo, _) => Console.WriteLine($"Failed to open DB connection (Try no. {tryNo}): {e}"));
 
         services.AddScoped<DbConnection>(provider =>
         {
@@ -58,13 +63,16 @@ public static class ServiceCollectionExtensions
                 var cs = provider.GetRequiredService<ConnectionStrings>();
                 connectionString = cs.ShoppingDatabase;
             }
-            var connection = new MySqlConnection(connectionString);
-            connection.Open();
-            return connection;
+
+            return connectionRetryPolicy.Execute(() =>
+            {
+                var connection = new MySqlConnection(connectionString);
+                connection.Open();
+                return connection;
+            });
         });
 
-        services.AddScoped<IList<DbContext>>(
-            serviceProvider => GetAllDbContextInstances(serviceProvider, assembly).ToList());
+        services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
 
         services.AddDbContext<ShoppingListContext>(SetDbConnection);
         services.AddDbContext<ItemCategoryContext>(SetDbConnection);
@@ -105,8 +113,10 @@ public static class ServiceCollectionExtensions
                 .GetRequiredService<IToDomainConverter<ItemCategories.Entities.ItemCategory, IItemCategory>>();
             var toEntityConverter = provider
                 .GetRequiredService<IToContractConverter<IItemCategory, ItemCategories.Entities.ItemCategory>>();
+            var dispatcher = provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>();
             var logger = provider.GetRequiredService<ILogger<ItemCategoryRepository>>();
-            return ct => new ItemCategoryRepository(context, toDomainConverter, toEntityConverter, logger, ct);
+            return ct => new ItemCategoryRepository(context, toDomainConverter, toEntityConverter, dispatcher, logger,
+                ct);
         });
         services.AddTransient<Func<CancellationToken, IManufacturerRepository>>(provider =>
         {
@@ -123,6 +133,7 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<StoreContext>(),
                 provider.GetRequiredService<IToDomainConverter<Stores.Entities.Store, IStore>>(),
                 provider.GetRequiredService<IToContractConverter<IStore, Stores.Entities.Store>>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>(),
                 provider.GetRequiredService<ILogger<StoreRepository>>(),
                 ct);
         });
@@ -159,9 +170,9 @@ public static class ServiceCollectionExtensions
         options.UseMySql(connection, _sqlServerVersion);
     }
 
-    private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider, Assembly assembly)
+    private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)
     {
-        var types = GetAllDbContextTypes(assembly);
+        var types = GetAllDbContextTypes();
         var instances = types.Select(serviceProvider.GetRequiredService);
         foreach (var instance in instances)
         {
@@ -169,9 +180,16 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    private static IEnumerable<Type> GetAllDbContextTypes(Assembly assembly)
+    private static IEnumerable<Type> GetAllDbContextTypes()
     {
-        var baseType = typeof(DbContext);
-        return assembly.GetTypes().Where(t => t.BaseType == baseType).ToList();
+        // The order of the types is important, because the migrations are applied in the same order
+        // and some of them depend on others
+        yield return typeof(ManufacturerContext);
+        yield return typeof(ItemCategoryContext);
+        yield return typeof(StoreContext);
+        yield return typeof(ItemContext);
+        yield return typeof(ShoppingListContext);
+        yield return typeof(RecipeTagContext);
+        yield return typeof(RecipeContext);
     }
 }

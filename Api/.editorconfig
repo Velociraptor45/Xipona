@@ -285,6 +285,9 @@ dotnet_diagnostic.CS8600.severity = error
 # CS8597: Thrown value may be null.
 dotnet_diagnostic.CS8597.severity = error
 
+# CS8602: Dereference of a possibly null reference
+dotnet_diagnostic.CS8602.severity = error
+
 # CS8625: Cannot convert null literal to non-nullable reference type.
 dotnet_diagnostic.CS8625.severity = error
 
@@ -296,3 +299,6 @@ dotnet_diagnostic.CS8618.severity = error
 
 # CS8762: Parameter must have a non-null value when exiting
 dotnet_diagnostic.CS8762.severity = error
+
+# S2094: Classes should not be empty
+dotnet_diagnostic.S2094.severity = none

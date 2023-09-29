@@ -81,4 +81,19 @@ public class ShoppingListRepositoryMock : Mock<IShoppingListRepository>
         Setup(m => m.StoreAsync(shoppingList))
             .Returns(Task.CompletedTask);
     }
+
+    public void SetupDeleteAsync(ShoppingListId shoppingListId)
+    {
+        Setup(m => m.DeleteAsync(shoppingListId)).Returns(Task.CompletedTask);
+    }
+
+    public void VerifyDeleteAsync(ShoppingListId shoppingListId, Func<Times> times)
+    {
+        Verify(m => m.DeleteAsync(shoppingListId), times);
+    }
+
+    public void VerifyDeleteAsyncNever()
+    {
+        Verify(m => m.DeleteAsync(It.IsAny<ShoppingListId>()), Times.Never);
+    }
 }

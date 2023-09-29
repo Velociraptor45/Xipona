@@ -1,3 +1,18 @@
 ﻿.section:hover {
-    cursor: pointer;
+  cursor: pointer;
+}
+.name {
+  font-size: 1.1rem;
+}
+.all-in-basket {
+  background-color: #3498db;
+  color: white;
+}
+.some-in-basket {
+  background-color: #F7D80F;
+  color: #496684;
+}
+.none-in-basket {
+  background-color: #e74c3c;
+  color: white;
 }

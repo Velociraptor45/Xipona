@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
@@ -7,6 +8,29 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 
 public static class ShoppingListReducer
 {
+    [ReducerMethod(typeof(ShoppingListEnteredAction))]
+    public static ShoppingListState OnShoppingListEntered(ShoppingListState state)
+    {
+        return state with
+        {
+            QuantityTypes = new List<QuantityType>(),
+            QuantityTypesInPacket = new List<QuantityTypeInPacket>(),
+            Stores = state.Stores with
+            {
+                Stores = new List<ShoppingListStore>()
+            },
+            SelectedStoreId = Guid.Empty,
+            ItemsInBasketVisible = true,
+            EditModeActive = false,
+            ShoppingList = null,
+            SearchBar = state.SearchBar with
+            {
+                Input = string.Empty,
+                Results = new List<SearchItemForShoppingListResult>()
+            }
+        };
+    }
+
     [ReducerMethod]
     public static ShoppingListState OnLoadQuantityTypesFinished(ShoppingListState state,
         LoadQuantityTypesFinishedAction action)
@@ -41,7 +65,6 @@ public static class ShoppingListReducer
             SearchBar = state.SearchBar with
             {
                 Input = string.Empty,
-                IsActive = false,
                 Results = new List<SearchItemForShoppingListResult>()
             }
         };

@@ -54,15 +54,6 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId)
-    {
-        var entities = await GetItemQuery()
-            .Where(i => i.ManufacturerId == manufacturerId.Value)
-            .ToListAsync(_cancellationToken);
-
-        return _toModelConverter.ToDomain(entities);
-    }
-
     public async Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
     {
@@ -86,6 +77,15 @@ public class ItemRepository : IItemRepository
             .ToList();
 
         return _toModelConverter.ToDomain(filteredResultByStore);
+    }
+
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId)
+    {
+        var entities = await GetItemQuery()
+            .Where(i => i.ManufacturerId == manufacturerId.Value && !i.Deleted)
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
@@ -112,7 +112,9 @@ public class ItemRepository : IItemRepository
     public async Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId)
     {
         var entities = await GetItemQuery()
-            .Where(item => !item.Deleted && item.AvailableAt.FirstOrDefault(av => av.StoreId == storeId) != null)
+            .Where(item => !item.Deleted
+                           && (item.AvailableAt.Any(av => av.StoreId == storeId)
+                               || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
@@ -211,12 +213,14 @@ public class ItemRepository : IItemRepository
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds,
-        StoreId storeId)
+        StoreId storeId, IEnumerable<ItemId> excludedItemIds)
     {
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
         var rawItemCategoryIds = itemCategoryIds.Select(id => id.Value).ToArray();
         var items = await GetItemQuery()
             .Where(item => item.ItemCategoryId.HasValue
                            && rawItemCategoryIds.Contains(item.ItemCategoryId.Value)
+                           && !excludedRawItemIds.Contains(item.Id)
                            && !item.Deleted
                            && (item.AvailableAt.Any(av => av.StoreId == storeId)
                                || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))))

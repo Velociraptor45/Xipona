@@ -1,26 +1,31 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 
+@inject IState<SharedState> SharedState
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
 <div class="temporary-item-creator">
-    <Button Type="@ButtonType.Primary"
-            OnClick="@OnOpenCreationButtonClicked"
-            Class="d-flex align-items-center"
-            Disabled="@(!State.Value.TemporaryItemCreator.IsButtonEnabled)">
-        <Icon Type="plus"></Icon>
-    </Button>
+    <Tooltip Placement="Placement.BottomRight" Title="@("Create temp. item")" Disabled="SharedState.Value.IsMobile">
+        <Button Type="@ButtonType.Primary"
+                OnClick="@OnOpenCreationButtonClicked"
+                Class="d-flex align-items-center">
+            <i class="bi bi-plus-lg"></i>
+        </Button>
+    </Tooltip>
     <Modal Title="Add temporary item"
            Visible="@State.Value.TemporaryItemCreator.IsOpen"
            OnCancel="@CloseModal"
            ConfirmLoading="@State.Value.TemporaryItemCreator.IsSaving"
            Footer="@GetFooter()">
         <div>
-            <Input TValue="string" Value="State.Value.TemporaryItemCreator.ItemName" ValueChanged="OnNameChanged"></Input>
+            <Input TValue="string" Value="State.Value.TemporaryItemCreator.ItemName" 
+                   Placeholder="Item name"
+                   OnInput="OnNameChanged"></Input>
             <div>
                 <div>Section</div>
                 <div class="d-flex">
@@ -28,17 +33,29 @@
                             TItemValue="Guid"
                             ValueName="@nameof(ShoppingListStoreSection.Id)"
                             LabelName="@nameof(ShoppingListStoreSection.Name)"
-                            DataSource="@State.Value.SelectedStore!.Sections.AsEnumerable()"
+                            DataSource="@State.Value.SelectedStore!.Sections.OrderBy(s => s.SortingIndex)"
                             OnSelectedItemChanged="OnSelectedSectionChanged"
                             AllowClear="false"
                             IgnoreItemChanges="false"
                             Value="@(State.Value.TemporaryItemCreator.Section?.Id ?? Guid.Empty)">
                     </Select>
-                    <div class="d-flex pl-2 align-items-center">
-                        <div class="price-input">
-                            <Input TValue="float" Value="@State.Value.TemporaryItemCreator.Price" ValueChanged="OnPriceChanged"></Input>
+                    <div class="d-flex pl-4 align-items-center">
+                        <div class="price-input mr-1">
+                            <Input TValue="float" Value="@State.Value.TemporaryItemCreator.Price"
+                                   ValueChanged="OnPriceChanged">
+                            </Input>
                         </div>
-                        <div>€</div>
+                        <div>
+                            <Select TItem="QuantityType"
+                                    TItemValue="int"
+                                    ValueName="@nameof(QuantityType.Id)"
+                                    LabelName="@nameof(QuantityType.PriceLabel)"
+                                    DataSource="@State.Value.QuantityTypes"
+                                    OnSelectedItemChanged="OnSelectedQuantityTypeIdChanged"
+                                    AllowClear="false"
+                                    Value="@State.Value.TemporaryItemCreator.SelectedQuantityTypeId">
+                            </Select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,9 +64,10 @@
 </div>
 
 @code {
-    private void OnNameChanged(string name)
+    private void OnNameChanged(ChangeEventArgs args)
     {
-        Dispatcher.Dispatch(new TemporaryItemNameChangedAction(name));
+        var name = args.Value!.ToString();
+        Dispatcher.Dispatch(new TemporaryItemNameChangedAction(name!));
     }
 
     private void OnPriceChanged(float price)
@@ -77,6 +95,11 @@
         Dispatcher.Dispatch(new SaveTemporaryItemAction());
     }
 
+    private void OnSelectedQuantityTypeIdChanged(QuantityType quantityType)
+    {
+        Dispatcher.Dispatch(new TemporaryItemSelectedQuantityTypeChangedAction(quantityType.Id));
+    }
+
     private RenderFragment GetFooter()
     {
         return @<Template>
@@ -84,6 +107,7 @@
                            OnClick="OnAddButtonClicked"
                            @key="@("submit")"
                            Type="@ButtonType.Primary"
+                           Disabled="@(!State.Value.TemporaryItemCreator.ItemName.Any())"
                            Loading="@State.Value.TemporaryItemCreator.IsSaving">
                        Add
                    </Button>

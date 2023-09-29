@@ -2,9 +2,9 @@ version: "3.7"
 
 services:  
   Database:
-    image: jsurf/rpi-mariadb
+    image: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: <insert-your-root-pwd-here>
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/prd-ph-shoppinglist-db-root-pwd
       MYSQL_DATABASE: prd-shoppinglist
     ports:
       - "15909:3306"
@@ -12,65 +12,48 @@ services:
       - prd-ph-shoppinglist
     volumes:
       - prd-ph-shoppinglist-database:/var/lib/mysql
-
-  Vault:
-    image: arm32v6/vault:latest
-    environment:
-      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "/vault/file"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
-    ports:
-      - "14779:8200"
-    volumes:
-      - prd-ph-shoppinglist-vault-file:/vault/file
-      - prd-ph-shoppinglist-vault-config:/vault/config
-      - prd-ph-shoppinglist-vault-tls:/opt/vault/tls
-    networks:
-      - prd-ph-shoppinglist
-    cap_add:
-      - IPC_LOCK
-    command: server
+    secrets:
+      - prd-ph-shoppinglist-db-root-pwd
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.9.1-arm32v7
+    image: velocir4ptor/ph-shoppinglist-api:0.10.2
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      PH_SL_VAULT_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-username
-      PH_SL_VAULT_PASSWORD_FILE: /run/secrets/prd-ph-shoppinglist-vault-api-password
+      PH_SL_DB_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-db-username
+      PH_SL_DB_PASSWORD_FILE: /run/secrets/prd-ph-shoppinglist-db-password
     ports:
-      - "12489:443"
+      - "12489:80"
     depends_on:
       - Database
-      - Vault
     volumes:
-      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - prd-ph-shoppinglist-api-tls:/app/ssl
+      # - prd-ph-shoppinglist-api-tls:/app/ssl:ro # uncomment this for https support, see readme
       - prd-ph-shoppinglist-api-logs:/app/logs
-      - prd-ph-shoppinglist-api-config:/app/config
+      - prd-ph-shoppinglist-api-config:/app/config:ro
     networks: 
       - prd-ph-shoppinglist
     secrets:
-      - prd-ph-shoppinglist-vault-api-password
-      - prd-ph-shoppinglist-vault-api-username
+      - prd-ph-shoppinglist-db-username
+      - prd-ph-shoppinglist-db-password
 
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.9.1-arm32v7
+    image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
     ports: 
-      - "14000:443"
+      - "14000:80"
     depends_on:
       - Api
     volumes:
-      - /usr/local/share/ca-certificates:/usr/local/share/ca-certificates
-      - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d
-      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json
-      - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl
+      - prd-ph-shoppinglist-frontend-config:/etc/nginx/conf.d:ro
+      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
+      # - prd-ph-shoppinglist-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks: 
       - prd-ph-shoppinglist
 
 volumes:
-  prd-ph-shoppinglist-frontend-tls:
-    external: true
+  # prd-ph-shoppinglist-frontend-tls: # uncomment this for https support, see readme
+  #   external: true
+  # prd-ph-shoppinglist-api-tls:
+  #   external: true
   prd-ph-shoppinglist-frontend-config:
-    external: true
-  prd-ph-shoppinglist-api-tls:
     external: true
   prd-ph-shoppinglist-api-logs:
     external: true
@@ -78,19 +61,15 @@ volumes:
     external: true
   prd-ph-shoppinglist-database:
     external: true
-  prd-ph-shoppinglist-vault-file:
-    external: true
-  prd-ph-shoppinglist-vault-config:
-    external: true
-  prd-ph-shoppinglist-vault-tls:
-    external: true
 
 networks:
   prd-ph-shoppinglist:
     name: prd-ph-shoppinglist
 
 secrets:
-  prd-ph-shoppinglist-vault-api-password:
+  prd-ph-shoppinglist-db-username:
     external: true
-  prd-ph-shoppinglist-vault-api-username:
+  prd-ph-shoppinglist-db-password:
+    external: true
+  prd-ph-shoppinglist-db-root-pwd:
     external: true

@@ -42,7 +42,7 @@ public abstract class TestBuilderBase<TModel> : Fixture
         return this.Create<TModel>();
     }
 
-    public IEnumerable<TModel> CreateMany(int count)
+    public virtual IEnumerable<TModel> CreateMany(int count)
     {
         return this.CreateMany<TModel>(count);
     }

@@ -25,7 +25,7 @@ public class ItemTypeMock : Mock<IItemType>
         Setup(m => m.Name).Returns(name);
     }
 
-    public void SetupAvailabilities(IEnumerable<IItemAvailability> availabilities)
+    public void SetupAvailabilities(IEnumerable<ItemAvailability> availabilities)
     {
         Setup(m => m.Availabilities).Returns(availabilities.ToList());
     }

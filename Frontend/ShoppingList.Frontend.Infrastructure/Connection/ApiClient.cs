@@ -4,7 +4,6 @@ using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.CreateTemporaryItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.ModifyItemWithTypes;
@@ -28,6 +27,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.ShoppingList.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.ShoppingList.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
@@ -111,6 +111,12 @@ public class ApiClient : IApiClient
         var contract =
             _converters.ToContract<RemoveItemFromShoppingListRequest, RemoveItemFromShoppingListContract>(request);
         await _client.RemoveItemFromShoppingListAsync(request.ShoppingListId, contract);
+    }
+
+    public async Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
+    {
+        var contract = _converters.ToContract<AddTemporaryItemToShoppingListRequest, AddTemporaryItemToShoppingListContract>(request);
+        await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
     }
 
     public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
@@ -269,12 +275,6 @@ public class ApiClient : IApiClient
             result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
     }
 
-    public async Task CreateTemporaryItem(CreateTemporaryItemRequest request)
-    {
-        var contract = _converters.ToContract<CreateTemporaryItemRequest, CreateTemporaryItemContract>(request);
-        await _client.CreateTemporaryItemAsync(contract);
-    }
-
     public async Task MakeTemporaryItemPermanent(MakeTemporaryItemPermanentRequest request)
     {
         var contract =
@@ -422,5 +422,10 @@ public class ApiClient : IApiClient
     {
         var contract = _converters.ToContract<IEnumerable<AddToShoppingListItem>, AddItemsToShoppingListsContract>(items);
         await _client.AddItemsToShoppingListsAsync(contract);
+    }
+
+    public async Task DeleteStoreAsync(Guid storeId)
+    {
+        await _client.DeleteStoreAsync(storeId);
     }
 }

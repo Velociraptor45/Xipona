@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using Force.DeepCloner;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
@@ -59,7 +60,7 @@ public class ItemTests
         // Assert
         var aggregateRootItem = (AggregateRoot)item;
         aggregateRootItem.DomainEvents.Should().HaveCount(1);
-        aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent(item.Id));
+        aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent { ItemId = item.Id });
     }
 
     [Fact]
@@ -117,69 +118,128 @@ public class ItemTests
 
     #endregion IsAvailableInStore
 
-    #region MakePermanent
-
-    [Fact]
-    public void MakePermanent_WithValidData_ShouldMakeItemPermanent()
+    public class MakePermanent
     {
-        // Arrange
-        Fixture fixture = _commonFixture.GetNewFixture();
-
-        IItem testObject = ItemMother.Initial().Create();
-        PermanentItem permanentItem = fixture.Create<PermanentItem>();
-        IEnumerable<IItemAvailability> availabilities =
-            ItemAvailabilityMother.Initial().CreateMany(3).ToList();
-
-        // Act
-        testObject.MakePermanent(permanentItem, availabilities);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void MakePermanent_WithValidData_ShouldMakeItemPermanent()
         {
-            testObject.Name.Should().Be(permanentItem.Name);
-            testObject.Comment.Should().Be(permanentItem.Comment);
-            testObject.ItemQuantity.Should().Be(permanentItem.ItemQuantity);
-            testObject.Availabilities.Should().BeEquivalentTo(availabilities);
-            testObject.ItemCategoryId.Should().Be(permanentItem.ItemCategoryId);
-            testObject.ManufacturerId.Should().Be(permanentItem.ManufacturerId);
-            testObject.IsTemporary.Should().BeFalse();
+            // Arrange
+            IItem sut = ItemMother.Initial().Create();
+            PermanentItem permanentItem = new DomainTestBuilder<PermanentItem>().Create();
+            IEnumerable<ItemAvailability> availabilities =
+                ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+
+            // Act
+            sut.MakePermanent(permanentItem, availabilities);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                sut.Name.Should().Be(permanentItem.Name);
+                sut.Comment.Should().Be(permanentItem.Comment);
+                sut.ItemQuantity.Should().Be(permanentItem.ItemQuantity);
+                sut.Availabilities.Should().BeEquivalentTo(availabilities);
+                sut.ItemCategoryId.Should().Be(permanentItem.ItemCategoryId);
+                sut.ManufacturerId.Should().Be(permanentItem.ManufacturerId);
+                sut.IsTemporary.Should().BeFalse();
+            }
+        }
+
+        [Fact]
+        public void MakePermanent_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            IItem sut = ItemMother.Initial().WithIsDeleted(true).Create();
+            PermanentItem permanentItem = new DomainTestBuilder<PermanentItem>().Create();
+            IEnumerable<ItemAvailability> availabilities =
+                ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+
+            // Act
+            var func = () => sut.MakePermanent(permanentItem, availabilities);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotMakeDeletedItemPermanent);
         }
     }
 
-    #endregion MakePermanent
-
-    #region Modify
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Modify_WithValidData_ShouldModifyItem(bool isTemporary)
+    public class Modify
     {
-        // Arrange
-        Fixture fixture = _commonFixture.GetNewFixture();
-
-        IItem testObject = ItemMother.Initial().WithIsTemporary(isTemporary).Create();
-        ItemModification itemModify = fixture.Create<ItemModification>();
-        IEnumerable<IItemAvailability> availabilities =
-            ItemAvailabilityMother.Initial().CreateMany(3).ToList();
-
-        // Act
-        testObject.Modify(itemModify, availabilities);
-
-        // Assert
-        using (new AssertionScope())
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Modify_WithValidData_ShouldModifyItem(bool isTemporary)
         {
-            testObject.Name.Should().Be(itemModify.Name);
-            testObject.Comment.Should().Be(itemModify.Comment);
-            testObject.ItemQuantity.Should().Be(itemModify.ItemQuantity);
-            testObject.Availabilities.Should().BeEquivalentTo(availabilities);
-            testObject.ItemCategoryId.Should().Be(itemModify.ItemCategoryId);
-            testObject.ManufacturerId.Should().Be(itemModify.ManufacturerId);
-            testObject.IsTemporary.Should().Be(isTemporary);
+            // Arrange
+            IItem sut = ItemMother.Initial().WithIsTemporary(isTemporary).Create();
+            ItemModification itemModify = new DomainTestBuilder<ItemModification>().Create();
+            IEnumerable<ItemAvailability> availabilities =
+                ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+
+            // Act
+            sut.Modify(itemModify, availabilities);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                sut.Name.Should().Be(itemModify.Name);
+                sut.Comment.Should().Be(itemModify.Comment);
+                sut.ItemQuantity.Should().Be(itemModify.ItemQuantity);
+                sut.Availabilities.Should().BeEquivalentTo(availabilities);
+                sut.ItemCategoryId.Should().Be(itemModify.ItemCategoryId);
+                sut.ManufacturerId.Should().Be(itemModify.ManufacturerId);
+                sut.IsTemporary.Should().Be(isTemporary);
+            }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Modify_WithDeleted_ShouldThrow(bool isTemporary)
+        {
+            // Arrange
+            IItem sut = ItemMother.Initial().WithIsTemporary(isTemporary).WithIsDeleted(true).Create();
+            ItemModification itemModify = new DomainTestBuilder<ItemModification>().Create();
+            IEnumerable<ItemAvailability> availabilities =
+                ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+
+            // Act
+            var func = () => sut.Modify(itemModify, availabilities);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotModifyDeletedItem);
         }
     }
 
-    #endregion Modify
+    public class ModifyAsync
+    {
+        private readonly ModifyAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task ModifyAsync_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupDeleted();
+            _fixture.SetupModification();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var func = async () => await sut.ModifyAsync(_fixture.Modification!, _fixture.ValidatorMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyDeletedItem);
+        }
+
+        private class ModifyAsyncFixture : ItemFixture
+        {
+            public ItemWithTypesModification? Modification { get; private set; }
+            public ValidatorMock ValidatorMock { get; } = new(MockBehavior.Strict);
+
+            public void SetupModification()
+            {
+                Modification = new DomainTestBuilder<ItemWithTypesModification>().Create();
+            }
+        }
+    }
 
     #region GetDefaultSectionIdForStore
 
@@ -227,6 +287,24 @@ public class ItemTests
         public UpdateAsync_WithTypes()
         {
             _fixture = new UpdateAsyncFixture();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithDeleted_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypesUpdateNotCustomized();
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemWithTypesUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemWithTypesUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotUpdateDeletedItem);
         }
 
         [Fact]
@@ -425,6 +503,24 @@ public class ItemTests
         }
 
         [Fact]
+        public async Task UpdateAsync_WithDeleted_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupItemUpdateNotCustomized();
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemUpdate);
+
+            // Act
+            var func = async () => await sut.UpdateAsync(_fixture.ItemUpdate, _fixture.ValidatorMock.Object,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotUpdateDeletedItem);
+        }
+
+        [Fact]
         public async Task UpdateAsync_WithTypes_ShouldThrowDomainException()
         {
             // Arrange
@@ -607,6 +703,27 @@ public class ItemTests
         public Update_Price()
         {
             _fixture = new UpdateFixture_Price();
+        }
+
+        [Fact]
+        public void Update_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeIdNull();
+            _fixture.SetupPrice();
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Price);
+
+            // Act
+            var func = () => sut.Update(_fixture.StoreId.Value, _fixture.ItemTypeId, _fixture.Price.Value,
+                _fixture.DateTimeServiceMock.Object);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotUpdateDeletedItem);
         }
 
         [Fact]
@@ -930,7 +1047,7 @@ public class ItemTests
             ValidatorMock.SetupValidateAsync(manufacturerId);
         }
 
-        protected void SetupValidatingAvailabilitiesSuccess(IEnumerable<IItemAvailability> availabilities)
+        protected void SetupValidatingAvailabilitiesSuccess(IEnumerable<ItemAvailability> availabilities)
         {
             ValidatorMock.SetupValidateAsync(availabilities);
         }
@@ -949,6 +1066,24 @@ public class ItemTests
         public TransferToDefaultSection()
         {
             _fixture = new TransferToDefaultSectionFixture();
+        }
+
+        [Fact]
+        public void TransferToDefaultSection_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupSectionIds();
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+
+            // Act
+            var func = () => sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotTransferDeletedItem);
         }
 
         [Fact]
@@ -1262,10 +1397,367 @@ public class ItemTests
         }
     }
 
+    public class RemoveManufacturer
+    {
+        private readonly RemoveManufacturerFixture _fixture = new();
+
+        [Fact]
+        public void RemoveManufacturer_WithDeleted_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupDeleted();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var func = () => sut.RemoveManufacturer();
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotRemoveManufacturerFromDeletedItem);
+        }
+
+        private class RemoveManufacturerFixture : ItemFixture
+        {
+        }
+    }
+
+    public class RemoveAvailabilitiesFor
+    {
+        private readonly RemoveAvailabilitiesForFixture _fixture = new();
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithItemDeleted_WithMultipleAvailabilities_WithOneForStore_ShouldNotChangeItem()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupDeleted();
+            _fixture.SetupMultipleWithOneAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            var expectedItem = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expectedItem);
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleAvailabilities_WithOneForStore_ShouldDeleteAvailabilityAndPublishEvent()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleWithOneAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilityDeletedDomainEvent);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.IsDeleted.Should().BeFalse();
+            sut.Availabilities.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilities);
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeOfType<ItemAvailabilityDeletedDomainEvent>();
+            var domainEvent = sut.DomainEvents.First() as ItemAvailabilityDeletedDomainEvent;
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilityDeletedDomainEvent);
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleAvailabilities_WithNoneForStore_ShouldNotChangeItem()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleWithoutAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            var expectedItem = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expectedItem);
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithOneAvailabilityForStore_ShouldDeleteItemAndPublishEvent()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupOneAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemDeletedDomainEvent);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.IsDeleted.Should().BeTrue();
+            sut.Availabilities.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilities);
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeOfType<ItemDeletedDomainEvent>();
+            var domainEvent = sut.DomainEvents.First() as ItemDeletedDomainEvent;
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemDeletedDomainEvent);
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithOneType_WithOneAvailabilityForStore_ShouldDeleteItemAndPublishEvent()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupOneTypeAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemDeletedDomainEvent);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.IsDeleted.Should().BeTrue();
+            var itemType = sut.ItemTypes.First(t => t.Availabilities.Any(av => av.StoreId == _fixture.StoreId.Value));
+            itemType.IsDeleted.Should().BeFalse();
+            itemType.Availabilities.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilities);
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeOfType<ItemDeletedDomainEvent>();
+            var domainEvent = sut.DomainEvents.First() as ItemDeletedDomainEvent;
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemDeletedDomainEvent);
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleTypes_WithOneAvailabilityForStore_ShouldDeleteItemTypeAndPublishEvent()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleTypesWithOneOnlyAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemTypeDeletedDomainEvent);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.IsDeleted.Should().BeFalse();
+            var itemTypeToDelete = sut.ItemTypes.First(t => t.Availabilities.Any(av => av.StoreId == _fixture.StoreId.Value));
+            var itemTypeToNotDelete = sut.ItemTypes.First(t => t.Availabilities.All(av => av.StoreId != _fixture.StoreId.Value));
+            itemTypeToDelete.IsDeleted.Should().BeTrue();
+            itemTypeToNotDelete.IsDeleted.Should().BeFalse();
+            itemTypeToDelete.Availabilities.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilities);
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeOfType<ItemTypeDeletedDomainEvent>();
+            var domainEvent = sut.DomainEvents.First() as ItemTypeDeletedDomainEvent;
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemTypeDeletedDomainEvent);
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleTypes_WithoutAvailabilityForStore_ShouldNotChangeItem()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleTypesWithoutAvailableAtStore();
+            var sut = _fixture.CreateSut();
+            var expectedItem = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expectedItem);
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleTypes_WithMultipleAvailabilities_WithOneForStore_ShouldDeleteAvailabilityAndPublishEvent()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleTypesWithOneNotOnlyAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemTypeAvailabilityDeletedDomainEvent);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.IsDeleted.Should().BeFalse();
+            var itemType = sut.ItemTypes.First();
+            itemType.IsDeleted.Should().BeFalse();
+            itemType.Availabilities.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilities);
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeOfType<ItemTypeAvailabilityDeletedDomainEvent>();
+            var domainEvent = sut.DomainEvents.First() as ItemTypeAvailabilityDeletedDomainEvent;
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemTypeAvailabilityDeletedDomainEvent);
+        }
+
+        private sealed class RemoveAvailabilitiesForFixture : ItemFixture
+        {
+            public StoreId? StoreId { get; private set; }
+            public IReadOnlyCollection<ItemAvailability>? ExpectedItemAvailabilities { get; private set; }
+            public ItemDeletedDomainEvent? ExpectedItemDeletedDomainEvent { get; private set; }
+            public ItemTypeDeletedDomainEvent? ExpectedItemTypeDeletedDomainEvent { get; private set; }
+            public ItemAvailabilityDeletedDomainEvent? ExpectedItemAvailabilityDeletedDomainEvent { get; private set; }
+            public ItemTypeAvailabilityDeletedDomainEvent? ExpectedItemTypeAvailabilityDeletedDomainEvent { get; private set; }
+
+            public void SetupStoreId()
+            {
+                StoreId = Domain.Stores.Models.StoreId.New;
+            }
+
+            public void SetupOneTypeAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
+                var itemTypes = ItemTypeMother.InitialAvailableAt(availability).CreateMany(1);
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+
+                ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
+                ExpectedItemDeletedDomainEvent = new ItemDeletedDomainEvent { ItemId = Id };
+            }
+
+            public void SetupMultipleTypesWithOneOnlyAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
+
+                var itemTypes = new List<IItemType>{
+                    ItemTypeMother.InitialAvailableAt(availability).Create(),
+                    ItemTypeMother.Initial().Create(),
+                };
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+
+                ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
+                ExpectedItemTypeDeletedDomainEvent = new ItemTypeDeletedDomainEvent(itemTypes.First().Id) { ItemId = Id };
+            }
+
+            public void SetupMultipleTypesWithoutAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
+
+                var itemTypes = new List<IItemType>{
+                    ItemTypeMother.Initial().Create(),
+                    ItemTypeMother.Initial().Create(),
+                };
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+            }
+
+            public void SetupMultipleTypesWithOneNotOnlyAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availabilities = new List<ItemAvailability>
+                {
+                    ItemAvailabilityMother.ForStore(StoreId.Value).Create(),
+                    ItemAvailabilityMother.Initial().Create()
+                };
+
+                var itemTypes = new List<IItemType>{
+                    ItemTypeMother.Initial().WithAvailabilities(availabilities).Create(),
+                    ItemTypeMother.Initial().Create(),
+                };
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+
+                ExpectedItemAvailabilities = new List<ItemAvailability> { itemTypes.First().Availabilities.Last() };
+                ExpectedItemTypeAvailabilityDeletedDomainEvent =
+                    new ItemTypeAvailabilityDeletedDomainEvent(itemTypes.First().Id, itemTypes.First().Availabilities.First())
+                    {
+                        ItemId = Id
+                    };
+            }
+
+            public void SetupOneAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
+
+                Builder.AsItem().WithAvailability(availability);
+
+                ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
+                ExpectedItemDeletedDomainEvent = new ItemDeletedDomainEvent { ItemId = Id };
+            }
+
+            public void SetupMultipleWithOneAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availabilities = new List<ItemAvailability>
+                {
+                    ItemAvailabilityMother.ForStore(StoreId.Value).Create(),
+                    ItemAvailabilityMother.Initial().Create()
+                };
+
+                Builder.AsItem().WithAvailabilities(availabilities);
+
+                ExpectedItemAvailabilities = new List<ItemAvailability> { availabilities.Last() };
+                ExpectedItemAvailabilityDeletedDomainEvent =
+                    new ItemAvailabilityDeletedDomainEvent(availabilities.First()) { ItemId = Id };
+            }
+
+            public void SetupMultipleWithoutAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availabilities = new List<ItemAvailability>
+                {
+                    ItemAvailabilityMother.Initial().Create(),
+                    ItemAvailabilityMother.Initial().Create()
+                };
+
+                Builder.AsItem().WithAvailabilities(availabilities);
+            }
+        }
+    }
+
     private abstract class ItemFixture
     {
+        protected readonly ItemId Id = ItemId.New;
+
         protected readonly ItemBuilder Builder = new();
         protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
+
+        protected ItemFixture()
+        {
+            Builder.WithIsDeleted(false).WithId(Id);
+        }
+
+        public void SetupDeleted()
+        {
+            Builder.WithIsDeleted(true);
+        }
 
         public Item CreateSut()
         {

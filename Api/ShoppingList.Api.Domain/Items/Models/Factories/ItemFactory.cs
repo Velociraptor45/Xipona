@@ -1,7 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 
@@ -16,7 +16,7 @@ public class ItemFactory : IItemFactory
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        ItemId? predecessorId, IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId,
+        ItemId? predecessorId, IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId,
         DateTimeOffset? updatedOn)
     {
         var item = new Item(
@@ -72,19 +72,30 @@ public class ItemFactory : IItemFactory
             null);
     }
 
-    public IItem Create(TemporaryItemCreation model)
+    public IItem CreateTemporary(ItemName name, QuantityType quantityType, StoreId storeId, Price price,
+        SectionId defaultSectionId, TemporaryItemId temporaryItemId)
     {
+        var itemQuantity = quantityType switch
+        {
+            QuantityType.Weight => new ItemQuantity(quantityType, null),
+            QuantityType.Unit => new ItemQuantity(quantityType, new ItemQuantityInPacket(new Quantity(1), QuantityTypeInPacket.Unit)),
+            _ => throw new ArgumentOutOfRangeException($"QuantityType {quantityType} is not supported for temporary items.")
+        };
+
         return new Item(
             ItemId.New,
-            model.Name,
+            name,
             false,
             Comment.Empty,
             true,
-            new ItemQuantity(QuantityType.Unit, new ItemQuantityInPacket(new Quantity(1), QuantityTypeInPacket.Unit)),
+            itemQuantity,
             null,
             null,
-            model.Availability.ToMonoList(),
-            new TemporaryItemId(model.ClientSideId),
+            new List<ItemAvailability>
+            {
+                new ItemAvailability(storeId, price, defaultSectionId)
+            },
+            temporaryItemId,
             null,
             null);
     }

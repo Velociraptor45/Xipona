@@ -12,7 +12,7 @@
         AllowClear="@AllowClear"
         DropdownRender="@OnRender"
         IgnoreItemChanges="@IgnoreItemChanges"
-        @bind-Value="@selectedValue">
+        Value="Value">
 </Select>
 
 @code {
@@ -20,7 +20,7 @@
     [Parameter] public string Placeholder { get; set; }
 
     [Parameter] public List<TItem> DataSource { get; set; }
-    [Parameter] public TValue DefaultValue { get; set; }
+    [Parameter] public TValue Value { get; set; }
     [Parameter] public string ValueName { get; set; }
     [Parameter] public string LabelName { get; set; }
 
@@ -33,15 +33,6 @@
     [Parameter] public bool IgnoreItemChanges { get; set; } = true;
 
     private string newItemName = "";
-    private TValue selectedValue;
-    
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        if(selectedValue is null || selectedValue.Equals(default(TValue)))
-            selectedValue = DefaultValue;
-    }
 
     private async void OnSelectedItemChanged(TItem item)
     {
@@ -62,22 +53,17 @@
                     @originNode
                     @if (CanAddItem)
                     {
-                        <Divider Class="my-1"></Divider>
+                        <hr class="my-1" />
                         <div class="d-flex p-2">
                             <div class="max-w-100">
                                 <Input @bind-Value="@newItemName" />
                             </div>
                             <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
-                                <Icon Type="plus" Theme="outline"></Icon>
+                                <i class="bi bi-plus-lg"></i>
                             </a>
                         </div>
                     }
                 </div>
             </Template>;
-    }
-
-    public void ResetToDefaultValue()
-    {
-        selectedValue = DefaultValue;
     }
 }

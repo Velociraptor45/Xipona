@@ -51,7 +51,7 @@ public class ShoppingListTests
     public void AddItem_WithSectionNotFound_ShouldThrowDomainException()
     {
         IShoppingList shoppingList = ShoppingListMother.ThreeSections().Create();
-        IShoppingListItem item = new ShoppingListItemBuilder().Create();
+        ShoppingListItem item = new ShoppingListItemBuilder().Create();
 
         // Act
         Action action = () => shoppingList.AddItem(item, new SectionId(Guid.NewGuid()));
@@ -74,7 +74,7 @@ public class ShoppingListTests
             .Create();
 
         ShoppingListSectionMock chosenSection = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem item = new ShoppingListItemBuilder().Create();
+        ShoppingListItem item = new ShoppingListItemBuilder().Create();
 
         // Act
         shoppingList.AddItem(item, chosenSection.Object.Id);
@@ -125,7 +125,7 @@ public class ShoppingListTests
             .Create();
 
         ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -179,7 +179,7 @@ public class ShoppingListTests
             .Create();
 
         ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -233,7 +233,7 @@ public class ShoppingListTests
             .Create();
 
         ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
             sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -288,7 +288,7 @@ public class ShoppingListTests
             .Create();
 
         ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+        ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
         foreach (var sectionMock in sectionMocks)
         {

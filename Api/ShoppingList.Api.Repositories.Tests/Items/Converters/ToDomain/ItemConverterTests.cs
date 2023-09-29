@@ -26,9 +26,9 @@ public class ItemConverterTests
             return new ItemEntityBuilder().WithEmptyAvailableAt().Create();
         }
 
-        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
         {
-            cfg.CreateMap<Item, DomainModels.Item>()
+            mapping
                 .ConvertUsing((src, _, ctx) =>
                     new DomainModels.Item(
                         new ItemId(src.Id),
@@ -44,7 +44,10 @@ public class ItemConverterTests
                         new ItemTypes(src.ItemTypes.Select(ctx.Mapper.Map<ItemType, IItemType>), new ItemTypeFactory()),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value)));
+        }
 
+        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        {
             new ItemTypeConverterTests().AddMapping(cfg);
         }
     }
@@ -56,9 +59,9 @@ public class ItemConverterTests
             return new ItemEntityBuilder().WithEmptyItemTypes().WithoutItemCategoryId().Create();
         }
 
-        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
         {
-            cfg.CreateMap<Item, DomainModels.Item>()
+            mapping
                 .ConvertUsing((src, _, ctx) =>
                     new DomainModels.Item(
                         new ItemId(src.Id),
@@ -72,11 +75,14 @@ public class ItemConverterTests
                                 src.QuantityTypeInPacket!.Value.ToEnum<QuantityTypeInPacket>())),
                         null,
                         new ManufacturerId(src.ManufacturerId!.Value),
-                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, IItemAvailability>),
+                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, ItemAvailability>),
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value)));
+        }
 
+        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        {
             new ItemAvailabilityConverterTests().AddMapping(cfg);
         }
     }
@@ -88,9 +94,9 @@ public class ItemConverterTests
             return new ItemEntityBuilder().WithEmptyItemTypes().WithoutManufacturerId().Create();
         }
 
-        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
         {
-            cfg.CreateMap<Item, DomainModels.Item>()
+            mapping
                 .ConvertUsing((src, _, ctx) =>
                     new DomainModels.Item(
                         new ItemId(src.Id),
@@ -104,11 +110,14 @@ public class ItemConverterTests
                                 src.QuantityTypeInPacket!.Value.ToEnum<QuantityTypeInPacket>())),
                         new ItemCategoryId(src.ItemCategoryId!.Value),
                         null,
-                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, IItemAvailability>),
+                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, ItemAvailability>),
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value)));
+        }
 
+        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        {
             new ItemAvailabilityConverterTests().AddMapping(cfg);
         }
     }
@@ -120,9 +129,9 @@ public class ItemConverterTests
             return new ItemEntityBuilder().WithEmptyItemTypes().Create();
         }
 
-        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
         {
-            cfg.CreateMap<Item, DomainModels.Item>()
+            mapping
                 .ConvertUsing((src, _, ctx) =>
                     new DomainModels.Item(
                         new ItemId(src.Id),
@@ -136,11 +145,14 @@ public class ItemConverterTests
                                 src.QuantityTypeInPacket!.Value.ToEnum<QuantityTypeInPacket>())),
                         new ItemCategoryId(src.ItemCategoryId!.Value),
                         new ManufacturerId(src.ManufacturerId!.Value),
-                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, IItemAvailability>),
+                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, ItemAvailability>),
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value)));
+        }
 
+        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        {
             new ItemAvailabilityConverterTests().AddMapping(cfg);
         }
     }
@@ -152,9 +164,9 @@ public class ItemConverterTests
             return new ItemEntityBuilder().WithEmptyItemTypes().WithoutCreatedFrom().Create();
         }
 
-        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
         {
-            cfg.CreateMap<Item, DomainModels.Item>()
+            mapping
                 .ConvertUsing((src, _, ctx) =>
                     new DomainModels.Item(
                         new ItemId(src.Id),
@@ -168,11 +180,14 @@ public class ItemConverterTests
                                 src.QuantityTypeInPacket!.Value.ToEnum<QuantityTypeInPacket>())),
                         new ItemCategoryId(src.ItemCategoryId!.Value),
                         new ManufacturerId(src.ManufacturerId!.Value),
-                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, IItemAvailability>),
+                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, ItemAvailability>),
                         null,
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value)));
+        }
 
+        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        {
             new ItemAvailabilityConverterTests().AddMapping(cfg);
         }
     }
@@ -189,9 +204,9 @@ public class ItemConverterTests
                 .Create();
         }
 
-        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
         {
-            cfg.CreateMap<Item, DomainModels.Item>()
+            mapping
                 .ConvertUsing((src, _, ctx) =>
                     new DomainModels.Item(
                         new ItemId(src.Id),
@@ -202,11 +217,14 @@ public class ItemConverterTests
                         new ItemQuantity(src.QuantityType.ToEnum<QuantityType>(), null),
                         new ItemCategoryId(src.ItemCategoryId!.Value),
                         new ManufacturerId(src.ManufacturerId!.Value),
-                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, IItemAvailability>),
+                        src.AvailableAt.Select(ctx.Mapper.Map<AvailableAt, ItemAvailability>),
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value)));
+        }
 
+        protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
+        {
             new ItemAvailabilityConverterTests().AddMapping(cfg);
         }
     }
@@ -249,11 +267,6 @@ public class ItemConverterTests
                 new ItemFactory(new ItemTypeFactory()),
                 new ItemTypeConverterTests().CreateSut(),
                 new ItemAvailabilityConverterTests().CreateSut());
-        }
-
-        protected override void AddMapping(IMappingExpression<Item, IItem> mapping)
-        {
-            mapping.As<DomainModels.Item>();
         }
     }
 

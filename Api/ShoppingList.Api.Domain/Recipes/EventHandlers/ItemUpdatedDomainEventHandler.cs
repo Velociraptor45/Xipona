@@ -17,6 +17,6 @@ public class ItemUpdatedDomainEventHandler : IDomainEventHandler<ItemUpdatedDoma
     public async Task HandleAsync(ItemUpdatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var service = _recipeModificationServiceDelegate(cancellationToken);
-        await service.ModifyIngredientsAfterItemUpdateAsync(domainEvent.OldItemId, domainEvent.NewItem);
+        await service.ModifyIngredientsAfterItemUpdateAsync(domainEvent.ItemId, domainEvent.NewItem);
     }
 }

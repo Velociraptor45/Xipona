@@ -1,8 +1,12 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 
@@ -10,13 +14,16 @@ public class RecipeModificationService : IRecipeModificationService
 {
     private readonly IRecipeRepository _recipeRepository;
     private readonly IValidator _validator;
+    private readonly IItemRepository _itemRepository;
 
     public RecipeModificationService(
         Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
+        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
         Func<CancellationToken, IValidator> validatorDelegate,
         CancellationToken cancellationToken)
     {
         _recipeRepository = recipeRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepositoryDelegate(cancellationToken);
         _validator = validatorDelegate(cancellationToken);
     }
 
@@ -32,13 +39,13 @@ public class RecipeModificationService : IRecipeModificationService
         await _recipeRepository.StoreAsync(recipe);
     }
 
-    public async Task RemoveDefaultItemAsync(ItemId itemId)
+    public async Task RemoveDefaultItemAsync(ItemId itemId, ItemTypeId? itemTypeId)
     {
         var recipes = await _recipeRepository.FindByAsync(itemId);
 
         foreach (var recipe in recipes)
         {
-            recipe.RemoveDefaultItem(itemId);
+            recipe.RemoveDefaultItem(itemId, itemTypeId);
             await _recipeRepository.StoreAsync(recipe);
         }
     }
@@ -50,6 +57,47 @@ public class RecipeModificationService : IRecipeModificationService
         foreach (var recipe in recipes)
         {
             recipe.ModifyIngredientsAfterItemUpdate(oldItemId, newItem);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
+    public async Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
+    {
+        var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId);
+        var item = await _itemRepository.FindActiveByAsync(itemId);
+        if (item is null)
+            throw new DomainException(new ItemNotFoundReason(itemId));
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
+    public async Task ModifyIngredientsAfterAvailabilityWasDeletedAsync(ItemId itemId, ItemTypeId? itemTypeId,
+        StoreId deletedAvailabilityStoreId)
+    {
+        var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId, deletedAvailabilityStoreId);
+        var item = await _itemRepository.FindActiveByAsync(itemId);
+        if (item is null)
+            throw new DomainException(new ItemNotFoundReason(itemId));
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ModifyIngredientsAfterAvailabilityWasDeleted(itemId, itemTypeId, item, deletedAvailabilityStoreId);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
+    public async Task RemoveIngredientsOfItemCategoryAsync(ItemCategoryId itemCategoryId)
+    {
+        var recipes = (await _recipeRepository.FindByAsync(itemCategoryId)).ToList();
+
+        foreach (var recipe in recipes)
+        {
+            recipe.RemoveIngredientsOfItemCategory(itemCategoryId);
             await _recipeRepository.StoreAsync(recipe);
         }
     }

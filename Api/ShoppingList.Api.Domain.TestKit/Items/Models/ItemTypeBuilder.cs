@@ -30,7 +30,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
         return this;
     }
 
-    public ItemTypeBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
+    public ItemTypeBuilder WithAvailabilities(IEnumerable<ItemAvailability> availabilities)
     {
         FillConstructorWith(nameof(availabilities), availabilities);
         return this;
@@ -38,7 +38,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
 
     public ItemTypeBuilder WithEmptyAvailabilities()
     {
-        return WithAvailabilities(Enumerable.Empty<IItemAvailability>());
+        return WithAvailabilities(Enumerable.Empty<ItemAvailability>());
     }
 
     public ItemTypeBuilder WithPredecessorId(ItemTypeId? predecessorId)
@@ -59,7 +59,7 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
     }
 
     // tcg keep
-    public ItemTypeBuilder WithAvailability(IItemAvailability availability)
+    public ItemTypeBuilder WithAvailability(ItemAvailability availability)
     {
         return WithAvailabilities(availability.ToMonoList());
     }

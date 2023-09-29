@@ -22,8 +22,7 @@ public class AddItemToShoppingListCommandHandler : ICommandHandler<AddItemToShop
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _addItemToShoppingListServiceDelegate(cancellationToken);
-        await service.AddAsync(command.ShoppingListId, command.ItemId, command.SectionId,
-            command.Quantity);
+        await service.AddAsync(command.ShoppingListId, command.ItemId, command.SectionId, command.Quantity);
 
         await transaction.CommitAsync(cancellationToken);
 

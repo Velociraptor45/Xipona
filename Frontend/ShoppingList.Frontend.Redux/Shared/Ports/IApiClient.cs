@@ -29,8 +29,6 @@ public interface IApiClient
 
     Task<EditedManufacturer> CreateManufacturerAsync(string name);
 
-    Task CreateTemporaryItem(CreateTemporaryItemRequest request);
-
     Task DeleteItemAsync(DeleteItemRequest request);
 
     Task FinishListAsync(FinishListRequest request);
@@ -119,4 +117,8 @@ public interface IApiClient
     Task<IEnumerable<AddToShoppingListItem>> GetItemAmountsForOneServingAsync(Guid recipeId);
 
     Task AddItemsToShoppingListsAsync(IEnumerable<AddToShoppingListItem> items);
+
+    Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request);
+
+    Task DeleteStoreAsync(Guid storeId);
 }

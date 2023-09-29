@@ -11,20 +11,29 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Manufacturers
 
-<div>
-    <div class="d-flex">
-        <div class="h4">Manufacturers</div>
-        <Button @onclick="@OnCreateManufacturerButtonClicked" Class="d-flex align-items-center ml-auto">
-            <Icon Type="plus"></Icon>
+<div class="manufacturers">
+    <div class="d-flex mt-2 top-bar">
+        <div class="d-flex search-bar">
+            <Input TValue="string" @bind-value="@_input"
+                   @ref="_searchInput"
+                   OnPressEnter="@OnLoadButtonClicked"
+                   Placeholder="Manufacturer name"></Input>
+            <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">
+                <i class="bi bi-search"></i>
+            </Button>
+        </div>
+        <Button @onclick="@OnCreateManufacturerButtonClicked" Class="d-flex align-items-center ml-auto"
+                Type="@ButtonType.Primary">
+            <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    <div>
-        <Input TValue="string" @bind-value="@input" 
-               OnPressEnter="@OnLoadButtonClicked" 
-               Placeholder="Manufacturer name ..."></Input>
-        <Button @onclick="@OnLoadButtonClicked" Class="mt-2">Load</Button>
-    </div>
-    <div>
+    <div class="mt-2">
+        @if (@State.Value.Search.TriggeredAtLeastOnce && State.Value.Search.SearchResults.Count == 0)
+        {
+            <div class="no-manufacturers-found-notice">
+                No manufacturers found
+            </div>
+        }
         @foreach (var searchResult in State.Value.Search.SearchResults)
         {
             <SearchResult Model="searchResult" TAction="EditManufacturerAction"></SearchResult>
@@ -33,11 +42,20 @@
 </div>
 
 @code {
-    private string input = "";
+    private string _input = "";
+    private Input<string> _searchInput;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+            _searchInput.Focus();
+    }
     
     private void OnLoadButtonClicked()
     {
-        Dispatcher.Dispatch(new SearchManufacturersAction(input));
+        Dispatcher.Dispatch(new SearchManufacturersAction(_input));
     }
 
     private void OnCreateManufacturerButtonClicked()

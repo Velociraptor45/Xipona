@@ -609,6 +609,152 @@ public class ItemCategoryEditorReducerTests
         }
     }
 
+    public class OnOpenDeleteItemCategoryDialog
+    {
+        private readonly OnOpenDeleteItemCategoryDialogFixture _fixture;
+
+        public OnOpenDeleteItemCategoryDialog()
+        {
+            _fixture = new OnOpenDeleteItemCategoryDialogFixture();
+        }
+
+        [Fact]
+        public void OnOpenDeleteItemCategoryDialog_WithDialogNotOpen_ShouldOpenDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogNotOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnOpenDeleteItemCategoryDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnOpenDeleteItemCategoryDialog_WithDialogOpen_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnOpenDeleteItemCategoryDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnOpenDeleteItemCategoryDialogFixture : ItemCategoryEditorReducerFixture
+        {
+            public void SetupInitialStateWithDialogOpen()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateWithDialogNotOpen()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isDeleteDialogOpen)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = isDeleteDialogOpen
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCloseDeleteItemCategoryDialog
+    {
+        private readonly OnCloseDeleteItemCategoryDialogFixture _fixture;
+
+        public OnCloseDeleteItemCategoryDialog()
+        {
+            _fixture = new OnCloseDeleteItemCategoryDialogFixture();
+        }
+
+        [Fact]
+        public void OnCloseDeleteItemCategoryDialog_WithDialogOpen_ShouldCloseDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnCloseDeleteItemCategoryDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCloseDeleteItemCategoryDialog_WithDialogClosed_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogNotOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnCloseDeleteItemCategoryDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCloseDeleteItemCategoryDialogFixture : ItemCategoryEditorReducerFixture
+        {
+            public void SetupInitialStateWithDialogOpen()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateWithDialogNotOpen()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isDeleteDialogOpen)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = isDeleteDialogOpen
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class ItemCategoryEditorReducerFixture
     {
         public ItemCategoryState ExpectedState { get; protected set; } = new DomainTestBuilder<ItemCategoryState>().Create();

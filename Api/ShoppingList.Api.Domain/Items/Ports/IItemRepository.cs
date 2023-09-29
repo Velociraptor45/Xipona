@@ -9,10 +9,10 @@ public interface IItemRepository
 {
     Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds);
 
-    Task<IEnumerable<IItem>> FindByAsync(ManufacturerId manufacturerId);
-
     Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
         IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds);
+
+    Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId);
 
     Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId);
 
@@ -20,7 +20,8 @@ public interface IItemRepository
 
     Task<IEnumerable<IItem>> FindActiveByAsync(ItemCategoryId itemCategoryId);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, StoreId storeId);
+    Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemCategoryId> itemCategoryIds, StoreId storeId,
+        IEnumerable<ItemId> excludedItemIds);
 
     Task<IItem?> FindActiveByAsync(TemporaryItemId temporaryItemId);
 

@@ -5,7 +5,7 @@
     <RootNamespace>ProjectHermes.ShoppingList.Api.Client</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>ProjectHermes ShoppingList Api Client</Title>
-    <Version>0.10.0-alpha.9</Version>
+    <Version>0.10.2</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes-ShoppingList</RepositoryUrl>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestEase" Version="1.6.0" />
+    <PackageReference Include="RestEase" Version="1.6.4" />
   </ItemGroup>
 
   <ItemGroup>

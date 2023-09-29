@@ -59,6 +59,11 @@ public class ItemRepositoryMock : Mock<IItemRepository>
         Setup(m => m.FindActiveByAsync(sectionId)).ReturnsAsync(returnValue);
     }
 
+    public void SetupFindActiveByAsync(StoreId storeId, IEnumerable<IItem> returnValue)
+    {
+        Setup(m => m.FindActiveByAsync(storeId)).ReturnsAsync(returnValue);
+    }
+
     public void VerifyFindByAsync(TemporaryItemId temporaryItemId)
     {
         Verify(

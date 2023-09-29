@@ -2,11 +2,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using MySqlConnector;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Domain;
 using ProjectHermes.ShoppingList.Api.Repositories;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Transactions;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
@@ -21,12 +24,32 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests;
 
 public abstract class DatabaseFixture : IDisposable
 {
+    private static readonly object _lock = new();
     protected readonly DockerFixture DockerFixture;
     private readonly IServiceProvider _provider;
+    private static int _databaseNameCounter = 0;
+    private readonly string _connectionString;
 
     protected DatabaseFixture(DockerFixture dockerFixture)
     {
         DockerFixture = dockerFixture;
+
+        string databaseName;
+        lock (_lock)
+        {
+            _databaseNameCounter++;
+            databaseName = $"{DockerFixture.DatabaseName}-{_databaseNameCounter}";
+            _connectionString = DockerFixture.ConnectionString.Replace("{DatabaseName}", databaseName);
+        }
+
+        using var connection = new MySqlConnection(DockerFixture.ConnectionStringWithoutDb);
+        connection.Open();
+
+        var cmd = connection.CreateCommand();
+        cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}`;";
+        cmd.ExecuteNonQuery();
+
+        connection.Close();
 
         _provider = CreateServiceProvider();
     }
@@ -37,7 +60,7 @@ public abstract class DatabaseFixture : IDisposable
         services.AddCore();
         services.AddDomain();
         services.AddEndpointControllers();
-        services.AddRepositories(DockerFixture.ConnectionString);
+        services.AddRepositories(_connectionString);
         services.AddApplicationServices();
 
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
@@ -54,8 +77,6 @@ public abstract class DatabaseFixture : IDisposable
     {
         var contexts = GetDbContexts(scope).ToList();
 
-        await contexts.First().Database.EnsureDeletedAsync();
-
         foreach (DbContext context in contexts)
         {
             await context.Database.MigrateAsync();
@@ -64,7 +85,7 @@ public abstract class DatabaseFixture : IDisposable
 
     public abstract IEnumerable<DbContext> GetDbContexts(IServiceScope scope);
 
-    protected TContext GetContextInstance<TContext>(IServiceScope scope) where TContext : DbContext
+    public TContext GetContextInstance<TContext>(IServiceScope scope) where TContext : DbContext
     {
         return scope.ServiceProvider.GetRequiredService<TContext>();
     }
@@ -86,6 +107,14 @@ public abstract class DatabaseFixture : IDisposable
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<ItemCategory>> LoadAllItemCategoriesAsync(IServiceScope assertionScope)
+    {
+        await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(assertionScope);
+
+        return await itemCategoryContext.ItemCategories.AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Item>> LoadAllItemsAsync(IServiceScope assertionScope)
     {
         await using var itemContext = GetContextInstance<ItemContext>(assertionScope);
@@ -95,7 +124,7 @@ public abstract class DatabaseFixture : IDisposable
             .Include(item => item.ItemTypes)
             .ThenInclude(itemType => itemType.AvailableAt)
             .Include(item => item.ItemTypes)
-            .ToArrayAsync();
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Repositories.Stores.Entities.Store>> LoadAllStoresAsync(IServiceScope assertionScope)
@@ -104,7 +133,7 @@ public abstract class DatabaseFixture : IDisposable
 
         return await storeContext.Stores.AsNoTracking()
             .Include(s => s.Sections)
-            .ToArrayAsync();
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Repositories.ShoppingLists.Entities.ShoppingList>> LoadAllShoppingListsAsync(
@@ -114,14 +143,14 @@ public abstract class DatabaseFixture : IDisposable
 
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
-            .ToArrayAsync();
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<RecipeTag>> LoadAllRecipeTagsAsync(IServiceScope assertionScope)
     {
         await using var dbContext = GetContextInstance<RecipeTagContext>(assertionScope);
 
-        return await dbContext.RecipeTags.ToListAsync();
+        return await dbContext.RecipeTags.AsNoTracking().ToListAsync();
     }
 
     protected virtual void Dispose(bool disposing)

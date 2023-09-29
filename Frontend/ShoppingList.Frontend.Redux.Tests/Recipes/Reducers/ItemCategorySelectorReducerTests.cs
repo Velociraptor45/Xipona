@@ -296,7 +296,7 @@ public class ItemCategorySelectorReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+            var result = ItemCategorySelectorReducer.OnItemCategoryChanged(_fixture.InitialState, _fixture.Action);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
@@ -312,7 +312,7 @@ public class ItemCategorySelectorReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+            var result = ItemCategorySelectorReducer.OnItemCategoryChanged(_fixture.InitialState, _fixture.Action);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
@@ -328,7 +328,7 @@ public class ItemCategorySelectorReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+            var result = ItemCategorySelectorReducer.OnItemCategoryChanged(_fixture.InitialState, _fixture.Action);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
@@ -345,7 +345,7 @@ public class ItemCategorySelectorReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            var result = ItemCategorySelectorReducer.OnSelectedItemCategoryChanged(_fixture.InitialState, _fixture.Action);
+            var result = ItemCategorySelectorReducer.OnItemCategoryChanged(_fixture.InitialState, _fixture.Action);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
@@ -353,7 +353,7 @@ public class ItemCategorySelectorReducerTests
 
         private sealed class OnSelectedItemCategoryChangedFixture : ItemCategorySelectorReducerFixture
         {
-            public SelectedItemCategoryChangedAction? Action { get; private set; }
+            public ItemCategoryChangedAction? Action { get; private set; }
 
             public void SetupExpectedStateRecipeNull()
             {
@@ -435,18 +435,18 @@ public class ItemCategorySelectorReducerTests
             {
                 var ingredient = InitialState.Editor.Recipe!.Ingredients.First();
                 var itemCategoryId = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategoryId;
-                Action = new SelectedItemCategoryChangedAction(ingredient.Key, itemCategoryId);
+                Action = new ItemCategoryChangedAction(ingredient.Key, itemCategoryId);
             }
 
             public void SetupActionWithInvalidIngredient()
             {
                 var itemCategoryId = ExpectedState.Editor.Recipe!.Ingredients.First().ItemCategoryId;
-                Action = new SelectedItemCategoryChangedAction(Guid.NewGuid(), itemCategoryId);
+                Action = new ItemCategoryChangedAction(Guid.NewGuid(), itemCategoryId);
             }
 
             public void SetupActionForRecipeNull()
             {
-                Action = new DomainTestBuilder<SelectedItemCategoryChangedAction>().Create();
+                Action = new DomainTestBuilder<ItemCategoryChangedAction>().Create();
             }
         }
     }

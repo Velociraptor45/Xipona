@@ -149,6 +149,7 @@ public class ItemReducerTests
                     Search = ExpectedState.Search with
                     {
                         IsLoadingSearchResults = isSearching,
+                        TriggeredAtLeastOnce = false,
                         SearchResults = new DomainTestBuilder<ItemSearchResult>().CreateMany(2).ToList()
                     }
                 };
@@ -161,6 +162,7 @@ public class ItemReducerTests
                     Search = ExpectedState.Search with
                     {
                         IsLoadingSearchResults = false,
+                        TriggeredAtLeastOnce = true,
                         SearchResults = new List<ItemSearchResult>
                         {
                             new DomainTestBuilder<ItemSearchResult>()

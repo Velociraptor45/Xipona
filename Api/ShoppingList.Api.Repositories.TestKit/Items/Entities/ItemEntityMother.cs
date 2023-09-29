@@ -10,6 +10,7 @@ public static class ItemEntityMother
             .WithDeleted(false)
             .WithIsTemporary(false)
             .WithoutCreatedFrom()
+            .WithoutUpdatedOn()
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithEmptyItemTypes()
@@ -34,7 +35,7 @@ public static class ItemEntityMother
 
     public static ItemEntityBuilder InitialWithTypes()
     {
-        var types = ItemTypeEntityMother.Initial().CreateMany(3).ToList();
+        var types = Enumerable.Range(0, 3).Select(_ => ItemTypeEntityMother.Initial().Create()).ToList();
 
         return new ItemEntityBuilder()
             .WithDeleted(false)
@@ -43,6 +44,7 @@ public static class ItemEntityMother
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithEmptyAvailableAt()
+            .WithoutUpdatedOn()
             .WithItemTypes(types);
     }
 

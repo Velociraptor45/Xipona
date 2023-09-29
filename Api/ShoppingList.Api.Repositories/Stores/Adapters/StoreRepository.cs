@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
+using ProjectHermes.ShoppingList.Api.Core.DomainEventHandlers;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Ports;
@@ -18,16 +20,19 @@ public class StoreRepository : IStoreRepository
     private readonly IToContractConverter<IStore, Store> _toContractConverter;
     private readonly ILogger<StoreRepository> _logger;
     private readonly CancellationToken _cancellationToken;
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     public StoreRepository(StoreContext dbContext,
         IToDomainConverter<Store, IStore> toDomainConverter,
         IToContractConverter<IStore, Store> toContractConverter,
+        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
         ILogger<StoreRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toDomainConverter = toDomainConverter;
         _toContractConverter = toContractConverter;
+        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
         _logger = logger;
         _cancellationToken = cancellationToken;
     }
@@ -113,6 +118,7 @@ public class StoreRepository : IStoreRepository
             _logger.LogInformation(ex, () => $"Saving store {store.Id.Value} failed due to concurrency violation");
             throw new DomainException(new ModelOutOfDateReason());
         }
+        await ((AggregateRoot)store).DispatchDomainEvents(_domainEventDispatcher);
 
         return _toDomainConverter.ToDomain(existingEntity);
     }

@@ -1,4 +1,6 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
@@ -21,6 +23,9 @@ public class Section : ISection
 
     public ISection Modify(SectionModification modification)
     {
+        if (IsDeleted)
+            throw new DomainException(new CannotModifyDeletedSectionReason(Id));
+
         return new Section(
             Id,
             modification.Name,

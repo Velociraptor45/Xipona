@@ -9,7 +9,7 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
     {
         WithoutPredecessor();
         WithoutItem();
-        WithAvailableAt(new ItemTypeAvailableAtEntityBuilder().CreateMany(2).ToList());
+        WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(3).ToList());
     }
 
     public ItemTypeEntityBuilder WithId(Guid id)
@@ -78,5 +78,11 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
     {
         FillPropertyWith(p => p.AvailableAt, availableAt);
         return this;
+    }
+
+    // TCG keep
+    public ItemTypeEntityBuilder WithAvailableAt(ItemTypeAvailableAt availableAt)
+    {
+        return WithAvailableAt(new List<ItemTypeAvailableAt> { availableAt });
     }
 }

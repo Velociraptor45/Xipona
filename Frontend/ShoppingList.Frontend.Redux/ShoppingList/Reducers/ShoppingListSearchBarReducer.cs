@@ -68,28 +68,4 @@ public static class ShoppingListSearchBarReducer
             }
         };
     }
-
-    [ReducerMethod(typeof(SetSearchBarActiveAction))]
-    public static ShoppingListState OnSetSearchBarActive(ShoppingListState state)
-    {
-        return state with
-        {
-            SearchBar = state.SearchBar with
-            {
-                IsActive = true
-            }
-        };
-    }
-
-    [ReducerMethod(typeof(SetSearchBarInactiveAction))]
-    public static ShoppingListState OnSetSearchBarInactive(ShoppingListState state)
-    {
-        return state with
-        {
-            SearchBar = state.SearchBar with
-            {
-                IsActive = false
-            }
-        };
-    }
 }

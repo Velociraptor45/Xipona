@@ -36,7 +36,7 @@ public static class StoreEntityMother
         var sections = new List<Section>();
 
         if (!sectionIdArray.Any())
-            return new StoreEntityBuilder().WithSections(sections);
+            return new StoreEntityBuilder().WithDeleted(false).WithSections(sections);
 
         sections.Add(new SectionEntityBuilder()
             .WithId(sectionIdArray.First())
@@ -53,7 +53,7 @@ public static class StoreEntityMother
                 .Create());
         }
 
-        return new StoreEntityBuilder().WithSections(sections);
+        return new StoreEntityBuilder().WithDeleted(false).WithSections(sections);
     }
 
     public static StoreEntityBuilder ActiveAndDeletedSection()

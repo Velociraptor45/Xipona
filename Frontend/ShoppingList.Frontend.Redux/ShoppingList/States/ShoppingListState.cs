@@ -20,7 +20,7 @@ public record ShoppingListState(
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
-        if(ShoppingList is null)
+        if (ShoppingList is null)
             return Enumerable.Empty<ShoppingListSection>();
 
         return ShoppingList.Sections.AsEnumerable()
@@ -28,11 +28,14 @@ public record ShoppingListState(
     }
 
     public ShoppingListStore? SelectedStore => Stores.Stores.FirstOrDefault(s => s.Id == SelectedStoreId);
+    public bool AllItemsInBasketHidden => !ItemsInBasketVisible && (ShoppingList?.Sections.All(s => s.AllItemsHidden) ?? false);
 }
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
 {
     private readonly IWebAssemblyHostEnvironment _environment;
+
+    public const float InitialTemporaryItemPrice = 1f;
 
     public ShoppingListFeatureState(IWebAssemblyHostEnvironment environment)
     {
@@ -54,9 +57,9 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             true,
             false,
             null,
-            new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
-            new TemporaryItemCreator(string.Empty, null, 1f, false, false, false),
-            new PriceUpdate(null, 1f, true, false, false),
+            new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
+            new TemporaryItemCreator(string.Empty, null, 1f, 0, false, false, false),
+            new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
             new Summary(false, false, DateTime.MinValue, false),
             new ProcessingErrors(!_environment.IsProduction(), false, new List<string>()));
     }

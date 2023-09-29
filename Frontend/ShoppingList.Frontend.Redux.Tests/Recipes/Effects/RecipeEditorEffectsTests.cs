@@ -1,10 +1,13 @@
-﻿using Moq.Contrib.InOrder;
+﻿using Moq;
+using Moq.Contrib.InOrder;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
 
@@ -12,6 +15,206 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Recipes.Effects;
 
 public class RecipeEditorEffectsTests
 {
+    public class HandleInitializeRecipe
+    {
+        private readonly HandleInitializeRecipeFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithQuantityTypesAlreadyInState_ShouldNotLoadQuantityTypes()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupStateWithQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithApiCallSuccessful_WithRecipeId_ShouldLoadQuantityTypesAndDispatchActionForExistingRecipe()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithApiCallSuccessful_WithEmptyRecipeId_ShouldLoadQuantityTypesAndDispatchActionForNewRecipe()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForNewRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypes();
+                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingSetNewRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithWithApiException_ShouldDispatchApiExceptionAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypesThrowsApiException();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleInitializeRecipe_WithWithHttpRequestException_ShouldDispatchErrorAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupActionForLoadingRecipe();
+                _fixture.SetupQuantityTypes();
+                _fixture.SetupStateWithoutQuantityTypes();
+                _fixture.SetupDispatchingLoadRecipeTagsAction();
+                _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingLoadRecipeAction();
+            });
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await _fixture.CreateSut().HandleInitializeRecipe(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleInitializeRecipeFixture : RecipeEditorEffectsFixture
+        {
+            private readonly Guid _recipeId = Guid.NewGuid();
+            private IReadOnlyCollection<IngredientQuantityType>? _quantityTypes;
+
+            public InitializeRecipeAction? Action { get; private set; }
+
+            public void SetupStateWithoutQuantityTypes()
+            {
+                State = State with { IngredientQuantityTypes = new List<IngredientQuantityType>() };
+            }
+
+            public void SetupStateWithQuantityTypes()
+            {
+                State = State with
+                {
+                    IngredientQuantityTypes = new DomainTestBuilder<IngredientQuantityType>().CreateMany(2).ToList()
+                };
+            }
+
+            public void SetupGettingQuantityTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+                TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
+                ApiClientMock.SetupGetAllIngredientQuantityTypes(_quantityTypes);
+            }
+
+            public void SetupQuantityTypes()
+            {
+                _quantityTypes = new DomainTestBuilder<IngredientQuantityType>().CreateMany(2).ToList();
+            }
+
+            public void SetupGettingQuantityTypesThrowsApiException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+                ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingQuantityTypesThrowsHttpRequestException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+                ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
+                SetupDispatchingAction(new LoadIngredientQuantityTypesFinishedAction(_quantityTypes));
+            }
+
+            public void SetupDispatchingLoadRecipeTagsAction()
+            {
+                SetupDispatchingAnyAction<LoadRecipeTagsAction>();
+            }
+
+            public void SetupDispatchingSetNewRecipeAction()
+            {
+                SetupDispatchingAnyAction<SetNewRecipeAction>();
+            }
+
+            public void SetupDispatchingLoadRecipeAction()
+            {
+                SetupDispatchingAction(new LoadRecipeForEditingAction(_recipeId));
+            }
+
+            public void SetupActionForLoadingRecipe()
+            {
+                Action = new InitializeRecipeAction(_recipeId);
+            }
+
+            public void SetupActionForNewRecipe()
+            {
+                Action = new InitializeRecipeAction(Guid.Empty);
+            }
+        }
+    }
+
     public class HandleLoadRecipeForEditing
     {
         private readonly HandleLoadRecipeForEditingFixture _fixture = new();
@@ -46,7 +249,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
                 _fixture.SetupGettingRecipeByIdThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -67,7 +270,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
                 _fixture.SetupGettingRecipeByIdThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -113,16 +316,6 @@ public class RecipeEditorEffectsTests
                     new DomainTestBuilder<HttpRequestException>().Create());
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
@@ -152,6 +345,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupModifyingRecipe();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
 
             // Act
@@ -171,7 +365,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingRecipeThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -192,7 +386,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingRecipeThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -245,16 +439,6 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingStartedAction()
             {
                 SetupDispatchingAction<ModifyRecipeStartedAction>();
@@ -268,6 +452,12 @@ public class RecipeEditorEffectsTests
             public void SetupDispatchingLeaveAction()
             {
                 SetupDispatchingAction<LeaveRecipeEditorAction>();
+            }
+
+            public void SetupSuccessNotification()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified recipe {_recipe.Name}");
             }
         }
     }
@@ -288,6 +478,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupCreatingRecipe();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
 
             // Act
@@ -307,7 +498,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingRecipeThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -328,7 +519,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingRecipeThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -382,16 +573,6 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingStartedAction()
             {
                 SetupDispatchingAction<CreateRecipeStartedAction>();
@@ -405,6 +586,12 @@ public class RecipeEditorEffectsTests
             public void SetupDispatchingLeaveAction()
             {
                 SetupDispatchingAction<LeaveRecipeEditorAction>();
+            }
+
+            public void SetupSuccessNotification()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_recipe);
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created recipe {_recipe.Name}");
             }
         }
     }
@@ -422,9 +609,10 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInputEmpty();
                 _fixture.SetupState();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -441,9 +629,10 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupCreatingRecipeTag();
                 _fixture.SetupDispatchingFinishedAction();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -458,11 +647,12 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupCreatingRecipeTagThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -477,11 +667,12 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupCreatingRecipeTagThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
+            var sut = _fixture.CreateSut();
 
             // Act
-            await _fixture.CreateSut().HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
+            await sut.HandleCreateNewRecipeTagAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -536,16 +727,6 @@ public class RecipeEditorEffectsTests
                         RecipeTagCreateInput = _recipeTagInput
                     }
                 };
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
 
             public void SetupDispatchingFinishedAction()
@@ -604,7 +785,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupGettingItemAmountsThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
 
             // Act
@@ -623,7 +804,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
                 _fixture.SetupGettingItemAmountsThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
 
             // Act
@@ -693,16 +874,6 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemAmounts);
@@ -727,6 +898,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupAddingToShoppingList();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupSuccessNotification();
             });
 
             // Act
@@ -762,7 +934,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupAddingToShoppingListThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -783,7 +955,7 @@ public class RecipeEditorEffectsTests
                 _fixture.SetupState();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupAddingToShoppingListThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
 
@@ -857,16 +1029,6 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
-
             public void SetupDispatchingStartedAction()
             {
                 SetupDispatchingAction<AddItemsToShoppingListStartedAction>();
@@ -881,15 +1043,24 @@ public class RecipeEditorEffectsTests
             {
                 SetupDispatchingAction<AddToShoppingListModalClosedAction>();
             }
+
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully added items to shopping lists");
+            }
         }
     }
 
     private abstract class RecipeEditorEffectsFixture : RecipeEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public RecipeEditorEffects CreateSut()
         {
             SetupStateReturningState();
-            return new RecipeEditorEffects(ApiClientMock.Object, RecipeStateMock.Object, NavigationManagerMock.Object);
+            return new RecipeEditorEffects(ApiClientMock.Object, RecipeStateMock.Object, NavigationManagerMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }

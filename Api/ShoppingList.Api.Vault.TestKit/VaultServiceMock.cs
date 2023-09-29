@@ -1,5 +1,4 @@
 ﻿using Moq;
-using ProjectHermes.ShoppingList.Api.Vault.Configs;
 
 namespace ProjectHermes.ShoppingList.Api.Vault.TestKit;
 
@@ -9,9 +8,9 @@ public class VaultServiceMock : Mock<IVaultService>
     {
     }
 
-    public void SetupLoadConnectionStringsAsync(ConnectionStrings connectionStrings)
+    public void SetupLoadCredentialsAsync((string UserName, string Password) returnValue)
     {
-        Setup(m => m.LoadConnectionStringsAsync())
-            .ReturnsAsync(connectionStrings);
+        Setup(m => m.LoadCredentialsAsync())
+            .ReturnsAsync(returnValue);
     }
 }

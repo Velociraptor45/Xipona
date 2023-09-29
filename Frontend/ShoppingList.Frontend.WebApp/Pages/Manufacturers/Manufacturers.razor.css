@@ -1,0 +1,25 @@
+﻿.manufacturers {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.search-bar {
+  width: 100%;
+}
+.no-manufacturers-found-notice {
+  text-align: center;
+  color: #bdc3c7;
+}
+@media (min-width: 769px) {
+  .manufacturers {
+    padding-bottom: 8px;
+  }
+}
+@media (max-width: 768px) {
+  .top-bar {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+  .manufacturers {
+    padding-bottom: 79.15px;
+  }
+}

@@ -28,6 +28,12 @@ public class StoreEntityBuilder : TestBuilderBase<Store>
         return this;
     }
 
+    // TCG keep
+    public StoreEntityBuilder WithSection(Section section)
+    {
+        return WithSections(new[] { section });
+    }
+
     public StoreEntityBuilder WithSections(ICollection<Section> sections)
     {
         FillPropertyWith(p => p.Sections, sections);

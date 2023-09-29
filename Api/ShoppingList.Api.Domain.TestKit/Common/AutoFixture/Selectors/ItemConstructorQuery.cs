@@ -10,7 +10,7 @@ public class ItemConstructorQuery : IMethodQuery
 
     public ItemConstructorQuery()
     {
-        _availabilitiesType = typeof(IEnumerable<IItemAvailability>);
+        _availabilitiesType = typeof(IEnumerable<ItemAvailability>);
     }
 
     public IEnumerable<IMethod> SelectMethods(Type type)

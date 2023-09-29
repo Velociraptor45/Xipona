@@ -19,6 +19,13 @@ public class CommandQueueMock : Mock<ICommandQueue>
             .Returns(Task.CompletedTask);
     }
 
+    public void SetupEnqueue(Func<IApiRequest, bool> comparison)
+    {
+        this.SetupInOrder(m =>
+                m.Enqueue(It.Is<IApiRequest>(r => comparison(r))))
+            .Returns(Task.CompletedTask);
+    }
+
     public void VerifyEnqueue(IApiRequest request, Func<Times> times)
     {
         Verify(m =>

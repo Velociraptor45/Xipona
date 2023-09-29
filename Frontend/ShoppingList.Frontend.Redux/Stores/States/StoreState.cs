@@ -16,6 +16,6 @@ public class StoreFeatureState : Feature<StoreState>
     {
         return new StoreState(
             new List<StoreSearchResult>(0),
-            new StoreEditor(null, false));
+            new StoreEditor(null, false, false, false));
     }
 }

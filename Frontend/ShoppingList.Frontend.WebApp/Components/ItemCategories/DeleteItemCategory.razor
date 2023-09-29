@@ -1,0 +1,40 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions
+@using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States
+
+@inject IState<ItemCategoryState> State
+@inject IDispatcher Dispatcher
+
+<Button Danger="true"
+        Class="ml-auto"
+        OnClick="@OnOpenDeleteDialogButtonClicked">
+    <i class="bi bi-trash"></i>
+</Button>
+<Modal Title="@($"Delete {State.Value.Editor.ItemCategory!.Name}")"
+       Visible="@State.Value.Editor.IsDeleteDialogOpen"
+       OnCancel="OnCloseDeleteDialogButtonClicked"
+       OnOk="OnDeleteButtonClicked"
+       OkButtonProps="@(new ButtonProps { Danger = true })"
+       ConfirmLoading="State.Value.Editor.IsDeleting"
+       OkText="@($"Delete {State.Value.Editor.ItemCategory.Name}")">
+    Do you really want to delete this item category? Doing this will also <b>delete all items</b> in this item category and <b>all recipe ingredients</b> with this item category.
+</Modal>
+
+@code {
+    private void OnOpenDeleteDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new OpenDeleteItemCategoryDialogAction());
+    }
+
+    private void OnCloseDeleteDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new CloseDeleteItemCategoryDialogAction(false));
+    }
+
+    private void OnDeleteButtonClicked()
+    {
+        Dispatcher.Dispatch(new DeleteItemCategoryAction());
+    }
+}

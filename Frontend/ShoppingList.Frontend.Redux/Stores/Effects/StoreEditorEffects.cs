@@ -14,12 +14,15 @@ public class StoreEditorEffects
     private readonly IApiClient _client;
     private readonly IState<StoreState> _state;
     private readonly NavigationManager _navigationManager;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public StoreEditorEffects(IApiClient client, IState<StoreState> state, NavigationManager navigationManager)
+    public StoreEditorEffects(IApiClient client, IState<StoreState> state, NavigationManager navigationManager,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _state = state;
         _navigationManager = navigationManager;
+        _notificationService = notificationService;
     }
 
     [EffectMethod(typeof(LeaveStoreEditorAction))]
@@ -30,7 +33,7 @@ public class StoreEditorEffects
     }
 
     [EffectMethod]
-    public async Task HandleLoadStoreForEditing(LoadStoreForEditingAction action, IDispatcher dispatcher)
+    public async Task HandleLoadStoreForEditingAction(LoadStoreForEditingAction action, IDispatcher dispatcher)
     {
         EditedStore result;
         try
@@ -54,11 +57,11 @@ public class StoreEditorEffects
     [EffectMethod(typeof(SaveStoreAction))]
     public async Task HandleSaveStoreAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new SaveStoreStartedAction());
-
         var store = _state.Value.Editor.Store;
         if (store is null)
             return;
+
+        dispatcher.Dispatch(new SaveStoreStartedAction());
 
         if (store.Id == Guid.Empty)
         {
@@ -78,6 +81,7 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
+            _notificationService.NotifySuccess($"Successfully created store {store.Name}");
         }
         else
         {
@@ -97,9 +101,42 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
+            _notificationService.NotifySuccess($"Successfully modified store {store.Name}");
         }
 
         dispatcher.Dispatch(new SaveStoreFinishedAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
+    }
+
+    [EffectMethod(typeof(DeleteStoreConfirmedAction))]
+    public async Task HandleDeleteStoreConfirmedAction(IDispatcher dispatcher)
+    {
+        var store = _state.Value.Editor.Store;
+        if (store is null)
+            return;
+
+        dispatcher.Dispatch(new DeleteStoreStartedAction());
+
+        try
+        {
+            await _client.DeleteStoreAsync(store.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Deleting store failed", e));
+            dispatcher.Dispatch(new DeleteStoreFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Deleting store failed", e.Message));
+            dispatcher.Dispatch(new DeleteStoreFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new DeleteStoreFinishedAction());
+        dispatcher.Dispatch(new CloseDeleteStoreDialogAction());
+        dispatcher.Dispatch(new LeaveStoreEditorAction());
+        _notificationService.NotifySuccess($"Successfully deleted store {store.Name}");
     }
 }

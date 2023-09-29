@@ -21,8 +21,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ManufacturerControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public class DeleteManufacturerAsync
+    public class DeleteManufacturerAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly DeleteManufacturerAsyncFixture _fixture;
 

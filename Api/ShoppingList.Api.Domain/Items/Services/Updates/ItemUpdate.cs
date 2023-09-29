@@ -6,11 +6,11 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Services.Updates;
 
 public class ItemUpdate
 {
-    private readonly IEnumerable<IItemAvailability> _availabilities;
+    private readonly IEnumerable<ItemAvailability> _availabilities;
 
     public ItemUpdate(ItemId oldId, ItemName name, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IItemAvailability> availabilities)
+        IEnumerable<ItemAvailability> availabilities)
     {
         OldId = oldId;
         Name = name;
@@ -31,5 +31,5 @@ public class ItemUpdate
     public ItemCategoryId ItemCategoryId { get; }
     public ManufacturerId? ManufacturerId { get; }
 
-    public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
+    public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.ToList().AsReadOnly();
 }

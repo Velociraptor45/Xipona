@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
@@ -24,20 +23,9 @@ public static class IngredientReducer
             return state;
 
         var ingredients = state.Editor.Recipe.Ingredients.ToList();
-        ingredients.Add(new EditedIngredient(
-            Guid.NewGuid(),
-            Guid.Empty,
-            Guid.Empty,
-            state.IngredientQuantityTypes.First().Id,
-            1,
-            null,
-            null,
-            null,
-            null,
-            new ItemCategorySelector(
-                new List<ItemCategorySearchResult>(0),
-                string.Empty),
-            new ItemSelector(new List<SearchItemByItemCategoryResult>(0))));
+        ingredients.Insert(
+            0,
+            EditedIngredient.GetInitial(state.IngredientQuantityTypes));
 
         return state with
         {
@@ -136,7 +124,7 @@ public static class IngredientReducer
         if (ingredient is null)
             return state;
 
-        if(ingredient.DefaultItemId == action.ItemId && ingredient.DefaultItemTypeId == action.ItemTypeId)
+        if (ingredient.DefaultItemId == action.ItemId && ingredient.DefaultItemTypeId == action.ItemTypeId)
             return state;
 
         var defaultStoreId = ingredient.ItemSelector.Items

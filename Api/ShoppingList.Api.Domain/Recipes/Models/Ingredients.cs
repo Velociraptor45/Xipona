@@ -1,9 +1,11 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 
@@ -94,9 +96,11 @@ public class Ingredients : IEnumerable<IIngredient>
         _ingredients.Add(ingredient.Id, ingredient);
     }
 
-    public void RemoveDefaultItem(ItemId defaultItemId)
+    public void RemoveDefaultItem(ItemId defaultItemId, ItemTypeId? itemTypeId)
     {
-        var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == defaultItemId);
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == defaultItemId
+                        && (itemTypeId is null || i.DefaultItemTypeId == itemTypeId));
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.RemoveDefaultItem();
@@ -109,6 +113,41 @@ public class Ingredients : IEnumerable<IIngredient>
         foreach (var ingredient in ingredientsWithItem)
         {
             _ingredients[ingredient.Id] = ingredient.ChangeDefaultItem(oldItemId, newItem);
+        }
+    }
+
+    public void ModifyAfterAvailabilityWasDeleted(ItemId itemId, ItemTypeId? itemTypeId, IItem item,
+        StoreId deletedAvailabilityStoreId)
+    {
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == itemId
+                        && i.DefaultItemTypeId == itemTypeId
+                        && i.ShoppingListProperties?.DefaultStoreId == deletedAvailabilityStoreId);
+
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ChangeDefaultStore(item);
+        }
+    }
+
+    public void RemoveIngredientsOfItemCategory(ItemCategoryId itemCategoryId)
+    {
+        var ingredients = _ingredients.Values.Where(i => i.ItemCategoryId == itemCategoryId);
+        foreach (var ingredient in ingredients)
+        {
+            _ingredients.Remove(ingredient.Id);
+        }
+    }
+
+    public void ModifyAfterAvailabilitiesChanged(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
+    {
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == itemId && i.DefaultItemTypeId == itemTypeId);
+
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ModifyAfterAvailabilitiesChanged(oldAvailabilities, newAvailabilities);
         }
     }
 }

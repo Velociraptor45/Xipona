@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
+using System;
 using System.Linq;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.ToDomain
@@ -49,6 +50,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
         {
             return new EditedItemType(
                 contract.Id,
+                Guid.NewGuid(),
                 contract.Name,
                 contract.Availabilities.Select(_availabilityConverter.ToDomain).ToList());
         }
