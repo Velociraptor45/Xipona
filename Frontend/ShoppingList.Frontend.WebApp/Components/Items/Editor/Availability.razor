@@ -13,7 +13,7 @@
                 DataSource="Available.CreateAvailabilityStores(Model, State.Value.Stores.Stores).ToList()"
                 TItem="EditedItemAvailabilityStore"
                 TItemValue="Guid"
-                DefaultValue="Model.StoreId"
+                Value="Model.StoreId"
                 ValueName="@nameof(EditedItemAvailabilityStore.Id)"
                 LabelName="@nameof(EditedItemAvailabilityStore.Name)"
                 DisabledName="@nameof(EditedItemAvailabilityStore.IsDisabled)"
@@ -34,7 +34,7 @@
                     LabelName="@nameof(ItemStoreSection.Name)"
                     OnSelectedItemChanged="OnDefaultSectionChanged"
                     IgnoreItemChanges="false"
-                    DefaultValue="@Model.DefaultSectionId"></Select>
+                    Value="@Model.DefaultSectionId"></Select>
         </div>
     </div>
     <Button Class="d-flex align-items-center ml-auto"
