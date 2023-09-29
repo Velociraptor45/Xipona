@@ -45,3 +45,8 @@
 .add-to-sl-modal-number-of-servings .ant-input-number {
     width: 55px
 }
+
+/* item */
+.item-editor .in-packet .ant-select {
+    width: auto !important;
+}
