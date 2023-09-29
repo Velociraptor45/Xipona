@@ -20,12 +20,15 @@ public class ShoppingListEffects
     private readonly IApiClient _client;
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public ShoppingListEffects(IApiClient client, ICommandQueue commandQueue, IState<ShoppingListState> state)
+    public ShoppingListEffects(IApiClient client, ICommandQueue commandQueue, IState<ShoppingListState> state,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _commandQueue = commandQueue;
         _state = state;
+        _notificationService = notificationService;
     }
 
     [EffectMethod(typeof(LoadQuantityTypesAction))]
@@ -196,6 +199,7 @@ public class ShoppingListEffects
             _state.Value.PriceUpdate.Price));
 
         dispatcher.Dispatch(new ClosePriceUpdaterAction());
+        _notificationService.NotifySuccess("Successfully updated item price");
     }
 
     [EffectMethod(typeof(FinishShoppingListAction))]
@@ -230,5 +234,6 @@ public class ShoppingListEffects
 
         dispatcher.Dispatch(new FinishShoppingListFinishedAction());
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
+        _notificationService.NotifySuccess("Finished shopping list");
     }
 }

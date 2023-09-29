@@ -8,7 +8,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Recipes.Effects;
 
 public class RecipeEffectsFixtureBase : EffectsFixtureBase
 {
-    protected readonly RecipeStatMock RecipeStateMock = new(MockBehavior.Strict);
+    protected readonly RecipeStateMock RecipeStateMock = new(MockBehavior.Strict);
     protected readonly NavigationManagerMock NavigationManagerMock = new(MockBehavior.Strict);
     protected RecipeState State = new DomainTestBuilder<RecipeState>().Create();
 

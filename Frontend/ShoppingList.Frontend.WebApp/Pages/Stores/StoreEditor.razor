@@ -12,19 +12,20 @@
 
 @if (State.Value.Editor.Store is not null)
 {
-    <div class="px-2">
+    <div class="pt-2 editor">
         <div class="d-flex">
             <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                <Icon Type="arrow-left"></Icon>
+                <i class="bi bi-arrow-left"></i>
             </Button>
             <div class="mx-3">
-                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"/>
+                <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"
+                       Placeholder="Store name"/>
             </div>
             @if (State.Value.Editor.Store.Id != Guid.Empty)
             {
                 <div class="ml-auto">
                     <Button Danger="true" OnClick="@OnDeleteButtonClicked">
-                        Delete
+                        <i class="bi bi-trash"></i>
                     </Button>
                 </div>
             }
@@ -35,26 +36,21 @@
         <div class="d-flex justify-content-end mt-2">
             @if (State.Value.Editor.Store.Id == Guid.Empty)
             {
-                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving">Create</Button>
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving" 
+                        Type="@ButtonType.Primary">
+                    Create
+                </Button>
             }
             else
             {
-                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving">Save</Button>
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving" 
+                        Type="@ButtonType.Primary">
+                    Save
+                </Button>
             }
         </div>
     </div>
-
-    <Modal Title="Delete Store"
-           Visible="@State.Value.Editor.IsShowingDeletionNotice"
-           OnCancel="@OnDeleteModalCancelClicked"
-           OnOk="@OnDeleteModalOkClicked"
-           OkText="@($"Delete {State.Value.Editor.Store.Name}")"
-           CancelText="@("Cancel")">
-        <div>
-            Deleting a store will also remove any availability of items in this store. 
-            Items that are only available in this store will be deleted.
-        </div>
-    </Modal>
+    <DeleteStoreDialog></DeleteStoreDialog>
 }
 
 @code {
@@ -88,15 +84,5 @@
     private void OnDeleteButtonClicked()
     {
         Dispatcher.Dispatch(new DeleteStoreButtonClickedAction());
-    }
-
-    private void OnDeleteModalCancelClicked()
-    {
-        Dispatcher.Dispatch(new DeleteStoreAbortedAction());
-    }
-
-    private void OnDeleteModalOkClicked()
-    {
-        Dispatcher.Dispatch(new DeleteStoreConfirmedAction());
     }
 }

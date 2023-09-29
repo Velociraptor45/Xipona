@@ -4,9 +4,9 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Recipes.States;
 
-public class RecipeStatMock : Mock<IState<RecipeState>>
+public class RecipeStateMock : Mock<IState<RecipeState>>
 {
-    public RecipeStatMock(MockBehavior behavior) : base(behavior)
+    public RecipeStateMock(MockBehavior behavior) : base(behavior)
     {
     }
 

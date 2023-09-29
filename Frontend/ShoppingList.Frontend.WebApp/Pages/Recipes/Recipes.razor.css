@@ -1,0 +1,22 @@
+﻿.recipes {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.no-recipes-found-notice {
+  text-align: center;
+  color: #bdc3c7;
+}
+@media (min-width: 769px) {
+  .recipes {
+    padding-bottom: 8px;
+  }
+}
+@media (max-width: 768px) {
+  .top-bar {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+  .recipes {
+    padding-bottom: 79.15px;
+  }
+}

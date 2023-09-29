@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using RestEase;
+using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 
@@ -16,12 +17,17 @@ public sealed class ItemEditorEffects
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
     private readonly NavigationManager _navigationManager;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public ItemEditorEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager)
+    private Timer? _leaveEditorTimer;
+
+    public ItemEditorEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _state = state;
         _navigationManager = navigationManager;
+        _notificationService = notificationService;
     }
 
     [EffectMethod]
@@ -52,7 +58,7 @@ public sealed class ItemEditorEffects
         if (action.Available is EditedItem)
             dispatcher.Dispatch(new StoreAddedToItemAction());
         if (action.Available is EditedItemType itemType)
-            dispatcher.Dispatch(new StoreAddedToItemTypeAction(itemType.Id));
+            dispatcher.Dispatch(new StoreAddedToItemTypeAction(itemType.Key));
 
         return Task.CompletedTask;
     }
@@ -104,6 +110,12 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(LeaveItemEditorAction))]
     public Task HandleLeaveItemEditorAction(IDispatcher dispatcher)
     {
+        if (_leaveEditorTimer is not null)
+        {
+            _leaveEditorTimer.Stop();
+            _leaveEditorTimer.Dispose();
+        }
+
         _navigationManager.NavigateTo(PageRoutes.Items);
         return Task.CompletedTask;
     }
@@ -142,6 +154,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
+        _notificationService.NotifySuccess($"Successfully created item {item.Name}");
     }
 
     [EffectMethod(typeof(UpdateItemAction))]
@@ -149,16 +162,17 @@ public sealed class ItemEditorEffects
     {
         dispatcher.Dispatch(new UpdateItemStartedAction());
 
+        var item = _state.Value.Editor.Item!;
         try
         {
-            if (_state.Value.Editor.Item!.IsItemWithTypes)
+            if (item.IsItemWithTypes)
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), item);
                 await _client.UpdateItemWithTypesAsync(request);
             }
             else
             {
-                var request = new UpdateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                var request = new UpdateItemRequest(Guid.NewGuid(), item);
                 await _client.UpdateItemAsync(request);
             }
         }
@@ -177,6 +191,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
+        _notificationService.NotifySuccess($"Successfully updated item {item.Name}");
     }
 
     [EffectMethod(typeof(ModifyItemAction))]
@@ -184,16 +199,17 @@ public sealed class ItemEditorEffects
     {
         dispatcher.Dispatch(new ModifyItemStartedAction());
 
+        var item = _state.Value.Editor.Item!;
         try
         {
-            if (_state.Value.Editor.Item!.IsItemWithTypes)
+            if (item.IsItemWithTypes)
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), item);
                 await _client.ModifyItemWithTypesAsync(request);
             }
             else
             {
-                var request = new ModifyItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
+                var request = new ModifyItemRequest(Guid.NewGuid(), item);
                 await _client.ModifyItemAsync(request);
             }
         }
@@ -212,6 +228,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new ModifyItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
+        _notificationService.NotifySuccess($"Successfully modified item {item.Name}");
     }
 
     [EffectMethod(typeof(MakeItemPermanentAction))]
@@ -250,6 +267,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
+        _notificationService.NotifySuccess($"Successfully made item {item.Name} permanent");
     }
 
     [EffectMethod(typeof(DeleteItemAction))]
@@ -257,7 +275,8 @@ public sealed class ItemEditorEffects
     {
         dispatcher.Dispatch(new DeleteItemStartedAction());
 
-        var request = new DeleteItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!.Id);
+        var item = _state.Value.Editor.Item!;
+        var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
 
         try
         {
@@ -277,6 +296,27 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new DeleteItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction());
+        dispatcher.Dispatch(new CloseDeleteItemDialogAction(true));
+        _notificationService.NotifySuccess($"Successfully deleted item {item.Name}");
+    }
+
+    [EffectMethod]
+    public Task HandleCloseDeleteItemDialogAction(CloseDeleteItemDialogAction action, IDispatcher dispatcher)
+    {
+        if (!action.LeaveEditor)
+            return Task.CompletedTask;
+
+        if (_leaveEditorTimer is not null)
+        {
+            _leaveEditorTimer.Stop();
+            _leaveEditorTimer.Dispose();
+        }
+
+        _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
+        _leaveEditorTimer.AutoReset = false;
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction());
+        _leaveEditorTimer.Start();
+
+        return Task.CompletedTask;
     }
 }

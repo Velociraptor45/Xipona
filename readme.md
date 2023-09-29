@@ -3,15 +3,55 @@
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-shoppinglist-api?color=blue&label=docker%20image%20api&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-shoppinglist-api)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-shoppinglist-frontend?color=blue&label=docker%20image%20frontend&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-shoppinglist-frontend)
 
-## Project Description
+## Description
 
-## Components
+With the Project Hermes Shopping List you can create **shopping lists**, manage your bought **items** and collect your favorite **recipes**.
+Thanks to queuing and retry logic, you don't have to worry about losing internet connection while grocery shopping - the app will **sync all changes** of your shopping list once you're online again.
 
-### API
-The API contains all the application's business logic.
+### Go Shopping
 
-### Frontend
-The frontend can show and edit active shopping lists, items & shops. Thanks to retry and queuing logic, it is possible to use the front page while shopping even if there's currently no internet connection. When the connection is re-established, the client syncs with the API.
+Your items are **sorted conveniently** by the store's section in which they are located, so that you can take your usual stroll through the aisles and see at one glance what you need to pick up. To make it even easier, you can **hide all items in the basket** to only see what's left to buy.</br>
+One of the items you needed was out of stock? No problem, the shopping list will **transfer all items** that you haven't marked as "in basket" to the next shopping list upon finishing the current one.
+
+<img src="./Documentation/img/ShoppingList.jpg" width="700px" alt="Shopping list with items in basket and items not in basket"/>
+
+### Manage items
+
+You can create simple items ...
+
+<img src="./Documentation/img/Item.jpg" width="700px" alt="Editor where you can define an item's name, category, manufacturer and availability"/>
+
+... or register multiple types per item, so you don't have to create a separate item for every individual type.
+
+<img src="./Documentation/img/ItemWithTypes.jpg" width="700px" alt="Editor where you can define an item's name, category, manufacturer and types. You can again define the availabilities per type"/>
+
+### Create Recipes
+
+Save your best recipes along with all the ingredients and instructions
+
+<img src="./Documentation/img/Recipe.jpg" width="700px" alt="A recipe for lasagna"/>
+
+
+### And more
+
+And that was just the general overview.
+Because not everyone wants to have certain items permanently show up for shopping, you can also create temporary items. These will only be available for this one store until you finish the shopping list with said item in the basket or remove it from the list
+
+<img src="./Documentation/img/ShoppingListTemporaryItem.jpg" width="700px" alt="The price change dialog that's opend directly on the shopping list"/>
+
+Depending on the prices you saved for the items, the shopping lists predicts the estimated costs of your shopping errand. But because prices change, you can quickly adjust them from the shopping list without having to laboriously search for & open the item in the item editor.
+
+<img src="./Documentation/img/ShoppingListPriceAdjustment.jpg" width="700px" alt="The price change dialog that's opend directly on the shopping list"/>
+
+**Search for recipes** not only by their name, but also by their tag. You'd like to eat vegetarian? Great! Search by the tag select the recipe you want to cook.
+
+<img src="./Documentation/img/RecipeSearch.jpg" width="700px" alt="Recipe search by the tag 'vegetarian'"/>
+
+But what if you're missing some ingredients? It's tedious to add all of them to the shopping lists individually. That's why you can **add with one click** all of the ones that you're lacking to the respective store's shopping list.
+
+<img src="./Documentation/img/RecipeAddToSl.jpg" width="700px" alt="Recipe search by the tag 'vegetarian'"/>
+
+And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/ProjectHermes-ShoppingList/milestones) to get a glimps at what's coming soon 👀
 
 ## Setup in Docker
 To run all required services in containers, Dockerfiles and docker-compose files are provided. Since v0.7.0 Docker Secrets are being used and thus the services must be started via a stack deploy on a Docker Swarm. Starting via docker-compose is not supported anymore.

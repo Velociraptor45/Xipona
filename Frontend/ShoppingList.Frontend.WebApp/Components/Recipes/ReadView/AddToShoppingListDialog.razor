@@ -7,7 +7,7 @@
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
 
-@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.Editor
+@namespace ProjectHermes.ShoppingList.Frontend.WebApp.Components.Recipes.ReadView
 
 <Modal Class="w-auto"
        Title="Add To Shoppping List"
@@ -16,6 +16,7 @@
        CancelText="@("Cancel")"
        OnOk="OnOkClicked"
        OkButtonProps="CreateOkButtonProps()"
+       ConfirmLoading="@(State.Value.Editor.AddToShoppingList?.IsSaving ?? false)"
        OnCancel="OnCancelClicked">
     <div>
         @if (State.Value.Editor.AddToShoppingList is not null)
@@ -44,7 +45,7 @@
                                 TItem="AddToShoppingListAvailability"
                                 TValue="Guid"
                                 DataSource="item.Availabilities.ToList()"
-                                DefaultValue="item.SelectedStoreId"
+                                Value="item.SelectedStoreId"
                                 ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
                                 LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
                                 OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
@@ -61,8 +62,7 @@
     {
         var props = new ButtonProps
         {
-            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false,
-            Loading = State.Value.Editor.AddToShoppingList?.IsSaving ?? false
+            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false
         };
         return props;
     }

@@ -1,24 +1,28 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 
+@inject IState<SharedState> SharedState
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Button Class="mr-1 d-flex align-items-center"
-        OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
-        Disabled="@(!State.Value.ShoppingList?.AnyItemInBasket ?? true)">
-    @if (State.Value.ItemsInBasketVisible)
-    {
-        <Icon Type="eye" />
-    }
-    else
-    {
-        <Icon Type="eye-invisible" />
-    }
-</Button>
+<Tooltip Placement="Placement.BottomRight" Title="@("Show/Hide items in basket")" Disabled="SharedState.Value.IsMobile">
+    <Button Class="mr-1 d-flex align-items-center"
+            OnClick="@OnShowBasketItemsChangeButtonClickedAsync"
+            Disabled="@(State.Value.ShoppingList is null)">
+        @if (State.Value.ItemsInBasketVisible)
+        {
+            <i class="bi bi-eye"></i>
+        }
+        else
+        {
+            <i class="bi bi-eye-slash"></i>
+        }
+    </Button>
+</Tooltip>
 
 @code {
     private void OnShowBasketItemsChangeButtonClickedAsync()

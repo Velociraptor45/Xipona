@@ -70,7 +70,7 @@ public static class ItemCategorySelectorReducer
     }
 
     [ReducerMethod]
-    public static RecipeState OnSelectedItemCategoryChanged(RecipeState state, SelectedItemCategoryChangedAction action)
+    public static RecipeState OnItemCategoryChanged(RecipeState state, ItemCategoryChangedAction action)
     {
         if (state.Editor.Recipe is null)
             return state;
@@ -81,7 +81,7 @@ public static class ItemCategorySelectorReducer
             return state;
         var ingredientIndex = ingredients.IndexOf(ingredient);
 
-        if(ingredients[ingredientIndex].ItemCategoryId == action.ItemCategoryId)
+        if (ingredients[ingredientIndex].ItemCategoryId == action.ItemCategoryId)
             return state;
 
         ingredients[ingredientIndex] = ingredient with

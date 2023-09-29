@@ -10,7 +10,8 @@
     padding-top: 2px;
 }
 
-.summary-datetime:hover {
+.summary-datetime:hover,
+.summary-datetime-edit:hover {
     cursor: pointer;
 }
 
@@ -22,4 +23,34 @@
 
 .summary-price {
     font-size: 16px;
+}
+
+.summary-datetime-edit {
+    font-size: 0.5em;
+}
+
+.price-sum .currency {
+    padding-left: 2px;
+}
+
+@media (min-width: 769px) {
+    .price-sum {
+        padding-right: 8px;
+    }
+
+    .summary {
+        margin-bottom: 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    .summary {
+        margin-right: 4px;
+        padding-bottom: 4px;
+        margin-bottom: 71.15px;
+    }
+
+    .price-sum {
+        padding-right: 4px;
+    }
 }

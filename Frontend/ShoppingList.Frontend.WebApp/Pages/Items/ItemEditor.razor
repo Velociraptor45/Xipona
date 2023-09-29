@@ -13,25 +13,18 @@
 
 @if (State.Value.Editor.Item != null)
 {
-    <div class="px-2">
+    <div class="pt-2 item-editor">
         <div class="d-flex">
             <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                <Icon Type="arrow-left"></Icon>
+                <i class="bi bi-arrow-left"></i>
             </Button>
             <div class="mx-3">
                 <Input TValue="string" Value="@State.Value.Editor.Item.Name"
-                       OnChange="OnNameChanged" Placeholder="Name ..."/>
+                       OnChange="OnNameChanged" Placeholder="Item name"/>
             </div>
-            @if (State.Value.Editor.Item.Id != Guid.Empty)
-            {
-                <Button Danger="true"
-                        Class="ml-auto"
-                        OnClick="@OnDeleteButtonClicked">
-                    Delete
-                </Button>
-            }
+            <DeleteItem></DeleteItem>
         </div>
-        <Divider Class="my-3"></Divider>
+        <hr class="my-3" />
         <div class="d-flex pb-2">
             <ItemCategorySelect></ItemCategorySelect>
             <ManufacturerSelect></ManufacturerSelect>
@@ -54,19 +47,28 @@
         <div class="d-flex justify-content-end">
             @if (State.Value.Editor.Item.Id == Guid.Empty)
             {
-                <Button OnClick="@OnCreateButtonClicked">Create</Button>
+                <Button OnClick="@OnCreateButtonClicked"
+                        Loading="@State.Value.Editor.IsModifying">
+                    Create
+                </Button>
             }
             else if (State.Value.Editor.Item.IsTemporary)
             {
-                <Button OnClick="@OnMakeItemPermanentButtonClicked">Make Permanent</Button>
+                <Button OnClick="@OnMakeItemPermanentButtonClicked"
+                        Loading="@State.Value.Editor.IsModifying">
+                    Make Permanent
+                </Button>
             }
             else
             {
-                <Button Disabled="@State.Value.Editor.DisableSaveButtons" 
-                        OnClick="@OnUpdateButtonClicked">Update</Button>
-                <Button Disabled="@State.Value.Editor.DisableSaveButtons" 
-                        Class="ml-2" 
+                <Button Disabled="@State.Value.Editor.DisableSaveButtons"
+                        Loading="@State.Value.Editor.IsModifying"
                         OnClick="@OnModifyButtonClicked">Modify</Button>
+                <Button Type="@ButtonType.Primary"
+                        Class="ml-2"
+                        Disabled="@State.Value.Editor.DisableSaveButtons"
+                        Loading="@State.Value.Editor.IsUpdating"
+                        OnClick="@OnUpdateButtonClicked">Update</Button>
             }
         </div>
     </div>
@@ -107,11 +109,6 @@
     private void OnMakeItemPermanentButtonClicked()
     {
         Dispatcher.Dispatch(new MakeItemPermanentAction());
-    }
-
-    private void OnDeleteButtonClicked()
-    {
-        Dispatcher.Dispatch(new DeleteItemAction());
     }
 
     private void OnBackButtonClicked()

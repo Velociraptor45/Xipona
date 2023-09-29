@@ -1237,6 +1237,79 @@ public class StoreEditorReducerTests
         }
     }
 
+    public class OnDeleteStoreStarted
+    {
+        private readonly OnDeleteStoreStartedFixture _fixture;
+
+        public OnDeleteStoreStarted()
+        {
+            _fixture = new OnDeleteStoreStartedFixture();
+        }
+
+        [Fact]
+        public void OnDeleteStoreStarted_WithNotDeleting_ShouldSetDeleting()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotDeleting();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnDeleteStoreStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnDeleteStoreStarted_WithDeleting_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateDeleting();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnDeleteStoreStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDeleteStoreStartedFixture : StoreEditorReducerFixture
+        {
+            public void SetupInitialStateDeleting()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateNotDeleting()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isDeleting)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = isDeleting
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = true
+                    }
+                };
+            }
+        }
+    }
+
     public class OnDeleteStoreFinished
     {
         private readonly OnDeleteStoreFinishedFixture _fixture;
@@ -1247,10 +1320,10 @@ public class StoreEditorReducerTests
         }
 
         [Fact]
-        public void OnDeleteStoreFinished_WithDeletionNoticeNotShowing_ShouldNotChangeState()
+        public void OnDeleteStoreFinished_WithDeleting_ShouldSetNotDeleting()
         {
             // Arrange
-            _fixture.SetupInitialStateNotShowingDeletionNotice();
+            _fixture.SetupInitialStateDeleting();
             _fixture.SetupExpectedState();
 
             // Act
@@ -1261,10 +1334,10 @@ public class StoreEditorReducerTests
         }
 
         [Fact]
-        public void OnDeleteStoreFinished_WithDeletionNoticeShowing_ShouldHideDeletionNotice()
+        public void OnDeleteStoreFinished_WithNotDeleting_ShouldNotChangeState()
         {
             // Arrange
-            _fixture.SetupInitialStateShowingDeletionNotice();
+            _fixture.SetupInitialStateNotDeleting();
             _fixture.SetupExpectedState();
 
             // Act
@@ -1275,6 +1348,79 @@ public class StoreEditorReducerTests
         }
 
         private sealed class OnDeleteStoreFinishedFixture : StoreEditorReducerFixture
+        {
+            public void SetupInitialStateDeleting()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateNotDeleting()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isDeleting)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = isDeleting
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleting = false
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCloseDeleteStoreDialog
+    {
+        private readonly OnCloseDeleteStoreDialogFixture _fixture;
+
+        public OnCloseDeleteStoreDialog()
+        {
+            _fixture = new OnCloseDeleteStoreDialogFixture();
+        }
+
+        [Fact]
+        public void OnCloseDeleteStoreDialog_WithDeletionNoticeNotShowing_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotShowingDeletionNotice();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnCloseDeleteStoreDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCloseDeleteStoreDialog_WithDeletionNoticeShowing_ShouldHideDeletionNotice()
+        {
+            // Arrange
+            _fixture.SetupInitialStateShowingDeletionNotice();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnCloseDeleteStoreDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCloseDeleteStoreDialogFixture : StoreEditorReducerFixture
         {
             public void SetupInitialStateShowingDeletionNotice()
             {

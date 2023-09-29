@@ -1,0 +1,14 @@
+﻿@media (min-width: 769px) {
+  .item-editor {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 8px;
+  }
+}
+@media (max-width: 768px) {
+  .item-editor {
+    padding-bottom: 79.15px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

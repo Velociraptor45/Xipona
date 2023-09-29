@@ -1,0 +1,13 @@
+﻿@media (min-width: 769px) {
+  .editor {
+    margin: 0 auto;
+    max-width: 600px;
+  }
+}
+@media (max-width: 768px) {
+  .editor {
+    padding-bottom: 79.15px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

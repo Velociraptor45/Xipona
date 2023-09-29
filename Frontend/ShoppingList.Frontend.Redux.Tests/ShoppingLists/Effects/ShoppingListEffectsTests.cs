@@ -1,6 +1,5 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
@@ -11,6 +10,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryIt
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Extensions;
 using RestEase;
@@ -49,7 +49,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -67,7 +67,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -113,16 +113,6 @@ public class ShoppingListEffectsTests
                 _expectedLoadFinishedAction = new LoadQuantityTypesFinishedAction(_expectedQuantityTypes);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
             }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
-            }
         }
     }
 
@@ -156,7 +146,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -174,7 +164,7 @@ public class ShoppingListEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -219,16 +209,6 @@ public class ShoppingListEffectsTests
 
                 _expectedLoadFinishedAction = new LoadQuantityTypesInPacketFinishedAction(_expectedQuantityTypesInPacket);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
         }
     }
@@ -374,7 +354,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupAction();
                 _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
-                _fixture.SetupDispatchingApiExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -395,7 +375,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupAction();
                 _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorAction();
+                _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -450,16 +430,6 @@ public class ShoppingListEffectsTests
             public void SetupAction()
             {
                 Action = new SelectedStoreChangedAction(_storeId);
-            }
-
-            public void SetupDispatchingApiExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
-            }
-
-            public void SetupDispatchingErrorAction()
-            {
-                SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
             }
         }
     }
@@ -656,6 +626,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupCallingEndpoint();
                 _fixture.SetupDispatchingFinishActionForAllTypes();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupSuccessNotification();
             });
 
             _fixture.SetupStateReturningState();
@@ -682,6 +653,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupCallingEndpoint();
                 _fixture.SetupDispatchingFinishActionForOneType();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupSuccessNotification();
             });
 
             _fixture.SetupStateReturningState();
@@ -782,6 +754,11 @@ public class ShoppingListEffectsTests
                 ApiClientMock.SetupUpdateItemPriceAsync(_expectedRequest);
             }
 
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully updated item price");
+            }
+
             public void VerifyCallingEndpoint()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRequest);
@@ -820,6 +797,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupFinishingList();
                 _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingStoreChangeAction();
+                _fixture.SetupSuccessNotification();
             });
 
             _fixture.SetupStateReturningState();
@@ -882,6 +860,11 @@ public class ShoppingListEffectsTests
                 ApiClientMock.SetupFinishListAsync(_expectedFinishRequest);
             }
 
+            public void SetupSuccessNotification()
+            {
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Finished shopping list");
+            }
+
             public void VerifyFinishingList()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedFinishRequest);
@@ -892,10 +875,14 @@ public class ShoppingListEffectsTests
 
     private abstract class ShoppingListEffectsFixture : ShoppingListEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public ShoppingListEffects CreateSut()
         {
             SetupStateReturningState();
-            return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object);
+            return new ShoppingListEffects(ApiClientMock.Object, CommandQueueMock.Object, ShoppingListStateMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }

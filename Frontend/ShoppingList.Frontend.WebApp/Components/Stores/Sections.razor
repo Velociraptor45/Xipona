@@ -10,14 +10,16 @@
 
 
 <div class="my-3">
-    <div class="d-flex align-items-center">
-        <div>
+    <div class="d-flex align-items-center pb-1">
+        <div class="font-weight-bold">
             Sections
         </div>
         <div class="ml-2">
-            <Button Icon="plus"
+            <Button Size="@ButtonSize.Small"
                     Class="align-items-center justify-content-center d-flex"
-                    OnClick="@OnAddSectionButtonClicked"></Button>
+                    OnClick="@OnAddSectionButtonClicked">
+                <i class="bi bi-plus-lg"></i>
+            </Button>
         </div>
     </div>
     @foreach (var section in State.Value.Editor.Store!.Sections)
@@ -26,6 +28,7 @@
             T="EditedSection"
             State="State.Value.Editor.Store"
             Model="section"
+            Placeholder="Section name"
             OnIncrement="OnIncrementSection"
             OnDecrement="OnDecrementSection"
             OnRemove="OnRemoveSection"
@@ -34,12 +37,12 @@
 </div>
 
 <div>
-    Default Section:
+    <div class="font-weight-bold">Default Section</div>
     <SingleSelect TItem="EditedSection"
                   TValue="Guid"
                   ValueName="@nameof(EditedSection.Key)"
                   LabelName="@nameof(EditedSection.Name)"
-                  DefaultValue="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Key"
+                  Value="@State.Value.Editor.Store!.Sections.First(s => s.IsDefaultSection).Key"
                   DataSource="@State.Value.Editor.Store!.Sections.ToList()"
                   IgnoreItemChanges="false"
                   OnItemChanged="OnDefaultSectionChanged"></SingleSelect>

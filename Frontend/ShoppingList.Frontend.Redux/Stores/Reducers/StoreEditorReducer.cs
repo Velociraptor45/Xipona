@@ -266,8 +266,32 @@ public static class StoreEditorReducer
         };
     }
 
+    [ReducerMethod(typeof(DeleteStoreStartedAction))]
+    public static StoreState OnDeleteStoreStarted(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = true
+            }
+        };
+    }
+
     [ReducerMethod(typeof(DeleteStoreFinishedAction))]
     public static StoreState OnDeleteStoreFinished(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteStoreDialogAction))]
+    public static StoreState OnCloseDeleteStoreDialog(StoreState state)
     {
         return state with
         {

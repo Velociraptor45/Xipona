@@ -26,11 +26,14 @@ public class ItemFeatureState : Feature<ItemState>
             new ActiveStores(new List<ItemStore>()),
             new ItemSearch(
                 false,
+                false,
                 new List<ItemSearchResult>()),
             new ItemEditor(
                 null,
                 new ItemCategorySelector(new List<ItemCategorySearchResult>(), string.Empty),
                 new ManufacturerSelector(new List<ManufacturerSearchResult>(), string.Empty),
+                false,
+                false,
                 false,
                 false,
                 false));

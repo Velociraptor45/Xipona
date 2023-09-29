@@ -32,6 +32,16 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             });
         }
 
+        public void NotifySuccess(string message, double? duration = 2)
+        {
+            _notificationService.Open(new NotificationConfig
+            {
+                Description = message,
+                NotificationType = NotificationType.Success,
+                Duration = duration
+            });
+        }
+
         public void NotifyWarning(string title, string message)
         {
             _notificationService.Open(new NotificationConfig

@@ -17,9 +17,11 @@ public class ItemCategoryFeatureState : Feature<ItemCategoryState>
         return new ItemCategoryState(
             new ItemCategorySearch(
                 false,
+                false,
                 new List<ItemCategorySearchResult>()),
             new ItemCategoryEditor(
                 null,
+                false,
                 false,
                 false,
                 false));

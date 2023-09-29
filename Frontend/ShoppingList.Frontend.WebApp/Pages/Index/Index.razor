@@ -2,16 +2,11 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemPriceCalculationService _itemPriceCalculationService;
-
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions
-@using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
-@using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
-@using Summary = ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index.Summary
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Common;
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Index;
 
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
@@ -20,70 +15,45 @@
 
 @if (State != null)
 {
-    <div>
+    <div class="shopping-content">
         @if (State.Value.Errors.HasErrors)
         {
             <ProcessingError></ProcessingError>
         }
-        <div class="mb-1 d-flex justify-content-end align-items-center">
-            <DebugSwitch></DebugSwitch>
-            <StoreSelect></StoreSelect>
-            <ItemVisiblityButton></ItemVisiblityButton>
-            <Button class="mr-1 d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
-                    Disabled="@(State.Value.ShoppingList is null)">
-                <Icon Type="edit" />
-            </Button>
+        <div class="top-header">
+            <div class="mb-1 d-flex justify-content-end align-items-center">
+                <DebugSwitch></DebugSwitch>
+                <StoreSelect></StoreSelect>
+                <ItemVisiblityButton></ItemVisiblityButton>
+                <ItemEditModeButton></ItemEditModeButton>
+            </div>
+            <ItemSearchBar></ItemSearchBar>
         </div>
-        <ItemSearchBar></ItemSearchBar>
         @if (State.Value.ShoppingList is not null)
         {
-            <div>
+            <div class="sections">
                 @foreach(var section in State.Value.GetSectionsToDisplay())
                 {
                     <Section Model="section"></Section>
                 }
             </div>
-        }
-        @if (State.Value.ShoppingList != null)
-        {
-            <div class="d-flex align-items-end flex-column px-2">
-                <div class="d-flex border-top pt-1">
-                    <div class="d-flex">
-                        <span>@GetInBasketPrice()</span>
-                        <span>€</span>
-                    </div>
-                    <span class="px-1">/</span>
-                    <div class="d-flex">
-                        <span>@GetTotalListPrice()</span>
-                        <span>€</span>
-                    </div>
+            @if (!State.Value.ShoppingList.Items.Any())
+            {
+                <div class="no-items-on-list-notice py-2">
+                    No items on list yet
                 </div>
-            </div>
+            }
+            else if (State.Value.AllItemsInBasketHidden)
+            {
+                <div class="all-items-in-basket-hidden-notice py-2">
+                    All items in basket
+                </div>
+            }
         }
         <Summary></Summary>
         <ErrorStack></ErrorStack>
     </div>
-    <Modal Title="@GetTitle()"
-           Visible="State.Value.PriceUpdate.IsOpen"
-           OnCancel="@OnCloseUpdatePriceModalButtonClicked"
-           ConfirmLoading="State.Value.PriceUpdate.IsSaving"
-           Footer="@GetFooter()">
-        <AntDesign.InputNumber Formatter="FormatUpdatePrice"
-                               Parser="ParseUpdatePrice"
-                               Class="price-update-input"
-                               TValue="float"
-                               Value="State.Value.PriceUpdate.Price"
-                               ValueChanged="OnPriceChanged"
-                               Min="0.01f"></AntDesign.InputNumber>
-        @if (State.Value.PriceUpdate.Item?.TypeId is not null)
-        {
-            <div class="pt-3">
-                <Checkbox Checked="State.Value.PriceUpdate.UpdatePriceForAllTypes" ValueChanged="OnUpdatePriceForAllTypes">
-                    Update for all types
-                </Checkbox>
-            </div>
-        }
-    </Modal>
+    <PriceUpdateDialog></PriceUpdateDialog>
 }
 
 @code{
@@ -95,79 +65,5 @@
         Dispatcher.Dispatch(new LoadAllActiveStoresAction());
 
         base.OnInitialized();
-    }
-    
-    #region Callbacks
-
-    private void OnEditModeButtonClicked()
-    {
-        Dispatcher.Dispatch(new ToggleEditModeAction());
-    }
-    #endregion
-
-    private string GetTotalListPrice()
-    {
-        var price = _itemPriceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
-        return $"{price:0.00}";
-    }
-
-    private string GetInBasketPrice()
-    {
-        var price = _itemPriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
-        return $"{price:0.00}";
-    }
-    
-    private void OnCloseUpdatePriceModalButtonClicked()
-    {
-        Dispatcher.Dispatch(new ClosePriceUpdaterAction());
-    }
-
-    private void OnPriceChanged(float price)
-    {
-        Dispatcher.Dispatch(new PriceOnPriceUpdaterChangedAction(price));
-    }
-
-    private void OnUpdatePriceForAllTypes(bool @checked)
-    {
-        Dispatcher.Dispatch(new UpdatePriceForAllTypesOnPriceUpdaterChangedAction(@checked));
-    }
-
-    private string GetTitle()
-    {
-        return $"Update price - {State.Value.PriceUpdate.Item?.Name ?? string.Empty}";
-    }
-
-    private RenderFragment GetFooter()
-    {
-        return 
-            @<Template>
-                <div class="d-flex">
-                    <Button Class="ml-auto"
-                        OnClick="OnUpdatePriceButtonClicked"
-                            @key="@("submit")"
-                        Type="@ButtonType.Primary"
-                        Loading="State.Value.PriceUpdate.IsSaving">
-                        Update
-                    </Button>
-                </div>
-            </Template>;
-    }
-
-    private void OnUpdatePriceButtonClicked()
-    {
-        Dispatcher.Dispatch(new SavePriceUpdateAction());
-    }
-
-    private string FormatUpdatePrice(float value)
-    {
-        return $"{value:n2} {State.Value.PriceUpdate.Item?.QuantityType.PriceLabel}";
-    }
-
-    private string ParseUpdatePrice(string value)
-    {
-        if (State.Value.PriceUpdate.Item is null)
-            return value;
-
-        return value.Replace(State.Value.PriceUpdate.Item.QuantityType.PriceLabel, string.Empty);
     }
 }
