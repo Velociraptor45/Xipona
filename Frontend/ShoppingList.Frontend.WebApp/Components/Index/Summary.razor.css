@@ -10,7 +10,8 @@
     padding-top: 2px;
 }
 
-.summary-datetime:hover {
+.summary-datetime:hover,
+.summary-datetime-edit:hover {
     cursor: pointer;
 }
 

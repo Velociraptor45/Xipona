@@ -150,8 +150,9 @@
                            else
                            {
                                 <div class="d-flex">
-                                    <div class="summary-datetime" @onclick="OnEnterFinishedAtEditModeClicked">@GetDateTime()</div>
-                                    <i class="bi bi-pencil summary-datetime-edit d-flex align-items-start pl-1"></i>
+                        <div class="summary-datetime" @onclick="OnEnterFinishedAtEditModeClicked">@GetDateTime()</div>
+                                    <i class="bi bi-pencil summary-datetime-edit d-flex align-items-start pl-1"
+                                       @onclick="OnEnterFinishedAtEditModeClicked"></i>
                                 </div>
                            }
                        </div>
