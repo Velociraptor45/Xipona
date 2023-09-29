@@ -5,7 +5,9 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 
+@inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
 @inject IState<RecipeState> State
 
@@ -44,7 +46,7 @@
                 </div>
             </TabPane>
         </Tabs>
-        <Tooltip Placement="Placement.BottomRight" Title="@("Create new recipe")">
+        <Tooltip Placement="Placement.BottomRight" Title="@("Create new recipe")" Disabled="SharedState.Value.IsMobile">
             <Button @onclick="@OnCreateRecipeButtonClicked" Class="d-flex align-items-center ml-auto"
                     Type="@ButtonType.Primary">
                 <i class="bi bi-plus-lg"></i>

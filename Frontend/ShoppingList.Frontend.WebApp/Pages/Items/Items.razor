@@ -6,8 +6,10 @@
 @using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Items.States
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Items.Filter;
 
+@inject IState<SharedState> SharedState
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
@@ -17,7 +19,7 @@
     <div class="top-bar d-flex">
         <ItemFilter></ItemFilter>
         <div class="d-flex ml-auto">
-            <Tooltip Placement="Placement.BottomRight" Title="@("Create new item")">
+            <Tooltip Placement="Placement.BottomRight" Title="@("Create new item")" Disabled="SharedState.Value.IsMobile">
                 <Button Type="@ButtonType.Primary" @onclick="OnCreateItemButtonClicked" 
                         Class="d-flex align-items-center ml-auto">
                     <i class="bi bi-plus-lg"></i>

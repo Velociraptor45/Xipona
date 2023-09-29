@@ -1,13 +1,15 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 
+@inject IState<SharedState> SharedState
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Tooltip Placement="Placement.BottomRight" Title="@("Edit items")">
+<Tooltip Placement="Placement.BottomRight" Title="@("Edit items")" Disabled="SharedState.Value.IsMobile">
     <Button class="d-flex align-items-center" OnClick="@OnEditModeButtonClicked"
             Disabled="@(State.Value.ShoppingList is null)">
         @if (State.Value.EditModeActive)

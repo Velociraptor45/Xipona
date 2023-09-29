@@ -5,11 +5,12 @@
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 
+@inject IState<SharedState> SharedState
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
 <div class="temporary-item-creator">
-    <Tooltip Placement="Placement.BottomRight" Title="@("Create temp. item")">
+    <Tooltip Placement="Placement.BottomRight" Title="@("Create temp. item")" Disabled="SharedState.Value.IsMobile">
         <Button Type="@ButtonType.Primary"
                 OnClick="@OnOpenCreationButtonClicked"
                 Class="d-flex align-items-center">
@@ -65,8 +66,8 @@
 @code {
     private void OnNameChanged(ChangeEventArgs args)
     {
-        var name = args.Value.ToString();
-        Dispatcher.Dispatch(new TemporaryItemNameChangedAction(name));
+        var name = args.Value!.ToString();
+        Dispatcher.Dispatch(new TemporaryItemNameChangedAction(name!));
     }
 
     private void OnPriceChanged(float price)

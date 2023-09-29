@@ -5,7 +5,9 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 
+@inject IState<SharedState> SharedState
 @inject IState<ItemCategoryState> State
 @inject IDispatcher Dispatcher
 
@@ -21,7 +23,7 @@
                 <i class="bi bi-search"></i>
             </Button>
         </div>
-        <Tooltip Placement="Placement.BottomRight" Title="@("Create new item category")">
+        <Tooltip Placement="Placement.BottomRight" Title="@("Create new item category")" Disabled="SharedState.Value.IsMobile">
             <Button @onclick="@OnCreateItemCategoryButtonClicked" Class="d-flex align-items-center ml-auto"
                     Type="@ButtonType.Primary">
                 <i class="bi bi-plus-lg"></i>

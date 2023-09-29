@@ -5,7 +5,9 @@
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors
 @using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 
+@inject IState<SharedState> SharedState
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
 
@@ -86,7 +88,8 @@
             {
                 <div class="add-to-sl-wrapper align-items-center ml-4 mt-1">
                     <Tooltip Placement="Placement.BottomRight"
-                             Title="@("Select this item by default when adding recipe ingredients to shopping lists")">
+                             Title="@("Select this item by default when adding recipe ingredients to shopping lists")"
+                             Disabled="SharedState.Value.IsMobile">
                         <Checkbox Value="@Model.AddToShoppingListByDefault!.Value"
                                   OnChange="OnAddToShoppingListByDefaultChanged">Add by default</Checkbox>
                     </Tooltip>

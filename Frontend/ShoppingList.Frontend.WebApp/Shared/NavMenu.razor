@@ -7,6 +7,7 @@
 
 @inject IState<SharedState> State
 @inject IDispatcher Dispatcher
+@inject IJSRuntime JsRuntime
 
 <div class="nav-menu py-2">
     <ul class="nav d-flex justify-content-around">
@@ -58,8 +59,15 @@
 </div>
 
 @code {
-
     private string NavMenuCssClass => State.Value.IsMobileNavMenuExpanded ? null : "nav-menu-ext-collapse";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var isMobile = await JsRuntime.InvokeAsync<bool>("isMobile");
+        Dispatcher.Dispatch(new ApplicationInitializedAction(isMobile));
+    }
 
     private void ToggleNavMenu()
     {
