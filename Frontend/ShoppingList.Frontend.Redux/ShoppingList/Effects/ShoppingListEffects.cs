@@ -5,6 +5,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Persistence;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
@@ -114,7 +115,7 @@ public class ShoppingListEffects
         }
         catch (HttpRequestException e)
         {
-            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading shopping list failed", e.Message));
+            dispatcher.Dispatch(new LoadShoppingListFromLocalStorageAction(action.StoreId));
             return;
         }
 
