@@ -1,9 +1,14 @@
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
+using Blazored.SessionStorage.Serialization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using ProjectHermes.ShoppingList.Api.Client;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
+using ProjectHermes.ShoppingList.Frontend.Infrastructure.Serializers;
 using ProjectHermes.ShoppingList.Frontend.Redux;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
@@ -60,6 +65,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddInfrastructure();
 
             builder.Services.AddRedux();
+
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredSessionStorage();
+            builder.Services.Replace(ServiceDescriptor.Scoped<IJsonSerializer, CustomStorageSerializer>());
         }
     }
 }

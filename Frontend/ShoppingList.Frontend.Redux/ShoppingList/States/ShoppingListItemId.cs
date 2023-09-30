@@ -8,7 +8,9 @@ public sealed class ShoppingListItemId : IEquatable<ShoppingListItemId>
     public Guid? ActualId { get; }
     public Guid? OfflineId { get; }
 
-    private ShoppingListItemId(Guid? offlineId, Guid? actualId)
+    //todo make this private again when upgraded to .net 8
+    // https://stackoverflow.com/a/73583938/12057682
+    public ShoppingListItemId(Guid? offlineId, Guid? actualId)
     {
         OfflineId = offlineId;
         ActualId = actualId;
