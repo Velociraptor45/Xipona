@@ -788,32 +788,30 @@ public class ItemEditorEffectsTests
 
             public void SetupCreatingItem()
             {
-                var request = new CreateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemAsync(request);
+                ApiClientMock.SetupCreateItemAsync(State.Editor.Item!);
             }
 
             public void SetupCreatingItemFailed()
             {
-                var request = new CreateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupCreateItemAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupCreatingItemWithTypes()
             {
-                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemWithTypesAsync(request);
+                ApiClientMock.SetupCreateItemWithTypesAsync(State.Editor.Item!);
             }
 
             public void SetupCreatingItemWithTypesFailedWithErrorInApi()
             {
-                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest()
             {
-                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -990,32 +988,29 @@ public class ItemEditorEffectsTests
 
             public void SetupUpdatingItem()
             {
-                var request = new UpdateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemAsync(request);
+                ApiClientMock.SetupUpdateItemAsync(State.Editor.Item!);
             }
 
             public void SetupUpdatingItemFailed()
             {
-                var request = new UpdateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupUpdateItemAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupUpdatingItemWithTypes()
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemWithTypesAsync(request);
+                ApiClientMock.SetupUpdateItemWithTypesAsync(State.Editor.Item!);
             }
 
             public void SetupUpdatingItemWithTypesFailedWithErrorInApi()
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest()
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1192,32 +1187,27 @@ public class ItemEditorEffectsTests
 
             public void SetupModifyingItem()
             {
-                var request = new ModifyItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemAsync(request);
+                ApiClientMock.SetupModifyItemAsync(State.Editor.Item!);
             }
 
             public void SetupModifyingItemFailed()
             {
-                var request = new ModifyItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupModifyingItemWithTypes()
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemWithTypesAsync(request);
+                ApiClientMock.SetupModifyItemWithTypesAsync(State.Editor.Item!);
             }
 
             public void SetupModifyingItemWithTypesFailedWithErrorInApi()
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest()
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(request, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1495,8 +1485,7 @@ public class ItemEditorEffectsTests
                     }
                 };
                 var item = State.Editor.Item!;
-                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
-                ApiClientMock.SetupDeleteItemAsync(request);
+                ApiClientMock.SetupDeleteItemAsync(item.Id);
             }
 
             public void SetupMakingItemPermanentFailedWithErrorInApi()
@@ -1512,8 +1501,7 @@ public class ItemEditorEffectsTests
                     }
                 };
                 var item = State.Editor.Item!;
-                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
-                ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest()
@@ -1529,8 +1517,7 @@ public class ItemEditorEffectsTests
                     }
                 };
                 var item = State.Editor.Item!;
-                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
-                ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()

@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ItemCategories
 {
-    public class ModifyItemCategoryRequest : IApiRequest
+    public class ModifyItemCategoryRequest
     {
         public ModifyItemCategoryRequest(Guid itemCategoryId, string name)
         {

@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Manufacturers
 {
-    public class ModifyManufacturerRequest : IApiRequest
+    public class ModifyManufacturerRequest
     {
         public ModifyManufacturerRequest(Guid manufacturerId, string name)
         {

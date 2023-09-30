@@ -99,81 +99,75 @@ public class ApiClientMock : Mock<IApiClient>
         Verify(m => m.GetItemByIdAsync(itemId), times);
     }
 
-    public void SetupCreateItemAsync(CreateItemRequest request)
+    public void SetupCreateItemAsync(EditedItem item)
     {
-        this.SetupInOrder(m => m.CreateItemAsync(It.Is<CreateItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.CreateItemAsync(item))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupCreateItemAsyncThrowing(CreateItemRequest request, Exception ex)
+    public void SetupCreateItemAsyncThrowing(EditedItem item, Exception ex)
     {
-        this.SetupInOrder(m => m.CreateItemAsync(It.Is<CreateItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.CreateItemAsync(item))
             .ThrowsAsync(ex);
     }
 
-    public void SetupCreateItemWithTypesAsync(CreateItemWithTypesRequest request)
+    public void SetupCreateItemWithTypesAsync(EditedItem item)
     {
-        this.SetupInOrder(m => m.CreateItemWithTypesAsync(
-                It.Is<CreateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.CreateItemWithTypesAsync(item))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupCreateItemWithTypesAsyncThrowing(CreateItemWithTypesRequest request, Exception ex)
+    public void SetupCreateItemWithTypesAsyncThrowing(EditedItem item, Exception ex)
     {
-        this.SetupInOrder(m => m.CreateItemWithTypesAsync(
-                It.Is<CreateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.CreateItemWithTypesAsync(item))
             .ThrowsAsync(ex);
     }
 
-    public void SetupUpdateItemAsync(UpdateItemRequest request)
+    public void SetupUpdateItemAsync(EditedItem item)
     {
-        this.SetupInOrder(m => m.UpdateItemAsync(It.Is<UpdateItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.UpdateItemAsync(item))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupUpdateItemAsyncThrowing(UpdateItemRequest request, Exception ex)
+    public void SetupUpdateItemAsyncThrowing(EditedItem item, Exception ex)
     {
-        this.SetupInOrder(m => m.UpdateItemAsync(It.Is<UpdateItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.UpdateItemAsync(item))
             .ThrowsAsync(ex);
     }
 
-    public void SetupUpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
+    public void SetupUpdateItemWithTypesAsync(EditedItem item)
     {
-        this.SetupInOrder(m => m.UpdateItemWithTypesAsync(
-                It.Is<UpdateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.UpdateItemWithTypesAsync(item))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupUpdateItemWithTypesAsyncThrowing(UpdateItemWithTypesRequest request, Exception ex)
+    public void SetupUpdateItemWithTypesAsyncThrowing(EditedItem item, Exception ex)
     {
-        this.SetupInOrder(m => m.UpdateItemWithTypesAsync(
-                It.Is<UpdateItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.UpdateItemWithTypesAsync(item))
             .ThrowsAsync(ex);
     }
 
-    public void SetupModifyItemAsync(ModifyItemRequest request)
+    public void SetupModifyItemAsync(EditedItem item)
     {
-        this.SetupInOrder(m => m.ModifyItemAsync(It.Is<ModifyItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.ModifyItemAsync(item))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupModifyItemAsyncThrowing(ModifyItemRequest request, Exception ex)
+    public void SetupModifyItemAsyncThrowing(EditedItem item, Exception ex)
     {
-        this.SetupInOrder(m => m.ModifyItemAsync(It.Is<ModifyItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.ModifyItemAsync(item))
             .ThrowsAsync(ex);
     }
 
-    public void SetupModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
+    public void SetupModifyItemWithTypesAsync(EditedItem item)
     {
-        this.SetupInOrder(m => m.ModifyItemWithTypesAsync(
-                It.Is<ModifyItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.ModifyItemWithTypesAsync(item))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupModifyItemWithTypesAsyncThrowing(ModifyItemWithTypesRequest request, Exception ex)
+    public void SetupModifyItemWithTypesAsyncThrowing(EditedItem item, Exception ex)
     {
-        this.SetupInOrder(m => m.ModifyItemWithTypesAsync(
-                It.Is<ModifyItemWithTypesRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.ModifyItemWithTypesAsync(item))
             .ThrowsAsync(ex);
     }
 
@@ -191,17 +185,15 @@ public class ApiClientMock : Mock<IApiClient>
             .ThrowsAsync(ex);
     }
 
-    public void SetupDeleteItemAsync(DeleteItemRequest request)
+    public void SetupDeleteItemAsync(Guid itemId)
     {
-        this.SetupInOrder(m => m.DeleteItemAsync(
-                It.Is<DeleteItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.DeleteItemAsync(itemId))
             .Returns(Task.CompletedTask);
     }
 
-    public void SetupDeleteItemAsyncThrowing(DeleteItemRequest request, Exception ex)
+    public void SetupDeleteItemAsyncThrowing(Guid itemId, Exception ex)
     {
-        this.SetupInOrder(m => m.DeleteItemAsync(
-                It.Is<DeleteItemRequest>(r => r.IsRequestEquivalentTo(request))))
+        this.SetupInOrder(m => m.DeleteItemAsync(itemId))
             .ThrowsAsync(ex);
     }
 
