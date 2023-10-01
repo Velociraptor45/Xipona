@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Persistence;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using System.Text;
 using System.Text.Json;
@@ -35,6 +36,24 @@ public class ShoppingListPersistenceEffects
 
     [EffectMethod(typeof(RemoveItemFromBasketAction))]
     public async Task HandleRemoveItemFromBasketAction(IDispatcher dispatcher)
+    {
+        await SaveListToLocalStorage();
+    }
+
+    [EffectMethod(typeof(RemoveItemFromShoppingListAction))]
+    public async Task HandleRemoveItemFromShoppingListAction(IDispatcher dispatcher)
+    {
+        await SaveListToLocalStorage();
+    }
+
+    [EffectMethod(typeof(ChangeItemQuantityAction))]
+    public async Task HandleChangeItemQuantityAction(IDispatcher dispatcher)
+    {
+        await SaveListToLocalStorage();
+    }
+
+    [EffectMethod(typeof(SaveTemporaryItemFinishedAction))]
+    public async Task HandleSaveTemporaryItemFinishedAction(IDispatcher dispatcher)
     {
         await SaveListToLocalStorage();
     }
