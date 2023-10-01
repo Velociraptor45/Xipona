@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
@@ -18,10 +19,22 @@ public class ShoppingListProcessingEffects
         _notificationService = notificationService;
     }
 
-    [EffectMethod(typeof(ApiRequestProcessingErrorOccurredAction))]
-    public Task HandleApiRequestProcessingErrorOccurredAction(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleApiRequestProcessingErrorOccurredAction(ApiRequestProcessingErrorOccurredAction action,
+        IDispatcher dispatcher)
     {
-        _notificationService.NotifyWarning("Request failed", "Processing the request failed.");
+        var requestName = action.FailedRequest.GetType().Name;
+        var message = requestName switch
+        {
+            nameof(PutItemInBasketRequest) => $"Putting {action.FailedRequest.ItemName} in basket failed",
+            nameof(RemoveItemFromBasketRequest) => $"Removing {action.FailedRequest.ItemName} from basket failed",
+            nameof(ChangeItemQuantityOnShoppingListRequest) => $"Changing quantity of {action.FailedRequest.ItemName} failed",
+            nameof(AddTemporaryItemToShoppingListRequest) => $"Adding temporary item {action.FailedRequest.ItemName} failed",
+            nameof(RemoveItemFromShoppingListRequest) => $"Removing item {action.FailedRequest.ItemName} failed",
+            _ => "Processing the request failed."
+        };
+
+        _notificationService.NotifyWarning("Request failed", message);
         return Task.CompletedTask;
     }
 

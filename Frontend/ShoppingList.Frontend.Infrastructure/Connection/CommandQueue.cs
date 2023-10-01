@@ -179,7 +179,7 @@ public class CommandQueue : ICommandQueue
 
     private sealed class ProcessingReport
     {
-        public bool NeedsReload { get; private set; } = false;
+        public bool NeedsReload { get; private set; }
 
         public void RequestReload()
         {
