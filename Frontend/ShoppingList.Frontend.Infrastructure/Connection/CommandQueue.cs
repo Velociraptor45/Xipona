@@ -37,11 +37,11 @@ public class CommandQueue : ICommandQueue
         _dispatcher = dispatcher;
         _syncSessionStorageService = syncSessionStorageService;
 
-        if (_syncSessionStorageService.ContainKey(_storageKey))
-        {
-            _queue = _syncSessionStorageService.GetItem<List<IApiRequest>>(_storageKey);
-            Console.WriteLine($"Loaded queue with {_queue.Count} items");
-        }
+        //if (_syncSessionStorageService.ContainKey(_storageKey))
+        //{
+        //    _queue = _syncSessionStorageService.GetItem<List<IApiRequest>>(_storageKey);
+        //    Console.WriteLine($"Loaded queue with {_queue.Count} items");
+        //}
 
         try
         {
@@ -86,7 +86,7 @@ public class CommandQueue : ICommandQueue
         }
         else if (!_connectionAlive)
         {
-            PersistQueue();
+            //PersistQueue();
         }
     }
 
@@ -159,22 +159,22 @@ public class CommandQueue : ICommandQueue
 
             lock (_queue)
             {
-                _queue.RemoveAt(0);
+                _queue.Remove(request);
             }
-            PersistQueue();
+            //PersistQueue();
         }
     }
 
-    private void PersistQueue()
-    {
-        lock (_queue)
-        {
-            if (_queue.Count == 0)
-                _syncSessionStorageService.RemoveItem(_storageKey);
-            else
-                _syncSessionStorageService.SetItem(_storageKey, _queue);
-        }
-    }
+    //private void PersistQueue()
+    //{
+    //    lock (_queue)
+    //    {
+    //        if (_queue.Count == 0)
+    //            _syncSessionStorageService.RemoveItem(_storageKey);
+    //        else
+    //            _syncSessionStorageService.SetItem(_storageKey, _queue);
+    //    }
+    //}
 
     private static void HandleRequestFailure(Exception e, HttpStatusCode? statusCode)
     {
@@ -184,6 +184,7 @@ public class CommandQueue : ICommandQueue
             or HttpStatusCode.InternalServerError
             or HttpStatusCode.UnprocessableEntity)
         {
+            Console.WriteLine(e);
             throw new ApiProcessingException("An error occurred while processing the request. See inner exception for more details.", e);
         }
 

@@ -46,7 +46,8 @@ public class ShoppingListPersistenceEffects
     }
 
     [EffectMethod]
-    public async Task HandleLoadShoppingListFromLocalStorageAction(LoadShoppingListFromLocalStorageAction action, IDispatcher dispatcher)
+    public async Task HandleLoadShoppingListFromLocalStorageAction(LoadShoppingListFromLocalStorageAction action,
+        IDispatcher dispatcher)
     {
         var list = await LoadListFromLocalStorage(action.StoreId);
 
