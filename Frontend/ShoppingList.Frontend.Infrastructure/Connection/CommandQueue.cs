@@ -1,5 +1,4 @@
-﻿using Blazored.SessionStorage;
-using Fluxor;
+﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
@@ -24,31 +23,22 @@ public class CommandQueue : ICommandQueue
     private readonly IApiClient _commandClient;
     private readonly IRequestSenderStrategy _senderStrategy;
     private readonly IDispatcher _dispatcher;
-    private readonly ISyncSessionStorageService _syncSessionStorageService;
 
     private bool _connectionAlive = true;
     private readonly List<IApiRequest> _queue = new();
 
-    public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher,
-        ISyncSessionStorageService syncSessionStorageService)
+    public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher)
     {
         _commandClient = commandClient;
         _senderStrategy = senderStrategy;
         _dispatcher = dispatcher;
-        _syncSessionStorageService = syncSessionStorageService;
-
-        //if (_syncSessionStorageService.ContainKey(_storageKey))
-        //{
-        //    _queue = _syncSessionStorageService.GetItem<List<IApiRequest>>(_storageKey);
-        //    Console.WriteLine($"Loaded queue with {_queue.Count} items");
-        //}
 
         try
         {
             var timer = new Timer(_connectionRetryIntervalInMilliseconds);
             timer.Elapsed += async (_, _) =>
             {
-                if (!_connectionAlive || _queue.Count > 0)
+                if (!_connectionAlive)
                     await RetryConnectionAsync();
             };
             timer.Start();
@@ -83,10 +73,6 @@ public class CommandQueue : ICommandQueue
                 OnApiProcessingError();
                 _dispatcher.Dispatch(new LogAction(e.InnerException!.ToString()));
             }
-        }
-        else if (!_connectionAlive)
-        {
-            //PersistQueue();
         }
     }
 
@@ -161,20 +147,8 @@ public class CommandQueue : ICommandQueue
             {
                 _queue.Remove(request);
             }
-            //PersistQueue();
         }
     }
-
-    //private void PersistQueue()
-    //{
-    //    lock (_queue)
-    //    {
-    //        if (_queue.Count == 0)
-    //            _syncSessionStorageService.RemoveItem(_storageKey);
-    //        else
-    //            _syncSessionStorageService.SetItem(_storageKey, _queue);
-    //    }
-    //}
 
     private static void HandleRequestFailure(Exception e, HttpStatusCode? statusCode)
     {

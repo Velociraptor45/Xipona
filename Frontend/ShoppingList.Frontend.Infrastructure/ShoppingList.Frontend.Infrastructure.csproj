@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
-    <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="ProjectHermes.ShoppingList.Api.Client" Version="0.10.2" />
     <PackageReference Include="RestEase" Version="1.6.4" />
