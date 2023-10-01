@@ -18,6 +18,13 @@ public class ShoppingListProcessingEffects
         _notificationService = notificationService;
     }
 
+    [EffectMethod(typeof(ApiRequestProcessingErrorOccurredAction))]
+    public Task HandleApiRequestProcessingErrorOccurredAction(IDispatcher dispatcher)
+    {
+        _notificationService.NotifyWarning("Request failed", "Processing the request failed.");
+        return Task.CompletedTask;
+    }
+
     [EffectMethod(typeof(ApiConnectionDiedAction))]
     public Task HandleApiConnectionDiedAction(IDispatcher dispatcher)
     {
@@ -28,14 +35,14 @@ public class ShoppingListProcessingEffects
     [EffectMethod(typeof(QueueProcessedAction))]
     public Task HandleQueueProcessedAction(IDispatcher dispatcher)
     {
-        _notificationService.NotifySuccess("Sync successful", "Synchronization with the server was successful.");
+        _notificationService.NotifySuccess("Sync completed", "Synchronization with the server completed.");
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
         return Task.CompletedTask;
     }
 
     [EffectMethod(typeof(ReloadAfterErrorAction))]
     public Task HandleReloadAfterErrorAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new ApiRequestProcessingErrorResolvedAction());
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
         return Task.CompletedTask;
     }

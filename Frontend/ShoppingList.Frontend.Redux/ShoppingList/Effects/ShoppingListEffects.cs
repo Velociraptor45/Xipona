@@ -103,23 +103,13 @@ public class ShoppingListEffects
     [EffectMethod]
     public async Task HandleSelectedStoreChangedAction(SelectedStoreChangedAction action, IDispatcher dispatcher)
     {
-        ShoppingListModel shoppingList;
-        try
-        {
-            shoppingList = await _client.GetActiveShoppingListByStoreIdAsync(action.StoreId);
-        }
-        catch (ApiException e)
-        {
-            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading shopping list failed", e));
-            return;
-        }
-        catch (HttpRequestException e)
-        {
-            dispatcher.Dispatch(new LoadShoppingListFromLocalStorageAction(action.StoreId));
-            return;
-        }
+        await LoadShoppingList(action.StoreId, dispatcher);
+    }
 
-        dispatcher.Dispatch(new LoadShoppingListFinishedAction(shoppingList));
+    [EffectMethod(typeof(ReloadCurrentShoppingListAction))]
+    public async Task HandleReloadCurrentShoppingListAction(IDispatcher dispatcher)
+    {
+        await LoadShoppingList(_state.Value.SelectedStoreId, dispatcher);
     }
 
     [EffectMethod(typeof(SaveTemporaryItemAction))]
@@ -236,5 +226,26 @@ public class ShoppingListEffects
         dispatcher.Dispatch(new FinishShoppingListFinishedAction());
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
         _notificationService.NotifySuccess("Finished shopping list");
+    }
+
+    private async Task LoadShoppingList(Guid storeId, IDispatcher dispatcher)
+    {
+        ShoppingListModel shoppingList;
+        try
+        {
+            shoppingList = await _client.GetActiveShoppingListByStoreIdAsync(storeId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading shopping list failed", e));
+            return;
+        }
+        catch (HttpRequestException)
+        {
+            dispatcher.Dispatch(new LoadShoppingListFromLocalStorageAction(storeId));
+            return;
+        }
+
+        dispatcher.Dispatch(new LoadShoppingListFinishedAction(shoppingList));
     }
 }

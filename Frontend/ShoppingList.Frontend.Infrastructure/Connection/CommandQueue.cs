@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
+using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
 using RestEase;
 using System;
@@ -88,9 +89,10 @@ public class CommandQueue : ICommandQueue
 
     private async Task<bool> SafeProcessQueue()
     {
+        var report = new ProcessingReport();
         try
         {
-            await ProcessQueue();
+            await ProcessQueue(report);
             return true;
         }
         catch (ApiConnectionException)
@@ -105,18 +107,23 @@ public class CommandQueue : ICommandQueue
                 _queue.Clear();
             }
         }
+        finally
+        {
+            if (report.NeedsReload)
+                _dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
+        }
 
         return false;
     }
 
-    private async Task ProcessQueue()
+    private async Task ProcessQueue(ProcessingReport report)
     {
         while (true)
         {
             IApiRequest request;
             lock (_queue)
             {
-                if (!_queue.Any())
+                if (_queue.Count == 0)
                     break;
 
                 request = _queue.First();
@@ -128,11 +135,11 @@ public class CommandQueue : ICommandQueue
             }
             catch (ApiException e)
             {
-                HandleRequestFailure(e, e.StatusCode);
+                HandleRequestFailure(report, request, e, e.StatusCode);
             }
             catch (HttpRequestException e)
             {
-                HandleRequestFailure(e, e.StatusCode);
+                HandleRequestFailure(report, request, e, e.StatusCode);
             }
 
             lock (_queue)
@@ -142,7 +149,7 @@ public class CommandQueue : ICommandQueue
         }
     }
 
-    private void HandleRequestFailure(Exception e, HttpStatusCode? statusCode)
+    private void HandleRequestFailure(ProcessingReport report, IApiRequest failedRequest, Exception e, HttpStatusCode? statusCode)
     {
         Console.WriteLine($"Encountered {e.GetType()} during request.");
 
@@ -150,8 +157,9 @@ public class CommandQueue : ICommandQueue
             or HttpStatusCode.InternalServerError
             or HttpStatusCode.UnprocessableEntity)
         {
-            _dispatcher.Dispatch(new ApiRequestProcessingErrorOccurredAction());
+            _dispatcher.Dispatch(new ApiRequestProcessingErrorOccurredAction(failedRequest));
             _dispatcher.Dispatch(new LogAction(e.ToString()));
+            report.RequestReload();
             return;
         }
 
@@ -167,5 +175,15 @@ public class CommandQueue : ICommandQueue
     {
         _connectionAlive = false;
         _dispatcher.Dispatch(new ApiConnectionDiedAction());
+    }
+
+    private sealed class ProcessingReport
+    {
+        public bool NeedsReload { get; private set; } = false;
+
+        public void RequestReload()
+        {
+            NeedsReload = true;
+        }
     }
 }
