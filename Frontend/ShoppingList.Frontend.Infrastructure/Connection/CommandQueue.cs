@@ -17,7 +17,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 
 public class CommandQueue : ICommandQueue
 {
-    private const string _storageKey = "CommandQueue";
     private const int _connectionRetryIntervalInMilliseconds = 4000;
 
     private readonly IApiClient _commandClient;
@@ -25,7 +24,7 @@ public class CommandQueue : ICommandQueue
     private readonly IDispatcher _dispatcher;
 
     private bool _connectionAlive = true;
-    private readonly List<IApiRequest> _queue = new();
+    private static readonly List<IApiRequest> _queue = new();
 
     public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher)
     {
@@ -60,19 +59,7 @@ public class CommandQueue : ICommandQueue
 
         if (_connectionAlive && queueCount == 1)
         {
-            try
-            {
-                await ProcessQueue();
-            }
-            catch (ApiConnectionException)
-            {
-                OnApiConnectionDied();
-            }
-            catch (ApiProcessingException e)
-            {
-                OnApiProcessingError();
-                _dispatcher.Dispatch(new LogAction(e.InnerException!.ToString()));
-            }
+            await SafeProcessQueue();
         }
     }
 
@@ -91,24 +78,35 @@ public class CommandQueue : ICommandQueue
 
         Console.WriteLine("Established connection. Processing queue.");
 
+        if (!await SafeProcessQueue())
+            return;
+
+        _connectionAlive = true;
+
+        _dispatcher.Dispatch(new QueueProcessedAction());
+    }
+
+    private async Task<bool> SafeProcessQueue()
+    {
         try
         {
             await ProcessQueue();
+            return true;
         }
         catch (ApiConnectionException)
         {
             OnApiConnectionDied();
-            return;
         }
-        catch (ApiProcessingException e)
+        catch (Exception e)
         {
-            OnApiProcessingError();
-            _dispatcher.Dispatch(new LogAction(e.InnerException!.ToString()));
-            return;
+            Console.WriteLine($"Encountered {e.GetType()} during request.");
+            lock (_queue)
+            {
+                _queue.Clear();
+            }
         }
-        _connectionAlive = true;
 
-        _dispatcher.Dispatch(new QueueProcessedAction());
+        return false;
     }
 
     private async Task ProcessQueue()
@@ -119,9 +117,8 @@ public class CommandQueue : ICommandQueue
             lock (_queue)
             {
                 if (!_queue.Any())
-                {
                     break;
-                }
+
                 request = _queue.First();
             }
 
@@ -137,11 +134,6 @@ public class CommandQueue : ICommandQueue
             {
                 HandleRequestFailure(e, e.StatusCode);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Encountered {e.GetType()} during request.");
-                throw;
-            }
 
             lock (_queue)
             {
@@ -150,7 +142,7 @@ public class CommandQueue : ICommandQueue
         }
     }
 
-    private static void HandleRequestFailure(Exception e, HttpStatusCode? statusCode)
+    private void HandleRequestFailure(Exception e, HttpStatusCode? statusCode)
     {
         Console.WriteLine($"Encountered {e.GetType()} during request.");
 
@@ -158,8 +150,9 @@ public class CommandQueue : ICommandQueue
             or HttpStatusCode.InternalServerError
             or HttpStatusCode.UnprocessableEntity)
         {
-            Console.WriteLine(e);
-            throw new ApiProcessingException("An error occurred while processing the request. See inner exception for more details.", e);
+            _dispatcher.Dispatch(new ApiRequestProcessingErrorOccurredAction());
+            _dispatcher.Dispatch(new LogAction(e.ToString()));
+            return;
         }
 
         throw new ApiConnectionException("An api error occurred while processing the request. See inner exception for more details.", e);
@@ -168,15 +161,6 @@ public class CommandQueue : ICommandQueue
     private async Task SendRequest(IApiRequest request)
     {
         await _senderStrategy.SendAsync(request);
-    }
-
-    private void OnApiProcessingError()
-    {
-        lock (_queue)
-        {
-            _queue.Clear();
-        }
-        _dispatcher.Dispatch(new ApiRequestProcessingErrorOccurredAction());
     }
 
     private void OnApiConnectionDied()
