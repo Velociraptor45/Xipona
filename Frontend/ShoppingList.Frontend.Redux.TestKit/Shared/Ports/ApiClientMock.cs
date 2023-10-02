@@ -28,15 +28,21 @@ public class ApiClientMock : Mock<IApiClient>
             .ReturnsAsync(returnValue);
     }
 
+    public void SetupGetAllActiveStoresForShoppingListAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllActiveStoresForShoppingListAsync()).ThrowsAsync(ex);
+    }
+
     public void SetupUpdateItemPriceAsync(UpdateItemPriceRequest request)
     {
         this.SetupInOrder(m => m.UpdateItemPriceAsync(It.Is<UpdateItemPriceRequest>(r => r.IsRequestEquivalentTo(request))))
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyUpdateItemPriceAsync(UpdateItemPriceRequest request, Func<Times> times)
+    public void SetupUpdateItemPriceAsyncThrowing(UpdateItemPriceRequest request, Exception ex)
     {
-        Verify(m => m.UpdateItemPriceAsync(It.Is<UpdateItemPriceRequest>(r => r.IsRequestEquivalentTo(request))), times);
+        this.SetupInOrder(m => m.UpdateItemPriceAsync(It.Is<UpdateItemPriceRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
     }
 
     public void SetupFinishListAsync(FinishListRequest request)
@@ -45,9 +51,10 @@ public class ApiClientMock : Mock<IApiClient>
             .Returns(Task.CompletedTask);
     }
 
-    public void VerifyFinishListAsync(FinishListRequest request, Func<Times> times)
+    public void SetupFinishListAsyncThrowing(FinishListRequest request, Exception ex)
     {
-        Verify(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))), times);
+        this.SetupInOrder(m => m.FinishListAsync(It.Is<FinishListRequest>(r => r.IsRequestEquivalentTo(request))))
+            .ThrowsAsync(ex);
     }
 
     public void SetupSearchItemsForShoppingListAsync(string searchInput, Guid storeId,
@@ -92,11 +99,6 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetItemByIdAsyncThrowing(Guid itemId, Exception ex)
     {
         this.SetupInOrder(m => m.GetItemByIdAsync(itemId)).ThrowsAsync(ex);
-    }
-
-    public void VerifyGetItemByIdAsync(Guid itemId, Func<Times> times)
-    {
-        Verify(m => m.GetItemByIdAsync(itemId), times);
     }
 
     public void SetupCreateItemAsync(EditedItem item)
