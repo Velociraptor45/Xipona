@@ -997,12 +997,7 @@ public class ShoppingListEffectsTests
 
     public class HandleFinishShoppingListAction
     {
-        private readonly HandleFinishShoppingListActionFixture _fixture;
-
-        public HandleFinishShoppingListAction()
-        {
-            _fixture = new HandleFinishShoppingListActionFixture();
-        }
+        private readonly HandleFinishShoppingListActionFixture _fixture = new();
 
         public static IEnumerable<object[]> GetTestDates()
         {
