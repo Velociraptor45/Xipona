@@ -18,8 +18,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 
 public class CommandQueue : ICommandQueue
 {
-    private const int _connectionRetryIntervalInMilliseconds = 4000;
-
     private readonly IApiClient _commandClient;
     private readonly IRequestSenderStrategy _senderStrategy;
     private readonly IDispatcher _dispatcher;
@@ -27,15 +25,19 @@ public class CommandQueue : ICommandQueue
     private bool _connectionAlive = true;
     private static readonly List<IApiRequest> _queue = new();
 
-    public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher)
+    public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher,
+        CommandQueueConfig config)
     {
         _commandClient = commandClient;
         _senderStrategy = senderStrategy;
         _dispatcher = dispatcher;
 
+        if (config.ConnectionRetryInterval == TimeSpan.Zero)
+            return;
+
         try
         {
-            var timer = new Timer(_connectionRetryIntervalInMilliseconds);
+            var timer = new Timer(config.ConnectionRetryInterval);
             timer.Elapsed += async (_, _) =>
             {
                 if (!_connectionAlive)
@@ -64,7 +66,7 @@ public class CommandQueue : ICommandQueue
         }
     }
 
-    private async Task RetryConnectionAsync()
+    internal async Task RetryConnectionAsync()
     {
         Console.WriteLine("Attempt connection retry.");
         try
@@ -102,6 +104,7 @@ public class CommandQueue : ICommandQueue
         catch (Exception e)
         {
             Console.WriteLine($"Encountered {e.GetType()} during request.");
+            _dispatcher.Dispatch(new LogAction(e.ToString()));
             lock (_queue)
             {
                 _queue.Clear();

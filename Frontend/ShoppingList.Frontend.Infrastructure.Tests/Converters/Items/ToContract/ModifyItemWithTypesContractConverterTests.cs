@@ -21,7 +21,7 @@ public class ModifyItemWithTypesContractConverterTests :
             .ForCtorParam(nameof(ModifyItemWithTypesContract.QuantityType), opt => opt.MapFrom(src => src.QuantityType.Id))
             .ForCtorParam(nameof(ModifyItemWithTypesContract.QuantityInPacket), opt => opt.MapFrom(src => src.QuantityInPacket))
             .ForCtorParam(nameof(ModifyItemWithTypesContract.QuantityTypeInPacket), opt => opt.MapFrom(src => src.QuantityInPacketType!.Id))
-            .ForCtorParam(nameof(ModifyItemWithTypesContract.ItemCategoryId), opt => opt.MapFrom(src => src.ItemCategoryId.Value))
+            .ForCtorParam(nameof(ModifyItemWithTypesContract.ItemCategoryId), opt => opt.MapFrom(src => src.ItemCategoryId!.Value))
             .ForCtorParam(nameof(ModifyItemWithTypesContract.ManufacturerId), opt => opt.MapFrom(src => src.ManufacturerId))
             .ForCtorParam(nameof(ModifyItemWithTypesContract.ItemTypes), opt => opt.MapFrom(src => src.ItemTypes));
     }

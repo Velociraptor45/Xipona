@@ -22,6 +22,18 @@ public class ApiClientMock : Mock<IApiClient>
     {
     }
 
+    public void SetupIsAliveAsync()
+    {
+        this.SetupInOrder(m => m.IsAliveAsync())
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupIsAliveAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.IsAliveAsync())
+            .ThrowsAsync(ex);
+    }
+
     public void SetupGetAllActiveStoresForShoppingListAsync(IEnumerable<ShoppingListStore> returnValue)
     {
         this.SetupInOrder(m => m.GetAllActiveStoresForShoppingListAsync())

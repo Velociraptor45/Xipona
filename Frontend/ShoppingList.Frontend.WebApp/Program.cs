@@ -45,12 +45,19 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
         private static void AddDependencies(WebAssemblyHostBuilder builder)
         {
-            var config = new ShoppingListConfiguration()
+            var shoppingListConfig = new ShoppingListConfiguration()
             {
                 SearchDelayAfterInput = TimeSpan.FromMilliseconds(300),
                 HideItemsDelay = TimeSpan.FromMilliseconds(1000)
             };
-            builder.Services.AddSingleton(config);
+            builder.Services.AddSingleton(shoppingListConfig);
+
+            var commandQueueConfig = new CommandQueueConfig()
+            {
+                ConnectionRetryInterval = TimeSpan.FromSeconds(4)
+            };
+            builder.Services.AddSingleton(commandQueueConfig);
+
             builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
             builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
             builder.Services.AddTransient<IApiClient, ApiClient>();
