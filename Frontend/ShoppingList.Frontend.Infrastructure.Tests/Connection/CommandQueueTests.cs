@@ -80,7 +80,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         [Theory]
@@ -109,7 +109,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         [Theory]
@@ -134,7 +134,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueNotEmpty();
+            CommandQueueFixture.VerifyQueueNotEmpty();
         }
 
         [Theory]
@@ -163,7 +163,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         [Theory]
@@ -188,7 +188,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueNotEmpty();
+            CommandQueueFixture.VerifyQueueNotEmpty();
         }
 
         [Fact]
@@ -210,7 +210,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         private sealed class RetryConnectionAsyncFixture : CommandQueueFixture
@@ -278,7 +278,7 @@ public class CommandQueueTests
                 _fixture.SetupSendingRequestSucceeded();
             });
             var sut = _fixture.CreateSut();
-            _fixture.SetupConnectionAlive(sut);
+            EnqueueFixture.SetupConnectionAlive(sut);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Request);
 
@@ -287,7 +287,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         [Fact]
@@ -299,7 +299,7 @@ public class CommandQueueTests
             _fixture.SetupRequest();
             var queue = CallQueue.Create(_ => { });
             var sut = _fixture.CreateSut();
-            _fixture.SetupConnectionNotAlive(sut);
+            EnqueueFixture.SetupConnectionNotAlive(sut);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Request);
 
@@ -308,7 +308,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueNotEmpty();
+            CommandQueueFixture.VerifyQueueNotEmpty();
         }
 
         [Fact]
@@ -320,7 +320,7 @@ public class CommandQueueTests
             _fixture.SetupRequest();
             var queue = CallQueue.Create(_ => { });
             var sut = _fixture.CreateSut();
-            _fixture.SetupConnectionAlive(sut);
+            EnqueueFixture.SetupConnectionAlive(sut);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Request);
 
@@ -329,7 +329,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueNotEmpty(2);
+            CommandQueueFixture.VerifyQueueNotEmpty(2);
         }
 
         [Theory]
@@ -351,7 +351,7 @@ public class CommandQueueTests
                 _fixture.SetupDispatchingRequestReloadAction();
             });
             var sut = _fixture.CreateSut();
-            _fixture.SetupConnectionAlive(sut);
+            EnqueueFixture.SetupConnectionAlive(sut);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Request);
 
@@ -360,7 +360,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         [Theory]
@@ -382,7 +382,7 @@ public class CommandQueueTests
                 _fixture.SetupDispatchingRequestReloadAction();
             });
             var sut = _fixture.CreateSut();
-            _fixture.SetupConnectionAlive(sut);
+            EnqueueFixture.SetupConnectionAlive(sut);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Request);
 
@@ -391,7 +391,7 @@ public class CommandQueueTests
 
             // Assert
             queue.VerifyOrder();
-            _fixture.VerifyQueueEmpty();
+            CommandQueueFixture.VerifyQueueEmpty();
         }
 
         private sealed class EnqueueFixture : CommandQueueFixture
@@ -432,12 +432,12 @@ public class CommandQueueTests
                 RequestSenderStrategyMock.SetupSendAsyncThrowing(Request, exception);
             }
 
-            public void SetupConnectionAlive(CommandQueue sut)
+            public static void SetupConnectionAlive(CommandQueue sut)
             {
                 SetConnection(sut, true);
             }
 
-            public void SetupConnectionNotAlive(CommandQueue sut)
+            public static void SetupConnectionNotAlive(CommandQueue sut)
             {
                 SetConnection(sut, false);
             }
@@ -523,13 +523,13 @@ public class CommandQueueTests
             internalQueue.AddRange(Queue);
         }
 
-        public void VerifyQueueEmpty()
+        public static void VerifyQueueEmpty()
         {
             var internalQueue = GetInternalQueue();
             internalQueue.Should().BeEmpty();
         }
 
-        public void VerifyQueueNotEmpty(int expectedCount = 1)
+        public static void VerifyQueueNotEmpty(int expectedCount = 1)
         {
             var internalQueue = GetInternalQueue();
             internalQueue.Should().HaveCount(expectedCount);
