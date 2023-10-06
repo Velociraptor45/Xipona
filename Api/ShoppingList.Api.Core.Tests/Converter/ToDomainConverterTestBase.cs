@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
+using FluentAssertions.Equivalency;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
@@ -26,7 +27,11 @@ public abstract class ToDomainConverterTestBase<TSource, TDest, TConverter> wher
         var result = sut.ToDomain(contract);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedResult);
+        result.Should().BeEquivalentTo(expectedResult, opt =>
+        {
+            CustomizeAssertionOptions(opt);
+            return opt;
+        });
     }
 
     public abstract TConverter CreateSut();
@@ -60,6 +65,10 @@ public abstract class ToDomainConverterTestBase<TSource, TDest, TConverter> wher
     }
 
     protected virtual void OnAfterMapping(TSource src, TDest mapped)
+    {
+    }
+
+    protected virtual void CustomizeAssertionOptions(EquivalencyAssertionOptions<TDest> opt)
     {
     }
 }
