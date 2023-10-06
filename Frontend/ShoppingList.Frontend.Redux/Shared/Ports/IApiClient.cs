@@ -19,17 +19,17 @@ public interface IApiClient
 {
     Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request);
 
-    Task ModifyItemAsync(ModifyItemRequest request);
+    Task ModifyItemAsync(EditedItem item);
 
     Task ChangeItemQuantityOnShoppingListAsync(ChangeItemQuantityOnShoppingListRequest request);
 
-    Task CreateItemAsync(CreateItemRequest request);
+    Task CreateItemAsync(EditedItem item);
 
     Task<EditedItemCategory> CreateItemCategoryAsync(string name);
 
     Task<EditedManufacturer> CreateManufacturerAsync(string name);
 
-    Task DeleteItemAsync(DeleteItemRequest request);
+    Task DeleteItemAsync(Guid itemId);
 
     Task FinishListAsync(FinishListRequest request);
 
@@ -54,19 +54,19 @@ public interface IApiClient
 
     Task RemoveItemFromShoppingListAsync(RemoveItemFromShoppingListRequest request);
 
-    Task UpdateItemAsync(UpdateItemRequest request);
+    Task UpdateItemAsync(EditedItem item);
 
     Task CreateStoreAsync(EditedStore store);
 
     Task ModifyStoreAsync(EditedStore store);
 
-    Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request);
+    Task ModifyItemWithTypesAsync(EditedItem item);
 
     Task AddItemWithTypeToShoppingListAsync(AddItemWithTypeToShoppingListRequest request);
 
-    Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request);
+    Task UpdateItemWithTypesAsync(EditedItem item);
 
-    Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request);
+    Task CreateItemWithTypesAsync(EditedItem item);
 
     Task<IEnumerable<ManufacturerSearchResult>> GetManufacturerSearchResultsAsync(string searchInput);
 

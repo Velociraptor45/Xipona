@@ -10,6 +10,16 @@ public class ShoppingListNotificationServiceMock : Mock<IShoppingListNotificatio
     {
     }
 
+    public void SetupNotifyWarning(string title, string message)
+    {
+        this.SetupInOrder(x => x.NotifyWarning(title, message));
+    }
+
+    public void SetupNotifyWarningContains(string title, string messagePart)
+    {
+        this.SetupInOrder(x => x.NotifyWarning(title, It.Is<string>(s => s.Contains(messagePart))));
+    }
+
     public void SetupNotifySuccess(string title, string message)
     {
         this.SetupInOrder(x => x.NotifySuccess(title, message));

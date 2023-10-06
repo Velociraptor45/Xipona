@@ -32,7 +32,7 @@ public sealed class ShoppingListItemEffects : IDisposable
     public async Task HandlePutItemInBasketAction(PutItemInBasketAction action, IDispatcher dispatcher)
     {
         var request = new PutItemInBasketRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id, action.ItemId,
-            action.ItemTypeId);
+            action.ItemTypeId, action.ItemName);
         await _commandQueue.Enqueue(request);
         RestartHideItemsTimer(dispatcher);
     }
@@ -41,7 +41,7 @@ public sealed class ShoppingListItemEffects : IDisposable
     public async Task HandleRemoveItemFromBasketAction(RemoveItemFromBasketAction action, IDispatcher dispatcher)
     {
         var request = new RemoveItemFromBasketRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id,
-            action.ItemId, action.ItemTypeId);
+            action.ItemId, action.ItemTypeId, action.ItemName);
         await _commandQueue.Enqueue(request);
         RestartHideItemsTimer(dispatcher);
     }
@@ -67,7 +67,7 @@ public sealed class ShoppingListItemEffects : IDisposable
             newQuantity = 1;
 
         var request = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id,
-            action.ItemId, action.ItemTypeId, newQuantity);
+            action.ItemId, action.ItemTypeId, newQuantity, action.ItemName);
         await _commandQueue.Enqueue(request);
 
         dispatcher.Dispatch(new ChangeItemQuantityFinishedAction(item.Id, item.TypeId, newQuantity));
@@ -78,7 +78,7 @@ public sealed class ShoppingListItemEffects : IDisposable
         IDispatcher dispatcher)
     {
         var request = new RemoveItemFromShoppingListRequest(Guid.NewGuid(), _state.Value.ShoppingList!.Id,
-            action.ItemId, action.ItemTypeId);
+            action.ItemId, action.ItemTypeId, action.ItemName);
         await _commandQueue.Enqueue(request);
     }
 

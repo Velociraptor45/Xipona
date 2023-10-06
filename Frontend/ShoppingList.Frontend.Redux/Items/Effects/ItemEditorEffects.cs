@@ -130,13 +130,11 @@ public sealed class ItemEditorEffects
         {
             if (item.IsItemWithTypes || (item.ItemMode is ItemMode.NotDefined && item.ItemTypes.Count > 0))
             {
-                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-                await _client.CreateItemWithTypesAsync(request);
+                await _client.CreateItemWithTypesAsync(_state.Value.Editor.Item!);
             }
             else
             {
-                var request = new CreateItemRequest(Guid.NewGuid(), _state.Value.Editor.Item!);
-                await _client.CreateItemAsync(request);
+                await _client.CreateItemAsync(_state.Value.Editor.Item!);
             }
         }
         catch (ApiException e)
@@ -167,13 +165,11 @@ public sealed class ItemEditorEffects
         {
             if (item.IsItemWithTypes)
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), item);
-                await _client.UpdateItemWithTypesAsync(request);
+                await _client.UpdateItemWithTypesAsync(item);
             }
             else
             {
-                var request = new UpdateItemRequest(Guid.NewGuid(), item);
-                await _client.UpdateItemAsync(request);
+                await _client.UpdateItemAsync(item);
             }
         }
         catch (ApiException e)
@@ -204,13 +200,11 @@ public sealed class ItemEditorEffects
         {
             if (item.IsItemWithTypes)
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), item);
-                await _client.ModifyItemWithTypesAsync(request);
+                await _client.ModifyItemWithTypesAsync(item);
             }
             else
             {
-                var request = new ModifyItemRequest(Guid.NewGuid(), item);
-                await _client.ModifyItemAsync(request);
+                await _client.ModifyItemAsync(item);
             }
         }
         catch (ApiException e)
@@ -276,11 +270,10 @@ public sealed class ItemEditorEffects
         dispatcher.Dispatch(new DeleteItemStartedAction());
 
         var item = _state.Value.Editor.Item!;
-        var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
 
         try
         {
-            await _client.DeleteItemAsync(request);
+            await _client.DeleteItemAsync(item.Id);
         }
         catch (ApiException e)
         {

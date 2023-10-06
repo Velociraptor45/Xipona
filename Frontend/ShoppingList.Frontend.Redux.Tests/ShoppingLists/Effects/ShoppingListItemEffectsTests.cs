@@ -164,7 +164,7 @@ public class ShoppingListItemEffectsTests
                 var quantity = new DomainTestBuilder<float>().Create();
                 ExpectedQuantity = Item.Quantity + quantity;
                 Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, quantity,
-                    ChangeItemQuantityAction.ChangeType.Diff);
+                    ChangeItemQuantityAction.ChangeType.Diff, Item.Name);
             }
 
             public void SetupActionWithChangeTypeDiffAndQuantityBelow1()
@@ -173,7 +173,7 @@ public class ShoppingListItemEffectsTests
 
                 ExpectedQuantity = 1;
                 Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, -Item.Quantity + 0.99f,
-                    ChangeItemQuantityAction.ChangeType.Diff);
+                    ChangeItemQuantityAction.ChangeType.Diff, Item.Name);
             }
 
             public void SetupActionWithChangeTypeAbsoluteAndQuantityAtLeast1()
@@ -182,7 +182,7 @@ public class ShoppingListItemEffectsTests
 
                 ExpectedQuantity = new DomainTestBuilder<float>().Create();
                 Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, ExpectedQuantity.Value,
-                    ChangeItemQuantityAction.ChangeType.Absolute);
+                    ChangeItemQuantityAction.ChangeType.Absolute, Item.Name);
             }
 
             public void SetupActionWithChangeTypeAbsoluteAndQuantityBelow1()
@@ -191,7 +191,7 @@ public class ShoppingListItemEffectsTests
 
                 ExpectedQuantity = 1;
                 Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, 0.99f,
-                    ChangeItemQuantityAction.ChangeType.Absolute);
+                    ChangeItemQuantityAction.ChangeType.Absolute, Item.Name);
             }
 
             public void SetupEnqueuingRequest()
@@ -200,7 +200,7 @@ public class ShoppingListItemEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(ExpectedQuantity);
 
                 ExpectedRequest = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList!.Id,
-                    Item.Id, Item.TypeId, ExpectedQuantity.Value);
+                    Item.Id, Item.TypeId, ExpectedQuantity.Value, Item.Name);
                 CommandQueueMock.SetupEnqueue(ExpectedRequest);
             }
 

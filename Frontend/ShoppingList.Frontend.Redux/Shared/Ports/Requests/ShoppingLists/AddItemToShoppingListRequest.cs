@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
 {
-    public class AddItemToShoppingListRequest : IApiRequest
+    public class AddItemToShoppingListRequest
     {
         public AddItemToShoppingListRequest(Guid requestId, Guid shoppingListId, Guid itemId, float quantity,
             Guid? sectionId)

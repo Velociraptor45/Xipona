@@ -16,10 +16,6 @@
 @if (State != null)
 {
     <div class="shopping-content">
-        @if (State.Value.Errors.HasErrors)
-        {
-            <ProcessingError></ProcessingError>
-        }
         <div class="top-header">
             <div class="mb-1 d-flex justify-content-end align-items-center">
                 <DebugSwitch></DebugSwitch>
