@@ -25,6 +25,8 @@ You can create simple items ...
 
 <img src="./Documentation/img/ItemWithTypes.jpg" width="700px" alt="Editor where you can define an item's name, category, manufacturer and types. You can again define the availabilities per type"/>
 
+(Modifying an item will alter the current revision, e.g. when you made a typo in the name. Updating the item will create a new revision of it, e.g. when the price changes. With this concept, you keep the item prices for previous shopping lists)
+
 ### Create Recipes
 
 Save your best recipes along with all the ingredients and instructions
