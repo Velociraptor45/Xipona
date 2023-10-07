@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Exceptions;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.RequestSenders;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
@@ -21,16 +22,18 @@ public class CommandQueue : ICommandQueue
     private readonly IApiClient _commandClient;
     private readonly IRequestSenderStrategy _senderStrategy;
     private readonly IDispatcher _dispatcher;
+    private readonly ILogger<CommandQueue> _logger;
 
     private bool _connectionAlive = true;
     private static readonly List<IApiRequest> _queue = new();
 
     public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher,
-        CommandQueueConfig config)
+        CommandQueueConfig config, ILogger<CommandQueue> logger)
     {
         _commandClient = commandClient;
         _senderStrategy = senderStrategy;
         _dispatcher = dispatcher;
+        _logger = logger;
 
         if (config.ConnectionRetryInterval == TimeSpan.Zero)
             return;
@@ -103,7 +106,7 @@ public class CommandQueue : ICommandQueue
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Encountered {e.GetType()} during request.");
+            _logger.LogError(e, "An unexpected Exception occurred. Clearing the queue");
             _dispatcher.Dispatch(new LogAction(e.ToString()));
             lock (_queue)
             {
@@ -138,10 +141,12 @@ public class CommandQueue : ICommandQueue
             }
             catch (ApiException e)
             {
+                _logger.LogError(e, "Api exception occurred with Message: {Message}", e.Content);
                 HandleRequestFailure(report, request, e, e.StatusCode);
             }
             catch (HttpRequestException e)
             {
+                _logger.LogError(e, "HttpRequestException during request");
                 HandleRequestFailure(report, request, e, e.StatusCode);
             }
 
