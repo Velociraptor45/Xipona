@@ -37,6 +37,8 @@ services:
 
   # LogCollector: # uncomment this for frontend log support
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
+  #   ports:
+  #     - "13879:80"
   #   volumes:
   #     - dev-ph-shoppinglist-log-collector-config:/app/config:ro
   #     - dev-ph-shoppinglist-log-collector-logs:/app/logs
