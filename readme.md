@@ -141,7 +141,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 ### Frontend Logging
 
-It is possible to collect client-side logs (e.g. exceptions). The compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (disabled by default) and set the LogCollector's address.
+It is possible to collect client-side logs (e.g. exceptions). The compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
 
 ### Key Vault
 Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
