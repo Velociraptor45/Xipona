@@ -57,12 +57,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
                 ? $"{config.HostUri}ingest"
                 : $"{config.HostUri}/ingest";
 
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? string.Empty;
-
             var levelSwitch = new LoggingLevelSwitch();
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(levelSwitch)
-                .Enrich.WithProperty("Env", env)
+                .Enrich.WithProperty("Env", builder.HostEnvironment.Environment)
                 .Enrich.WithProperty("InstanceId", Guid.NewGuid().ToString("D"))
                 .WriteTo.BrowserHttp(endpointUrl: endpointUrl, controlLevelSwitch: levelSwitch)
                 .CreateLogger();
