@@ -25,6 +25,8 @@ You can create simple items ...
 
 <img src="./Documentation/img/ItemWithTypes.jpg" width="700px" alt="Editor where you can define an item's name, category, manufacturer and types. You can again define the availabilities per type"/>
 
+(Modifying an item will alter the current revision, e.g. when you made a typo in the name. Updating the item will create a new revision of it, e.g. when the price changes. With this concept, you keep the item prices for previous shopping lists)
+
 ### Create Recipes
 
 Save your best recipes along with all the ingredients and instructions
@@ -136,6 +138,10 @@ If you don't want to run the application behind a reverse proxy that handles the
         }
     }
     ```
+
+### Frontend Logging
+
+It is possible to collect client-side logs (e.g. exceptions). The compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
 
 ### Key Vault
 Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):

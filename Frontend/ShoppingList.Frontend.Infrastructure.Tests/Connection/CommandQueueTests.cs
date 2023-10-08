@@ -1,4 +1,5 @@
-﻿using Moq.Contrib.InOrder;
+﻿using Microsoft.Extensions.Logging;
+using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
@@ -457,6 +458,7 @@ public class CommandQueueTests
         protected readonly ApiClientMock ApiClientMock = new(MockBehavior.Strict);
         protected readonly RequestSenderStrategyMock RequestSenderStrategyMock = new(MockBehavior.Strict);
         protected readonly DispatcherMock DispatcherMock = new(MockBehavior.Strict);
+        private readonly Mock<ILogger<CommandQueue>> _loggerMock = new(MockBehavior.Loose);
 
         private readonly CommandQueueConfig _config = new()
         {
@@ -468,7 +470,7 @@ public class CommandQueueTests
         public CommandQueue CreateSut()
         {
             return new CommandQueue(ApiClientMock.Object, RequestSenderStrategyMock.Object,
-                DispatcherMock.Object, _config);
+                DispatcherMock.Object, _config, _loggerMock.Object);
         }
 
         public void SetupEmptyQueue()
