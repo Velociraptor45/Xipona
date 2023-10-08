@@ -35,6 +35,14 @@ services:
       - prd-ph-shoppinglist-db-username
       - prd-ph-shoppinglist-db-password
 
+  # LogCollector: # uncomment this for frontend log support
+  #   image: velocir4ptor/web-assembly-log-collector:1.0.0
+  #   volumes:
+  #     - prd-ph-shoppinglist-log-collector-config:/app/config:ro
+  #     - prd-ph-shoppinglist-log-collector-logs:/app/logs
+  #   networks:
+  #     - prd-ph-shoppinglist
+
   Frontend:
     image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
     ports: 
@@ -61,6 +69,10 @@ volumes:
     external: true
   prd-ph-shoppinglist-database:
     external: true
+  # prd-ph-shoppinglist-log-collector-config: # uncomment this for frontend log support
+  #   external: true
+  # prd-ph-shoppinglist-log-collector-logs:
+  #   external: true
 
 networks:
   prd-ph-shoppinglist:
