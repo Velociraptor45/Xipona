@@ -69,12 +69,8 @@ public class ItemType : IItemType
             PredecessorId,
             IsDeleted);
 
-        // todo #404: comparison of availabilities
         if (modification.Availabilities.Count != Availabilities.Count
-            || !modification.Availabilities.All(av => Availabilities.Any(oldAv =>
-                oldAv.StoreId == av.StoreId
-                && oldAv.Price == av.Price
-                && oldAv.DefaultSectionId == av.DefaultSectionId)))
+            || !modification.Availabilities.All(av => Availabilities.Any(oldAv => oldAv == av)))
         {
             domainEvents.Add(
                 new ItemAvailabilitiesChangedDomainEvent(Id, Availabilities, modification.Availabilities));

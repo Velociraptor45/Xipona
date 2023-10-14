@@ -329,6 +329,140 @@ public class ItemTests
         private readonly ModifyAsyncFixture _fixture = new();
 
         [Fact]
+        public async Task ModifyAsync_WithOneNewType_ShouldRemoveOldType()
+        {
+            // Arrange
+            _fixture.SetupOneExistingType();
+            _fixture.SetupModificationWithOneDifferentType();
+            _fixture.SetupValidationSuccess();
+            _fixture.SetupFactoryCreatingType();
+
+            var sut = _fixture.CreateSut();
+            var existing = sut.ItemTypes.First().DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewType);
+
+            // Act
+            await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            sut.ItemTypes.Should().HaveCount(2);
+            sut.ItemTypes.Should().Contain(_fixture.NewType);
+
+            var existingResult = sut.ItemTypes.FirstOrDefault(t => t.Id == existing.Id);
+            existingResult.Should().NotBeNull();
+            existingResult.Should().BeEquivalentTo(existing, opt => opt.Excluding(info => info.Path == "IsDeleted"));
+            existingResult!.IsDeleted.Should().BeTrue();
+
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task ModifyAsync_WithOneExistingType_WithDifferentAvailabilities_ShouldModifyExistingType()
+        {
+            // Arrange
+            _fixture.SetupOneExistingType();
+            _fixture.SetupModificationWithOneExistingType();
+            _fixture.SetupValidationSuccess();
+
+            var sut = _fixture.CreateSut();
+            var existingType = sut.ItemTypes.First();
+            _fixture.SetupExpectedModifiedType(existingType);
+            _fixture.SetupExpectedEvent(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedModifiedType);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedEvent);
+
+            // Act
+            await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            sut.ItemTypes.Should().HaveCount(1);
+            sut.ItemTypes.First().Should().BeEquivalentTo(_fixture.ExpectedModifiedType);
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeEquivalentTo(_fixture.ExpectedEvent);
+        }
+
+        [Fact]
+        public async Task ModifyAsync_WithOneExistingType_WithSameAvailabilities_ShouldModifyExistingType()
+        {
+            // Arrange
+            _fixture.SetupOneExistingType();
+            var sut = _fixture.CreateSut();
+            var existingType = sut.ItemTypes.First();
+
+            _fixture.SetupModificationWithOneExistingTypeAndSameAvailabilities(existingType);
+            _fixture.SetupValidationSuccess();
+            _fixture.SetupExpectedModifiedType(existingType);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedModifiedType);
+
+            // Act
+            await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            sut.ItemTypes.Should().HaveCount(1);
+            sut.ItemTypes.First().Should().BeEquivalentTo(_fixture.ExpectedModifiedType);
+
+            sut.DomainEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task ModifyAsync_WithEmptyTypes_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupOneExistingType();
+            _fixture.SetupModificationWithEmptyTypes();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = async () => await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotRemoveAllTypesFromItemWithTypes);
+        }
+
+        [Fact]
+        public async Task ModifyAsync_WithEmptyTypeAvailabilities_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupOneExistingType();
+            _fixture.SetupModificationWithOneExistingTypeAndEmptyAvailabilities();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = async () => await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyItemTypeWithoutAvailabilities);
+        }
+
+        [Fact]
+        public async Task ModifyAsync_WithModifyingDeletedType_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupOneExistingDeletedType();
+            _fixture.SetupModificationWithOneExistingType();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = async () => await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyDeletedItemType);
+        }
+
+        [Fact]
         public async Task ModifyAsync_WithDeleted_ShouldThrow()
         {
             // Arrange
@@ -336,21 +470,158 @@ public class ItemTests
             _fixture.SetupModification();
             var sut = _fixture.CreateSut();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
             // Act
-            var func = async () => await sut.ModifyAsync(_fixture.Modification!, _fixture.ValidatorMock.Object);
+            var func = async () => await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyDeletedItem);
         }
 
+        [Fact]
+        public async Task ModifyAsync_WithoutItemTypes_ShouldThrow()
+        {
+            // Arrange
+            _fixture.SetupWithoutItemTypes();
+            _fixture.SetupModification();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = async () => await sut.ModifyAsync(_fixture.Modification, _fixture.ValidatorMock.Object);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyItemAsItemWithTypes);
+        }
+
         private class ModifyAsyncFixture : ItemFixture
         {
-            public ItemWithTypesModification? Modification { get; private set; }
             public ValidatorMock ValidatorMock { get; } = new(MockBehavior.Strict);
+            public ItemWithTypesModification? Modification { get; private set; }
+            public ItemType? NewType { get; private set; }
+            public ItemTypeId? ExistingTypeId { get; private set; }
+            public ItemAvailabilitiesChangedDomainEvent? ExpectedEvent { get; private set; }
 
             public void SetupModification()
             {
                 Modification = new DomainTestBuilder<ItemWithTypesModification>().Create();
+            }
+
+            public void SetupModificationWithOneDifferentType()
+            {
+                var types = new DomainTestBuilder<ItemTypeModification>()
+                    .FillConstructorWith<ItemTypeId?>("id", null)
+                    .CreateMany(1)
+                    .ToList();
+
+                Modification = new DomainTestBuilder<ItemWithTypesModification>()
+                    .FillConstructorWith("itemTypes", types.AsEnumerable()).Create();
+            }
+
+            public void SetupModificationWithOneExistingType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+
+                var types = new DomainTestBuilder<ItemTypeModification>()
+                    .FillConstructorWith<ItemTypeId?>("id", ExistingTypeId.Value)
+                    .CreateMany(1)
+                    .ToList();
+
+                Modification = new DomainTestBuilder<ItemWithTypesModification>()
+                    .FillConstructorWith("itemTypes", types.AsEnumerable()).Create();
+            }
+
+            public void SetupModificationWithOneExistingTypeAndSameAvailabilities(IItemType existingType)
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+
+                var types = new DomainTestBuilder<ItemTypeModification>()
+                    .FillConstructorWith<ItemTypeId?>("id", ExistingTypeId.Value)
+                    .FillConstructorWith("availabilities", existingType.Availabilities.AsEnumerable())
+                    .CreateMany(1)
+                    .ToList();
+
+                Modification = new DomainTestBuilder<ItemWithTypesModification>()
+                    .FillConstructorWith("itemTypes", types.AsEnumerable()).Create();
+            }
+
+            public void SetupModificationWithOneExistingTypeAndEmptyAvailabilities()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+
+                var types = new DomainTestBuilder<ItemTypeModification>()
+                    .FillConstructorWith<ItemTypeId?>("id", ExistingTypeId.Value)
+                    .FillConstructorWith("availabilities", Enumerable.Empty<ItemAvailability>())
+                    .CreateMany(1)
+                    .ToList();
+
+                Modification = new DomainTestBuilder<ItemWithTypesModification>()
+                    .FillConstructorWith("itemTypes", types.AsEnumerable()).Create();
+            }
+
+            public void SetupModificationWithEmptyTypes()
+            {
+                Modification = new DomainTestBuilder<ItemWithTypesModification>()
+                    .FillConstructorWith("itemTypes", Enumerable.Empty<ItemTypeModification>()).Create();
+            }
+
+            public void SetupOneExistingType()
+            {
+                ExistingTypeId = ItemTypeId.New;
+                var types = ItemTypeMother.Initial().WithId(ExistingTypeId.Value).CreateMany(1).ToList();
+                Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
+            }
+
+            public void SetupOneExistingDeletedType()
+            {
+                ExistingTypeId = ItemTypeId.New;
+                var types = ItemTypeMother.Initial().WithIsDeleted(true).WithId(ExistingTypeId.Value).CreateMany(1).ToList();
+                Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
+            }
+
+            public void SetupValidationSuccess()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+
+                foreach (var type in Modification.ItemTypes)
+                {
+                    ValidatorMock.SetupValidateAsync(type.Availabilities);
+                }
+            }
+
+            public void SetupExpectedModifiedType(IItemType existingType)
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+
+                var typeModification = Modification.ItemTypes.First();
+                ExpectedModifiedType = new ItemType(ExistingTypeId.Value, typeModification.Name,
+                    typeModification.Availabilities, existingType.PredecessorId, false);
+            }
+
+            public void SetupExpectedEvent(IItem sut)
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+
+                ExpectedEvent = new ItemAvailabilitiesChangedDomainEvent(ExistingTypeId.Value,
+                    sut.ItemTypes.First().Availabilities, Modification.ItemTypes.First().Availabilities)
+                {
+                    ItemId = sut.Id
+                };
+            }
+
+            public ItemType? ExpectedModifiedType { get; private set; }
+
+            public void SetupFactoryCreatingType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+
+                var modificationType = Modification.ItemTypes.First();
+                NewType = ItemTypeMother.Initial().Create();
+                ItemTypeFactoryMock.SetupCreateNew(modificationType.Name, modificationType.Availabilities, NewType);
             }
         }
     }
