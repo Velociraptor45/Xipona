@@ -466,7 +466,7 @@ public class ItemModificationServiceTests
             var dict = new Dictionary<ItemTypeId, List<ShoppingListMock>>();
             foreach (var type in _itemMock.Object.ItemTypes)
             {
-                var storeId = StoreIdMother.OneFrom(type.Availabilities).Create();
+                var storeId = _commonFixture.ChooseRandom(type.Availabilities).StoreId;
                 var shoppingLists = new ShoppingListBuilder()
                     .WithStoreId(storeId)
                     .CreateMany(1)
@@ -488,8 +488,8 @@ public class ItemModificationServiceTests
             {
                 var storeId =
                     type.Id == _removedStoreByTypeId.Item1
-                        ? new StoreIdBuilder().Create()
-                        : StoreIdMother.OneFrom(type.Availabilities).Create();
+                        ? StoreId.New
+                        : _commonFixture.ChooseRandom(type.Availabilities).StoreId;
                 var shoppingListMocks = new ShoppingListBuilder()
                     .WithStoreId(storeId)
                     .CreateMany(1)

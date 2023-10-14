@@ -83,7 +83,7 @@ public class ItemSearchServiceTests
 
             public void SetupStoreId()
             {
-                StoreId = new StoreIdBuilder().Create();
+                StoreId = StoreId.New;
             }
 
             public void SetupParameters()

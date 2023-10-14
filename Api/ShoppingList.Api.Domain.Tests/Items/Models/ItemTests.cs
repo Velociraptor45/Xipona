@@ -1,7 +1,6 @@
 ﻿using Force.DeepCloner;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
@@ -18,7 +17,6 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using System.Text.RegularExpressions;
 
@@ -82,7 +80,7 @@ public class ItemTests
             IItem testObject = ItemMother.Initial().Create();
 
             // Act
-            StoreId storeId = new StoreIdBuilder().Create();
+            var storeId = StoreId.New;
             var result = testObject.IsAvailableInStore(storeId);
 
             // Assert
@@ -631,21 +629,30 @@ public class ItemTests
         private readonly CommonFixture _commonFixture = new();
 
         [Fact]
+        public void GetDefaultSectionIdForStore_WithItemTypes_ShouldThrowDomainException()
+        {
+            // Arrange
+            IItem testObject = ItemMother.InitialWithTypes().Create();
+
+            // Act
+            var act = () => testObject.GetDefaultSectionIdForStore(StoreId.New);
+
+            // Assert
+            act.Should().ThrowDomainException(ErrorReasonCode.ItemWithTypesHasNoAvailabilities);
+        }
+
+        [Fact]
         public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
         {
             // Arrange
             IItem testObject = ItemMother.Initial().Create();
-            var requestStoreId = new StoreIdBuilder().Create();
+            var requestStoreId = StoreId.New;
 
             // Act
-            Action action = () => testObject.GetDefaultSectionIdForStore(requestStoreId);
+            var act = () => testObject.GetDefaultSectionIdForStore(requestStoreId);
 
             // Assert
-            using (new AssertionScope())
-            {
-                action.Should().Throw<DomainException>()
-                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
-            }
+            act.Should().ThrowDomainException(ErrorReasonCode.ItemAtStoreNotAvailable);
         }
 
         [Fact]
@@ -659,10 +666,7 @@ public class ItemTests
             var result = testObject.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
 
             // Assert
-            using (new AssertionScope())
-            {
-                result.Should().BeEquivalentTo(chosenAvailability.DefaultSectionId);
-            }
+            result.Should().BeEquivalentTo(chosenAvailability.DefaultSectionId);
         }
     }
 
