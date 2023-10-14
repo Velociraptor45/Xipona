@@ -121,16 +121,19 @@ public class Item : AggregateRoot, IItem
         IsTemporary = false;
     }
 
-    public void Modify(ItemModification itemChange, IEnumerable<ItemAvailability> availabilities)
+    public void Modify(ItemModification modification, IEnumerable<ItemAvailability> availabilities)
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemReason(Id));
 
-        Name = itemChange.Name;
-        Comment = itemChange.Comment;
-        ItemQuantity = itemChange.ItemQuantity;
-        ItemCategoryId = itemChange.ItemCategoryId;
-        ManufacturerId = itemChange.ManufacturerId;
+        if (HasItemTypes)
+            throw new DomainException(new CannotModifyItemWithTypesAsItemReason(Id));
+
+        Name = modification.Name;
+        Comment = modification.Comment;
+        ItemQuantity = modification.ItemQuantity;
+        ItemCategoryId = modification.ItemCategoryId;
+        ManufacturerId = modification.ManufacturerId;
 
         var oldAvailabilities = _availabilities;
         _availabilities = availabilities.ToList();
@@ -138,12 +141,8 @@ public class Item : AggregateRoot, IItem
         if (!_availabilities.Any())
             throw new DomainException(new CannotModifyItemWithoutAvailabilitiesReason());
 
-        // todo #404: comparison of availabilities
         if (_availabilities.Count != oldAvailabilities.Count
-           || !_availabilities.All(av => oldAvailabilities.Any(oldAv =>
-               oldAv.StoreId == av.StoreId
-               && oldAv.Price == av.Price
-               && oldAv.DefaultSectionId == av.DefaultSectionId)))
+           || !_availabilities.All(av => oldAvailabilities.Any(oldAv => oldAv == av)))
         {
             PublishDomainEvent(new ItemAvailabilitiesChangedDomainEvent(null, oldAvailabilities, _availabilities));
         }

@@ -26,97 +26,90 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Models;
 
 public class ItemTests
 {
-    private readonly CommonFixture _commonFixture;
-
-    public ItemTests()
+    public class Delete
     {
-        _commonFixture = new CommonFixture();
-    }
-
-    #region Delete
-
-    [Fact]
-    public void Delete_WithNotDeletedItem_ShouldMarkItemAsDeleted()
-    {
-        // Arrange
-        var item = ItemMother.Initial().Create();
-
-        // Act
-        item.Delete();
-
-        // Assert
-        item.IsDeleted.Should().BeTrue();
-    }
-
-    [Fact]
-    public void Delete_WithNotDeletedItem_ShouldPublishEvent()
-    {
-        // Arrange
-        var item = ItemMother.Initial().Create();
-
-        // Act
-        item.Delete();
-
-        // Assert
-        var aggregateRootItem = (AggregateRoot)item;
-        aggregateRootItem.DomainEvents.Should().HaveCount(1);
-        aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent { ItemId = item.Id });
-    }
-
-    [Fact]
-    public void Delete_WithDeletedItem_ShouldNotPublishEvent()
-    {
-        // Arrange
-        var item = ItemMother.Deleted().Create();
-
-        // Act
-        item.Delete();
-
-        // Assert
-        var aggregateRootItem = (AggregateRoot)item;
-        aggregateRootItem.DomainEvents.Should().BeEmpty();
-    }
-
-    #endregion Delete
-
-    #region IsAvailableInStore
-
-    [Fact]
-    public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
-    {
-        // Arrange
-        IItem testObject = ItemMother.Initial().Create();
-
-        // Act
-        StoreId storeId = new StoreIdBuilder().Create();
-        var result = testObject.IsAvailableInStore(storeId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void Delete_WithNotDeletedItem_ShouldMarkItemAsDeleted()
         {
-            result.Should().BeFalse();
+            // Arrange
+            var item = ItemMother.Initial().Create();
+
+            // Act
+            item.Delete();
+
+            // Assert
+            item.IsDeleted.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Delete_WithNotDeletedItem_ShouldPublishEvent()
+        {
+            // Arrange
+            var item = ItemMother.Initial().Create();
+
+            // Act
+            item.Delete();
+
+            // Assert
+            var aggregateRootItem = (AggregateRoot)item;
+            aggregateRootItem.DomainEvents.Should().HaveCount(1);
+            aggregateRootItem.DomainEvents.First().Should().BeEquivalentTo(new ItemDeletedDomainEvent { ItemId = item.Id });
+        }
+
+        [Fact]
+        public void Delete_WithDeletedItem_ShouldNotPublishEvent()
+        {
+            // Arrange
+            var item = ItemMother.Deleted().Create();
+
+            // Act
+            item.Delete();
+
+            // Assert
+            var aggregateRootItem = (AggregateRoot)item;
+            aggregateRootItem.DomainEvents.Should().BeEmpty();
         }
     }
 
-    [Fact]
-    public void IsAvailableInStore_WithAvailableInStore_ShouldReturnTrue()
+    public class IsAvailableInStore
     {
-        // Arrange
-        IItem testObject = ItemMother.Initial().Create();
-        var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId).ToList();
+        private readonly CommonFixture _commonFixture = new();
 
-        // Act
-        StoreId chosenStoreId = _commonFixture.ChooseRandom(availabilityStoreIds);
-        var result = testObject.IsAvailableInStore(chosenStoreId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
         {
-            result.Should().BeTrue();
+            // Arrange
+            IItem testObject = ItemMother.Initial().Create();
+
+            // Act
+            StoreId storeId = new StoreIdBuilder().Create();
+            var result = testObject.IsAvailableInStore(storeId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeFalse();
+            }
+        }
+
+        [Fact]
+        public void IsAvailableInStore_WithAvailableInStore_ShouldReturnTrue()
+        {
+            // Arrange
+            IItem testObject = ItemMother.Initial().Create();
+            var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId).ToList();
+
+            // Act
+            StoreId chosenStoreId = _commonFixture.ChooseRandom(availabilityStoreIds);
+            var result = testObject.IsAvailableInStore(chosenStoreId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeTrue();
+            }
         }
     }
-
-    #endregion IsAvailableInStore
 
     public class MakePermanent
     {
@@ -164,31 +157,115 @@ public class ItemTests
 
     public class Modify
     {
+        private readonly ModifyFixture _fixture = new();
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void Modify_WithValidData_ShouldModifyItem(bool isTemporary)
+        public void Modify_WithExistingAvailabilities_ShouldModifyItem(bool isTemporary)
         {
             // Arrange
-            IItem sut = ItemMother.Initial().WithIsTemporary(isTemporary).Create();
-            ItemModification itemModify = new DomainTestBuilder<ItemModification>().Create();
-            IEnumerable<ItemAvailability> availabilities =
-                ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+            _fixture.SetupWithoutItemTypes();
+            _fixture.SetupIsTemporary(isTemporary);
+            _fixture.SetupModification();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
 
             // Act
-            sut.Modify(itemModify, availabilities);
+            sut.Modify(_fixture.Modification, sut.Availabilities);
 
             // Assert
             using (new AssertionScope())
             {
-                sut.Name.Should().Be(itemModify.Name);
-                sut.Comment.Should().Be(itemModify.Comment);
-                sut.ItemQuantity.Should().Be(itemModify.ItemQuantity);
-                sut.Availabilities.Should().BeEquivalentTo(availabilities);
-                sut.ItemCategoryId.Should().Be(itemModify.ItemCategoryId);
-                sut.ManufacturerId.Should().Be(itemModify.ManufacturerId);
+                sut.Name.Should().Be(_fixture.Modification.Name);
+                sut.Comment.Should().Be(_fixture.Modification.Comment);
+                sut.ItemQuantity.Should().Be(_fixture.Modification.ItemQuantity);
+                sut.Availabilities.Should().BeEquivalentTo(sut.Availabilities);
+                sut.ItemCategoryId.Should().Be(_fixture.Modification.ItemCategoryId);
+                sut.ManufacturerId.Should().Be(_fixture.Modification.ManufacturerId);
                 sut.IsTemporary.Should().Be(isTemporary);
+                sut.DomainEvents.Should().BeEmpty();
             }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Modify_WithNewAvailabilities_ShouldModifyItem(bool isTemporary)
+        {
+            // Arrange
+            _fixture.SetupWithoutItemTypes();
+            _fixture.SetupIsTemporary(isTemporary);
+            _fixture.SetupModification();
+            _fixture.SetupAvailabilities();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedEvent(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Availabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedEvent);
+
+            // Act
+            sut.Modify(_fixture.Modification, _fixture.Availabilities);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                sut.Name.Should().Be(_fixture.Modification.Name);
+                sut.Comment.Should().Be(_fixture.Modification.Comment);
+                sut.ItemQuantity.Should().Be(_fixture.Modification.ItemQuantity);
+                sut.Availabilities.Should().BeEquivalentTo(_fixture.Availabilities);
+                sut.ItemCategoryId.Should().Be(_fixture.Modification.ItemCategoryId);
+                sut.ManufacturerId.Should().Be(_fixture.Modification.ManufacturerId);
+                sut.IsTemporary.Should().Be(isTemporary);
+                sut.DomainEvents.Should().HaveCount(1);
+            }
+
+            sut.DomainEvents.First().Should().BeEquivalentTo(_fixture.ExpectedEvent);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Modify_WithTypes_ShouldThrow(bool isTemporary)
+        {
+            // Arrange
+            _fixture.SetupIsTemporary(isTemporary);
+            _fixture.SetupModification();
+            _fixture.SetupAvailabilities();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Availabilities);
+
+            // Act
+            var func = () => sut.Modify(_fixture.Modification, _fixture.Availabilities);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotModifyItemWithTypesAsItem);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Modify_WithEmptyAvailabilities_ShouldThrow(bool isTemporary)
+        {
+            // Arrange
+            _fixture.SetupWithoutItemTypes();
+            _fixture.SetupIsTemporary(isTemporary);
+            _fixture.SetupModification();
+            _fixture.SetupEmptyAvailabilities();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Availabilities);
+
+            // Act
+            var func = () => sut.Modify(_fixture.Modification, _fixture.Availabilities);
+
+            // Assert
+            func.Should().ThrowDomainException(ErrorReasonCode.CannotModifyItemWithoutAvailabilities);
         }
 
         [Theory]
@@ -197,16 +274,53 @@ public class ItemTests
         public void Modify_WithDeleted_ShouldThrow(bool isTemporary)
         {
             // Arrange
-            IItem sut = ItemMother.Initial().WithIsTemporary(isTemporary).WithIsDeleted(true).Create();
-            ItemModification itemModify = new DomainTestBuilder<ItemModification>().Create();
-            IEnumerable<ItemAvailability> availabilities =
-                ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+            _fixture.SetupWithoutItemTypes();
+            _fixture.SetupDeleted();
+            _fixture.SetupIsTemporary(isTemporary);
+            _fixture.SetupModification();
+            _fixture.SetupAvailabilities();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Availabilities);
 
             // Act
-            var func = () => sut.Modify(itemModify, availabilities);
+            var func = () => sut.Modify(_fixture.Modification, _fixture.Availabilities);
 
             // Assert
             func.Should().ThrowDomainException(ErrorReasonCode.CannotModifyDeletedItem);
+        }
+
+        private sealed class ModifyFixture : ItemFixture
+        {
+            public ItemModification? Modification { get; private set; }
+            public IReadOnlyCollection<ItemAvailability>? Availabilities { get; private set; }
+            public ItemAvailabilitiesChangedDomainEvent? ExpectedEvent { get; private set; }
+
+            public void SetupModification()
+            {
+                Modification = new DomainTestBuilder<ItemModification>().Create();
+            }
+
+            public void SetupAvailabilities()
+            {
+                Availabilities = ItemAvailabilityMother.Initial().CreateMany(3).ToList();
+            }
+
+            public void SetupEmptyAvailabilities()
+            {
+                Availabilities = new List<ItemAvailability>(0);
+            }
+
+            public void SetupExpectedEvent(Item sut)
+            {
+                TestPropertyNotSetException.ThrowIfNull(Availabilities);
+
+                ExpectedEvent = new ItemAvailabilitiesChangedDomainEvent(null, sut.Availabilities, Availabilities)
+                {
+                    ItemId = sut.Id
+                };
+            }
         }
     }
 
@@ -241,53 +355,49 @@ public class ItemTests
         }
     }
 
-    #region GetDefaultSectionIdForStore
-
-    [Fact]
-    public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
+    public class GetDefaultSectionIdForStore
     {
-        // Arrange
-        IItem testObject = ItemMother.Initial().Create();
-        var requestStoreId = new StoreIdBuilder().Create();
+        private readonly CommonFixture _commonFixture = new();
 
-        // Act
-        Action action = () => testObject.GetDefaultSectionIdForStore(requestStoreId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
+            // Arrange
+            IItem testObject = ItemMother.Initial().Create();
+            var requestStoreId = new StoreIdBuilder().Create();
+
+            // Act
+            Action action = () => testObject.GetDefaultSectionIdForStore(requestStoreId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                action.Should().Throw<DomainException>()
+                    .Where(ex => ex.Reason.ErrorCode == ErrorReasonCode.ItemAtStoreNotAvailable);
+            }
+        }
+
+        [Fact]
+        public void GetDefaultSectionIdForStore_WithValidStoreId_ShouldReturnSectionId()
+        {
+            // Arrange
+            IItem testObject = ItemMother.Initial().Create();
+            var chosenAvailability = _commonFixture.ChooseRandom(testObject.Availabilities);
+
+            // Act
+            var result = testObject.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                result.Should().BeEquivalentTo(chosenAvailability.DefaultSectionId);
+            }
         }
     }
-
-    [Fact]
-    public void GetDefaultSectionIdForStore_WithValidStoreId_ShouldReturnSectionId()
-    {
-        // Arrange
-        IItem testObject = ItemMother.Initial().Create();
-        var chosenAvailability = _commonFixture.ChooseRandom(testObject.Availabilities);
-
-        // Act
-        var result = testObject.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            result.Should().BeEquivalentTo(chosenAvailability.DefaultSectionId);
-        }
-    }
-
-    #endregion GetDefaultSectionIdForStore
 
     public class UpdateAsync_WithTypes
     {
-        private readonly UpdateAsyncFixture _fixture;
-
-        public UpdateAsync_WithTypes()
-        {
-            _fixture = new UpdateAsyncFixture();
-        }
+        private readonly UpdateAsyncFixture _fixture = new();
 
         [Fact]
         public async Task UpdateAsync_WithDeleted_ShouldThrowDomainException()
@@ -495,12 +605,7 @@ public class ItemTests
 
     public class UpdateAsync_WithoutTypes
     {
-        private readonly UpdateAsyncFixture _fixture;
-
-        public UpdateAsync_WithoutTypes()
-        {
-            _fixture = new UpdateAsyncFixture();
-        }
+        private readonly UpdateAsyncFixture _fixture = new();
 
         [Fact]
         public async Task UpdateAsync_WithDeleted_ShouldThrowDomainException()
@@ -698,12 +803,7 @@ public class ItemTests
 
     public class Update_Price
     {
-        private readonly UpdateFixture_Price _fixture;
-
-        public Update_Price()
-        {
-            _fixture = new UpdateFixture_Price();
-        }
+        private readonly UpdateFixture_Price _fixture = new();
 
         [Fact]
         public void Update_WithDeleted_ShouldThrow()
@@ -1061,12 +1161,7 @@ public class ItemTests
 
     public class TransferToDefaultSection
     {
-        private readonly TransferToDefaultSectionFixture _fixture;
-
-        public TransferToDefaultSection()
-        {
-            _fixture = new TransferToDefaultSectionFixture();
-        }
+        private readonly TransferToDefaultSectionFixture _fixture = new();
 
         [Fact]
         public void TransferToDefaultSection_WithDeleted_ShouldThrow()
@@ -1243,12 +1338,7 @@ public class ItemTests
 
     public class GetDefaultSectionIdForStore_ItemType
     {
-        private readonly GetDefaultSectionIdForStoreFixture _fixture;
-
-        public GetDefaultSectionIdForStore_ItemType()
-        {
-            _fixture = new GetDefaultSectionIdForStoreFixture();
-        }
+        private readonly GetDefaultSectionIdForStoreFixture _fixture = new();
 
         [Fact]
         public void GetDefaultSectionIdForStore_WithValidData_ShouldReturnExpectedResult()
@@ -1663,8 +1753,6 @@ public class ItemTests
             {
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
 
-                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
-
                 var itemTypes = new List<IItemType>{
                     ItemTypeMother.Initial().Create(),
                     ItemTypeMother.Initial().Create(),
@@ -1754,9 +1842,19 @@ public class ItemTests
             Builder.WithIsDeleted(false).WithId(Id);
         }
 
+        public void SetupWithoutItemTypes()
+        {
+            Builder.AsItem();
+        }
+
         public void SetupDeleted()
         {
             Builder.WithIsDeleted(true);
+        }
+
+        public void SetupIsTemporary(bool isTemporary)
+        {
+            Builder.WithIsTemporary(isTemporary);
         }
 
         public Item CreateSut()
