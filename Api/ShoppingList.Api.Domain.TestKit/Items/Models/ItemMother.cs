@@ -58,6 +58,15 @@ public static class ItemMother
             .AsItem();
     }
 
+    public static ItemBuilder WithTypesWithPredecessor()
+    {
+        ItemBuilder builder = new();
+        var types = ItemTypeMother.WithPredecessor().CreateMany(3);
+
+        return EnrichAsActiveWithoutPredecessor(builder)
+            .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
+    }
+
     public static ItemBuilder Deleted(ItemBuilder? builder = null)
     {
         builder ??= new ItemBuilder();

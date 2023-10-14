@@ -208,7 +208,7 @@ public class Item : AggregateRoot, IItem
 
     public IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId)
     {
-        return _itemTypes?.GetForStore(storeId) ?? new List<IItemType>().AsReadOnly();
+        return _itemTypes?.GetForStore(storeId) ?? new List<IItemType>(0).AsReadOnly();
     }
 
     public bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor)

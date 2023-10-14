@@ -12,6 +12,12 @@ public static class ItemTypeMother
             .WithoutPredecessorId();
     }
 
+    public static ItemTypeBuilder WithPredecessor()
+    {
+        return new ItemTypeBuilder()
+            .WithIsDeleted(false);
+    }
+
     public static ItemTypeBuilder InitialAvailableAt(ItemAvailability availability)
     {
         return new ItemTypeBuilder()
