@@ -21,10 +21,15 @@ public class ItemTypesTests
             yield return new object?[] { itemTypeId, itemTypeId };
         }
 
+        public static IEnumerable<object?[]> GetUpdatePriceItemTypeIdForTypeNotAvailable()
+        {
+            yield return new object?[] { null };
+            yield return new object?[] { ItemTypeId.New };
+        }
+
         [Theory]
-        [MemberData(nameof(GetUpdatePriceItemTypeIdCombinations))]
-        public void Update_WithItemTypeNotAvailableAtStore_ShouldCallCorrectMethod(ItemTypeId? itemTypeIdArg,
-            ItemTypeId _)
+        [MemberData(nameof(GetUpdatePriceItemTypeIdForTypeNotAvailable))]
+        public void Update_WithItemTypeNotAvailableAtStore_ShouldCallCorrectMethod(ItemTypeId? itemTypeIdArg)
         {
             // Arrange
             _fixture.SetupStoreId();
@@ -45,9 +50,8 @@ public class ItemTypesTests
         }
 
         [Theory]
-        [MemberData(nameof(GetUpdatePriceItemTypeIdCombinations))]
-        public void Update_WithItemTypeNotAvailableAtStore_ShouldReturnExpectedResult(ItemTypeId? itemTypeIdArg,
-            ItemTypeId _)
+        [MemberData(nameof(GetUpdatePriceItemTypeIdForTypeNotAvailable))]
+        public void Update_WithItemTypeNotAvailableAtStore_ShouldReturnExpectedResult(ItemTypeId? itemTypeIdArg)
         {
             // Arrange
             _fixture.SetupStoreId();
