@@ -156,8 +156,14 @@ public class ItemType : IItemType
             IsDeleted);
     }
 
-    public IItemType Delete(out IDomainEvent domainEventToPublish)
+    public IItemType Delete(out IDomainEvent? domainEventToPublish)
     {
+        if (IsDeleted)
+        {
+            domainEventToPublish = null;
+            return this;
+        }
+
         domainEventToPublish = new ItemTypeDeletedDomainEvent(Id);
         return new ItemType(
             Id,
@@ -189,7 +195,11 @@ public class ItemType : IItemType
         }
 
         var deletedType = Delete(out var deletedDomainEvent);
-        domainEventsToPublish = new List<IDomainEvent> { deletedDomainEvent };
+
+        domainEventsToPublish = deletedDomainEvent != null
+            ? new List<IDomainEvent> { deletedDomainEvent }
+            : Enumerable.Empty<IDomainEvent>();
+
         return deletedType;
     }
 }

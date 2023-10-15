@@ -111,7 +111,7 @@ public class ItemTypes : IEnumerable<IItemType>
         if (!_itemTypes.TryGetValue(id, out var type))
             return;
 
-        _itemTypes[id] = type.Delete(out var _);
+        _itemTypes[id] = type.Delete(out IDomainEvent? _);
     }
 
     private async Task<IEnumerable<IDomainEvent>> ModifyAsync(ItemTypeModification modification, IValidator validator)
