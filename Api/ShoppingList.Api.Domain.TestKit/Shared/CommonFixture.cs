@@ -1,19 +1,8 @@
-﻿using AutoFixture.AutoMoq;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 
 public class CommonFixture
 {
     private static readonly Random _random = new();
-
-    public Fixture GetNewFixture()
-    {
-        var fixture = new Fixture();
-        fixture.Customize(new AutoMoqCustomization { ConfigureMembers = true });
-        new DomainCustomization().Customize(fixture);
-        return fixture;
-    }
 
     public T ChooseRandom<T>(IEnumerable<T> enumerable)
     {

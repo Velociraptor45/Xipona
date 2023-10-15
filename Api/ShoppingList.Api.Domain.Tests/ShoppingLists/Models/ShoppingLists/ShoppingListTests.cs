@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
@@ -15,14 +16,8 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
 public class ShoppingListTests
 {
-    private readonly CommonFixture _commonFixture;
-    private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture;
-
-    public ShoppingListTests()
-    {
-        _commonFixture = new CommonFixture();
-        _shoppingListSectionMockFixture = new ShoppingListSectionMockFixture();
-    }
+    private readonly CommonFixture _commonFixture = new();
+    private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
     #region AddItem
 
@@ -322,10 +317,9 @@ public class ShoppingListTests
     public void Finish_WithCompletedShoppingList_ShouldThrowDomainException()
     {
         // Arrange
-        var fixture = _commonFixture.GetNewFixture();
         var shoppingList = ShoppingListMother.Completed().Create();
 
-        DateTimeOffset completionDate = fixture.Create<DateTimeOffset>();
+        var completionDate = new DomainTestBuilder<DateTimeOffset>().Create();
 
         // Act
         Action action = () => shoppingList.Finish(completionDate);
@@ -346,7 +340,7 @@ public class ShoppingListTests
         var itemsInBasket = shoppingList.Items.Where(i => i.IsInBasket);
         var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
 
-        DateTimeOffset completionDate = _commonFixture.GetNewFixture().Create<DateTimeOffset>();
+        var completionDate = new DomainTestBuilder<DateTimeOffset>().Create();
 
         // Act
         IShoppingList result = shoppingList.Finish(completionDate);
@@ -401,12 +395,7 @@ public class ShoppingListTests
 
     public class TransferItem
     {
-        private readonly TransferItemFixture _fixture;
-
-        public TransferItem()
-        {
-            _fixture = new TransferItemFixture();
-        }
+        private readonly TransferItemFixture _fixture = new();
 
         [Fact]
         public void TransferItem_WithoutNewSection_ShouldThrowDomainException()

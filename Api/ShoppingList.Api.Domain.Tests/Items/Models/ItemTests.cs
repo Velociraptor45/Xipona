@@ -497,10 +497,11 @@ public class ItemTests
 
         private class ModifyAsyncFixture : ItemFixture
         {
+            private ItemTypeId? _existingTypeId;
+
             public ValidatorMock ValidatorMock { get; } = new(MockBehavior.Strict);
             public ItemWithTypesModification? Modification { get; private set; }
             public ItemType? NewType { get; private set; }
-            public ItemTypeId? ExistingTypeId { get; private set; }
             public ItemAvailabilitiesChangedDomainEvent? ExpectedEvent { get; private set; }
 
             public void SetupModification()
@@ -521,10 +522,10 @@ public class ItemTests
 
             public void SetupModificationWithOneExistingType()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_existingTypeId);
 
                 var types = new DomainTestBuilder<ItemTypeModification>()
-                    .FillConstructorWith<ItemTypeId?>("id", ExistingTypeId.Value)
+                    .FillConstructorWith<ItemTypeId?>("id", _existingTypeId.Value)
                     .CreateMany(1)
                     .ToList();
 
@@ -534,10 +535,10 @@ public class ItemTests
 
             public void SetupModificationWithOneExistingTypeAndSameAvailabilities(IItemType existingType)
             {
-                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_existingTypeId);
 
                 var types = new DomainTestBuilder<ItemTypeModification>()
-                    .FillConstructorWith<ItemTypeId?>("id", ExistingTypeId.Value)
+                    .FillConstructorWith<ItemTypeId?>("id", _existingTypeId.Value)
                     .FillConstructorWith("availabilities", existingType.Availabilities.AsEnumerable())
                     .CreateMany(1)
                     .ToList();
@@ -548,10 +549,10 @@ public class ItemTests
 
             public void SetupModificationWithOneExistingTypeAndEmptyAvailabilities()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_existingTypeId);
 
                 var types = new DomainTestBuilder<ItemTypeModification>()
-                    .FillConstructorWith<ItemTypeId?>("id", ExistingTypeId.Value)
+                    .FillConstructorWith<ItemTypeId?>("id", _existingTypeId.Value)
                     .FillConstructorWith("availabilities", Enumerable.Empty<ItemAvailability>())
                     .CreateMany(1)
                     .ToList();
@@ -568,15 +569,15 @@ public class ItemTests
 
             public void SetupOneExistingType()
             {
-                ExistingTypeId = ItemTypeId.New;
-                var types = ItemTypeMother.Initial().WithId(ExistingTypeId.Value).CreateMany(1).ToList();
+                _existingTypeId = ItemTypeId.New;
+                var types = ItemTypeMother.Initial().WithId(_existingTypeId.Value).CreateMany(1).ToList();
                 Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
             }
 
             public void SetupOneExistingDeletedType()
             {
-                ExistingTypeId = ItemTypeId.New;
-                var types = ItemTypeMother.Initial().WithIsDeleted(true).WithId(ExistingTypeId.Value).CreateMany(1).ToList();
+                _existingTypeId = ItemTypeId.New;
+                var types = ItemTypeMother.Initial().WithIsDeleted(true).WithId(_existingTypeId.Value).CreateMany(1).ToList();
                 Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
             }
 
@@ -592,20 +593,20 @@ public class ItemTests
 
             public void SetupExpectedModifiedType(IItemType existingType)
             {
-                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_existingTypeId);
                 TestPropertyNotSetException.ThrowIfNull(Modification);
 
                 var typeModification = Modification.ItemTypes.First();
-                ExpectedModifiedType = new ItemType(ExistingTypeId.Value, typeModification.Name,
+                ExpectedModifiedType = new ItemType(_existingTypeId.Value, typeModification.Name,
                     typeModification.Availabilities, existingType.PredecessorId, false);
             }
 
             public void SetupExpectedEvent(IItem sut)
             {
-                TestPropertyNotSetException.ThrowIfNull(ExistingTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_existingTypeId);
                 TestPropertyNotSetException.ThrowIfNull(Modification);
 
-                ExpectedEvent = new ItemAvailabilitiesChangedDomainEvent(ExistingTypeId.Value,
+                ExpectedEvent = new ItemAvailabilitiesChangedDomainEvent(_existingTypeId.Value,
                     sut.ItemTypes.First().Availabilities, Modification.ItemTypes.First().Availabilities)
                 {
                     ItemId = sut.Id
@@ -897,8 +898,14 @@ public class ItemTests
             sut.ManufacturerId.Should().BeNull();
         }
 
-        private class RemoveManufacturerFixture : ItemFixture
+        private sealed class RemoveManufacturerFixture : ItemFixture
         {
+            public RemoveManufacturerFixture()
+            {
+                // Technically, it shouldn't matter if it is an item with types or not but if you remove this line,
+                // the DeepClone() in the test above will reek havoc in all of the other Domain tests for no apparent reason
+                Builder.AsItem();
+            }
         }
     }
 
