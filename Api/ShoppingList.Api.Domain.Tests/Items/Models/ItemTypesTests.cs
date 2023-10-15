@@ -35,7 +35,7 @@ public class ItemTypesTests
             _fixture.SetupStoreId();
             _fixture.SetupPrice();
             _fixture.SetupItemTypeId(itemTypeIdArg);
-            _fixture.SetupItemTypeMockNotAvailableAtStore(itemTypeId);
+            _fixture.SetupItemTypeMockNotAvailableAtStore();
             _fixture.SetupCallingUpdate();
             var sut = _fixture.CreateSut();
 
@@ -58,7 +58,7 @@ public class ItemTypesTests
             _fixture.SetupStoreId();
             _fixture.SetupPrice();
             _fixture.SetupItemTypeId(itemTypeIdArg);
-            _fixture.SetupItemTypeMockNotAvailableAtStore(itemTypeId);
+            _fixture.SetupItemTypeMockNotAvailableAtStore();
             _fixture.SetupCallingUpdate();
             var sut = _fixture.CreateSut();
 
@@ -200,11 +200,10 @@ public class ItemTypesTests
                 _itemTypeMocks.First().SetupIsAvailableAtStore(StoreId.Value, true);
             }
 
-            public void SetupItemTypeMockNotAvailableAtStore(ItemTypeId itemTypeId)
+            public void SetupItemTypeMockNotAvailableAtStore()
             {
                 TestPropertyNotSetException.ThrowIfNull(StoreId);
 
-                var itemType = new ItemTypeBuilder().WithId(itemTypeId).Create();
                 _itemTypeMocks = new() { new ItemTypeMock(new ItemTypeBuilder().Create(), MockBehavior.Strict) };
                 _itemTypeMocks.First().SetupIsAvailableAtStore(StoreId.Value, false);
             }
