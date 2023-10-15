@@ -11,12 +11,7 @@ public class ItemTypesTests
 {
     public sealed class Update
     {
-        private readonly UpdateFixture _fixture;
-
-        public Update()
-        {
-            _fixture = new UpdateFixture();
-        }
+        private readonly UpdateFixture _fixture = new();
 
         public static IEnumerable<object?[]> GetUpdatePriceItemTypeIdCombinations()
         {
@@ -29,7 +24,7 @@ public class ItemTypesTests
         [Theory]
         [MemberData(nameof(GetUpdatePriceItemTypeIdCombinations))]
         public void Update_WithItemTypeNotAvailableAtStore_ShouldCallCorrectMethod(ItemTypeId? itemTypeIdArg,
-            ItemTypeId itemTypeId)
+            ItemTypeId _)
         {
             // Arrange
             _fixture.SetupStoreId();
@@ -52,7 +47,7 @@ public class ItemTypesTests
         [Theory]
         [MemberData(nameof(GetUpdatePriceItemTypeIdCombinations))]
         public void Update_WithItemTypeNotAvailableAtStore_ShouldReturnExpectedResult(ItemTypeId? itemTypeIdArg,
-            ItemTypeId itemTypeId)
+            ItemTypeId _)
         {
             // Arrange
             _fixture.SetupStoreId();
