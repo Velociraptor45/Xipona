@@ -108,8 +108,7 @@ public class Ingredient : IIngredient
                 ShoppingListProperties.AddToShoppingListByDefault));
     }
 
-    public IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<ItemAvailability> oldAvailabilities,
-        IEnumerable<ItemAvailability> newAvailabilities)
+    public IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<ItemAvailability> newAvailabilities)
     {
         if (ShoppingListProperties is null)
             return this;

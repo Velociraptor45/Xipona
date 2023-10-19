@@ -26,7 +26,7 @@ public class ItemAvailabilitiesChangedDomainEventHandler : IDomainEventHandler<I
 
         var service = _recipeModificationServiceDelegate(cancellationToken);
         await service.ModifyIngredientsAfterAvailabilitiesChangedAsync(domainEvent.ItemId, domainEvent.ItemTypeId,
-            domainEvent.OldAvailabilities, domainEvent.NewAvailabilities);
+            domainEvent.NewAvailabilities);
 
         _logger.LogDebug(
             () => $"Finished handling {nameof(ItemAvailabilitiesChangedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");

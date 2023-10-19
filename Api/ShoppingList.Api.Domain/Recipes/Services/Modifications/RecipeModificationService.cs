@@ -62,7 +62,7 @@ public class RecipeModificationService : IRecipeModificationService
     }
 
     public async Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
-        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
+        IEnumerable<ItemAvailability> newAvailabilities)
     {
         var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId);
         var item = await _itemRepository.FindActiveByAsync(itemId);
@@ -71,7 +71,7 @@ public class RecipeModificationService : IRecipeModificationService
 
         foreach (var recipe in recipes)
         {
-            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
+            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, newAvailabilities);
             await _recipeRepository.StoreAsync(recipe);
         }
     }
