@@ -17,6 +17,12 @@ public class RecipeBuilder : DomainTestBuilderBase<Recipe>
         return this;
     }
 
+    public RecipeBuilder WithNumberOfServings(NumberOfServings numberOfServings)
+    {
+        FillConstructorWith(nameof(numberOfServings), numberOfServings);
+        return this;
+    }
+
     public RecipeBuilder WithIngredients(Ingredients ingredients)
     {
         FillConstructorWith(nameof(ingredients), ingredients);
@@ -26,6 +32,12 @@ public class RecipeBuilder : DomainTestBuilderBase<Recipe>
     public RecipeBuilder WithSteps(PreparationSteps steps)
     {
         FillConstructorWith(nameof(steps), steps);
+        return this;
+    }
+
+    public RecipeBuilder WithTags(Domain.Recipes.Models.RecipeTags tags)
+    {
+        FillConstructorWith(nameof(tags), tags);
         return this;
     }
 }

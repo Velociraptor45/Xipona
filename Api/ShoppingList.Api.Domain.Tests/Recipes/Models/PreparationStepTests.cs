@@ -9,12 +9,7 @@ public class PreparationStepTests
 {
     public class Modify
     {
-        private readonly ModifyFixture _fixture;
-
-        public Modify()
-        {
-            _fixture = new ModifyFixture();
-        }
+        private readonly ModifyFixture _fixture = new();
 
         [Fact]
         public void Modify_WithValidData_ShouldReturnExpectedResult()
