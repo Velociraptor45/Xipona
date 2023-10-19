@@ -171,9 +171,6 @@ public class ItemTypes : IEnumerable<IItemType>
 
         foreach (var type in itemTypes)
         {
-            if (!type.IsAvailableAt(storeId))
-                continue;
-
             _itemTypes[type.Id] = type.RemoveAvailabilitiesFor(storeId, out IEnumerable<IDomainEvent> eventsToPublish);
             domainEvents.AddRange(eventsToPublish);
         }

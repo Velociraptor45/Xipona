@@ -1,9 +1,12 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using Force.DeepCloner;
+using ProjectHermes.ShoppingList.Api.Domain.Items.DomainEvents;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Models;
 
@@ -240,6 +243,280 @@ public class ItemTypesTests
 
                 _itemTypeMocks.First().VerifyUpdate(Times.Once);
             }
+        }
+    }
+
+    public sealed class TransferToDefaultSection
+    {
+        private readonly TransferToDefaultSectionFixture _fixture = new();
+
+        [Fact]
+        public void TransferToDefaultSection_WithItemTypeInOldSection_ShouldTransferToNewSection()
+        {
+            // Arrange
+            _fixture.SetupOldSectionId();
+            _fixture.SetupNewSectionId();
+            _fixture.SetupItemTypeInOldSection();
+            _fixture.SetupExpectedTypeInNewSection();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedType);
+
+            // Act
+            sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            var types = sut.ToList();
+            types.Should().HaveCount(1);
+            types[0].Should().BeEquivalentTo(_fixture.ExpectedType);
+        }
+
+        [Fact]
+        public void TransferToDefaultSection_WithItemTypeNotInOldSection_ShouldNotTransferToNewSection()
+        {
+            // Arrange
+            _fixture.SetupOldSectionId();
+            _fixture.SetupNewSectionId();
+            _fixture.SetupItemTypeNotInOldSection();
+            _fixture.SetupExpectedTypeNotInNewSection();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedType);
+
+            // Act
+            sut.TransferToDefaultSection(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+
+            // Assert
+            var types = sut.ToList();
+            types.Should().HaveCount(1);
+            types[0].Should().BeEquivalentTo(_fixture.ExpectedType);
+        }
+
+        private sealed class TransferToDefaultSectionFixture : ItemTypesFixture
+        {
+            public SectionId? OldSectionId { get; private set; }
+            public SectionId? NewSectionId { get; private set; }
+            public ItemType? ExpectedType { get; private set; }
+
+            public void SetupOldSectionId()
+            {
+                OldSectionId = SectionId.New;
+            }
+
+            public void SetupNewSectionId()
+            {
+                NewSectionId = SectionId.New;
+            }
+
+            public void SetupItemTypeInOldSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(OldSectionId);
+
+                var itemType = ItemTypeMother.InitialAvailableAt(OldSectionId.Value).Create();
+                ItemTypes.Add(itemType);
+            }
+
+            public void SetupItemTypeNotInOldSection()
+            {
+                var itemType = ItemTypeMother.Initial().Create();
+                ItemTypes.Add(itemType);
+            }
+
+            public void SetupExpectedTypeInNewSection()
+            {
+                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
+
+                var type = ItemTypes[0];
+
+                var av = new ItemAvailabilityBuilder()
+                    .WithDefaultSectionId(NewSectionId.Value)
+                    .WithPrice(type.Availabilities.First().Price)
+                    .WithStoreId(type.Availabilities.First().StoreId)
+                    .Create();
+
+                ExpectedType = new ItemTypeBuilder()
+                    .WithAvailability(av)
+                    .WithId(type.Id)
+                    .WithName(type.Name)
+                    .WithIsDeleted(type.IsDeleted)
+                    .WithPredecessorId(type.PredecessorId)
+                    .Create();
+            }
+
+            public void SetupExpectedTypeNotInNewSection()
+            {
+                ExpectedType = ItemTypes[0].DeepClone();
+            }
+        }
+    }
+
+    public sealed class RemoveAvailabilitiesFor
+    {
+        private readonly RemoveAvailabilitiesForFixture _fixture = new();
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithItemTypeNotAvailableAtStore_ShouldNotRemoveAvailability()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeNotAvailableAtStore();
+            _fixture.SetupExpectedResultUnchanged();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedType);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value, out var domainEvents);
+
+            // Assert
+            var types = sut.ToList();
+            types.Should().HaveCount(1);
+            types[0].Should().BeEquivalentTo(_fixture.ExpectedType);
+
+            var domainEventsList = domainEvents.ToList();
+            domainEventsList.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithItemTypeOnlyAvailableAtStore_ShouldDeleteItemType()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeOnlyAvailableAtStore();
+            _fixture.SetupExpectedResultDeleted();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedType);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value, out var domainEvents);
+
+            // Assert
+            var types = sut.ToList();
+            types.Should().HaveCount(1);
+            types[0].Should().BeEquivalentTo(_fixture.ExpectedType);
+
+            var domainEventsList = domainEvents.ToList();
+            domainEventsList.Should().HaveCount(1);
+            domainEventsList[0].Should().BeOfType<ItemTypeDeletedDomainEvent>();
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithItemTypeAvailableAtStoreAndOthers_ShouldRemoveAvailability()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemTypeAvailableAtStoreAndOthers();
+            _fixture.SetupExpectedResultWithoutStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedType);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value, out var domainEvents);
+
+            // Assert
+            var types = sut.ToList();
+            types.Should().HaveCount(1);
+            types[0].Should().BeEquivalentTo(_fixture.ExpectedType);
+
+            var domainEventsList = domainEvents.ToList();
+            domainEventsList.Should().HaveCount(1);
+            domainEventsList[0].Should().BeOfType<ItemTypeAvailabilityDeletedDomainEvent>();
+        }
+
+        private sealed class RemoveAvailabilitiesForFixture : ItemTypesFixture
+        {
+            public StoreId? StoreId { get; private set; }
+            public ItemType? ExpectedType { get; private set; }
+
+            public void SetupStoreId()
+            {
+                StoreId = Domain.Stores.Models.StoreId.New;
+            }
+
+            public void SetupItemTypeNotAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var itemType = ItemTypeMother.Initial().Create();
+                ItemTypes.Add(itemType);
+            }
+
+            public void SetupItemTypeOnlyAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var itemType = ItemTypeMother.InitialAvailableAt(StoreId.Value).Create();
+                ItemTypes.Add(itemType);
+            }
+
+            public void SetupItemTypeAvailableAtStoreAndOthers()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availabilities = new List<ItemAvailability>()
+                {
+                    ItemAvailabilityMother.ForStore(StoreId.Value).Create(),
+                    ItemAvailabilityMother.Initial().Create()
+                };
+                availabilities.Shuffle();
+                var itemType = ItemTypeMother.Initial().WithAvailabilities(availabilities).Create();
+                ItemTypes.Add(itemType);
+            }
+
+            public void SetupExpectedResultUnchanged()
+            {
+                var type = ItemTypes[0];
+
+                ExpectedType = type.DeepClone();
+            }
+
+            public void SetupExpectedResultDeleted()
+            {
+                var type = ItemTypes[0];
+
+                ExpectedType = new ItemTypeBuilder()
+                    .WithAvailability(type.Availabilities.First())
+                    .WithId(type.Id)
+                    .WithName(type.Name)
+                    .WithIsDeleted(true)
+                    .WithPredecessorId(type.PredecessorId)
+                    .Create();
+            }
+
+            public void SetupExpectedResultWithoutStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var type = ItemTypes[0];
+
+                ExpectedType = new ItemTypeBuilder()
+                    .WithAvailability(type.Availabilities.First(av => av.StoreId != StoreId.Value))
+                    .WithId(type.Id)
+                    .WithName(type.Name)
+                    .WithIsDeleted(type.IsDeleted)
+                    .WithPredecessorId(type.PredecessorId)
+                    .Create();
+            }
+        }
+    }
+
+    private abstract class ItemTypesFixture
+    {
+        protected IList<ItemType> ItemTypes { get; } = new List<ItemType>();
+        protected ItemTypeFactoryMock ItemTypeFactoryMock { get; } = new(MockBehavior.Strict);
+
+        public ItemTypes CreateSut()
+        {
+            return new ItemTypes(ItemTypes, ItemTypeFactoryMock.Object);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 
@@ -24,5 +25,17 @@ public static class ItemTypeMother
             .WithAvailabilities(availability.ToMonoList())
             .WithIsDeleted(false)
             .WithoutPredecessorId();
+    }
+
+    public static ItemTypeBuilder InitialAvailableAt(StoreId storeId)
+    {
+        var av = ItemAvailabilityMother.ForStore(storeId).Create();
+        return InitialAvailableAt(av);
+    }
+
+    public static ItemTypeBuilder InitialAvailableAt(SectionId defaultSectionId)
+    {
+        var av = ItemAvailabilityMother.ForDefaultSection(defaultSectionId).Create();
+        return InitialAvailableAt(av);
     }
 }
