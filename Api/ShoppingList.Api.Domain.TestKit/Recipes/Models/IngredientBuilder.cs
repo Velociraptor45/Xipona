@@ -6,6 +6,19 @@ namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 
 public class IngredientBuilder : DomainTestBuilderBase<Ingredient>
 {
+    public IngredientBuilder()
+    {
+    }
+
+    public IngredientBuilder(Ingredient ingredient)
+    {
+        WithId(ingredient.Id);
+        WithItemCategoryId(ingredient.ItemCategoryId);
+        WithQuantityType(ingredient.QuantityType);
+        WithQuantity(ingredient.Quantity);
+        WithShoppingListProperties(ingredient.ShoppingListProperties);
+    }
+
     public IngredientBuilder WithId(IngredientId id)
     {
         FillConstructorWith(nameof(id), id);

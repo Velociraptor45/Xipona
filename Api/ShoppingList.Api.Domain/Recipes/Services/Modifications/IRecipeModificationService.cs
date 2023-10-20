@@ -16,7 +16,7 @@ public interface IRecipeModificationService
         StoreId deletedAvailabilityStoreId);
 
     Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
-        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities);
+        IEnumerable<ItemAvailability> newAvailabilities);
 
     Task RemoveIngredientsOfItemCategoryAsync(ItemCategoryId itemCategoryId);
 }

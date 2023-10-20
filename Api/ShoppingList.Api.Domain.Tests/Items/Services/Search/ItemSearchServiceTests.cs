@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+﻿using ProjectHermes.ShoppingList.Api.Core.TestKit;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
@@ -13,9 +14,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
@@ -72,30 +71,23 @@ public class ItemSearchServiceTests
 
         private sealed class SearchForShoppingListAsyncFixture : ItemSearchServiceFixture
         {
-            private IStore? _store;
             public string Name { get; private set; } = string.Empty;
             public StoreId StoreId { get; private set; }
 
             public void SetupName()
             {
-                Name = Fixture.Create<string>();
+                Name = new TestBuilder<string>().Create();
             }
 
             public void SetupStoreId()
             {
-                StoreId = new StoreIdBuilder().Create();
+                StoreId = StoreId.New;
             }
 
             public void SetupParameters()
             {
                 SetupName();
                 SetupStoreId();
-            }
-
-            public void SetupFindingStore()
-            {
-                _store = StoreMother.Sections(1).WithId(StoreId).Create();
-                StoreRepositoryMock.SetupFindActiveByAsync(StoreId, _store);
             }
 
             public void SetupNotFindingStore()
@@ -400,9 +392,6 @@ public class ItemSearchServiceTests
 
     private abstract class ItemSearchServiceFixture
     {
-        protected readonly Fixture Fixture;
-        protected readonly CommonFixture CommonFixture = new();
-
         protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
         protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
@@ -412,11 +401,6 @@ public class ItemSearchServiceTests
         protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
         protected readonly ItemAvailabilityReadModelConversionServiceMock AvailabilityConversionServiceMock = new(MockBehavior.Strict);
         protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
-
-        protected ItemSearchServiceFixture()
-        {
-            Fixture = CommonFixture.GetNewFixture();
-        }
 
         public ItemSearchService CreateSut()
         {

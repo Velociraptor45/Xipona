@@ -6,12 +6,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.SpecimenBu
 public class EnumSpecimenBuilder<TEnum> : ISpecimenBuilder
     where TEnum : Enum
 {
-    private readonly CommonFixture _commonFixture;
-
-    public EnumSpecimenBuilder()
-    {
-        _commonFixture = new CommonFixture();
-    }
+    private readonly CommonFixture _commonFixture = new();
 
     public object Create(object request, ISpecimenContext context)
     {
