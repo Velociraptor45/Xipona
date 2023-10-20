@@ -31,4 +31,26 @@ public class CommonFixture
 
         return list;
     }
+
+    public IEnumerable<IEnumerable<T>> SplitRandom<T>(IEnumerable<T> enumerable, int targetListCount)
+    {
+        var list = enumerable.ToList();
+        var lists = new List<List<T>>();
+
+        for (int i = 0; i < targetListCount; i++)
+        {
+            lists.Add(new List<T>());
+        }
+
+        while (list.Any())
+        {
+            var item = list[0];
+            list.RemoveAt(0);
+
+            var targetListIndex = NextInt(0, targetListCount - 1);
+            lists[targetListIndex].Add(item);
+        }
+
+        return lists;
+    }
 }
