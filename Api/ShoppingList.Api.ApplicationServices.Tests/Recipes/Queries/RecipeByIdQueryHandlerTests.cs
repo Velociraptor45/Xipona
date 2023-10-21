@@ -1,14 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.RecipeById;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Recipes.Queries;
 
-public class RecipeByIdQueryHandlerTests : QueryHandlerTestsBase<RecipeByIdQueryHandler, RecipeByIdQuery, IRecipe>
+public class RecipeByIdQueryHandlerTests : QueryHandlerTestsBase<RecipeByIdQueryHandler, RecipeByIdQuery, RecipeReadModel>
 {
     public RecipeByIdQueryHandlerTests() : base(new RecipeByIdQueryHandlerFixture())
     {
@@ -19,7 +18,7 @@ public class RecipeByIdQueryHandlerTests : QueryHandlerTestsBase<RecipeByIdQuery
         private readonly RecipeQueryServiceMock _serviceMock = new(MockBehavior.Strict);
 
         public RecipeByIdQuery? Query { get; private set; }
-        public IRecipe? ExpectedResult { get; private set; }
+        public RecipeReadModel? ExpectedResult { get; private set; }
 
         public RecipeByIdQueryHandler CreateSut()
         {
@@ -40,7 +39,7 @@ public class RecipeByIdQueryHandlerTests : QueryHandlerTestsBase<RecipeByIdQuery
 
         private void CreateExpectedResult()
         {
-            ExpectedResult = new RecipeBuilder().Create();
+            ExpectedResult = new DomainTestBuilder<RecipeReadModel>().Create();
         }
 
         private void SetupServiceReturningExpectedResult()

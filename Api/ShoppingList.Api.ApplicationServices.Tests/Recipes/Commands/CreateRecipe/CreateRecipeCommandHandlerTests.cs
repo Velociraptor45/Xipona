@@ -1,15 +1,14 @@
 ﻿using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Services.Creations;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.ApplicationServices.Tests.Recipes.Commands.CreateRecipe;
 
 public class CreateRecipeCommandHandlerTests : CommandHandlerTestsBase<
-    CreateRecipeCommandHandler, CreateRecipeCommand, IRecipe>
+    CreateRecipeCommandHandler, CreateRecipeCommand, RecipeReadModel>
 {
     public CreateRecipeCommandHandlerTests() : base(new CreateRecipeCommandHandlerFixture())
     {
@@ -21,7 +20,7 @@ public class CreateRecipeCommandHandlerTests : CommandHandlerTestsBase<
             new RecipeCreationServiceMock(MockBehavior.Strict);
 
         public override CreateRecipeCommand? Command { get; protected set; }
-        public override IRecipe? ExpectedResult { get; protected set; }
+        public override RecipeReadModel? ExpectedResult { get; protected set; }
 
         public override CreateRecipeCommandHandler CreateSut()
         {
@@ -50,7 +49,7 @@ public class CreateRecipeCommandHandlerTests : CommandHandlerTestsBase<
 
         private void SetupExpectedResult()
         {
-            ExpectedResult = new RecipeBuilder().Create();
+            ExpectedResult = new DomainTestBuilder<RecipeReadModel>().Create();
         }
 
         private void SetupCallingService()

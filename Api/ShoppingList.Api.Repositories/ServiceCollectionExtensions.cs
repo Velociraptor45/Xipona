@@ -103,7 +103,9 @@ public static class ServiceCollectionExtensions
         });
         services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
         {
-            return ct => new ItemTypeReadRepository(provider.GetRequiredService<ItemContext>(), ct);
+            var dbContext = provider.GetRequiredService<ItemContext>();
+            var converter = provider.GetRequiredService<IToDomainConverter<Items.Entities.ItemType, IItemType>>();
+            return ct => new ItemTypeReadRepository(dbContext, converter, ct);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryRepository>>(provider =>

@@ -1,4 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
@@ -67,17 +67,6 @@ public class IngredientEntityBuilder : TestBuilderBase<Ingredient>
         return WithDefaultItemTypeId(null);
     }
 
-    public IngredientEntityBuilder WithRecipe(Recipe? recipe)
-    {
-        FillPropertyWith(p => p.Recipe, recipe);
-        return this;
-    }
-
-    public IngredientEntityBuilder WithoutRecipe()
-    {
-        return WithRecipe(null);
-    }
-
     public IngredientEntityBuilder WithDefaultStoreId(Guid? defaultStoreId)
     {
         FillPropertyWith(p => p.DefaultStoreId, defaultStoreId);
@@ -89,9 +78,25 @@ public class IngredientEntityBuilder : TestBuilderBase<Ingredient>
         return WithDefaultStoreId(null);
     }
 
-    public IngredientEntityBuilder WithAddToShoppingListByDefault(bool addToShoppingListByDefault)
+    public IngredientEntityBuilder WithAddToShoppingListByDefault(bool? addToShoppingListByDefault)
     {
         FillPropertyWith(p => p.AddToShoppingListByDefault, addToShoppingListByDefault);
         return this;
+    }
+
+    public IngredientEntityBuilder WithoutAddToShoppingListByDefault()
+    {
+        return WithAddToShoppingListByDefault(null);
+    }
+
+    public IngredientEntityBuilder WithRecipe(Recipe? recipe)
+    {
+        FillPropertyWith(p => p.Recipe, recipe);
+        return this;
+    }
+
+    public IngredientEntityBuilder WithoutRecipe()
+    {
+        return WithRecipe(null);
     }
 }
