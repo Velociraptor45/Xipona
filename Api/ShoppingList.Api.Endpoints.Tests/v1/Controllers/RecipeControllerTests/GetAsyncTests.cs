@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.ApplicationServices.Recipes.Queries.RecipeB
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common.StatusResults;
@@ -12,7 +13,7 @@ using System.Reflection;
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
 public class GetAsyncTests : ControllerQueryTestsBase<RecipeController, RecipeByIdQuery,
-    IRecipe, RecipeContract, GetAsyncTests.GetAsyncFixture>
+    RecipeReadModel, RecipeContract, GetAsyncTests.GetAsyncFixture>
 {
     public GetAsyncTests() : base(new GetAsyncFixture())
     {

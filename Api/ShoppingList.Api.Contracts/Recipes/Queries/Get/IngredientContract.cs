@@ -4,10 +4,11 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get
 {
     public class IngredientContract
     {
-        public IngredientContract(Guid id, Guid itemCategoryId, int quantityType, float quantity,
+        public IngredientContract(Guid id, string name, Guid itemCategoryId, int quantityType, float quantity,
             Guid? defaultItemId, Guid? defaultItemTypeId, Guid? defaultStoreId, bool? addToShoppingListByDefault)
         {
             Id = id;
+            Name = name;
             ItemCategoryId = itemCategoryId;
             QuantityType = quantityType;
             Quantity = quantity;
@@ -18,6 +19,7 @@ namespace ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get
         }
 
         public Guid Id { get; }
+        public string Name { get; }
         public Guid ItemCategoryId { get; }
         public int QuantityType { get; }
         public float Quantity { get; }

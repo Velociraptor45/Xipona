@@ -1,8 +1,8 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 
 public interface IRecipeCreationService
 {
-    Task<IRecipe> CreateAsync(RecipeCreation creation);
+    Task<RecipeReadModel> CreateAsync(RecipeCreation creation);
 }

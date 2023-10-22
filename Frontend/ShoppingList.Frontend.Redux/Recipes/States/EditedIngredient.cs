@@ -4,6 +4,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 public record EditedIngredient(
     Guid Key,
     Guid Id,
+    string Name,
     Guid ItemCategoryId,
     int QuantityTypeId,
     float Quantity,
@@ -37,6 +38,7 @@ public record EditedIngredient(
         return new EditedIngredient(
             Guid.NewGuid(),
             Guid.Empty,
+            string.Empty,
             Guid.Empty,
             quantityTypes.First().Id,
             1,
