@@ -14,17 +14,13 @@ public class RecipeCreationService : IRecipeCreationService
     private readonly IRecipeFactory _recipeFactory;
     private readonly IRecipeConversionService _recipeConversionService;
 
-    public RecipeCreationService(
-        Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        Func<CancellationToken, IRecipeFactory> recipeFactoryDelegate,
-        Func<CancellationToken, IRecipeConversionService> recipeConversionServiceDelegate,
-        ILogger<RecipeCreationService> logger,
-        CancellationToken cancellationToken)
+    public RecipeCreationService(IRecipeRepository recipeRepository, IRecipeFactory recipeFactory,
+        IRecipeConversionService recipeConversionService, ILogger<RecipeCreationService> logger)
     {
         _logger = logger;
-        _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _recipeFactory = recipeFactoryDelegate(cancellationToken);
-        _recipeConversionService = recipeConversionServiceDelegate(cancellationToken);
+        _recipeRepository = recipeRepository;
+        _recipeFactory = recipeFactory;
+        _recipeConversionService = recipeConversionService;
     }
 
     public async Task<RecipeReadModel> CreateAsync(RecipeCreation creation)

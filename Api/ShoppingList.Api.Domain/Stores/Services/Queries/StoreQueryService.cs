@@ -9,11 +9,9 @@ public class StoreQueryService : IStoreQueryService
 {
     private readonly IStoreRepository _storeRepository;
 
-    public StoreQueryService(
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public StoreQueryService(IStoreRepository storeRepository)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
     }
 
     public async Task<IStore> GetActiveAsync(StoreId storeId)

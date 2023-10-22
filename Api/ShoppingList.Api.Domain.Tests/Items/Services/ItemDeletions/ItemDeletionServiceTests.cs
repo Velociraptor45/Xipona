@@ -121,18 +121,11 @@ public class ItemDeletionServiceTests
 
     private abstract class LocalFixture
     {
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-
-        protected LocalFixture()
-        {
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-        }
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
 
         public ItemDeletionService CreateSut()
         {
-            return new ItemDeletionService(
-                _ => ItemRepositoryMock.Object,
-                default);
+            return new ItemDeletionService(ItemRepositoryMock.Object);
         }
     }
 }

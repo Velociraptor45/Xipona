@@ -1046,10 +1046,9 @@ public class ShoppingListExchangeServiceTests
         public ShoppingListExchangeService CreateSut()
         {
             return new ShoppingListExchangeService(
-                _ => ShoppingListRepositoryMock.Object,
-                _ => AddItemToShoppingListServiceMock.Object,
-                _logger,
-                default);
+                ShoppingListRepositoryMock.Object,
+                AddItemToShoppingListServiceMock.Object,
+                _logger);
         }
     }
 }

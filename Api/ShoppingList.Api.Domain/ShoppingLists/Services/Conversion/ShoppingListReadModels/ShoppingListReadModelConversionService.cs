@@ -25,17 +25,13 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ShoppingListReadModelConversionService(
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
+        IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
+        _itemRepository = itemRepository;
+        _itemCategoryRepository = itemCategoryRepository;
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList)

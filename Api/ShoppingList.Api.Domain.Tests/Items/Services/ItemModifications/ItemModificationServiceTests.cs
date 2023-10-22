@@ -982,11 +982,10 @@ public class ItemModificationServiceTests
         public ItemModificationService CreateSut()
         {
             return new ItemModificationService(
-                _ => ItemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
-                _ => ShoppingListRepositoryMock.Object,
-                _ => StoreRepositoryMock.Object,
-                default);
+                ItemRepositoryMock.Object,
+                ValidatorMock.Object,
+                ShoppingListRepositoryMock.Object,
+                StoreRepositoryMock.Object);
         }
     }
 }

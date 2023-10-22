@@ -148,24 +148,18 @@ public class ItemSearchReadModelConversionServiceTests
     private class LocalFixture
     {
         private readonly CommonFixture _commonFixture = new CommonFixture();
-        private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock;
-        private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock;
+        private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock = new(MockBehavior.Strict);
+        private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock = new(MockBehavior.Strict);
         private readonly Dictionary<ItemCategoryId, IItemCategory> _itemCategories = new();
         private readonly Dictionary<ManufacturerId, IManufacturer> _manufacturers = new();
-
-        public LocalFixture()
-        {
-            _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-            _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
-        }
 
         public List<IItem>? Items { get; private set; }
         public IStore? Store { get; private set; }
 
         public ItemSearchReadModelConversionService CreateSut()
         {
-            return new ItemSearchReadModelConversionService(_ => _itemCategoryRepositoryMock.Object,
-                _ => _manufacturerRepositoryMock.Object, default);
+            return new ItemSearchReadModelConversionService(_itemCategoryRepositoryMock.Object,
+                _manufacturerRepositoryMock.Object);
         }
 
         public void SetupStore()

@@ -8,9 +8,9 @@ public class IngredientFactory : IIngredientFactory
 {
     private readonly IValidator _validator;
 
-    public IngredientFactory(Func<CancellationToken, IValidator> validatorDelegate, CancellationToken cancellationToken)
+    public IngredientFactory(IValidator validator)
     {
-        _validator = validatorDelegate(cancellationToken);
+        _validator = validator;
     }
 
     public async Task<IIngredient> CreateNewAsync(ItemCategoryId itemCategoryId, IngredientQuantityType quantityType,

@@ -24,14 +24,14 @@ public class ItemCategoryRepository : IItemCategoryRepository
     public ItemCategoryRepository(ItemCategoryContext dbContext,
         IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
         IToEntityConverter<IItemCategory, Entities.ItemCategory> toEntityConverter,
-        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
+        IDomainEventDispatcher domainEventDispatcher,
         ILogger<ItemCategoryRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
-        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
+        _domainEventDispatcher = domainEventDispatcher;
         _logger = logger;
         _cancellationToken = cancellationToken;
     }

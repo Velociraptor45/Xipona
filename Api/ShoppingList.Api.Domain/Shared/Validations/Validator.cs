@@ -18,18 +18,17 @@ public class Validator : IValidator
     private readonly IRecipeTagValidationService _recipeTagValidationService;
 
     public Validator(
-        Func<CancellationToken, IAvailabilityValidationService> availabilityValidationServiceDelegate,
-        Func<CancellationToken, IItemCategoryValidationService> itemCategoryValidationServiceDelegate,
-        Func<CancellationToken, IManufacturerValidationService> manufacturerValidationServiceDelegate,
-        Func<CancellationToken, IItemValidationService> itemValidationServiceDelegate,
-        Func<CancellationToken, IRecipeTagValidationService> recipeTagValidationServiceDelegate,
-        CancellationToken cancellationToken)
+        IAvailabilityValidationService availabilityValidationService,
+        IItemCategoryValidationService itemCategoryValidationService,
+        IManufacturerValidationService manufacturerValidationService,
+        IItemValidationService itemValidationService,
+        IRecipeTagValidationService recipeTagValidationService)
     {
-        _availabilityValidationService = availabilityValidationServiceDelegate(cancellationToken);
-        _itemCategoryValidationService = itemCategoryValidationServiceDelegate(cancellationToken);
-        _manufacturerValidationService = manufacturerValidationServiceDelegate(cancellationToken);
-        _itemValidationService = itemValidationServiceDelegate(cancellationToken);
-        _recipeTagValidationService = recipeTagValidationServiceDelegate(cancellationToken);
+        _availabilityValidationService = availabilityValidationService;
+        _itemCategoryValidationService = itemCategoryValidationService;
+        _manufacturerValidationService = manufacturerValidationService;
+        _itemValidationService = itemValidationService;
+        _recipeTagValidationService = recipeTagValidationService;
     }
 
     public async Task ValidateAsync(IEnumerable<ItemAvailability> availabilities)

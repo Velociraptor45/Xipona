@@ -10,14 +10,11 @@ public class RecipeFactory : IRecipeFactory
     private readonly IPreparationStepFactory _preparationStepFactory;
     private readonly IValidator _validator;
 
-    public RecipeFactory(
-        Func<CancellationToken, IIngredientFactory> ingredientFactoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        IPreparationStepFactory preparationStepFactory,
-        CancellationToken cancellationToken)
+    public RecipeFactory(IIngredientFactory ingredientFactory, IValidator validator,
+        IPreparationStepFactory preparationStepFactory)
     {
-        _validator = validatorDelegate(cancellationToken);
-        _ingredientFactory = ingredientFactoryDelegate(cancellationToken);
+        _validator = validator;
+        _ingredientFactory = ingredientFactory;
         _preparationStepFactory = preparationStepFactory;
     }
 

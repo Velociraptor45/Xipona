@@ -9,13 +9,10 @@ public class ManufacturerDeletionService : IManufacturerDeletionService
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IItemRepository _itemRepository;
 
-    public ManufacturerDeletionService(
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ManufacturerDeletionService(IManufacturerRepository manufacturerRepository, IItemRepository itemRepository)
     {
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _manufacturerRepository = manufacturerRepository;
+        _itemRepository = itemRepository;
     }
 
     public async Task DeleteAsync(ManufacturerId manufacturerId)

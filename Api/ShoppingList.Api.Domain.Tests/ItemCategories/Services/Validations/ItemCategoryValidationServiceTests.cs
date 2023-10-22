@@ -60,17 +60,12 @@ public class ItemCategoryValidationServiceTests
 
     private class LocalFixture
     {
-        public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; }
+        public ItemCategoryRepositoryMock ItemCategoryRepositoryMock { get; } = new(MockBehavior.Strict);
         public ItemCategory? ItemCategory { get; private set; }
-
-        public LocalFixture()
-        {
-            ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-        }
 
         public ItemCategoryValidationService CreateService()
         {
-            return new ItemCategoryValidationService(_ => ItemCategoryRepositoryMock.Object, default);
+            return new ItemCategoryValidationService(ItemCategoryRepositoryMock.Object);
         }
 
         public void SetupItemCategory()

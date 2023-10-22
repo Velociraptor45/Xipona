@@ -19,17 +19,13 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     private readonly IItemRepository _itemRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
 
-    public AddItemToShoppingListService(
-        IShoppingListSectionFactory shoppingListSectionFactory,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public AddItemToShoppingListService(IShoppingListSectionFactory shoppingListSectionFactory,
+        IStoreRepository storeRepository, IItemRepository itemRepository, IShoppingListRepository shoppingListRepository)
     {
         _shoppingListSectionFactory = shoppingListSectionFactory;
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
     }
 
     public async Task AddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)

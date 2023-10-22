@@ -70,8 +70,7 @@ public class RecipeTagCreationServiceTests
         {
             return new RecipeTagCreationService(
                 RecipeTagFactoryMock.Object,
-                _ => RecipeTagRepositoryMock.Object,
-                default);
+                RecipeTagRepositoryMock.Object);
         }
     }
 }

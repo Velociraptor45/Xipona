@@ -425,10 +425,9 @@ public class RecipeModificationServiceTests
         public RecipeModificationService CreateSut()
         {
             return new RecipeModificationService(
-                _ => RecipeRepositoryMock.Object,
-                _ => ItemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
-                default);
+                RecipeRepositoryMock.Object,
+                ItemRepositoryMock.Object,
+                ValidatorMock.Object);
         }
     }
 }

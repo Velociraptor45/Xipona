@@ -118,7 +118,7 @@ public class RecipeTests
 
             public ModifyAsyncFixture()
             {
-                _ingredientFactory = new(_ => ValidatorMock.Object, default);
+                _ingredientFactory = new(ValidatorMock.Object);
             }
 
             public Recipe? ExpectedRecipe { get; private set; }

@@ -80,11 +80,10 @@ public class RecipeCreationServiceTests
         public RecipeCreationService CreateSut()
         {
             return new RecipeCreationService(
-                _ => _recipeRepository.Object,
-                _ => _recipeFactoryMock.Object,
-                _ => _recipeConversionServiceMock.Object,
-                _logger,
-                default);
+                _recipeRepository.Object,
+                _recipeFactoryMock.Object,
+                _recipeConversionServiceMock.Object,
+                _logger);
         }
 
         public void SetupCreation()

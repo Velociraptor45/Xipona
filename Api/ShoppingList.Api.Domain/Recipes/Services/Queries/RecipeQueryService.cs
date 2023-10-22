@@ -26,19 +26,14 @@ public class RecipeQueryService : IRecipeQueryService
     private readonly IQuantityTranslationService _quantityTranslationService;
     private readonly ILogger<RecipeQueryService> _logger;
 
-    public RecipeQueryService(
-        Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IRecipeConversionService> recipeConversionServiceDelegate,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IQuantityTranslationService quantityTranslationService,
-        ILogger<RecipeQueryService> logger,
-        CancellationToken cancellationToken)
+    public RecipeQueryService(IRecipeRepository recipeRepository, IItemRepository itemRepository,
+        IRecipeConversionService recipeConversionService, IStoreRepository storeRepository,
+        IQuantityTranslationService quantityTranslationService, ILogger<RecipeQueryService> logger)
     {
-        _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _recipeConversionService = recipeConversionServiceDelegate(cancellationToken);
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _recipeRepository = recipeRepository;
+        _itemRepository = itemRepository;
+        _recipeConversionService = recipeConversionService;
+        _storeRepository = storeRepository;
         _quantityTranslationService = quantityTranslationService;
         _logger = logger;
     }

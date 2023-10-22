@@ -380,11 +380,10 @@ public class ItemCreationServiceTests
         public ItemCreationService CreateSut()
         {
             return new ItemCreationService(
-                _ => ItemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
+                ItemRepositoryMock.Object,
+                ValidatorMock.Object,
                 ItemFactoryMock.Object,
-                _ => ConversionServiceMock.Object,
-                default);
+                ConversionServiceMock.Object);
         }
     }
 }

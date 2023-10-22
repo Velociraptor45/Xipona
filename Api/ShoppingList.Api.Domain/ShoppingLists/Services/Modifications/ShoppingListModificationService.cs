@@ -24,19 +24,15 @@ public class ShoppingListModificationService : IShoppingListModificationService
     private readonly IItemFactory _itemFactory;
     private readonly IAddItemToShoppingListService _addItemToShoppingListService;
 
-    public ShoppingListModificationService(
-        Func<CancellationToken, IAddItemToShoppingListService> addItemToShoppingListServiceDelegate,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IShoppingListSectionFactory shoppingListSectionFactory,
-        IItemFactory itemFactory,
-        CancellationToken cancellationToken)
+    public ShoppingListModificationService(IAddItemToShoppingListService addItemToShoppingListService,
+        IShoppingListRepository shoppingListRepository, IItemRepository itemRepository,
+        IStoreRepository storeRepository, IShoppingListSectionFactory shoppingListSectionFactory,
+        IItemFactory itemFactory)
     {
-        _addItemToShoppingListService = addItemToShoppingListServiceDelegate(cancellationToken);
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _addItemToShoppingListService = addItemToShoppingListService;
+        _shoppingListRepository = shoppingListRepository;
+        _itemRepository = itemRepository;
+        _storeRepository = storeRepository;
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _itemFactory = itemFactory;
     }

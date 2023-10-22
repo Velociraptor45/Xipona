@@ -10,13 +10,10 @@ public class RecipeConversionService : IRecipeConversionService
     private readonly IItemRepository _itemRepository;
     private readonly IItemCategoryRepository _itemCategoryRepository;
 
-    public RecipeConversionService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public RecipeConversionService(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepository;
+        _itemCategoryRepository = itemCategoryRepository;
     }
 
     public async Task<RecipeReadModel> ToReadModelAsync(IRecipe recipe)

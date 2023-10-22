@@ -16,15 +16,12 @@ public class RecipeModificationService : IRecipeModificationService
     private readonly IValidator _validator;
     private readonly IItemRepository _itemRepository;
 
-    public RecipeModificationService(
-        Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        CancellationToken cancellationToken)
+    public RecipeModificationService(IRecipeRepository recipeRepository, IItemRepository itemRepository,
+        IValidator validator)
     {
-        _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
+        _recipeRepository = recipeRepository;
+        _itemRepository = itemRepository;
+        _validator = validator;
     }
 
     public async Task ModifyAsync(RecipeModification modification)

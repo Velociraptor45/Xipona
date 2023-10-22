@@ -1074,10 +1074,9 @@ public class AddItemToShoppingListServiceTests
         {
             return new AddItemToShoppingListService(
                 ShoppingListSectionFactoryMock.Object,
-                _ => StoreRepositoryMock.Object,
-                _ => ItemRepositoryMock.Object,
-                _ => ShoppingListRepositoryMock.Object,
-                default);
+                StoreRepositoryMock.Object,
+                ItemRepositoryMock.Object,
+                ShoppingListRepositoryMock.Object);
         }
 
         public void SetupShoppingListMock()
