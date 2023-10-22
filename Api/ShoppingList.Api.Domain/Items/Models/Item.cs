@@ -371,9 +371,7 @@ public class Item : AggregateRoot, IItem
 
         if (HasItemTypes)
         {
-            if (_itemTypes!.Count() == 1
-               && _itemTypes!.First().Availabilities.Count == 1
-               && _itemTypes!.First().IsAvailableAt(storeId))
+            if (_itemTypes!.All(t => t.IsAvailableAt(storeId) && t.Availabilities.Count == 1))
             {
                 Delete();
                 return;
