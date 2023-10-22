@@ -8,11 +8,9 @@ public class ManufacturerModificationService : IManufacturerModificationService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ManufacturerModificationService(
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ManufacturerModificationService(IManufacturerRepository manufacturerRepository)
     {
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task ModifyAsync(ManufacturerModification modification)

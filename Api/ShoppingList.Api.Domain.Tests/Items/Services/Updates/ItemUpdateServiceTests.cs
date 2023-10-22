@@ -515,10 +515,9 @@ public class ItemUpdateServiceTests
         public ItemUpdateService CreateSut()
         {
             return new ItemUpdateService(
-                _ => _itemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
-                DateTimeServiceMock.Object,
-                default);
+                _itemRepositoryMock.Object,
+                ValidatorMock.Object,
+                DateTimeServiceMock.Object);
         }
 
         protected void SetupFindingItem(ItemId itemId, IItem? item)

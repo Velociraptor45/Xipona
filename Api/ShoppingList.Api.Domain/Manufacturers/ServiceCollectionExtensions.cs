@@ -18,8 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IManufacturerValidationService>>(provider =>
         {
             return ct => new ManufacturerValidationService(
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
-                ct);
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerCreationService>>(provider =>
@@ -27,15 +26,14 @@ public static class ServiceCollectionExtensions
             var manufacturerRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
             var manufacturerFactory = provider.GetRequiredService<IManufacturerFactory>();
-            return cancellationToken => new ManufacturerCreationService(manufacturerRepositoryDelegate, manufacturerFactory,
-                cancellationToken);
+            return ct => new ManufacturerCreationService(manufacturerRepositoryDelegate(ct), manufacturerFactory);
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerQueryService>>(provider =>
         {
             var manufacturerRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
-            return cancellationToken => new ManufacturerQueryService(manufacturerRepositoryDelegate, cancellationToken);
+            return ct => new ManufacturerQueryService(manufacturerRepositoryDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerDeletionService>>(provider =>
@@ -43,16 +41,14 @@ public static class ServiceCollectionExtensions
             var manufacturerRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
-            return cancellationToken =>
-                new ManufacturerDeletionService(manufacturerRepositoryDelegate, itemRepositoryDelegate, cancellationToken);
+            return ct => new ManufacturerDeletionService(manufacturerRepositoryDelegate(ct), itemRepositoryDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IManufacturerModificationService>>(provider =>
         {
             var manufacturerRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
-            return cancellationToken =>
-                new ManufacturerModificationService(manufacturerRepositoryDelegate, cancellationToken);
+            return ct => new ManufacturerModificationService(manufacturerRepositoryDelegate(ct));
         });
     }
 }

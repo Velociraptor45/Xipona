@@ -21,15 +21,12 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IStoreRepository _storeRepository;
 
-    public ItemReadModelConversionService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
+        IManufacturerRepository manufacturerRepository, IStoreRepository storeRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
+        _manufacturerRepository = manufacturerRepository;
+        _storeRepository = storeRepository;
     }
 
     public async Task<ItemReadModel> ConvertAsync(IItem item)

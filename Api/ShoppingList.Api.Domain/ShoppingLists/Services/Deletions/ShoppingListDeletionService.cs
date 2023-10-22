@@ -10,13 +10,11 @@ public class ShoppingListDeletionService : IShoppingListDeletionService
     private readonly ILogger<ShoppingListDeletionService> _logger;
     private readonly IShoppingListRepository _shoppingListRepository;
 
-    public ShoppingListDeletionService(
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        ILogger<ShoppingListDeletionService> logger,
-        CancellationToken cancellationToken)
+    public ShoppingListDeletionService(IShoppingListRepository shoppingListRepository,
+        ILogger<ShoppingListDeletionService> logger)
     {
         _logger = logger;
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _shoppingListRepository = shoppingListRepository;
     }
 
     public async Task HardDeleteForStoreAsync(StoreId storeId)

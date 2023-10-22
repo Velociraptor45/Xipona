@@ -61,18 +61,13 @@ public class ManufacturerValidationServiceTests
 
     private class LocalFixture
     {
-        public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; }
+        public ManufacturerRepositoryMock ManufacturerRepositoryMock { get; } = new(MockBehavior.Strict);
 
         public Manufacturer? Manufacturer { get; private set; }
 
-        public LocalFixture()
-        {
-            ManufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
-        }
-
         public ManufacturerValidationService CreateSut()
         {
-            return new ManufacturerValidationService(_ => ManufacturerRepositoryMock.Object, default);
+            return new ManufacturerValidationService(ManufacturerRepositoryMock.Object);
         }
 
         public void SetupManufacturer()

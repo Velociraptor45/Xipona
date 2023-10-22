@@ -12,31 +12,21 @@ public class StoreCreationService : IStoreCreationService
     private readonly IStoreFactory _storeFactory;
     private readonly IShoppingListFactory _shoppingListFactory;
     private readonly IShoppingListRepository _shoppingListRepository;
-    private readonly CancellationToken _cancellationToken;
 
-    public StoreCreationService(
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IStoreFactory storeFactory,
-        IShoppingListFactory shoppingListFactory,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public StoreCreationService(IStoreRepository storeRepository, IStoreFactory storeFactory,
+        IShoppingListFactory shoppingListFactory, IShoppingListRepository shoppingListRepository)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
         _storeFactory = storeFactory;
         _shoppingListFactory = shoppingListFactory;
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _cancellationToken = cancellationToken;
+        _shoppingListRepository = shoppingListRepository;
     }
 
     public async Task<IStore> CreateAsync(StoreCreation creation)
     {
-        _cancellationToken.ThrowIfCancellationRequested();
-
         IStore store = _storeFactory.CreateNew(creation);
 
         store = await _storeRepository.StoreAsync(store);
-
-        _cancellationToken.ThrowIfCancellationRequested();
 
         var shoppingList = _shoppingListFactory.CreateNew(store);
         await _shoppingListRepository.StoreAsync(shoppingList);

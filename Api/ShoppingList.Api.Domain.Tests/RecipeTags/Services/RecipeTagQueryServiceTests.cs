@@ -55,7 +55,7 @@ public class RecipeTagQueryServiceTests
 
         public RecipeTagQueryService CreateSut()
         {
-            return new RecipeTagQueryService(_ => RepositoryMock.Object, default);
+            return new RecipeTagQueryService(RepositoryMock.Object);
         }
     }
 }

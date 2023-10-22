@@ -14,15 +14,11 @@ public class ItemUpdateService : IItemUpdateService
     private readonly IDateTimeService _dateTimeService;
     private readonly IValidator _validator;
 
-    public ItemUpdateService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        IDateTimeService dateTimeService,
-        CancellationToken cancellationToken)
+    public ItemUpdateService(IItemRepository itemRepository, IValidator validator, IDateTimeService dateTimeService)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepository;
         _dateTimeService = dateTimeService;
-        _validator = validatorDelegate(cancellationToken);
+        _validator = validator;
     }
 
     public async Task UpdateAsync(ItemWithTypesUpdate update)

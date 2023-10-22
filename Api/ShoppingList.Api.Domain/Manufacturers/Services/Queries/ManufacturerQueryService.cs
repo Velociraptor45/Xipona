@@ -10,11 +10,9 @@ public class ManufacturerQueryService : IManufacturerQueryService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ManufacturerQueryService(
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ManufacturerQueryService(IManufacturerRepository manufacturerRepository)
     {
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<IEnumerable<ManufacturerReadModel>> GetAllActiveAsync()

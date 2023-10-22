@@ -12,14 +12,13 @@ public class ItemCategoryDeletionService : IItemCategoryDeletionService
     private readonly IShoppingListRepository _shoppingListRepository;
 
     public ItemCategoryDeletionService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        CancellationToken cancellationToken)
+        IItemCategoryRepository itemCategoryRepository,
+        IItemRepository itemRepository,
+        IShoppingListRepository shoppingListRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
     }
 
     public async Task DeleteAsync(ItemCategoryId itemCategoryId)

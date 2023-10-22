@@ -9,11 +9,9 @@ public class StoreDeletionService : IStoreDeletionService
 {
     private readonly IStoreRepository _storeRepository;
 
-    public StoreDeletionService(
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public StoreDeletionService(IStoreRepository storeRepository)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
     }
 
     public async Task DeleteAsync(StoreId storeId)

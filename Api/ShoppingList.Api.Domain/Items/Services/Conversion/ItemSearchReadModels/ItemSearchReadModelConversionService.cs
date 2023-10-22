@@ -18,13 +18,11 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ItemSearchReadModelConversionService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemSearchReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
+        IManufacturerRepository manufacturerRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items,

@@ -9,12 +9,10 @@ public class ManufacturerCreationService : IManufacturerCreationService
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IManufacturerFactory _manufacturerFactory;
 
-    public ManufacturerCreationService(
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        IManufacturerFactory manufacturerFactory,
-        CancellationToken cancellationToken)
+    public ManufacturerCreationService(IManufacturerRepository manufacturerRepository,
+        IManufacturerFactory manufacturerFactory)
     {
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _manufacturerRepository = manufacturerRepository;
         _manufacturerFactory = manufacturerFactory;
     }
 

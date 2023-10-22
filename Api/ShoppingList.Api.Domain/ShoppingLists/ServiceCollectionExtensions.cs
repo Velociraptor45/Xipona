@@ -26,10 +26,9 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IShoppingListExchangeService>>(provider =>
         {
             return ct => new ShoppingListExchangeService(
-                provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>(),
-                provider.GetRequiredService<Func<CancellationToken, IAddItemToShoppingListService>>(),
-                provider.GetRequiredService<ILogger<ShoppingListExchangeService>>(),
-                ct);
+                provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>()(ct),
+                provider.GetRequiredService<Func<CancellationToken, IAddItemToShoppingListService>>()(ct),
+                provider.GetRequiredService<ILogger<ShoppingListExchangeService>>());
         });
 
         services.AddTransient<Func<CancellationToken, IAddItemToShoppingListService>>(provider =>
@@ -39,19 +38,17 @@ public static class ServiceCollectionExtensions
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
             var shoppingListRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
-            return token => new AddItemToShoppingListService(shoppingListSectionFactory, storeRepositoryDelegate,
-                itemRepositoryDelegate, shoppingListRepositoryDelegate, token);
+            return ct => new AddItemToShoppingListService(shoppingListSectionFactory, storeRepositoryDelegate(ct),
+                itemRepositoryDelegate(ct), shoppingListRepositoryDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListReadModelConversionService>>(provider =>
         {
             return ct => new ShoppingListReadModelConversionService(
-                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>(),
-                provider.GetRequiredService<Func<CancellationToken, IItemRepository>>(),
-                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>(),
-                ct
-            );
+                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct),
+                provider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(ct),
+                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListModificationService>>(provider =>
@@ -64,10 +61,10 @@ public static class ServiceCollectionExtensions
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var shoppingListSectionFactory = provider.GetRequiredService<IShoppingListSectionFactory>();
             var itemFactory = provider.GetRequiredService<IItemFactory>();
-            return cancellationToken =>
-                new ShoppingListModificationService(addItemToShoppingListServiceDelegate, shoppingListRepositoryDelegate,
-                    itemRepositoryDelegate, storeRepositoryDelegate, shoppingListSectionFactory, itemFactory,
-                    cancellationToken);
+            return ct =>
+                new ShoppingListModificationService(addItemToShoppingListServiceDelegate(ct),
+                    shoppingListRepositoryDelegate(ct), itemRepositoryDelegate(ct), storeRepositoryDelegate(ct),
+                    shoppingListSectionFactory, itemFactory);
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListQueryService>>(provider =>
@@ -76,8 +73,8 @@ public static class ServiceCollectionExtensions
                 .GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             var conversionServiceDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IShoppingListReadModelConversionService>>();
-            return cancellationToken => new ShoppingListQueryService(shoppingListRepositoryDelegate,
-                conversionServiceDelegate, cancellationToken);
+            return ct => new ShoppingListQueryService(shoppingListRepositoryDelegate(ct),
+                conversionServiceDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListDeletionService>>(provider =>
@@ -85,8 +82,7 @@ public static class ServiceCollectionExtensions
             var shoppingListRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             var logger = provider.GetRequiredService<ILogger<ShoppingListDeletionService>>();
-            return cancellationToken => new ShoppingListDeletionService(shoppingListRepositoryDelegate, logger,
-                cancellationToken);
+            return ct => new ShoppingListDeletionService(shoppingListRepositoryDelegate(ct), logger);
         });
     }
 }

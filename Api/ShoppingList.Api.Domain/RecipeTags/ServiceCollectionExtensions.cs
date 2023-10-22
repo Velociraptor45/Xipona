@@ -16,20 +16,20 @@ internal static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IRecipeTagQueryService>>(s =>
         {
             var repo = s.GetRequiredService<Func<CancellationToken, IRecipeTagRepository>>();
-            return token => new RecipeTagQueryService(repo, token);
+            return ct => new RecipeTagQueryService(repo(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IRecipeTagCreationService>>(s =>
         {
             var repo = s.GetRequiredService<Func<CancellationToken, IRecipeTagRepository>>();
             var factory = s.GetRequiredService<IRecipeTagFactory>();
-            return token => new RecipeTagCreationService(factory, repo, token);
+            return ct => new RecipeTagCreationService(factory, repo(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IRecipeTagValidationService>>(s =>
         {
             var repo = s.GetRequiredService<Func<CancellationToken, IRecipeTagRepository>>();
-            return token => new RecipeTagValidationService(repo, token);
+            return ct => new RecipeTagValidationService(repo(ct));
         });
     }
 }

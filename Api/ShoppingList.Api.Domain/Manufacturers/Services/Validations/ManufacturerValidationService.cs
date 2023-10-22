@@ -9,11 +9,9 @@ public class ManufacturerValidationService : IManufacturerValidationService
 {
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ManufacturerValidationService(
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ManufacturerValidationService(IManufacturerRepository manufacturerRepository)
     {
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task ValidateAsync(ManufacturerId manufacturerId)

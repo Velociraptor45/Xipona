@@ -10,11 +10,10 @@ public class ItemCategoryCreationService : IItemCategoryCreationService
     private readonly IItemCategoryFactory _itemCategoryFactory;
 
     public ItemCategoryCreationService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        IItemCategoryFactory itemCategoryFactory,
-        CancellationToken cancellationToken)
+        IItemCategoryRepository itemCategoryRepository,
+        IItemCategoryFactory itemCategoryFactory)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
         _itemCategoryFactory = itemCategoryFactory;
     }
 

@@ -10,11 +10,9 @@ public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadM
 {
     private readonly IStoreRepository _storeRepository;
 
-    public ItemAvailabilityReadModelConversionService(
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemAvailabilityReadModelConversionService(IStoreRepository storeRepository)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
     }
 
     public async Task<IDictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailabilityReadModel>>> ConvertAsync(
