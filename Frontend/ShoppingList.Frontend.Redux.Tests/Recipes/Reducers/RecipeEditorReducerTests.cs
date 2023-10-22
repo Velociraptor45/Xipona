@@ -65,6 +65,7 @@ public class RecipeEditorReducerTests
                                 new(
                                     Guid.NewGuid(),
                                     Guid.Empty,
+                                    string.Empty,
                                     Guid.Empty,
                                     ExpectedState.IngredientQuantityTypes.First().Id,
                                     1,
