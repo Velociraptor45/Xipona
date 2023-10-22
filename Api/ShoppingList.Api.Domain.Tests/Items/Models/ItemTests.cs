@@ -2155,7 +2155,7 @@ public class ItemTests
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemTypeDeletedDomainEvent);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemTypeDeletedDomainEvents);
 
             // Act
             sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
@@ -2171,7 +2171,34 @@ public class ItemTests
             sut.DomainEvents.Should().HaveCount(1);
             sut.DomainEvents.First().Should().BeOfType<ItemTypeDeletedDomainEvent>();
             var domainEvent = sut.DomainEvents.First() as ItemTypeDeletedDomainEvent;
-            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemTypeDeletedDomainEvent);
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemTypeDeletedDomainEvents.First());
+        }
+
+        [Fact]
+        public void RemoveAvailabilitiesFor_WithMultipleTypes_WithOneAvailabilityForStoreInAllTypes_ShouldDeleteItemAndPublishEvent()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupMultipleTypesWithAllOnlyAvailableAtStore();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemAvailabilities);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItemDeletedDomainEvent);
+
+            // Act
+            sut.RemoveAvailabilitiesFor(_fixture.StoreId.Value);
+
+            // Assert
+            sut.IsDeleted.Should().BeTrue();
+            sut.ItemTypes.Should().HaveCount(2);
+            sut.ItemTypes.Should().AllSatisfy(t => t.IsDeleted.Should().BeFalse());
+            sut.ItemTypes.Should().AllSatisfy(t => t.Availabilities.Should().BeEquivalentTo(_fixture.ExpectedItemAvailabilities));
+
+            sut.DomainEvents.Should().HaveCount(1);
+            sut.DomainEvents.First().Should().BeOfType<ItemDeletedDomainEvent>();
+            var domainEvent = sut.DomainEvents.First() as ItemDeletedDomainEvent;
+            domainEvent.Should().BeEquivalentTo(_fixture.ExpectedItemDeletedDomainEvent);
         }
 
         [Fact]
@@ -2225,7 +2252,7 @@ public class ItemTests
             public StoreId? StoreId { get; private set; }
             public IReadOnlyCollection<ItemAvailability>? ExpectedItemAvailabilities { get; private set; }
             public ItemDeletedDomainEvent? ExpectedItemDeletedDomainEvent { get; private set; }
-            public ItemTypeDeletedDomainEvent? ExpectedItemTypeDeletedDomainEvent { get; private set; }
+            public IReadOnlyCollection<ItemTypeDeletedDomainEvent>? ExpectedItemTypeDeletedDomainEvents { get; private set; }
             public ItemAvailabilityDeletedDomainEvent? ExpectedItemAvailabilityDeletedDomainEvent { get; private set; }
             public ItemTypeAvailabilityDeletedDomainEvent? ExpectedItemTypeAvailabilityDeletedDomainEvent { get; private set; }
 
@@ -2261,7 +2288,25 @@ public class ItemTests
                 Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
                 ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
-                ExpectedItemTypeDeletedDomainEvent = new ItemTypeDeletedDomainEvent(itemTypes.First().Id) { ItemId = Id };
+                ExpectedItemTypeDeletedDomainEvents = new ItemTypeDeletedDomainEvent(itemTypes.First().Id) { ItemId = Id }
+                    .ToMonoList();
+            }
+
+            public void SetupMultipleTypesWithAllOnlyAvailableAtStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
+
+                var itemTypes = new List<IItemType>{
+                    ItemTypeMother.InitialAvailableAt(availability).Create(),
+                    ItemTypeMother.InitialAvailableAt(availability).Create()
+                };
+
+                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+
+                ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
+                ExpectedItemDeletedDomainEvent = new ItemDeletedDomainEvent { ItemId = Id };
             }
 
             public void SetupMultipleTypesWithoutAvailableAtStore()
