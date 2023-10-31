@@ -392,7 +392,7 @@ public class RecipeControllerIntegrationTests
 
             // Assert
             using var assertScope = _fixture.CreateServiceScope();
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
             var entities = (await _fixture.LoadAllRecipesAsync(assertScope)).ToList();
             entities.Should().HaveCount(1);
             var entity = entities.First();

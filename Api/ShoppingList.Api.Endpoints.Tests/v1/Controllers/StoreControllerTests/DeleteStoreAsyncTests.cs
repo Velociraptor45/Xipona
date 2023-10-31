@@ -44,7 +44,7 @@ public class DeleteStoreAsyncTests : ControllerCommandTestsBase<StoreController,
 
         public DeleteStoreAsyncFixture()
         {
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.StoreNotFound));
         }

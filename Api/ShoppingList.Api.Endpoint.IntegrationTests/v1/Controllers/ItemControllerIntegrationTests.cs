@@ -615,7 +615,7 @@ public class ItemControllerIntegrationTests
             // Assert
             using var assertionScope = _fixture.CreateServiceScope();
 
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
             items.Should().HaveCount(1);
@@ -766,7 +766,7 @@ public class ItemControllerIntegrationTests
             // Assert
             using var assertionScope = _fixture.CreateServiceScope();
 
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
             items.Should().HaveCount(1);
@@ -947,7 +947,7 @@ public class ItemControllerIntegrationTests
             var result = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertionScope = _fixture.CreateServiceScope();
             var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
@@ -1003,7 +1003,7 @@ public class ItemControllerIntegrationTests
             var result = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertScope = _fixture.CreateServiceScope();
             var allEntities = (await _fixture.LoadAllItemsAsync(assertScope)).ToList();
@@ -1251,7 +1251,7 @@ public class ItemControllerIntegrationTests
             var result = await sut.UpdateItemAsync(_fixture.ItemId, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertionScope = _fixture.CreateServiceScope();
 
@@ -1798,7 +1798,7 @@ public class ItemControllerIntegrationTests
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertionServiceScope = _fixture.CreateServiceScope();
             using var assertionScope = new AssertionScope();

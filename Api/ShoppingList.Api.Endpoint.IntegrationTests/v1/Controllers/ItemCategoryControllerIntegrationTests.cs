@@ -45,7 +45,7 @@ public class ItemCategoryControllerIntegrationTests
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertionServiceScope = _fixture.CreateServiceScope();
 

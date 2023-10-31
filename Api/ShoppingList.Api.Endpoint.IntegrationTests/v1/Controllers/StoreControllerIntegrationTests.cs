@@ -548,7 +548,7 @@ public class StoreControllerIntegrationTests
             var response = await sut.ModifyStoreAsync(_fixture.Contract!);
 
             // Assert
-            response.Should().BeOfType<OkResult>();
+            response.Should().BeOfType<NoContentResult>();
 
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
@@ -593,7 +593,7 @@ public class StoreControllerIntegrationTests
             var response = await sut.ModifyStoreAsync(_fixture.Contract!);
 
             // Assert
-            response.Should().BeOfType<OkResult>();
+            response.Should().BeOfType<NoContentResult>();
 
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);

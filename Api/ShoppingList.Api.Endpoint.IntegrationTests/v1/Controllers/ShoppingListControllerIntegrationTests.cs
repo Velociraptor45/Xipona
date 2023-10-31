@@ -48,7 +48,7 @@ public class ShoppingListControllerIntegrationTests
             var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, null);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
             var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
             allShoppingLists.Should().HaveCount(2);
             allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
@@ -75,7 +75,7 @@ public class ShoppingListControllerIntegrationTests
             var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, _fixture.FinishedAt);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
             var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
             allShoppingLists.Should().HaveCount(2);
             allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
@@ -168,7 +168,7 @@ public class ShoppingListControllerIntegrationTests
             var result = await sut.AddTemporaryItemToShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
