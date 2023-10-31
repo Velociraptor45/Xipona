@@ -55,7 +55,7 @@ public class UpdateItemPriceAsyncTests : ControllerCommandTestsBase<ItemControll
                 ErrorReasonCode.ItemNotFound,
                 ErrorReasonCode.ItemTypeNotFound
             }));
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 

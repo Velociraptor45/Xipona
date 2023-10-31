@@ -132,7 +132,7 @@ public class StoreController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
@@ -154,11 +154,11 @@ public class StoreController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}")]
@@ -179,6 +179,6 @@ public class StoreController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 }

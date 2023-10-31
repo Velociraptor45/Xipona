@@ -190,7 +190,7 @@ public class RecipeController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/modify")]
@@ -203,7 +203,7 @@ public class RecipeController : ControllerBase
 
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
-            return Ok();
+            return NoContent();
         }
         catch (DomainException e)
         {

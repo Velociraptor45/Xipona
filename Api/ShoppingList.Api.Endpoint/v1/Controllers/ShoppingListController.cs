@@ -83,7 +83,7 @@ public class ShoppingListController : ControllerBase
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -123,11 +123,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -156,11 +156,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items")]
@@ -186,11 +186,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/items/{itemId:guid}/{itemTypeId:guid}")]
@@ -218,11 +218,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("add-items-to-shopping-lists")]
@@ -244,11 +244,11 @@ public class ShoppingListController : ControllerBase
 
             return UnprocessableEntity(errorContract);
         }
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -284,11 +284,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -324,11 +324,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -365,11 +365,11 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/finish")]
@@ -390,6 +390,6 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 }

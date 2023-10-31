@@ -112,7 +112,7 @@ public class ManufacturerController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
@@ -134,7 +134,7 @@ public class ManufacturerController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -152,7 +152,7 @@ public class ManufacturerController : ControllerBase
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id}")]
@@ -171,6 +171,6 @@ public class ManufacturerController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 }
