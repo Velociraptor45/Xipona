@@ -53,6 +53,29 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
     }
 
     [SkippableFact]
+    public async Task EndpointCall_WithValidData_ShouldReturnNoContent()
+    {
+        var statusResult =
+            Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.NoContent);
+
+        Skip.If(statusResult is null, $"Status code 204 not relevant for endpoint {Fixture.Method.Name}");
+
+        // Arrange
+        Fixture.SetupParameters();
+        Fixture.SetupCommand();
+        Fixture.SetupCommandConverter();
+        Fixture.SetupCommandResult(HttpStatusCode.OK);
+        Fixture.SetupDispatcherSuccess();
+        var sut = Fixture.CreateSut();
+
+        // Act
+        var result = await Fixture.ExecuteTestMethod(sut);
+
+        // Assert
+        result.Should().BeOfType<NoContentResult>();
+    }
+
+    [SkippableFact]
     public async Task EndpointCall_WithMalformedInput_ShouldReturnBadRequest()
     {
         var statusResult =
