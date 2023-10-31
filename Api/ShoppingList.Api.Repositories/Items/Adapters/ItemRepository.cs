@@ -264,7 +264,7 @@ public class ItemRepository : IItemRepository
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogInformation(ex, () => $"Saving item {item.Id.Value} failed due to concurrency violation");
+                _logger.LogInformation(ex, () => "Saving item '{ItemId}' failed due to concurrency violation", item.Id.Value);
                 throw new DomainException(new ModelOutOfDateReason());
             }
             entityIdToLoad = updatedEntity.Id;

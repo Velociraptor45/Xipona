@@ -120,7 +120,7 @@ public class ItemCategoryRepository : IItemCategoryRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogInformation(ex,
-                () => $"Saving item category {model.Id.Value} failed due to concurrency violation");
+                () => "Saving item category '{ItemCategoryId}' failed due to concurrency violation", model.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
 

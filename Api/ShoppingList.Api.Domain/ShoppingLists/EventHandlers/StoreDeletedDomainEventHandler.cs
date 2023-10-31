@@ -21,11 +21,11 @@ public class StoreDeletedDomainEventHandler : IDomainEventHandler<StoreDeletedDo
 
     public async Task HandleAsync(StoreDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        _logger.LogDebug(() => $"Started handling {nameof(StoreDeletedDomainEvent)} for shopping lists");
+        _logger.LogDebug(() => "Started handling {EventName} for shopping lists", nameof(StoreDeletedDomainEvent));
 
         var service = _shoppingListDeletionServiceDelegate(cancellationToken);
         await service.HardDeleteForStoreAsync(domainEvent.StoreId);
 
-        _logger.LogDebug(() => $"Finished handling {nameof(StoreDeletedDomainEvent)} for shopping lists");
+        _logger.LogDebug(() => "Finished handling {EventName} for shopping lists", nameof(StoreDeletedDomainEvent));
     }
 }

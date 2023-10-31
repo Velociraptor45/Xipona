@@ -23,11 +23,11 @@ public class ShoppingListDeletionService : IShoppingListDeletionService
 
         if (shoppingList is null)
         {
-            _logger.LogWarning(() => $"No active shopping list found for store '{storeId.Value}' - aborting hard delete");
+            _logger.LogWarning(() => "No active shopping list found for store '{StoreId}' - aborting hard delete", storeId.Value);
             return;
         }
 
         await _shoppingListRepository.DeleteAsync(shoppingList.Id);
-        _logger.LogInformation(() => $"Deleted shopping list '{shoppingList.Id.Value}' after store '{storeId.Value}' was deleted");
+        _logger.LogInformation(() => "Deleted shopping list '{ShoppingListId}' after store '{StoreId}' was deleted", shoppingList.Id.Value, storeId.Value);
     }
 }

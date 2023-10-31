@@ -22,13 +22,15 @@ public class ItemAvailabilitiesChangedDomainEventHandler : IDomainEventHandler<I
     public async Task HandleAsync(ItemAvailabilitiesChangedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         _logger.LogDebug(
-            () => $"Started handling {nameof(ItemAvailabilitiesChangedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");
+            () => "Started handling {EventName} for item '{domainEvent.ItemId}' for recipes",
+            nameof(ItemAvailabilitiesChangedDomainEvent));
 
         var service = _recipeModificationServiceDelegate(cancellationToken);
         await service.ModifyIngredientsAfterAvailabilitiesChangedAsync(domainEvent.ItemId, domainEvent.ItemTypeId,
             domainEvent.NewAvailabilities);
 
         _logger.LogDebug(
-            () => $"Finished handling {nameof(ItemAvailabilitiesChangedDomainEvent)} for item '{domainEvent.ItemId}' for recipes");
+            () => "Finished handling {EventName} for item '{domainEvent.ItemId}' for recipes",
+            nameof(ItemAvailabilitiesChangedDomainEvent));
     }
 }

@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 public readonly record struct RecipeId
 {
     public RecipeId()

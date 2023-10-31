@@ -28,7 +28,8 @@ public class RecipeCreationService : IRecipeCreationService
         var recipe = await _recipeFactory.CreateNewAsync(creation);
         var storedRecipe = await _recipeRepository.StoreAsync(recipe);
 
-        _logger.LogInformation(() => $"Created recipe {storedRecipe.Name.Value}");
+        _logger.LogInformation(() => "Created recipe '{RecipeName}' with id '{RecipeId}'", storedRecipe.Name.Value,
+            storedRecipe.Id.Value);
 
         return await _recipeConversionService.ToReadModelAsync(storedRecipe);
     }
