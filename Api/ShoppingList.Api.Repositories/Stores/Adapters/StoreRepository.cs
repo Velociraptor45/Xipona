@@ -115,7 +115,8 @@ public class StoreRepository : IStoreRepository
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            _logger.LogInformation(ex, () => $"Saving store {store.Id.Value} failed due to concurrency violation");
+            _logger.LogInformation(ex, () => "Saving store '{StoreId}' failed due to concurrency violation",
+                store.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
         await ((AggregateRoot)store).DispatchDomainEvents(_domainEventDispatcher);

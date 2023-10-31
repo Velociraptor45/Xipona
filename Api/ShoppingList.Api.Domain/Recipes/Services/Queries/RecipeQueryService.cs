@@ -51,7 +51,8 @@ public class RecipeQueryService : IRecipeQueryService
 
         var results = (await _recipeRepository.SearchByAsync(searchInput)).ToList();
 
-        _logger.LogInformation(() => $"Found {results.Count} result{(results.Count != 1 ? 's' : string.Empty)} for input '{searchInput}'");
+        _logger.LogInformation(() => "Found {ResultCount} result(s) for input '{Input}'",
+            results.Count, searchInput);
 
         return results;
     }

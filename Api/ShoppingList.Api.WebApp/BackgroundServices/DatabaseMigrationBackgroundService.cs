@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -35,6 +36,6 @@ public class DatabaseMigrationBackgroundService : BackgroundService
         }
 
         sw.Stop();
-        _logger.LogInformation($"Finished database migration in {sw.Elapsed}");
+        _logger.LogInformation(() => "Finished database migration in {Elapsed}", sw.Elapsed);
     }
 }
