@@ -70,7 +70,7 @@
 
     private string FormatPriceInput(float price)
     {
-        return $"{price:0.##} {State.Value.Editor.Item!.QuantityType.PriceLabel}";
+        return $"{price:0.00} {State.Value.Editor.Item!.QuantityType.PriceLabel}";
     }
 
     private string ParsePriceInput(string value)
