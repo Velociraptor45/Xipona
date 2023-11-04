@@ -151,7 +151,7 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnSectionRemoved(StoreState state, SectionRemovedAction action)
     {
-        if (state.Editor.Store is null)
+        if (state.Editor.Store is null || state.Editor.Store.Sections.Count <= 1)
             return state;
 
         var sections = state.Editor.Store.Sections.ToList();

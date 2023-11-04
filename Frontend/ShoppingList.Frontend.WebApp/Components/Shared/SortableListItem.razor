@@ -29,7 +29,8 @@
     <div class="ml-2">
         <Button Class="align-items-center justify-content-center d-flex"
                 Danger="true"
-                OnClick="() => OnRemove?.Invoke(Model)">
+                OnClick="() => OnRemove?.Invoke(Model)"
+                Disabled="@(DisableRemove())">
             <i class="bi bi-dash-lg"></i>
         </Button>
     </div>
@@ -53,6 +54,8 @@
     public Action<T> OnIncrement { get; set; }
     [Parameter]
     public Action<T> OnDecrement { get; set; }
+    [Parameter]
+    public Func<bool> DisableRemove { get; set; } = () => false;
 
     private string _textContentClasses = string.Empty;
 
