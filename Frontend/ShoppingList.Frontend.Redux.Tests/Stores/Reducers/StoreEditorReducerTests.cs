@@ -13,12 +13,7 @@ public class StoreEditorReducerTests
 {
     public class OnSetNewStore
     {
-        private readonly OnSetNewStoreFixture _fixture;
-
-        public OnSetNewStore()
-        {
-            _fixture = new OnSetNewStoreFixture();
-        }
+        private readonly OnSetNewStoreFixture _fixture = new();
 
         [Fact]
         public void OnSetNewStore_WithValidData_ShouldSetStore()
@@ -65,12 +60,7 @@ public class StoreEditorReducerTests
 
     public class OnLoadStoreForEditingFinished
     {
-        private readonly OnLoadStoreForEditingFinishedFixture _fixture;
-
-        public OnLoadStoreForEditingFinished()
-        {
-            _fixture = new OnLoadStoreForEditingFinishedFixture();
-        }
+        private readonly OnLoadStoreForEditingFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadStoreForEditingFinished_WithValidData_ShouldSetStore()
@@ -106,12 +96,7 @@ public class StoreEditorReducerTests
 
     public class OnStoreNameChanged
     {
-        private readonly OnStoreNameChangedFixture _fixture;
-
-        public OnStoreNameChanged()
-        {
-            _fixture = new OnStoreNameChangedFixture();
-        }
+        private readonly OnStoreNameChangedFixture _fixture = new();
 
         [Fact]
         public void OnStoreNameChanged_WithValidData_ShouldChangeName()
@@ -180,12 +165,7 @@ public class StoreEditorReducerTests
 
     public class OnSaveStoreStarted
     {
-        private readonly OnSaveStoreStartedFixture _fixture;
-
-        public OnSaveStoreStarted()
-        {
-            _fixture = new OnSaveStoreStartedFixture();
-        }
+        private readonly OnSaveStoreStartedFixture _fixture = new();
 
         [Fact]
         public void OnSaveStoreStarted_WithNotAlreadySaving_ShouldSave()
@@ -254,12 +234,7 @@ public class StoreEditorReducerTests
 
     public class OnSaveStoreFinished
     {
-        private readonly OnSaveStoreFinishedFixture _fixture;
-
-        public OnSaveStoreFinished()
-        {
-            _fixture = new OnSaveStoreFinishedFixture();
-        }
+        private readonly OnSaveStoreFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSaveStoreFinished_WithSaving_ShouldNotSave()
@@ -328,12 +303,7 @@ public class StoreEditorReducerTests
 
     public class OnSectionDecremented
     {
-        private readonly OnSectionDecrementedFixture _fixture;
-
-        public OnSectionDecremented()
-        {
-            _fixture = new OnSectionDecrementedFixture();
-        }
+        private readonly OnSectionDecrementedFixture _fixture = new();
 
         [Fact]
         public void OnSectionDecremented_WithSectionDecrementable_ShouldDecrementSection()
@@ -465,12 +435,7 @@ public class StoreEditorReducerTests
 
     public class OnSectionIncremented
     {
-        private readonly OnSectionIncrementedFixture _fixture;
-
-        public OnSectionIncremented()
-        {
-            _fixture = new OnSectionIncrementedFixture();
-        }
+        private readonly OnSectionIncrementedFixture _fixture = new();
 
         [Fact]
         public void OnSectionIncremented_WithSectionIncrementable_ShouldIncrementSection()
@@ -602,15 +567,26 @@ public class StoreEditorReducerTests
 
     public class OnSectionRemoved
     {
-        private readonly OnSectionRemovedFixture _fixture;
+        private readonly OnSectionRemovedFixture _fixture = new();
 
-        public OnSectionRemoved()
+        [Fact]
+        public void OnSectionRemoved_WithRemovingDefaultSection_ShouldRemoveSection()
         {
-            _fixture = new OnSectionRemovedFixture();
+            // Arrange
+            _fixture.SetupInitialStateForRemovingDefaultSection();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
         [Fact]
-        public void OnSectionRemoved_WithValidSection_ShouldRemoveSection()
+        public void OnSectionRemoved_WithRemovingNonDefaultSection_ShouldRemoveSection()
         {
             // Arrange
             _fixture.SetupInitialState();
@@ -685,6 +661,29 @@ public class StoreEditorReducerTests
                 };
             }
 
+            public void SetupInitialStateForRemovingDefaultSection()
+            {
+                var sections = ExpectedState.Editor.Store!.Sections.ToList();
+                var additionalSection = new DomainTestBuilder<EditedSection>().Create() with
+                {
+                    IsDefaultSection = true,
+                    SortingIndex = -1
+                };
+                sections.Add(additionalSection);
+                sections[0] = sections[0] with { IsDefaultSection = false };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store with
+                        {
+                            Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
             public void SetupExpectedStateStoreNull()
             {
                 ExpectedState = ExpectedState with
@@ -715,12 +714,7 @@ public class StoreEditorReducerTests
 
     public class OnSectionTextChanged
     {
-        private readonly OnSectionTextChangedFixture _fixture;
-
-        public OnSectionTextChanged()
-        {
-            _fixture = new OnSectionTextChangedFixture();
-        }
+        private readonly OnSectionTextChangedFixture _fixture = new();
 
         [Fact]
         public void OnSectionTextChanged_WithValidSection_ShouldChangeText()
@@ -828,12 +822,7 @@ public class StoreEditorReducerTests
 
     public class OnDefaultSectionChanged
     {
-        private readonly OnDefaultSectionChangedFixture _fixture;
-
-        public OnDefaultSectionChanged()
-        {
-            _fixture = new OnDefaultSectionChangedFixture();
-        }
+        private readonly OnDefaultSectionChangedFixture _fixture = new();
 
         [Fact]
         public void OnDefaultSectionChanged_WithValidSection_ShouldChangeDefaultSection()
@@ -942,12 +931,7 @@ public class StoreEditorReducerTests
 
     public class OnSectionAdded
     {
-        private readonly OnSectionAddedFixture _fixture;
-
-        public OnSectionAdded()
-        {
-            _fixture = new OnSectionAddedFixture();
-        }
+        private readonly OnSectionAddedFixture _fixture = new();
 
         [Fact]
         public void OnSectionAdded_WithSectionsExisting_ShouldAddSection()
@@ -1093,12 +1077,7 @@ public class StoreEditorReducerTests
 
     public class OnDeleteStoreButtonClicked
     {
-        private readonly OnDeleteStoreButtonClickedFixture _fixture;
-
-        public OnDeleteStoreButtonClicked()
-        {
-            _fixture = new OnDeleteStoreButtonClickedFixture();
-        }
+        private readonly OnDeleteStoreButtonClickedFixture _fixture = new();
 
         [Fact]
         public void OnDeleteStoreButtonClicked_WithDeletionNoticeShowing_ShouldNotChangeState()
@@ -1166,12 +1145,7 @@ public class StoreEditorReducerTests
 
     public class OnDeleteStoreAborted
     {
-        private readonly OnDeleteStoreAbortedFixture _fixture;
-
-        public OnDeleteStoreAborted()
-        {
-            _fixture = new OnDeleteStoreAbortedFixture();
-        }
+        private readonly OnDeleteStoreAbortedFixture _fixture = new();
 
         [Fact]
         public void OnDeleteStoreAborted_WithDeletionNoticeNotShowing_ShouldNotChangeState()
@@ -1239,12 +1213,7 @@ public class StoreEditorReducerTests
 
     public class OnDeleteStoreStarted
     {
-        private readonly OnDeleteStoreStartedFixture _fixture;
-
-        public OnDeleteStoreStarted()
-        {
-            _fixture = new OnDeleteStoreStartedFixture();
-        }
+        private readonly OnDeleteStoreStartedFixture _fixture = new();
 
         [Fact]
         public void OnDeleteStoreStarted_WithNotDeleting_ShouldSetDeleting()
@@ -1312,12 +1281,7 @@ public class StoreEditorReducerTests
 
     public class OnDeleteStoreFinished
     {
-        private readonly OnDeleteStoreFinishedFixture _fixture;
-
-        public OnDeleteStoreFinished()
-        {
-            _fixture = new OnDeleteStoreFinishedFixture();
-        }
+        private readonly OnDeleteStoreFinishedFixture _fixture = new();
 
         [Fact]
         public void OnDeleteStoreFinished_WithDeleting_ShouldSetNotDeleting()
@@ -1385,12 +1349,7 @@ public class StoreEditorReducerTests
 
     public class OnCloseDeleteStoreDialog
     {
-        private readonly OnCloseDeleteStoreDialogFixture _fixture;
-
-        public OnCloseDeleteStoreDialog()
-        {
-            _fixture = new OnCloseDeleteStoreDialogFixture();
-        }
+        private readonly OnCloseDeleteStoreDialogFixture _fixture = new();
 
         [Fact]
         public void OnCloseDeleteStoreDialog_WithDeletionNoticeNotShowing_ShouldNotChangeState()

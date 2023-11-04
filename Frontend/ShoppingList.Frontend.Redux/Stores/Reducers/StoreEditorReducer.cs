@@ -157,6 +157,9 @@ public static class StoreEditorReducer
         var sections = state.Editor.Store.Sections.ToList();
         sections.Remove(action.Section);
 
+        if (action.Section.IsDefaultSection)
+            sections[0] = sections[0] with { IsDefaultSection = true };
+
         return state with
         {
             Editor = state.Editor with
