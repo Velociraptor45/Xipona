@@ -32,7 +32,8 @@
             OnIncrement="OnIncrementSection"
             OnDecrement="OnDecrementSection"
             OnRemove="OnRemoveSection"
-            OnTextChanged="OnSectionTextChanged"></SortableListItem>
+            OnTextChanged="OnSectionTextChanged"
+            DisableRemove="() => State.Value.Editor.Store.Sections.Count == 1"></SortableListItem>
     }
 </div>
 

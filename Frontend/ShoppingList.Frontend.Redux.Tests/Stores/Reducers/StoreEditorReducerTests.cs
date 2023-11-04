@@ -602,6 +602,23 @@ public class StoreEditorReducerTests
         }
 
         [Fact]
+        public void OnSectionRemoved_WithOnlyOneSection_ShouldNotChangeAnything()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithOneSection();
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
         public void OnSectionRemoved_WithInvalidSection_ShouldNotRemoveSection()
         {
             // Arrange
@@ -679,6 +696,26 @@ public class StoreEditorReducerTests
                         Store = ExpectedState.Editor.Store with
                         {
                             Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithOneSection()
+            {
+                var section = new DomainTestBuilder<EditedSection>().Create() with
+                {
+                    IsDefaultSection = true,
+                    SortingIndex = -1
+                };
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(new[] { section }, new SortingIndexComparer())
                         }
                     }
                 };
