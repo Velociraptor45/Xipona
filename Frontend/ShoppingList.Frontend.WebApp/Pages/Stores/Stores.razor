@@ -12,19 +12,21 @@
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.Stores
 
-<div class="d-flex">
-    <div class="h4">Stores</div>
-    <Button @onclick="@OnCreateStoreButtonClicked" Class="d-flex align-items-center ml-auto">
-        <Icon Type="plus"></Icon>
-    </Button>
-</div>
-<div>
-    <ol class="pl-0">
-        @foreach (var searchResult in State.Value.SearchResults)
-        {
-            <SearchResult Model="searchResult" TAction="EditStoreAction"></SearchResult>
-        }
-    </ol>
+<div class="stores-search pt-2">
+    <div class="d-flex mb-2">
+        <Button @onclick="@OnCreateStoreButtonClicked" Class="d-flex align-items-center ml-auto"
+                Type="@ButtonType.Primary">
+            <i class="bi bi-plus-lg"></i>
+        </Button>
+    </div>
+    <div>
+        <ol class="pl-0">
+            @foreach (var searchResult in State.Value.SearchResults)
+            {
+                <SearchResult Model="searchResult" TAction="EditStoreAction"></SearchResult>
+            }
+        </ol>
+    </div>
 </div>
 
 @code {

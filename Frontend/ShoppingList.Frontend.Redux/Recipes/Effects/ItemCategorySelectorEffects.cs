@@ -29,6 +29,10 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         if (action.Ingredient.ItemCategoryId == Guid.Empty)
             return;
 
+        var ingredient = _state.Value.GetIngredientByKey(action.Ingredient.Key);
+        if (ingredient is null || ingredient.ItemCategorySelector.ItemCategories.Any())
+            return;
+
         EditedItemCategory itemCategory;
         try
         {
@@ -79,9 +83,14 @@ public sealed class ItemCategorySelectorEffects : IDisposable
     }
 
     [EffectMethod]
-    public static Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
+    public Task HandleSelectedItemCategoryChangedAction(SelectedItemCategoryChangedAction action,
         IDispatcher dispatcher)
     {
+        var ingredient = _state.Value.GetIngredientByKey(action.IngredientKey);
+        if (ingredient is null || ingredient.ItemCategoryId == action.ItemCategoryId)
+            return Task.CompletedTask;
+
+        dispatcher.Dispatch(new ItemCategoryChangedAction(action.IngredientKey, action.ItemCategoryId));
         dispatcher.Dispatch(new LoadItemsForItemCategoryAction(action.IngredientKey, action.ItemCategoryId));
         return Task.CompletedTask;
     }

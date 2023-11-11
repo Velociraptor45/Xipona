@@ -8,12 +8,12 @@
 @inject IDispatcher Dispatcher
 
 <div class="availability d-flex">
-    <div class="data">
+    <div class="data pr-2">
         <Select Class="mr-2 store"
                 DataSource="Available.CreateAvailabilityStores(Model, State.Value.Stores.Stores).ToList()"
                 TItem="EditedItemAvailabilityStore"
                 TItemValue="Guid"
-                DefaultValue="Model.StoreId"
+                Value="Model.StoreId"
                 ValueName="@nameof(EditedItemAvailabilityStore.Id)"
                 LabelName="@nameof(EditedItemAvailabilityStore.Name)"
                 DisabledName="@nameof(EditedItemAvailabilityStore.IsDisabled)"
@@ -21,28 +21,26 @@
                 OnSelectedItemChanged="@OnStoreChanged">
         </Select>
         <div class="d-flex pt-1">
-            <div class="align-items-center d-flex">
-                <div class="price-input">
-                    <Input TValue="float" Value="@Model.PricePerQuantity" ValueChanged="OnPriceChanged"/>
-                </div>
-                <div class="mr-2">@(State.Value.Editor.Item!.QuantityType.PriceLabel)</div>
+            <div class="price-input">
+                <AntDesign.InputNumber TValue="float" Value="@Model.PricePerQuantity" 
+                                       Formatter="FormatPriceInput"
+                                       Parser="ParsePriceInput"
+                                       ValueChanged="OnPriceChanged"/>
             </div>
-            @*// todo convert to Select #298 *@
-            <SingleSelect Class="ml-2"
-                          DataSource="State.Value.Stores.GetSections(Model.StoreId).ToList()"
-                          TItem="ItemStoreSection"
-                          TValue="Guid"
-                          ValueName="@nameof(ItemStoreSection.Id)"
-                          LabelName="@nameof(ItemStoreSection.Name)"
-                          OnItemChanged="OnDefaultSectionChanged"
-                          IgnoreItemChanges="false"
-                          DefaultValue="@Model.DefaultSectionId"></SingleSelect>
+            <Select DataSource="State.Value.Stores.GetSections(Model.StoreId)"
+                    TItem="ItemStoreSection"
+                    TItemValue="Guid"
+                    ValueName="@nameof(ItemStoreSection.Id)"
+                    LabelName="@nameof(ItemStoreSection.Name)"
+                    OnSelectedItemChanged="OnDefaultSectionChanged"
+                    IgnoreItemChanges="false"
+                    Value="@Model.DefaultSectionId"></Select>
         </div>
     </div>
     <Button Class="d-flex align-items-center ml-auto"
             OnClick="@OnRemoveStoreButtonClicked"
             Danger="true">
-        <Icon Type="minus"></Icon>
+        <i class="bi bi-dash-lg"></i>
     </Button>
 </div>
 
@@ -68,5 +66,15 @@
     private void OnPriceChanged(float price)
     {
         Dispatcher.Dispatch(new ChangePriceAction(Available, Model, price));
+    }
+
+    private string FormatPriceInput(float price)
+    {
+        return $"{price:0.00} {State.Value.Editor.Item!.QuantityType.PriceLabel}";
+    }
+
+    private string ParsePriceInput(string value)
+    {
+        return value.Replace(State.Value.Editor.Item!.QuantityType.PriceLabel, string.Empty);
     }
 }

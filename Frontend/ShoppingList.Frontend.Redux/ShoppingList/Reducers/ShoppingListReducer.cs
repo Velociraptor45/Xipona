@@ -26,7 +26,6 @@ public static class ShoppingListReducer
             SearchBar = state.SearchBar with
             {
                 Input = string.Empty,
-                IsActive = false,
                 Results = new List<SearchItemForShoppingListResult>()
             }
         };
@@ -66,7 +65,6 @@ public static class ShoppingListReducer
             SearchBar = state.SearchBar with
             {
                 Input = string.Empty,
-                IsActive = false,
                 Results = new List<SearchItemForShoppingListResult>()
             }
         };

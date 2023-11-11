@@ -17,12 +17,12 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
 public class Item : AggregateRoot, IItem
 {
-    private List<IItemAvailability> _availabilities;
+    private List<ItemAvailability> _availabilities;
     private readonly ItemTypes? _itemTypes;
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
-        IEnumerable<IItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
+        IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
         ItemId? predecessorId)
     {
         Id = id;
@@ -59,7 +59,7 @@ public class Item : AggregateRoot, IItem
         PredecessorId = predecessorId;
         TemporaryId = null;
         _itemTypes = itemTypes;
-        _availabilities = new List<IItemAvailability>();
+        _availabilities = new List<ItemAvailability>();
 
         if (!_itemTypes.Any())
             throw new DomainException(new CannotCreateItemWithTypesWithoutTypesReason(Id));
@@ -80,7 +80,7 @@ public class Item : AggregateRoot, IItem
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
 
-    public IReadOnlyCollection<IItemAvailability> Availabilities => _availabilities.AsReadOnly();
+    public IReadOnlyCollection<ItemAvailability> Availabilities => _availabilities.AsReadOnly();
     public bool HasItemTypes => _itemTypes?.Any() ?? false;
 
     protected override IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
@@ -107,7 +107,7 @@ public class Item : AggregateRoot, IItem
         return Availabilities.Any(av => av.StoreId == storeId);
     }
 
-    public void MakePermanent(PermanentItem permanentItem, IEnumerable<IItemAvailability> availabilities)
+    public void MakePermanent(PermanentItem permanentItem, IEnumerable<ItemAvailability> availabilities)
     {
         if (IsDeleted)
             throw new DomainException(new CannotMakeDeletedItemPermanentReason(Id));
@@ -121,20 +121,31 @@ public class Item : AggregateRoot, IItem
         IsTemporary = false;
     }
 
-    public void Modify(ItemModification itemChange, IEnumerable<IItemAvailability> availabilities)
+    public void Modify(ItemModification modification, IEnumerable<ItemAvailability> availabilities)
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemReason(Id));
 
-        Name = itemChange.Name;
-        Comment = itemChange.Comment;
-        ItemQuantity = itemChange.ItemQuantity;
-        ItemCategoryId = itemChange.ItemCategoryId;
-        ManufacturerId = itemChange.ManufacturerId;
+        if (HasItemTypes)
+            throw new DomainException(new CannotModifyItemWithTypesAsItemReason(Id));
+
+        Name = modification.Name;
+        Comment = modification.Comment;
+        ItemQuantity = modification.ItemQuantity;
+        ItemCategoryId = modification.ItemCategoryId;
+        ManufacturerId = modification.ManufacturerId;
+
+        var oldAvailabilities = _availabilities;
         _availabilities = availabilities.ToList();
 
         if (!_availabilities.Any())
             throw new DomainException(new CannotModifyItemWithoutAvailabilitiesReason());
+
+        if (_availabilities.Count != oldAvailabilities.Count
+           || !_availabilities.All(av => oldAvailabilities.Any(oldAv => oldAv == av)))
+        {
+            PublishDomainEvent(new ItemAvailabilitiesChangedDomainEvent(null, oldAvailabilities, _availabilities));
+        }
     }
 
     public async Task ModifyAsync(ItemWithTypesModification modification, IValidator validator)
@@ -154,7 +165,8 @@ public class Item : AggregateRoot, IItem
         ItemCategoryId = modification.ItemCategoryId;
         ManufacturerId = modification.ManufacturerId;
 
-        await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
+        var domainEvents = await _itemTypes!.ModifyManyAsync(modification.ItemTypes, validator);
+        PublishDomainEvents(domainEvents);
     }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)
@@ -196,7 +208,7 @@ public class Item : AggregateRoot, IItem
 
     public IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId)
     {
-        return _itemTypes?.GetForStore(storeId) ?? new List<IItemType>().AsReadOnly();
+        return _itemTypes?.GetForStore(storeId) ?? new List<IItemType>(0).AsReadOnly();
     }
 
     public bool TryGetTypeWithPredecessor(ItemTypeId predecessorTypeId, out IItemType? predecessor)
@@ -359,9 +371,7 @@ public class Item : AggregateRoot, IItem
 
         if (HasItemTypes)
         {
-            if (_itemTypes!.Count() == 1
-               && _itemTypes!.First().Availabilities.Count == 1
-               && _itemTypes!.First().IsAvailableAt(storeId))
+            if (_itemTypes!.All(t => t.IsAvailableAt(storeId) && t.Availabilities.Count == 1))
             {
                 Delete();
                 return;

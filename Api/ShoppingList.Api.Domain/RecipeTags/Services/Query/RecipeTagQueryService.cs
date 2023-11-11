@@ -7,11 +7,9 @@ public class RecipeTagQueryService : IRecipeTagQueryService
 {
     private readonly IRecipeTagRepository _recipeTagRepository;
 
-    public RecipeTagQueryService(
-        Func<CancellationToken, IRecipeTagRepository> recipeTagRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public RecipeTagQueryService(IRecipeTagRepository recipeTagRepository)
     {
-        _recipeTagRepository = recipeTagRepositoryDelegate(cancellationToken);
+        _recipeTagRepository = recipeTagRepository;
     }
 
     public async Task<IEnumerable<IRecipeTag>> GetAllAsync()

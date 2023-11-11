@@ -17,22 +17,15 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
     private readonly IStoreRepository _storeRepository;
     private readonly IItemRepository _itemRepository;
-    private readonly IShoppingListItemFactory _shoppingListItemFactory;
     private readonly IShoppingListRepository _shoppingListRepository;
 
-    public AddItemToShoppingListService(
-        IShoppingListSectionFactory shoppingListSectionFactory,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        IShoppingListItemFactory shoppingListItemFactory,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public AddItemToShoppingListService(IShoppingListSectionFactory shoppingListSectionFactory,
+        IStoreRepository storeRepository, IItemRepository itemRepository, IShoppingListRepository shoppingListRepository)
     {
         _shoppingListSectionFactory = shoppingListSectionFactory;
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _shoppingListItemFactory = shoppingListItemFactory;
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
     }
 
     public async Task AddAsync(IEnumerable<ItemToShoppingListAddition> itemsToAdd)
@@ -121,13 +114,13 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         await AddItemAsync(shoppingList, item, null, sectionId, quantity);
     }
 
-    private IShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
+    private ShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
     {
-        return _shoppingListItemFactory.Create(itemId, itemTypeId, false, quantity);
+        return new ShoppingListItem(itemId, itemTypeId, false, quantity);
     }
 
     private void ValidateItemIsAvailableAtStore(IItem item, StoreId storeId,
-        out IItemAvailability availability)
+        out ItemAvailability availability)
     {
         var av = item.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 
@@ -135,7 +128,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
     }
 
     private static void ValidateItemTypeIsAvailableAtStore(IItemType itemType, StoreId storeId,
-        out IItemAvailability availability)
+        out ItemAvailability availability)
     {
         var av = itemType.Availabilities.FirstOrDefault(av => av.StoreId == storeId);
 
@@ -153,7 +146,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         sectionId ??= availability.DefaultSectionId;
 
-        IShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, itemTypeId, quantity);
+        ShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, itemTypeId, quantity);
         await AddItemAsync(shoppingList, shoppingListItem, store, sectionId.Value, throwIfItemAlreadyOnShoppingList);
     }
 
@@ -167,11 +160,11 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         sectionId ??= availability.DefaultSectionId;
 
-        IShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, null, quantity);
+        ShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, null, quantity);
         await AddItemAsync(shoppingList, shoppingListItem, store, sectionId.Value, throwIfItemAlreadyOnShoppingList);
     }
 
-    internal async Task AddItemAsync(IShoppingList shoppingList, IShoppingListItem item, IStore? store,
+    internal async Task AddItemAsync(IShoppingList shoppingList, ShoppingListItem item, IStore? store,
         SectionId sectionId, bool throwIfItemAlreadyOnShoppingList = true)
     {
         store ??= await _storeRepository.FindActiveByAsync(shoppingList.StoreId);

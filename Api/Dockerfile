@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0-bullseye-slim AS base
 WORKDIR /app
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim AS build
 WORKDIR /src
@@ -15,4 +14,4 @@ RUN dotnet publish "ShoppingList.Api.WebApp/ShoppingList.Api.WebApp.csproj" -c R
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["/bin/bash", "-c", "update-ca-certificates && dotnet ShoppingList.Api.WebApp.dll"]
+ENTRYPOINT ["dotnet", "ShoppingList.Api.WebApp.dll"]

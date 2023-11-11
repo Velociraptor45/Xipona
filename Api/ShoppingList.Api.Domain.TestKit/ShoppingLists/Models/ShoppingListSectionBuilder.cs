@@ -12,25 +12,31 @@ public class ShoppingListSectionBuilder : DomainTestBuilderBase<ShoppingListSect
         Customize(new QuantityInBasketCustomization());
     }
 
+    public ShoppingListSectionBuilder(ShoppingListSection section) : this()
+    {
+        WithId(section.Id);
+        WithItems(section.Items);
+    }
+
     public ShoppingListSectionBuilder WithId(SectionId id)
     {
         FillConstructorWith("id", id);
         return this;
     }
 
-    public ShoppingListSectionBuilder WithItems(IEnumerable<IShoppingListItem> items)
+    public ShoppingListSectionBuilder WithItems(IEnumerable<ShoppingListItem> items)
     {
         FillConstructorWith("shoppingListItems", items);
         return this;
     }
 
-    public ShoppingListSectionBuilder WithItem(IShoppingListItem item)
+    public ShoppingListSectionBuilder WithItem(ShoppingListItem item)
     {
         return WithItems(item.ToMonoList());
     }
 
     public ShoppingListSectionBuilder WithoutItems()
     {
-        return WithItems(Enumerable.Empty<IShoppingListItem>());
+        return WithItems(Enumerable.Empty<ShoppingListItem>());
     }
 }

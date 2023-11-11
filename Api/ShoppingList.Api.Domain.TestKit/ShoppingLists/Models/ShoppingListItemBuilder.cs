@@ -4,34 +4,29 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 
-public class ShoppingListItemBuilder : DomainTestBuilderBase<ShoppingListItem>
+public class ShoppingListItemBuilder : DomainRecordTestBuilderBase<ShoppingListItem>
 {
-    public ShoppingListItemBuilder()
-    {
-        Customize(new QuantityInBasketCustomization());
-    }
-
     public ShoppingListItemBuilder WithId(ItemId id)
     {
-        FillConstructorWith("id", id);
+        Modifiers.Add(item => item with { Id = id });
         return this;
     }
 
     public ShoppingListItemBuilder WithIsInBasket(bool isInBasket)
     {
-        FillConstructorWith("isInBasket", isInBasket);
+        Modifiers.Add(item => item with { IsInBasket = isInBasket });
         return this;
     }
 
     public ShoppingListItemBuilder WithQuantity(QuantityInBasket quantity)
     {
-        FillConstructorWith("quantity", quantity);
+        Modifiers.Add(item => item with { Quantity = quantity });
         return this;
     }
 
     public ShoppingListItemBuilder WithTypeId(ItemTypeId? typeId)
     {
-        FillConstructorWith("typeId", typeId);
+        Modifiers.Add(item => item with { TypeId = typeId });
         return this;
     }
 

@@ -1,9 +1,9 @@
-﻿using FluentAssertions.Common;
-using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using Force.DeepCloner;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Fixtures;
@@ -15,398 +15,504 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
 public class ShoppingListTests
 {
-    private readonly CommonFixture _commonFixture;
-    private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture;
-
-    public ShoppingListTests()
+    public class AddItem
     {
-        _commonFixture = new CommonFixture();
-        _shoppingListSectionMockFixture = new ShoppingListSectionMockFixture();
-    }
+        private readonly AddItemFixture _fixture = new();
 
-    #region AddItem
-
-    [Fact]
-    public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
-    {
-        // Arrange
-        var shoppingList = ShoppingListMother.ThreeSections().Create();
-        var chosenItem = _commonFixture.ChooseRandom(shoppingList.Items);
-
-        var collidingItem = new ShoppingListItemBuilder().WithId(chosenItem.Id).WithTypeId(chosenItem.TypeId).Create();
-        SectionId sectionId = new SectionId(Guid.NewGuid());
-
-        // Act
-        Action action = () => shoppingList.AddItem(collidingItem, sectionId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void AddItem_WithItemIdIsAlreadyOnList_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemAlreadyOnShoppingList);
+            // Arrange
+            _fixture.SetupSections();
+            _fixture.SetupValidSectionId();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupItemAlreadyOnShoppingList(sut);
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SectionId);
+
+            // Act
+            var action = () => sut.AddItem(_fixture.Item, _fixture.SectionId.Value);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.ItemAlreadyOnShoppingList);
         }
-    }
 
-    [Fact]
-    public void AddItem_WithSectionNotFound_ShouldThrowDomainException()
-    {
-        IShoppingList shoppingList = ShoppingListMother.ThreeSections().Create();
-        IShoppingListItem item = new ShoppingListItemBuilder().Create();
-
-        // Act
-        Action action = () => shoppingList.AddItem(item, new SectionId(Guid.NewGuid()));
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void AddItem_WithSectionNotFound_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionInStoreNotFound);
+            _fixture.SetupSections();
+            _fixture.SetupItem();
+            _fixture.SetupInvalidSectionId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SectionId);
+
+            // Act
+            var action = () => sut.AddItem(_fixture.Item, _fixture.SectionId.Value);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.SectionInStoreNotFound);
         }
-    }
 
-    [Fact]
-    public void AddItem_WithValidItemWithActualId_ShouldAddItemToList()
-    {
-        // Arrange
-        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
-        var shoppingList = ShoppingListMother.Initial()
-            .WithSections(sectionMocks.Select(s => s.Object))
-            .Create();
-
-        ShoppingListSectionMock chosenSection = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem item = new ShoppingListItemBuilder().Create();
-
-        // Act
-        shoppingList.AddItem(item, chosenSection.Object.Id);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void AddItem_WithValidItemWithActualId_ShouldAddItemToList()
         {
-            chosenSection.VerifyAddItemOnce(item);
+            // Arrange
+            _fixture.SetupSections();
+            _fixture.SetupItem();
+            _fixture.SetupValidSectionId();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SectionId);
+
+            // Act
+            sut.AddItem(_fixture.Item, _fixture.SectionId.Value);
+
+            // Assert
+            _fixture.VerifySectionContainsItem(sut);
         }
-    }
 
-    #endregion AddItem
-
-    #region RemoveItem
-
-    [Fact]
-    public void RemoveItem_WithItemIdNotOnList_ShouldDoNothing()
-    {
-        // Arrange
-        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(2).ToList();
-        sectionMocks.ForEach(m => m.SetupContainsItem(false));
-        var list = ShoppingListMother.Initial()
-            .WithSections(sectionMocks.Select(s => s.Object))
-            .Create();
-
-        var shoppingListItemId = new ItemId(Guid.NewGuid());
-
-        // Act
-        list.RemoveItem(shoppingListItemId);
-
-        // Assert
-        using (new AssertionScope())
+        private sealed class AddItemFixture : ShoppingListFixture
         {
-            foreach (var mock in sectionMocks)
+            private readonly CommonFixture _commonFixture = new();
+            private List<ShoppingListSection>? _sections;
+            public ShoppingListItem? Item { get; private set; }
+            public SectionId? SectionId { get; private set; }
+
+            public void SetupSections()
             {
-                mock.VerifyRemoveItemNever();
+                _sections = new ShoppingListSectionBuilder().CreateMany(3).ToList();
+                Builder.WithSections(_sections);
+            }
+
+            public void SetupItem()
+            {
+                Item = new ShoppingListItemBuilder().Create();
+            }
+
+            public void SetupItemAlreadyOnShoppingList(Domain.ShoppingLists.Models.ShoppingList sut)
+            {
+                Item = _commonFixture.ChooseRandom(sut.Items);
+            }
+
+            public void SetupValidSectionId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_sections);
+
+                SectionId = _commonFixture.ChooseRandom(_sections).Id;
+            }
+
+            public void SetupInvalidSectionId()
+            {
+                SectionId = Domain.Stores.Models.SectionId.New;
+            }
+
+            public void VerifySectionContainsItem(Domain.ShoppingLists.Models.ShoppingList result)
+            {
+                TestPropertyNotSetException.ThrowIfNull(SectionId);
+                result.Sections.First(s => s.Id == SectionId.Value).Items.Should().Contain(x => x == Item);
             }
         }
     }
 
-    [Fact]
-    public void RemoveItem_WithValidItemId_ShouldRemoveItemFromList()
+    public class RemoveItemAndItsTypes
     {
-        // Arrange
-        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
-        var shoppingList = ShoppingListMother.Initial()
-            .WithSections(sectionMocks.Select(s => s.Object))
-            .Create();
+        private readonly RemoveItemAndItsTypesFixture _fixture = new();
 
-        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
-
-        foreach (var sectionMock in sectionMocks)
-            sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
-
-        // Act
-        shoppingList.RemoveItem(chosenItem.Id, chosenItem.TypeId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void RemoveItemAndItsTypes_WithItemIdNotOnList_ShouldDoNothing()
         {
-            foreach (var section in sectionMocks)
+            // Arrange
+            _fixture.SetupItemId();
+            var sut = _fixture.CreateSut();
+            var expected = sut.DeepClone();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+            // Act
+            sut.RemoveItemAndItsTypes(_fixture.ItemId.Value);
+
+            // Assert
+            sut.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void RemoveItemAndItsTypes_WithValidItemId_WithItemWithoutTypes_ShouldRemoveItemFromList()
+        {
+            // Arrange
+            _fixture.SetupItemId();
+            _fixture.SetupItem();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+            // Act
+            sut.RemoveItemAndItsTypes(_fixture.ItemId.Value);
+
+            // Assert
+            sut.Items.Should().HaveCount(2);
+            sut.Items.Should().NotContain(i => i.Id == _fixture.ItemId.Value);
+        }
+
+        [Fact]
+        public void RemoveItemAndItsTypes_WithValidItemId_WithItemWithTypes_ShouldRemoveItemFromList()
+        {
+            // Arrange
+            _fixture.SetupItemId();
+            _fixture.SetupItemType();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+            // Act
+            sut.RemoveItemAndItsTypes(_fixture.ItemId.Value);
+
+            // Assert
+            sut.Items.Should().HaveCount(2);
+            sut.Items.Should().NotContain(i => i.Id == _fixture.ItemId.Value);
+        }
+
+        private sealed class RemoveItemAndItsTypesFixture : ShoppingListFixture
+        {
+            public ItemId? ItemId { get; private set; }
+
+            public void SetupItemId()
             {
-                if (section == chosenSectionMock)
-                    section.VerifyRemoveItem(chosenItem.Id, chosenItem.TypeId, Times.Once);
-                else
-                    section.VerifyRemoveItemNever();
+                ItemId = Domain.Items.Models.ItemId.New;
+            }
+
+            public void SetupItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                var items = new List<ShoppingListItem>()
+                {
+                    new ShoppingListItemBuilder().WithId(ItemId.Value).WithoutTypeId().Create(),
+                    new ShoppingListItemBuilder().Create(),
+                    new ShoppingListItemBuilder().Create(),
+                };
+                items.Shuffle();
+                var section = ShoppingListSectionMother.Items(items).Create();
+                Builder.WithSection(section);
+            }
+
+            public void SetupItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                var items = new List<ShoppingListItem>()
+                {
+                    new ShoppingListItemBuilder().WithId(ItemId.Value).Create(),
+                    new ShoppingListItemBuilder().Create(),
+                    new ShoppingListItemBuilder().Create(),
+                };
+                items.Shuffle();
+                var section = ShoppingListSectionMother.Items(items).Create();
+                Builder.WithSection(section);
             }
         }
     }
 
-    #endregion RemoveItem
-
-    #region PutItemInBasket
-
-    [Fact]
-    public void PutItemInBasket_WithItemIdNotOnList_ShouldThrowDomainException()
+    public class RemoveItem
     {
-        // Arrange
-        var list = ShoppingListMother.ThreeSections().Create();
-        var shoppingListItemId = new ItemId(Guid.NewGuid());
+        private readonly CommonFixture _commonFixture = new();
+        private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
-        // Act
-        Action action = () => list.PutItemInBasket(shoppingListItemId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void RemoveItem_WithItemIdNotOnList_ShouldDoNothing()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
-        }
-    }
+            // Arrange
+            var sectionMocks = _shoppingListSectionMockFixture.CreateMany(2).ToList();
+            sectionMocks.ForEach(m => m.SetupContainsItem(false));
+            var list = ShoppingListMother.Initial()
+                .WithSections(sectionMocks.Select(s => s.Object))
+                .Create();
 
-    [Fact]
-    public void PutItemInBasket_WithValidItemId_ShouldPutItemInBasket()
-    {
-        // Arrange
-        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
-        var shoppingList = ShoppingListMother.Initial()
-            .WithSections(sectionMocks.Select(s => s.Object))
-            .Create();
+            var shoppingListItemId = new ItemId(Guid.NewGuid());
 
-        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+            // Act
+            list.RemoveItem(shoppingListItemId);
 
-        foreach (var sectionMock in sectionMocks)
-            sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
-
-        // Act
-        shoppingList.PutItemInBasket(chosenItem.Id, chosenItem.TypeId);
-
-        // Assert
-        using (new AssertionScope())
-        {
-            foreach (var section in sectionMocks)
+            // Assert
+            using (new AssertionScope())
             {
-                if (section == chosenSectionMock)
-                    section.VerifyPutItemInBasketOnce(chosenItem.Id, chosenItem.TypeId);
-                else
-                    section.VerifyPutItemInBasketNever();
+                foreach (var mock in sectionMocks)
+                {
+                    mock.VerifyRemoveItemNever();
+                }
+            }
+        }
+
+        [Fact]
+        public void RemoveItem_WithValidItemId_ShouldRemoveItemFromList()
+        {
+            // Arrange
+            var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
+            var shoppingList = ShoppingListMother.Initial()
+                .WithSections(sectionMocks.Select(s => s.Object))
+                .Create();
+
+            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+
+            foreach (var sectionMock in sectionMocks)
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
+
+            // Act
+            shoppingList.RemoveItem(chosenItem.Id, chosenItem.TypeId);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                foreach (var section in sectionMocks)
+                {
+                    if (section == chosenSectionMock)
+                        section.VerifyRemoveItem(chosenItem.Id, chosenItem.TypeId, Times.Once);
+                    else
+                        section.VerifyRemoveItemNever();
+                }
             }
         }
     }
 
-    #endregion PutItemInBasket
-
-    #region RemoveFromBasket
-
-    [Fact]
-    public void RemoveFromBasket_WithItemIdNotOnList_ShouldThrowDomainException()
+    public class PutItemInBasket
     {
-        // Arrange
-        var list = ShoppingListMother.ThreeSections().Create();
-        var shoppingListItemId = new ItemId(Guid.NewGuid());
+        private readonly CommonFixture _commonFixture = new();
+        private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
-        // Act
-        Action action = () => list.RemoveFromBasket(shoppingListItemId, null);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void PutItemInBasket_WithItemIdNotOnList_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
+            // Arrange
+            var list = ShoppingListMother.ThreeSections().Create();
+            var shoppingListItemId = new ItemId(Guid.NewGuid());
+
+            // Act
+            var action = () => list.PutItemInBasket(shoppingListItemId);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.ItemNotOnShoppingList);
         }
-    }
 
-    [Fact]
-    public void RemoveFromBasket_WithValidItemId_ShouldRemoveItemFromList()
-    {
-        // Arrange
-        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
-        var shoppingList = ShoppingListMother.Initial()
-            .WithSections(sectionMocks.Select(s => s.Object))
-            .Create();
-
-        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
-
-        foreach (var sectionMock in sectionMocks)
-            sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
-
-        // Act
-        shoppingList.RemoveFromBasket(chosenItem.Id, chosenItem.TypeId);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void PutItemInBasket_WithValidItemId_ShouldPutItemInBasket()
         {
-            foreach (var section in sectionMocks)
+            // Arrange
+            var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
+            var shoppingList = ShoppingListMother.Initial()
+                .WithSections(sectionMocks.Select(s => s.Object))
+                .Create();
+
+            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+
+            foreach (var sectionMock in sectionMocks)
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
+
+            // Act
+            shoppingList.PutItemInBasket(chosenItem.Id, chosenItem.TypeId);
+
+            // Assert
+            using (new AssertionScope())
             {
-                if (section == chosenSectionMock)
-                    section.VerifyRemoveItemFromBasketOnce(chosenItem.Id, chosenItem.TypeId);
-                else
-                    section.VerifyRemoveItemFromBasketNever();
+                foreach (var section in sectionMocks)
+                {
+                    if (section == chosenSectionMock)
+                        section.VerifyPutItemInBasketOnce(chosenItem.Id, chosenItem.TypeId);
+                    else
+                        section.VerifyPutItemInBasketNever();
+                }
             }
         }
     }
 
-    #endregion RemoveFromBasket
-
-    #region ChangeItemQuantity
-
-    [Fact]
-    public void ChangeItemQuantity_WithItemIdNotOnList_ShouldThrowDomainException()
+    public class RemoveFromBasket
     {
-        // Arrange
-        var list = ShoppingListMother.ThreeSections().Create();
-        var shoppingListItemId = new ItemId(Guid.NewGuid());
-        var quantity = new QuantityInBasketBuilder().Create();
+        private readonly CommonFixture _commonFixture = new();
+        private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
-        // Act
-        Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, quantity);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void RemoveFromBasket_WithItemIdNotOnList_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ItemNotOnShoppingList);
-        }
-    }
+            // Arrange
+            var list = ShoppingListMother.ThreeSections().Create();
+            var shoppingListItemId = new ItemId(Guid.NewGuid());
 
-    [Fact]
-    public void ChangeItemQuantity_WithValidItemId_ShouldChangeQuantity()
-    {
-        // Arrange
-        var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
-        var shoppingList = ShoppingListMother.Initial()
-            .WithSections(sectionMocks.Select(s => s.Object))
-            .Create();
+            // Act
+            Action action = () => list.RemoveFromBasket(shoppingListItemId, null);
 
-        ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-        IShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
-
-        foreach (var sectionMock in sectionMocks)
-        {
-            sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
-                sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.ItemNotOnShoppingList);
         }
 
-        var quantity = new QuantityInBasketBuilder().Create();
-
-        // Act
-        shoppingList.ChangeItemQuantity(chosenItem.Id, chosenItem.TypeId, quantity);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void RemoveFromBasket_WithValidItemId_ShouldRemoveItemFromList()
         {
-            foreach (var section in sectionMocks)
+            // Arrange
+            var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
+            var shoppingList = ShoppingListMother.Initial()
+                .WithSections(sectionMocks.Select(s => s.Object))
+                .Create();
+
+            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+
+            foreach (var sectionMock in sectionMocks)
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
+
+            // Act
+            shoppingList.RemoveFromBasket(chosenItem.Id, chosenItem.TypeId);
+
+            // Assert
+            using (new AssertionScope())
             {
-                if (section == chosenSectionMock)
-                    section.VerifyChangeItemQuantityOnce(chosenItem.Id, chosenItem.TypeId, quantity);
-                else
-                    section.VerifyChangeItemQuantityNever();
+                foreach (var section in sectionMocks)
+                {
+                    if (section == chosenSectionMock)
+                        section.VerifyRemoveItemFromBasketOnce(chosenItem.Id, chosenItem.TypeId);
+                    else
+                        section.VerifyRemoveItemFromBasketNever();
+                }
             }
         }
     }
 
-    #endregion ChangeItemQuantity
-
-    #region Finish
-
-    [Fact]
-    public void Finish_WithCompletedShoppingList_ShouldThrowDomainException()
+    public class ChangeItemQuantity
     {
-        // Arrange
-        var fixture = _commonFixture.GetNewFixture();
-        var shoppingList = ShoppingListMother.Completed().Create();
+        private readonly CommonFixture _commonFixture = new();
+        private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
-        DateTimeOffset completionDate = fixture.Create<DateTimeOffset>();
-
-        // Act
-        Action action = () => shoppingList.Finish(completionDate);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void ChangeItemQuantity_WithItemIdNotOnList_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.ShoppingListAlreadyFinished);
+            // Arrange
+            var list = ShoppingListMother.ThreeSections().Create();
+            var shoppingListItemId = new ItemId(Guid.NewGuid());
+            var quantity = new QuantityInBasketBuilder().Create();
+
+            // Act
+            Action action = () => list.ChangeItemQuantity(shoppingListItemId, null, quantity);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.ItemNotOnShoppingList);
+        }
+
+        [Fact]
+        public void ChangeItemQuantity_WithValidItemId_ShouldChangeQuantity()
+        {
+            // Arrange
+            var sectionMocks = _shoppingListSectionMockFixture.CreateMany(3).ToList();
+            var shoppingList = ShoppingListMother.Initial()
+                .WithSections(sectionMocks.Select(s => s.Object))
+                .Create();
+
+            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+
+            foreach (var sectionMock in sectionMocks)
+            {
+                sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
+                    sectionMock.Object.IsEquivalentTo(chosenSectionMock.Object));
+            }
+
+            var quantity = new QuantityInBasketBuilder().Create();
+
+            // Act
+            shoppingList.ChangeItemQuantity(chosenItem.Id, chosenItem.TypeId, quantity);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                foreach (var section in sectionMocks)
+                {
+                    if (section == chosenSectionMock)
+                        section.VerifyChangeItemQuantityOnce(chosenItem.Id, chosenItem.TypeId, quantity);
+                    else
+                        section.VerifyChangeItemQuantityNever();
+                }
+            }
         }
     }
 
-    [Fact]
-    public void Finish_WithUncompletedShoppingList_ShouldSetCompletionDate()
+    public class Finish
     {
-        // Arrange
-        var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasketAndOneNot().Create();
-        var itemsInBasket = shoppingList.Items.Where(i => i.IsInBasket);
-        var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
-
-        DateTimeOffset completionDate = _commonFixture.GetNewFixture().Create<DateTimeOffset>();
-
-        // Act
-        IShoppingList result = shoppingList.Finish(completionDate);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void Finish_WithCompletedShoppingList_ShouldThrowDomainException()
         {
-            shoppingList.Sections.First().Items.Should().BeEquivalentTo(itemsInBasket);
-            result.Sections.First().Items.Should().BeEquivalentTo(itemsNotInBasket);
-            shoppingList.CompletionDate.Should().Be(completionDate);
+            // Arrange
+            var shoppingList = ShoppingListMother.Completed().Create();
+            var completionDate = new DomainTestBuilder<DateTimeOffset>().Create();
+
+            // Act
+            var action = () => shoppingList.Finish(completionDate);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.ShoppingListAlreadyFinished);
+        }
+
+        [Fact]
+        public void Finish_WithUncompletedShoppingList_ShouldSetCompletionDate()
+        {
+            // Arrange
+            var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasketAndOneNot().Create();
+            var itemsInBasket = shoppingList.Items.Where(i => i.IsInBasket);
+            var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
+
+            var completionDate = new DomainTestBuilder<DateTimeOffset>().Create();
+
+            // Act
+            IShoppingList result = shoppingList.Finish(completionDate);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                shoppingList.Sections.First().Items.Should().BeEquivalentTo(itemsInBasket);
+                result.Sections.First().Items.Should().BeEquivalentTo(itemsNotInBasket);
+                shoppingList.CompletionDate.Should().Be(completionDate);
+            }
         }
     }
 
-    #endregion Finish
-
-    #region AddSection
-
-    [Fact]
-    public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()
+    public class AddSection
     {
-        IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-        IShoppingListSection section = _commonFixture.ChooseRandom(shoppingList.Sections);
+        private readonly CommonFixture _commonFixture = new();
 
-        // Act
-        Action action = () => shoppingList.AddSection(section);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()
         {
-            action.Should().Throw<DomainException>()
-                .Where(e => e.Reason.ErrorCode == ErrorReasonCode.SectionAlreadyInShoppingList);
+            IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+            IShoppingListSection section = _commonFixture.ChooseRandom(shoppingList.Sections);
+
+            // Act
+            var action = () => shoppingList.AddSection(section);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.SectionAlreadyInShoppingList);
         }
-    }
 
-    [Fact]
-    public void AddSection_WithNewSection_ShouldThrowDomainException()
-    {
-        IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-        IShoppingListSection section = new ShoppingListSectionBuilder().Create();
-
-        // Act
-        shoppingList.AddSection(section);
-
-        // Assert
-        using (new AssertionScope())
+        [Fact]
+        public void AddSection_WithNewSection_ShouldThrowDomainException()
         {
+            IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+            IShoppingListSection section = new ShoppingListSectionBuilder().Create();
+
+            // Act
+            shoppingList.AddSection(section);
+
+            // Assert
             shoppingList.Sections.Should().Contain(section);
         }
     }
 
-    #endregion AddSection
-
     public class TransferItem
     {
-        private readonly TransferItemFixture _fixture;
-
-        public TransferItem()
-        {
-            _fixture = new TransferItemFixture();
-        }
+        private readonly TransferItemFixture _fixture = new();
 
         [Fact]
         public void TransferItem_WithoutNewSection_ShouldThrowDomainException()
@@ -568,6 +674,21 @@ public class ShoppingListTests
 
                 _builder.WithSections(sections);
             }
+        }
+    }
+
+    private abstract class ShoppingListFixture
+    {
+        protected readonly ShoppingListBuilder Builder = new();
+
+        protected ShoppingListFixture()
+        {
+            Builder.WithoutCompletionDate();
+        }
+
+        public Domain.ShoppingLists.Models.ShoppingList CreateSut()
+        {
+            return Builder.Create();
         }
     }
 }

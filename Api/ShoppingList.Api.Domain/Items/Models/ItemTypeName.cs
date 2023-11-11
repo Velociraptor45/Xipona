@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
-public class ItemTypeName : Name
+public record ItemTypeName : Name
 {
     public ItemTypeName(string value) : base(value)
     {

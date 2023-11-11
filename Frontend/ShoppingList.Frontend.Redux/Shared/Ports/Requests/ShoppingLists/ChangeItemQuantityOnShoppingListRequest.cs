@@ -5,13 +5,14 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Shoppi
     public class ChangeItemQuantityOnShoppingListRequest : IApiRequest
     {
         public ChangeItemQuantityOnShoppingListRequest(Guid requestId, Guid shoppingListId, ShoppingListItemId itemId,
-            Guid? itemTypeId, float quantity)
+            Guid? itemTypeId, float quantity, string itemName)
         {
             RequestId = requestId;
             ShoppingListId = shoppingListId;
             ItemId = itemId;
             ItemTypeId = itemTypeId;
             Quantity = quantity;
+            ItemName = itemName;
         }
 
         public Guid RequestId { get; }
@@ -19,5 +20,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Shoppi
         public ShoppingListItemId ItemId { get; }
         public Guid? ItemTypeId { get; }
         public float Quantity { get; }
+        public string ItemName { get; }
     }
 }

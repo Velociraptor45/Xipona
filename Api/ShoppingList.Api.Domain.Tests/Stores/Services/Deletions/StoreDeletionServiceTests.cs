@@ -108,7 +108,7 @@ public class StoreDeletionServiceTests
 
         public StoreDeletionService CreateSut()
         {
-            return new StoreDeletionService(_ => StoreRepositoryMock.Object, default);
+            return new StoreDeletionService(StoreRepositoryMock.Object);
         }
     }
 }

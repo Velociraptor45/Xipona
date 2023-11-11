@@ -55,7 +55,7 @@ public class RecipeController : ControllerBase
             var query = new RecipeByIdQuery(new RecipeId(id));
             var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
 
-            var contract = _converters.ToContract<IRecipe, RecipeContract>(result);
+            var contract = _converters.ToContract<RecipeReadModel, RecipeContract>(result);
 
             return Ok(contract);
         }
@@ -178,9 +178,8 @@ public class RecipeController : ControllerBase
 
             var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
-            var contract = _converters.ToContract<IRecipe, RecipeContract>(model);
+            var contract = _converters.ToContract<RecipeReadModel, RecipeContract>(model);
 
-            // ReSharper disable once Mvc.ActionNotResolved
             return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
         }
         catch (DomainException e)
@@ -191,7 +190,7 @@ public class RecipeController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/modify")]
@@ -204,7 +203,7 @@ public class RecipeController : ControllerBase
 
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
-            return Ok();
+            return NoContent();
         }
         catch (DomainException e)
         {

@@ -10,12 +10,9 @@ FROM build AS publish
 RUN dotnet publish "ShoppingList.Frontend.WebApp/ShoppingList.Frontend.WebApp.csproj" -c Release -o /app/publish
 
 ################## FINAL ##################
-FROM nginx:1.25.0-bullseye AS final
-EXPOSE 443
+FROM nginxinc/nginx-unprivileged:1.25 AS final
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish .
 COPY Docker/nginx.conf /etc/nginx/nginx.conf
-COPY Docker/entry-command.sh /entry-command.sh
-RUN chmod +x /entry-command.sh
 
-CMD ["/entry-command.sh"]
+CMD ["nginx", "-g", "daemon off;"]

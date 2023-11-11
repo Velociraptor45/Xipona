@@ -197,8 +197,8 @@ public class RecipeFactoryTests
 
         public RecipeFactory CreateSut()
         {
-            return new RecipeFactory(_ => IngredientFactoryMock.Object, _ => ValidatorMock.Object,
-                PreparationStepFactoryMock.Object, default);
+            return new RecipeFactory(IngredientFactoryMock.Object, ValidatorMock.Object,
+                PreparationStepFactoryMock.Object);
         }
     }
 }

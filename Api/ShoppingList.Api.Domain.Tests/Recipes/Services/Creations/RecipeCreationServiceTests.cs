@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Services.Shared;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit.Abstractions;
 
@@ -26,10 +28,10 @@ public class RecipeCreationServiceTests
         _fixture.SetupCreation();
         _fixture.SetupCreatingNewRecipe();
         _fixture.SetupStoringRecipe();
+        _fixture.SetupConvertingRecipe();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.Creation);
-        TestPropertyNotSetException.ThrowIfNull(_fixture.StoredRecipe);
 
         // Act
         await sut.CreateAsync(_fixture.Creation);
@@ -45,23 +47,26 @@ public class RecipeCreationServiceTests
         _fixture.SetupCreation();
         _fixture.SetupCreatingNewRecipe();
         _fixture.SetupStoringRecipe();
+        _fixture.SetupConvertingRecipe();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.Creation);
-        TestPropertyNotSetException.ThrowIfNull(_fixture.StoredRecipe);
+        TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
         var result = await sut.CreateAsync(_fixture.Creation);
 
         // Assert
-        result.Should().Be(_fixture.StoredRecipe);
+        result.Should().Be(_fixture.ExpectedResult);
     }
 
     private class RecipeCreationServiceFixture
     {
         private readonly RecipeRepositoryMock _recipeRepository = new(MockBehavior.Strict);
         private readonly RecipeFactoryMock _recipeFactoryMock = new(MockBehavior.Strict);
+        private readonly RecipeConversionServiceMock _recipeConversionServiceMock = new(MockBehavior.Strict);
         private Recipe? _createdRecipe;
+        private Recipe? _storedRecipe;
         private readonly ILogger<RecipeCreationService> _logger;
 
         public RecipeCreationServiceFixture(ITestOutputHelper output)
@@ -70,15 +75,15 @@ public class RecipeCreationServiceTests
         }
 
         public RecipeCreation? Creation { get; private set; }
-        public Recipe? StoredRecipe { get; private set; }
+        public RecipeReadModel? ExpectedResult { get; private set; }
 
         public RecipeCreationService CreateSut()
         {
             return new RecipeCreationService(
-                _ => _recipeRepository.Object,
-                _ => _recipeFactoryMock.Object,
-                _logger,
-                default);
+                _recipeRepository.Object,
+                _recipeFactoryMock.Object,
+                _recipeConversionServiceMock.Object,
+                _logger);
         }
 
         public void SetupCreation()
@@ -98,8 +103,17 @@ public class RecipeCreationServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(_createdRecipe);
 
-            StoredRecipe = new RecipeBuilder().Create();
-            _recipeRepository.SetupStoreAsync(_createdRecipe, StoredRecipe);
+            _storedRecipe = new RecipeBuilder().Create();
+            _recipeRepository.SetupStoreAsync(_createdRecipe, _storedRecipe);
+        }
+
+        public void SetupConvertingRecipe()
+        {
+            TestPropertyNotSetException.ThrowIfNull(_storedRecipe);
+
+            ExpectedResult = new DomainTestBuilder<RecipeReadModel>().Create();
+
+            _recipeConversionServiceMock.SetupToReadModel(_storedRecipe, ExpectedResult);
         }
 
         public void VerifyStoringRecipe()

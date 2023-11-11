@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
+using Moq;
 using Moq.Contrib.InOrder;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Effects;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Common;
+using ProjectHermes.ShoppingList.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.TestTools.Exceptions;
 using RestEase;
 using Xunit.Abstractions;
@@ -51,15 +52,38 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadItemForEditingAction_WithFailedCall_ShouldDispatchExceptionAction()
+        public async Task HandleLoadItemForEditingAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             _fixture.SetupAction();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupGettingItemFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+            }, _logger);
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleLoadItemForEditingAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadItemForEditingAction_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            _fixture.SetupAction();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupGettingItemFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
             }, _logger);
 
             var sut = _fixture.CreateSut();
@@ -96,11 +120,19 @@ public class ItemEditorEffectsTests
                 ApiClientMock.SetupGetItemByIdAsync(Action.ItemId, _item);
             }
 
-            public void SetupGettingItemFailed()
+            public void SetupGettingItemFailedWithErrorInApi()
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var exception = new DomainTestBuilder<ApiException>().Create();
+                ApiClientMock.SetupGetItemByIdAsyncThrowing(Action.ItemId, exception);
+            }
+
+            public void SetupGettingItemFailedWithErrorWhileTransmittingRequest()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Action);
+
+                var exception = new DomainTestBuilder<HttpRequestException>().Create();
                 ApiClientMock.SetupGetItemByIdAsyncThrowing(Action.ItemId, exception);
             }
 
@@ -114,11 +146,6 @@ public class ItemEditorEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
                 SetupDispatchingAction(new LoadItemForEditingFinishedAction(_item));
-            }
-
-            public void SetupDispatchingExceptionAction()
-            {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
             }
         }
     }
@@ -184,7 +211,7 @@ public class ItemEditorEffectsTests
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Id));
+                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Key));
             }
 
             public void SetupActionForItem()
@@ -553,6 +580,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -574,6 +602,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -593,7 +622,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupCreatingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -616,6 +645,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -637,6 +667,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupCreatingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -648,15 +679,36 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleCreateItemAction_WithTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleCreateItemAction_WithTypes_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             _fixture.SetupItemWithTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItemWithTypesFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupCreatingItemWithTypesFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateItemAction_WithTypes_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -670,6 +722,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleCreateItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -678,6 +732,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes
                         }
                     }
@@ -692,6 +747,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.NotDefined,
                             ItemTypes = new List<EditedItemType>()
                         }
@@ -707,6 +763,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithTypes
                         }
                     }
@@ -721,6 +778,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.NotDefined,
                             ItemTypes = new DomainTestBuilder<EditedItemType>().CreateMany(2).ToList()
                         }
@@ -730,26 +788,30 @@ public class ItemEditorEffectsTests
 
             public void SetupCreatingItem()
             {
-                var request = new CreateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemAsync(request);
+                ApiClientMock.SetupCreateItemAsync(State.Editor.Item!);
             }
 
             public void SetupCreatingItemFailed()
             {
-                var request = new CreateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupCreateItemAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupCreatingItemWithTypes()
             {
-                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemWithTypesAsync(request);
+                ApiClientMock.SetupCreateItemWithTypesAsync(State.Editor.Item!);
             }
 
-            public void SetupCreatingItemWithTypesFailed()
+            public void SetupCreatingItemWithTypesFailedWithErrorInApi()
             {
-                var request = new CreateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest()
+            {
+                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -767,9 +829,9 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
+            public void SetupSuccessNotification()
             {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item {_itemName}");
             }
         }
     }
@@ -794,6 +856,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupUpdatingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -813,7 +876,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupUpdatingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -836,6 +899,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupUpdatingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -847,15 +911,36 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleUpdateItemAction_WithTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleUpdateItemAction_WithTypes_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             _fixture.SetupItemWithTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingItemWithTypesFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupUpdatingItemWithTypesFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleUpdateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleUpdateItemAction_WithTypes_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -869,6 +954,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleUpdateItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -877,6 +964,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes
                         }
                     }
@@ -891,6 +979,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithTypes
                         }
                     }
@@ -899,26 +988,29 @@ public class ItemEditorEffectsTests
 
             public void SetupUpdatingItem()
             {
-                var request = new UpdateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemAsync(request);
+                ApiClientMock.SetupUpdateItemAsync(State.Editor.Item!);
             }
 
             public void SetupUpdatingItemFailed()
             {
-                var request = new UpdateItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupUpdateItemAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupUpdatingItemWithTypes()
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemWithTypesAsync(request);
+                ApiClientMock.SetupUpdateItemWithTypesAsync(State.Editor.Item!);
             }
 
-            public void SetupUpdatingItemWithTypesFailed()
+            public void SetupUpdatingItemWithTypesFailedWithErrorInApi()
             {
-                var request = new UpdateItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest()
+            {
+                ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -936,9 +1028,9 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
+            public void SetupSuccessNotification()
             {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully updated item {_itemName}");
             }
         }
     }
@@ -963,6 +1055,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupModifyingItem();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -982,7 +1075,7 @@ public class ItemEditorEffectsTests
             {
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupModifyingItemFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupDispatchingExceptionNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1005,6 +1098,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupModifyingItemWithTypes();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1016,15 +1110,36 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleModifyItemAction_WithTypes_CallFailed_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleModifyItemAction_WithTypes_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             _fixture.SetupItemWithTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingItemWithTypesFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupModifyingItemWithTypesFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleModifyItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleModifyItemAction_WithTypes_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            _fixture.SetupItemWithTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1038,6 +1153,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleModifyItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -1046,6 +1163,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes
                         }
                     }
@@ -1060,6 +1178,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithTypes
                         }
                     }
@@ -1068,26 +1187,27 @@ public class ItemEditorEffectsTests
 
             public void SetupModifyingItem()
             {
-                var request = new ModifyItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemAsync(request);
+                ApiClientMock.SetupModifyItemAsync(State.Editor.Item!);
             }
 
             public void SetupModifyingItemFailed()
             {
-                var request = new ModifyItemRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupModifyingItemWithTypes()
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemWithTypesAsync(request);
+                ApiClientMock.SetupModifyItemWithTypesAsync(State.Editor.Item!);
             }
 
-            public void SetupModifyingItemWithTypesFailed()
+            public void SetupModifyingItemWithTypesFailedWithErrorInApi()
             {
-                var request = new ModifyItemWithTypesRequest(Guid.NewGuid(), State.Editor.Item!);
-                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest()
+            {
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1105,9 +1225,9 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
+            public void SetupSuccessNotification()
             {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item {_itemName}");
             }
         }
     }
@@ -1132,6 +1252,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupMakingItemPermanent();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1143,15 +1264,36 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleMakeItemPermanentAction_WithCallFailed_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleMakeItemPermanentAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupMakingItemPermanentFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleMakeItemPermanentAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleMakeItemPermanentAction_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1165,6 +1307,8 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleMakeItemPermanentActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupItemWithoutTypes()
             {
                 State = State with
@@ -1173,6 +1317,7 @@ public class ItemEditorEffectsTests
                     {
                         Item = State.Editor.Item! with
                         {
+                            Name = _itemName,
                             ItemMode = ItemMode.WithoutTypes,
                             ItemTypes = new List<EditedItemType>(),
                             Availabilities = new DomainTestBuilder<EditedItemAvailability>().CreateMany(2).ToList()
@@ -1197,7 +1342,7 @@ public class ItemEditorEffectsTests
                 ApiClientMock.SetupMakeTemporaryItemPermanent(request);
             }
 
-            public void SetupMakingItemPermanentFailed()
+            public void SetupMakingItemPermanentFailedWithErrorInApi()
             {
                 var item = State.Editor.Item!;
                 var request = new MakeTemporaryItemPermanentRequest(
@@ -1212,6 +1357,23 @@ public class ItemEditorEffectsTests
                     item.Availabilities);
                 ApiClientMock.SetupMakeTemporaryItemPermanentThrowing(request,
                     new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest()
+            {
+                var item = State.Editor.Item!;
+                var request = new MakeTemporaryItemPermanentRequest(
+                    item.Id,
+                    item.Name,
+                    item.Comment,
+                    item.QuantityType.Id,
+                    item.QuantityInPacket,
+                    item.QuantityInPacketType?.Id,
+                    item.ItemCategoryId!.Value,
+                    item.ManufacturerId,
+                    item.Availabilities);
+                ApiClientMock.SetupMakeTemporaryItemPermanentThrowing(request,
+                    new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1229,9 +1391,9 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<LeaveItemEditorAction>();
             }
 
-            public void SetupDispatchingExceptionAction()
+            public void SetupSuccessNotification()
             {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully made item {_itemName} permanent");
             }
         }
     }
@@ -1254,7 +1416,8 @@ public class ItemEditorEffectsTests
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupMakingItemPermanent();
                 _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingCloseDialogAction();
+                _fixture.SetupSuccessNotification();
             });
             var sut = _fixture.CreateSut();
 
@@ -1266,14 +1429,34 @@ public class ItemEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleDeleteItemAction_WithCallFailed_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleDeleteItemAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailed();
-                _fixture.SetupDispatchingExceptionAction();
+                _fixture.SetupMakingItemPermanentFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleDeleteItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleDeleteItemAction_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -1287,18 +1470,54 @@ public class ItemEditorEffectsTests
 
         private sealed class HandleDeleteItemActionFixture : ItemEditorEffectsFixture
         {
+            private readonly string _itemName = new DomainTestBuilder<string>().Create();
+
             public void SetupMakingItemPermanent()
             {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            Name = _itemName
+                        }
+                    }
+                };
                 var item = State.Editor.Item!;
-                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
-                ApiClientMock.SetupDeleteItemAsync(request);
+                ApiClientMock.SetupDeleteItemAsync(item.Id);
             }
 
-            public void SetupMakingItemPermanentFailed()
+            public void SetupMakingItemPermanentFailedWithErrorInApi()
             {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            Name = _itemName
+                        }
+                    }
+                };
                 var item = State.Editor.Item!;
-                var request = new DeleteItemRequest(Guid.NewGuid(), item.Id);
-                ApiClientMock.SetupDeleteItemAsyncThrowing(request, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Item = State.Editor.Item! with
+                        {
+                            Name = _itemName
+                        }
+                    }
+                };
+                var item = State.Editor.Item!;
+                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<HttpRequestException>().Create());
             }
 
             public void SetupDispatchingStartedAction()
@@ -1311,24 +1530,28 @@ public class ItemEditorEffectsTests
                 SetupDispatchingAction<DeleteItemFinishedAction>();
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingCloseDialogAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new CloseDeleteItemDialogAction(true));
             }
 
-            public void SetupDispatchingExceptionAction()
+            public void SetupSuccessNotification()
             {
-                SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted item {_itemName}");
             }
         }
     }
 
     private abstract class ItemEditorEffectsFixture : ItemEffectsFixtureBase
     {
+        protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
+            new(MockBehavior.Strict);
+
         public ItemEditorEffects CreateSut()
         {
             SetupStateReturningState();
-            return new ItemEditorEffects(ApiClientMock.Object, ItemStateMock.Object, NavigationManagerMock.Object);
+            return new ItemEditorEffects(ApiClientMock.Object, ItemStateMock.Object, NavigationManagerMock.Object,
+                ShoppingListNotificationServiceMock.Object);
         }
     }
 }

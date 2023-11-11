@@ -1,9 +1,11 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Extensions;
+﻿using Force.DeepCloner;
+using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
@@ -11,17 +13,318 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.ShoppingLists.Models.Shopp
 
 public class ShoppingListSectionTests
 {
-    public ShoppingListSectionTests()
+    public class RemoveItem
     {
+        public class WithoutType
+        {
+            private readonly RemoveItemFixture _fixture = new();
+
+            [Fact]
+            public void RemoveItem_WithItemInSection_ShouldReturnExpectedResult()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                var sut = _fixture.CreateSut();
+                _fixture.SetupExpectedResultForItemWithoutTypes(sut);
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+                // Act
+                var result = sut.RemoveItem(_fixture.ItemId.Value);
+
+                // Assert
+                result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            }
+
+            [Fact]
+            public void RemoveItem_WithItemNotInSection_ShouldReturnExpectedResult()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                _fixture.SetupInvalidIds();
+                var sut = _fixture.CreateSut();
+                var expected = sut.DeepClone();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+                // Act
+                var result = sut.RemoveItem(_fixture.ItemId.Value);
+
+                // Assert
+                result.Should().BeEquivalentTo(expected);
+            }
+        }
+
+        public class WithType
+        {
+            private readonly RemoveItemFixture _fixture = new();
+
+            [Fact]
+            public void RemoveItem_WithItemInSection_ShouldReturnExpectedResult()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                var sut = _fixture.CreateSut();
+                _fixture.SetupExpectedResultForItemWithoutTypes(sut);
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+                // Act
+                var result = sut.RemoveItem(_fixture.ItemId.Value, null);
+
+                // Assert
+                result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            }
+
+            [Fact]
+            public void RemoveItem_WithItemNotInSection_ShouldReturnExpectedResult()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                _fixture.SetupInvalidIds();
+                var sut = _fixture.CreateSut();
+                var expected = sut.DeepClone();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+                // Act
+                var result = sut.RemoveItem(_fixture.ItemId.Value, null);
+
+                // Assert
+                result.Should().BeEquivalentTo(expected);
+            }
+
+            [Fact]
+            public void RemoveItem_WithItemTypeInSection_ShouldReturnExpectedResult()
+            {
+                // Arrange
+                _fixture.SetupItemWithTypes();
+                var sut = _fixture.CreateSut();
+                _fixture.SetupExpectedResultForItemWithTypes(sut);
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+                // Act
+                var result = sut.RemoveItem(_fixture.ItemId.Value, _fixture.ItemTypeId.Value);
+
+                // Assert
+                result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            }
+
+            [Fact]
+            public void RemoveItem_WithItemTypeNotInSection_ShouldReturnExpectedResult()
+            {
+                // Arrange
+                _fixture.SetupItemWithTypes();
+                _fixture.SetupInvalidIds();
+                var sut = _fixture.CreateSut();
+                var expected = sut.DeepClone();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+                // Act
+                var result = sut.RemoveItem(_fixture.ItemId.Value, _fixture.ItemTypeId.Value);
+
+                // Assert
+                result.Should().BeEquivalentTo(expected);
+            }
+        }
+
+        private sealed class RemoveItemFixture : ShoppingListSectionFixture
+        {
+            public ShoppingListSection? ExpectedResult { get; private set; }
+            public ItemId? ItemId { get; private set; }
+            public ItemTypeId? ItemTypeId { get; private set; }
+
+            public void SetupItemWithoutTypes()
+            {
+                var items = new ShoppingListItemBuilder().WithoutTypeId().CreateMany(3).ToList();
+                ItemId = items.First().Id;
+                SetupItems(items);
+            }
+
+            public void SetupItemWithTypes()
+            {
+                var items = new ShoppingListItemBuilder().CreateMany(3).ToList();
+                var item = items.First();
+                ItemId = item.Id;
+                ItemTypeId = item.TypeId;
+                SetupItems(items);
+            }
+
+            public void SetupInvalidIds()
+            {
+                ItemId = Domain.Items.Models.ItemId.New;
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupExpectedResultForItemWithoutTypes(ShoppingListSection sut)
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+
+                var items = sut.Items.Where(i => i.Id != ItemId).ToList();
+                ExpectedResult = new ShoppingListSectionBuilder(sut).WithItems(items).Create();
+            }
+
+            public void SetupExpectedResultForItemWithTypes(ShoppingListSection sut)
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
+
+                var items = sut.Items.Where(i => i.Id != ItemId || i.TypeId != ItemTypeId).ToList();
+                ExpectedResult = new ShoppingListSectionBuilder(sut).WithItems(items).Create();
+            }
+        }
     }
 
-    #region RemoveItem
-    // todo implement
-    #endregion RemoveItem
+    public class ContainsItem
+    {
+        public class WithoutType
+        {
+            private readonly ContainsItemFixture _fixture = new();
 
-    #region ContainsItem
-    // todo implement
-    #endregion ContainsItem
+            [Fact]
+            public void ContainsItem_WithItemInSection_ShouldReturnTrue()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                var sut = _fixture.CreateSut();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+                // Act
+                var result = sut.ContainsItem(_fixture.ItemId.Value);
+
+                // Assert
+                result.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ContainsItem_WithItemNotInSection_ShouldReturnFalse()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                _fixture.SetupInvalidIds();
+                var sut = _fixture.CreateSut();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+                // Act
+                var result = sut.ContainsItem(_fixture.ItemId.Value);
+
+                // Assert
+                result.Should().BeFalse();
+            }
+        }
+
+        public class WithType
+        {
+            private readonly ContainsItemFixture _fixture = new();
+
+            [Fact]
+            public void ContainsItem_WithItemInSection_ShouldReturnTrue()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                var sut = _fixture.CreateSut();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId, null);
+
+                // Act
+                var result = sut.ContainsItem(_fixture.ItemId.Value);
+
+                // Assert
+                result.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ContainsItem_WithItemNotInSection_ShouldReturnFalse()
+            {
+                // Arrange
+                _fixture.SetupItemWithoutTypes();
+                _fixture.SetupInvalidIds();
+                var sut = _fixture.CreateSut();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+
+                // Act
+                var result = sut.ContainsItem(_fixture.ItemId.Value, null);
+
+                // Assert
+                result.Should().BeFalse();
+            }
+
+            [Fact]
+            public void ContainsItem_WithItemTypeInSection_ShouldReturnTrue()
+            {
+                // Arrange
+                _fixture.SetupItemWithTypes();
+                var sut = _fixture.CreateSut();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+                // Act
+                var result = sut.ContainsItem(_fixture.ItemId.Value, _fixture.ItemTypeId.Value);
+
+                // Assert
+                result.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ContainsItem_WithItemTypeNotInSection_ShouldReturnFalse()
+            {
+                // Arrange
+                _fixture.SetupItemWithTypes();
+                _fixture.SetupInvalidIds();
+                var sut = _fixture.CreateSut();
+
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+
+                // Act
+                var result = sut.ContainsItem(_fixture.ItemId.Value, _fixture.ItemTypeId.Value);
+
+                // Assert
+                result.Should().BeFalse();
+            }
+        }
+
+        private sealed class ContainsItemFixture : ShoppingListSectionFixture
+        {
+            private readonly CommonFixture _commonFixture = new();
+
+            public ItemId? ItemId { get; private set; }
+            public ItemTypeId? ItemTypeId { get; private set; }
+
+            public void SetupItemWithoutTypes()
+            {
+                var items = new ShoppingListItemBuilder().WithoutTypeId().CreateMany(3).ToList();
+                ItemId = _commonFixture.ChooseRandom(items).Id;
+                SetupItems(items);
+            }
+
+            public void SetupItemWithTypes()
+            {
+                var items = new ShoppingListItemBuilder().CreateMany(3).ToList();
+                var item = _commonFixture.ChooseRandom(items);
+                ItemId = item.Id;
+                ItemTypeId = item.TypeId;
+                SetupItems(items);
+            }
+
+            public void SetupInvalidIds()
+            {
+                ItemId = Domain.Items.Models.ItemId.New;
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+        }
+    }
 
     public class AddItem
     {
@@ -137,7 +440,7 @@ public class ShoppingListSectionTests
 
         private sealed class AddItemFixture : ShoppingListSectionFixture
         {
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
             public ShoppingListSection? ExpectedResult { get; private set; }
 
             public void SetupItemNotAlreadyExisting()
@@ -149,7 +452,7 @@ public class ShoppingListSectionTests
             {
                 Item = ShoppingListItemMother.NotInBasket().WithoutTypeId().Create();
                 var existingItem = ShoppingListItemMother.NotInBasket().WithId(Item.Id).WithoutTypeId().Create();
-                SetupSectionContainingItem(existingItem);
+                SetupItem(existingItem);
             }
 
             public void SetupItemWithTypeNotAlreadyExisting()
@@ -161,7 +464,7 @@ public class ShoppingListSectionTests
             {
                 Item = ShoppingListItemMother.NotInBasket().Create();
                 var existingItem = ShoppingListItemMother.NotInBasket().WithId(Item.Id).WithTypeId(Item.TypeId).Create();
-                SetupSectionContainingItem(existingItem);
+                SetupItem(existingItem);
             }
 
             public void SetupExpectedResultForItemAlreadyExisting(ShoppingListSection sut)
@@ -286,24 +589,24 @@ public class ShoppingListSectionTests
         private sealed class PutItemInBasketFixture : ShoppingListSectionFixture
         {
             public ShoppingListSection? ExpectedResult { get; private set; }
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
 
             public void SetupItemNotAlreadyInBasket()
             {
                 Item = ShoppingListItemMother.NotInBasket().WithoutTypeId().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupItemWithTypeNotAlreadyInBasket()
             {
                 Item = ShoppingListItemMother.NotInBasket().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupItemWithTypeAlreadyInBasket()
             {
                 Item = ShoppingListItemMother.InBasket().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupExpectedResult(ShoppingListSection sut)
@@ -405,24 +708,24 @@ public class ShoppingListSectionTests
         private sealed class RemoveItemFromBasketFixture : ShoppingListSectionFixture
         {
             public ShoppingListSection? ExpectedResult { get; private set; }
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
 
             public void SetupItemNotAlreadyInBasket()
             {
                 Item = ShoppingListItemMother.NotInBasket().WithoutTypeId().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupItemWithTypeNotAlreadyInBasket()
             {
                 Item = ShoppingListItemMother.NotInBasket().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupItemWithTypeAlreadyInBasket()
             {
                 Item = ShoppingListItemMother.InBasket().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupExpectedResult(ShoppingListSection sut)
@@ -515,7 +818,7 @@ public class ShoppingListSectionTests
         private sealed class ChangeItemQuantityFixture : ShoppingListSectionFixture
         {
             public ShoppingListSection? ExpectedResult { get; private set; }
-            public IShoppingListItem? Item { get; private set; }
+            public ShoppingListItem? Item { get; private set; }
             public QuantityInBasket? Quantity { get; private set; }
 
             public void SetupItemQuantity()
@@ -526,13 +829,13 @@ public class ShoppingListSectionTests
             public void SetupItem()
             {
                 Item = new ShoppingListItemBuilder().WithoutTypeId().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupItemWithType()
             {
                 Item = new ShoppingListItemBuilder().Create();
-                SetupSectionContainingItem(Item);
+                SetupItem(Item);
             }
 
             public void SetupExpectedResult(ShoppingListSection sut)
@@ -547,21 +850,172 @@ public class ShoppingListSectionTests
         }
     }
 
-    #region RemoveAllItemsInBasket
-    // todo implement
-    #endregion RemoveAllItemsInBasket
+    public class RemoveItemsNotInBasket
+    {
+        private readonly RemoveItemsNotInBasketFixture _fixture = new();
 
-    #region RemoveAllItemsNotInBasket
-    // todo implement
-    #endregion RemoveAllItemsNotInBasket
+        [Fact]
+        public void RemoveItemsNotInBasket_WithItemsInBasket_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemsInBasket();
+            _fixture.SetupItemsNotInBasket();
+            _fixture.SetupItemsInSection();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.RemoveItemsNotInBasket();
+
+            // Assert
+            result.Items.Should().BeEquivalentTo(_fixture.ItemsInBasket);
+            sut.Items.Should().Contain(_fixture.ItemsInBasket);
+            sut.Items.Should().Contain(_fixture.ItemsNotInBasket);
+        }
+
+        [Fact]
+        public void RemoveItemsNotInBasket_WithNoItemsInBasket_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemsNotInBasket();
+            _fixture.SetupItemsInSection();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.RemoveItemsNotInBasket();
+
+            // Assert
+            result.Items.Should().BeEmpty();
+            sut.Items.Should().BeEquivalentTo(_fixture.ItemsNotInBasket);
+        }
+
+        [Fact]
+        public void RemoveItemsNotInBasket_WithAllItemsInBasket_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemsInBasket();
+            _fixture.SetupItemsInSection();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.RemoveItemsNotInBasket();
+
+            // Assert
+            result.Items.Should().BeEquivalentTo(_fixture.ItemsInBasket);
+            sut.Items.Should().BeEquivalentTo(_fixture.ItemsInBasket);
+        }
+
+        private sealed class RemoveItemsNotInBasketFixture : ShoppingListSectionFixture
+        {
+            public IReadOnlyCollection<ShoppingListItem> ItemsInBasket { get; private set; } = new List<ShoppingListItem>(0);
+            public IReadOnlyCollection<ShoppingListItem> ItemsNotInBasket { get; private set; } = new List<ShoppingListItem>(0);
+
+            public void SetupItemsInBasket()
+            {
+                ItemsInBasket = ShoppingListItemMother.InBasket().CreateMany(3).ToList();
+            }
+
+            public void SetupItemsNotInBasket()
+            {
+                ItemsNotInBasket = ShoppingListItemMother.NotInBasket().CreateMany(3).ToList();
+            }
+
+            public void SetupItemsInSection()
+            {
+                var items = ItemsInBasket.Union(ItemsNotInBasket);
+                SetupItems(items);
+            }
+        }
+    }
+
+    public class RemoveItemsInBasket
+    {
+        private readonly RemoveItemsInBasketFixture _fixture = new();
+
+        [Fact]
+        public void RemoveItemsInBasket_WithItemsNotInBasket_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemsInBasket();
+            _fixture.SetupItemsNotInBasket();
+            _fixture.SetupItemsInSection();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.RemoveItemsInBasket();
+
+            // Assert
+            result.Items.Should().BeEquivalentTo(_fixture.ItemsNotInBasket);
+            sut.Items.Should().Contain(_fixture.ItemsInBasket);
+            sut.Items.Should().Contain(_fixture.ItemsNotInBasket);
+        }
+
+        [Fact]
+        public void RemoveItemsInBasket_WithNoItemsInBasket_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemsNotInBasket();
+            _fixture.SetupItemsInSection();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.RemoveItemsInBasket();
+
+            // Assert
+            result.Items.Should().BeEquivalentTo(_fixture.ItemsNotInBasket);
+            sut.Items.Should().BeEquivalentTo(_fixture.ItemsNotInBasket);
+        }
+
+        [Fact]
+        public void RemoveItemsInBasket_WithAllItemsInBasket_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemsInBasket();
+            _fixture.SetupItemsInSection();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.RemoveItemsInBasket();
+
+            // Assert
+            result.Items.Should().BeEmpty();
+            sut.Items.Should().BeEquivalentTo(_fixture.ItemsInBasket);
+        }
+
+        private sealed class RemoveItemsInBasketFixture : ShoppingListSectionFixture
+        {
+            public IReadOnlyCollection<ShoppingListItem> ItemsInBasket { get; private set; } = new List<ShoppingListItem>(0);
+            public IReadOnlyCollection<ShoppingListItem> ItemsNotInBasket { get; private set; } = new List<ShoppingListItem>(0);
+
+            public void SetupItemsInBasket()
+            {
+                ItemsInBasket = ShoppingListItemMother.InBasket().CreateMany(3).ToList();
+            }
+
+            public void SetupItemsNotInBasket()
+            {
+                ItemsNotInBasket = ShoppingListItemMother.NotInBasket().CreateMany(3).ToList();
+            }
+
+            public void SetupItemsInSection()
+            {
+                var items = ItemsInBasket.Union(ItemsNotInBasket);
+                SetupItems(items);
+            }
+        }
+    }
 
     private abstract class ShoppingListSectionFixture
     {
         private readonly ShoppingListSectionBuilder _builder = new();
 
-        protected void SetupSectionContainingItem(IShoppingListItem item)
+        protected void SetupItem(ShoppingListItem item)
         {
             _builder.WithItem(item);
+        }
+
+        protected void SetupItems(IEnumerable<ShoppingListItem> items)
+        {
+            _builder.WithItems(items);
         }
 
         public ShoppingListSection CreateSut()

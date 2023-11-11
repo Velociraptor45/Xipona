@@ -11,13 +11,12 @@ public class AvailabilityValidationService : IAvailabilityValidationService
 {
     private readonly IStoreRepository _storeRepository;
 
-    public AvailabilityValidationService(Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public AvailabilityValidationService(IStoreRepository storeRepository)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _storeRepository = storeRepository;
     }
 
-    public async Task ValidateAsync(IEnumerable<IItemAvailability> availabilities)
+    public async Task ValidateAsync(IEnumerable<ItemAvailability> availabilities)
     {
         var availabilitiesList = availabilities.ToList();
 

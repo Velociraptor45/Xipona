@@ -16,8 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class RecipeTagControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public sealed class CreateRecipeTagAsync
+    public sealed class CreateRecipeTagAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly CreateRecipeTagAsyncFixture _fixture;
 
@@ -47,9 +46,10 @@ public class RecipeTagControllerIntegrationTests
             result.Should().BeOfType<CreatedAtActionResult>();
 
             var createdResult = (CreatedAtActionResult)result;
+            createdResult.Value.Should().NotBeNull();
             createdResult.Value.Should().BeOfType<RecipeTagContract>();
 
-            var createdContract = (RecipeTagContract)createdResult.Value;
+            var createdContract = (RecipeTagContract)createdResult.Value!;
             createdContract.Should().BeEquivalentTo(_fixture.ExpectedContract,
                 opt => opt.Excluding(info => info.Path == "Id"));
 

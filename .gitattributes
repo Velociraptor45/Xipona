@@ -1,0 +1,7 @@
+*       text=auto
+
+# diffs
+*.cs    diff=csharp
+
+# line endings
+*.sh    eol=lf

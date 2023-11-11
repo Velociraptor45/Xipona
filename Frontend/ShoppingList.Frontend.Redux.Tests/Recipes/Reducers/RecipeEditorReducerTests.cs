@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
@@ -29,7 +30,10 @@ public class RecipeEditorReducerTests
             var result = RecipeEditorReducer.OnSetNewRecipe(_fixture.InitialState);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState,
+                opt => opt.Excluding(info =>
+                    info.Path == "Editor.Recipe.Ingredients[0].Key"
+                    || info.Path == "Editor.Recipe.PreparationSteps[0].Key"));
         }
 
         private sealed class OnSetNewRecipeFixture : RecipeEditorReducerFixture
@@ -41,7 +45,7 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
-                        IsInEditMode = true
+                        IsInEditMode = false
                     }
                 };
             }
@@ -56,10 +60,30 @@ public class RecipeEditorReducerTests
                             Guid.Empty,
                             string.Empty,
                             1,
-                            new List<EditedIngredient>(0),
-                            new SortedSet<EditedPreparationStep>(),
+                            new List<EditedIngredient>
+                            {
+                                new(
+                                    Guid.NewGuid(),
+                                    Guid.Empty,
+                                    string.Empty,
+                                    Guid.Empty,
+                                    ExpectedState.IngredientQuantityTypes.First().Id,
+                                    1,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    new ItemCategorySelector(
+                                        new List<ItemCategorySearchResult>(0),
+                                        string.Empty),
+                                    new ItemSelector(new List<SearchItemByItemCategoryResult>(0)))
+                            },
+                            new SortedSet<EditedPreparationStep>
+                            {
+                                new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
+                            },
                             new List<Guid>(0)),
-                        IsInEditMode = false
+                        IsInEditMode = true
                     }
                 };
             }
@@ -704,6 +728,298 @@ public class RecipeEditorReducerTests
             public void SetupActionForRecipeNull()
             {
                 Action = new DomainTestBuilder<RecipeNumberOfServingsChangedAction>().Create();
+            }
+        }
+    }
+
+    public class OnModifyRecipeStarted
+    {
+        private readonly OnModifyRecipeStartedFixture _fixture;
+
+        public OnModifyRecipeStarted()
+        {
+            _fixture = new OnModifyRecipeStartedFixture();
+        }
+
+        [Fact]
+        public void OnModifyRecipeStarted_WithNotSaving_ShouldSetSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipeStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnModifyRecipeStarted_WithSaving_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipeStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.InitialState);
+        }
+
+        private sealed class OnModifyRecipeStartedFixture : RecipeEditorReducerFixture
+        {
+            public void SetupInitialStateNotSaving()
+            {
+                SetupInitialState(false);
+            }
+
+            public void SetupInitialStateSaving()
+            {
+                SetupInitialState(true);
+            }
+
+            private void SetupInitialState(bool isSaving)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = isSaving,
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnModifyRecipeFinished
+    {
+        private readonly OnModifyRecipeFinishedFixture _fixture;
+
+        public OnModifyRecipeFinished()
+        {
+            _fixture = new OnModifyRecipeFinishedFixture();
+        }
+
+        [Fact]
+        public void OnModifyRecipeFinished_WithSaving_ShouldSetNotSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialStateSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipeFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnModifyRecipeFinished_WithNotSaving_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipeFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.InitialState);
+        }
+
+        private sealed class OnModifyRecipeFinishedFixture : RecipeEditorReducerFixture
+        {
+            public void SetupInitialStateNotSaving()
+            {
+                SetupInitialState(false);
+            }
+
+            public void SetupInitialStateSaving()
+            {
+                SetupInitialState(true);
+            }
+
+            private void SetupInitialState(bool isSaving)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = isSaving,
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCreateRecipeStarted
+    {
+        private readonly OnCreateRecipeStartedFixture _fixture;
+
+        public OnCreateRecipeStarted()
+        {
+            _fixture = new OnCreateRecipeStartedFixture();
+        }
+
+        [Fact]
+        public void OnCreateRecipeStarted_WithNotSaving_ShouldSetSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipeStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateRecipeStarted_WithSaving_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipeStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.InitialState);
+        }
+
+        private sealed class OnCreateRecipeStartedFixture : RecipeEditorReducerFixture
+        {
+            public void SetupInitialStateNotSaving()
+            {
+                SetupInitialState(false);
+            }
+
+            public void SetupInitialStateSaving()
+            {
+                SetupInitialState(true);
+            }
+
+            private void SetupInitialState(bool isSaving)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = isSaving,
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCreateRecipeFinished
+    {
+        private readonly OnCreateRecipeFinishedFixture _fixture;
+
+        public OnCreateRecipeFinished()
+        {
+            _fixture = new OnCreateRecipeFinishedFixture();
+        }
+
+        [Fact]
+        public void OnCreateRecipeFinished_WithSaving_ShouldSetNotSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialStateSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipeFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateRecipeFinished_WithNotSaving_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotSaving();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipeFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.InitialState);
+        }
+
+        private sealed class OnCreateRecipeFinishedFixture : RecipeEditorReducerFixture
+        {
+            public void SetupInitialStateNotSaving()
+            {
+                SetupInitialState(false);
+            }
+
+            public void SetupInitialStateSaving()
+            {
+                SetupInitialState(true);
+            }
+
+            private void SetupInitialState(bool isSaving)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = isSaving,
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsSaving = false
+                    }
+                };
             }
         }
     }

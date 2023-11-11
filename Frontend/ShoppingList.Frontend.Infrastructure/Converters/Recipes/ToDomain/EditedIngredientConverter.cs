@@ -14,6 +14,7 @@ public class EditedIngredientConverter : IToDomainConverter<IngredientContract, 
         return new EditedIngredient(
             Guid.NewGuid(),
             source.Id,
+            source.Name,
             source.ItemCategoryId,
             source.QuantityType,
             source.Quantity,

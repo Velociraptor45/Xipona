@@ -9,11 +9,9 @@ public class ItemCategoryValidationService : IItemCategoryValidationService
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
 
-    public ItemCategoryValidationService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemCategoryValidationService(IItemCategoryRepository itemCategoryRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
     }
 
     public async Task ValidateAsync(ItemCategoryId itemCategoryId)

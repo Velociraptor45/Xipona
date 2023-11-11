@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
@@ -15,15 +16,12 @@ public class RecipeModificationService : IRecipeModificationService
     private readonly IValidator _validator;
     private readonly IItemRepository _itemRepository;
 
-    public RecipeModificationService(
-        Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        CancellationToken cancellationToken)
+    public RecipeModificationService(IRecipeRepository recipeRepository, IItemRepository itemRepository,
+        IValidator validator)
     {
-        _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
+        _recipeRepository = recipeRepository;
+        _itemRepository = itemRepository;
+        _validator = validator;
     }
 
     public async Task ModifyAsync(RecipeModification modification)
@@ -60,6 +58,21 @@ public class RecipeModificationService : IRecipeModificationService
         }
     }
 
+    public async Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
+        IEnumerable<ItemAvailability> newAvailabilities)
+    {
+        var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId);
+        var item = await _itemRepository.FindActiveByAsync(itemId);
+        if (item is null)
+            throw new DomainException(new ItemNotFoundReason(itemId));
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, newAvailabilities);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
     public async Task ModifyIngredientsAfterAvailabilityWasDeletedAsync(ItemId itemId, ItemTypeId? itemTypeId,
         StoreId deletedAvailabilityStoreId)
     {
@@ -71,6 +84,17 @@ public class RecipeModificationService : IRecipeModificationService
         foreach (var recipe in recipes)
         {
             recipe.ModifyIngredientsAfterAvailabilityWasDeleted(itemId, itemTypeId, item, deletedAvailabilityStoreId);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
+    public async Task RemoveIngredientsOfItemCategoryAsync(ItemCategoryId itemCategoryId)
+    {
+        var recipes = (await _recipeRepository.FindByAsync(itemCategoryId)).ToList();
+
+        foreach (var recipe in recipes)
+        {
+            recipe.RemoveIngredientsOfItemCategory(itemCategoryId);
             await _recipeRepository.StoreAsync(recipe);
         }
     }

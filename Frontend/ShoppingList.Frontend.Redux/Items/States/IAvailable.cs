@@ -30,7 +30,7 @@
                     return new EditedItemAvailabilityStore(s.Id, s.Name, isDisabled);
                 })
                 .ToList();
-            return avStores;
+            return avStores.OrderBy(s => s.Name);
         }
     }
 }

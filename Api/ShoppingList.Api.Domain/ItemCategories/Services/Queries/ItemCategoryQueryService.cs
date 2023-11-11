@@ -10,10 +10,9 @@ public class ItemCategoryQueryService : IItemCategoryQueryService
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
 
-    public ItemCategoryQueryService(Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemCategoryQueryService(IItemCategoryRepository itemCategoryRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
     }
 
     public async Task<IEnumerable<ItemCategorySearchResultReadModel>> GetAsync(string searchInput, bool includeDeleted)

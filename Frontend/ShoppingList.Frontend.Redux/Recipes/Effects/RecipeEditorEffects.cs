@@ -1,7 +1,9 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
@@ -15,12 +17,31 @@ public sealed class RecipeEditorEffects
     private readonly IApiClient _client;
     private readonly IState<RecipeState> _state;
     private readonly NavigationManager _navigationManager;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public RecipeEditorEffects(IApiClient client, IState<RecipeState> state, NavigationManager navigationManager)
+    public RecipeEditorEffects(IApiClient client, IState<RecipeState> state, NavigationManager navigationManager,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _state = state;
         _navigationManager = navigationManager;
+        _notificationService = notificationService;
+    }
+
+    [EffectMethod]
+    public async Task HandleInitializeRecipe(InitializeRecipeAction action, IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new LoadRecipeTagsAction());
+
+        // ingredient quantity types must be loaded before recipe is loaded
+        // otherwise this could lead to exceptions when creating a new recipe
+        if (!_state.Value.IngredientQuantityTypes.Any())
+            await LoadIngredientQuantityTypes(dispatcher);
+
+        if (action.RecipeId == Guid.Empty)
+            dispatcher.Dispatch(new SetNewRecipeAction());
+        else
+            dispatcher.Dispatch(new LoadRecipeForEditingAction(action.RecipeId));
     }
 
     [EffectMethod]
@@ -55,9 +76,11 @@ public sealed class RecipeEditorEffects
     public async Task HandleModifyRecipeAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new ModifyRecipeStartedAction());
+
+        var recipe = _state.Value.Editor.Recipe!;
         try
         {
-            await _client.ModifyRecipeAsync(_state.Value.Editor.Recipe!);
+            await _client.ModifyRecipeAsync(recipe);
         }
         catch (ApiException e)
         {
@@ -74,15 +97,18 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new ModifyRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        _notificationService.NotifySuccess($"Successfully modified recipe {recipe.Name}");
     }
 
     [EffectMethod(typeof(CreateRecipeAction))]
     public async Task HandleCreateRecipeAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new CreateRecipeStartedAction());
+
+        var recipe = _state.Value.Editor.Recipe!;
         try
         {
-            await _client.CreateRecipeAsync(_state.Value.Editor.Recipe!);
+            await _client.CreateRecipeAsync(recipe);
         }
         catch (ApiException e)
         {
@@ -99,6 +125,7 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new CreateRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        _notificationService.NotifySuccess($"Successfully created recipe {recipe.Name}");
     }
 
     [EffectMethod(typeof(CreateNewRecipeTagAction))]
@@ -178,5 +205,27 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
         dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
+        _notificationService.NotifySuccess("Successfully added items to shopping lists");
+    }
+
+    private async Task LoadIngredientQuantityTypes(IDispatcher dispatcher)
+    {
+        IEnumerable<IngredientQuantityType> results;
+        try
+        {
+            results = await _client.GetAllIngredientQuantityTypes();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading ingredient types failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading ingredient types failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new LoadIngredientQuantityTypesFinishedAction(results.ToList()));
     }
 }

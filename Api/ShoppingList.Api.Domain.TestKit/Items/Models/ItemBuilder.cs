@@ -69,13 +69,13 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         return WithManufacturerId(null);
     }
 
-    public ItemBuilder WithAvailabilities(IEnumerable<IItemAvailability> availabilities)
+    public ItemBuilder WithAvailabilities(IEnumerable<ItemAvailability> availabilities)
     {
         FillConstructorWith("availabilities", availabilities);
         return this;
     }
 
-    public ItemBuilder WithAvailability(IItemAvailability availability)
+    public ItemBuilder WithAvailability(ItemAvailability availability)
     {
         return WithAvailabilities(availability.ToMonoList());
     }

@@ -218,33 +218,24 @@ public class ItemReadModelConversionServiceTests
 
     private class LocalFixture
     {
-        private readonly SectionFactoryMock _sectionFactoryMock;
-        private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock;
-        private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock;
-        private readonly StoreRepositoryMock _storeRepositoryMock;
+        private readonly SectionFactoryMock _sectionFactoryMock = new(MockBehavior.Strict);
+        private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock = new(MockBehavior.Strict);
+        private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock = new(MockBehavior.Strict);
+        private readonly StoreRepositoryMock _storeRepositoryMock = new(MockBehavior.Strict);
         private IStore? _store;
         private IItemCategory? _itemCategory;
         private IManufacturer? _manufacturer;
         private ManufacturerId ManufacturerId => Item!.ManufacturerId!.Value;
         private ItemCategoryId ItemCategoryId => Item!.ItemCategoryId!.Value;
 
-        public LocalFixture()
-        {
-            _itemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-            _manufacturerRepositoryMock = new ManufacturerRepositoryMock(MockBehavior.Strict);
-            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
-        }
-
         public IItem? Item { get; private set; }
 
         public ItemReadModelConversionService CreateService()
         {
             return new ItemReadModelConversionService(
-                _ => _itemCategoryRepositoryMock.Object,
-                _ => _manufacturerRepositoryMock.Object,
-                _ => _storeRepositoryMock.Object,
-                default);
+                _itemCategoryRepositoryMock.Object,
+                _manufacturerRepositoryMock.Object,
+                _storeRepositoryMock.Object);
         }
 
         public void SetupItem()
@@ -427,7 +418,7 @@ public class ItemReadModelConversionServiceTests
         }
 
         private static ItemAvailabilityReadModel CreateAvailabilityReadModel(IStore store,
-            IItemAvailability availability)
+            ItemAvailability availability)
         {
             var section = store.Sections.First();
             var sectionReadModel = new ItemSectionReadModel(

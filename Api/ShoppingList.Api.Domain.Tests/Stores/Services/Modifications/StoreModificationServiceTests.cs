@@ -156,10 +156,9 @@ public class StoreModificationServiceTests
         public StoreModificationService CreateSut()
         {
             return new StoreModificationService(
-                _ => _storeRepositoryMock.Object,
-                _ => ItemModificationServiceMock.Object,
-                _ => ShoppingListModificationServiceMock.Object,
-                default);
+                _storeRepositoryMock.Object,
+                ItemModificationServiceMock.Object,
+                ShoppingListModificationServiceMock.Object);
         }
 
         protected void SetupFindingStore(StoreId storeId, IStore store)

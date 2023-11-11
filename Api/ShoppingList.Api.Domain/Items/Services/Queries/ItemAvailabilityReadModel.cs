@@ -13,7 +13,7 @@ public class ItemAvailabilityReadModel
         DefaultSection = defaultSection;
     }
 
-    public ItemAvailabilityReadModel(IItemAvailability availability, IStore store, ISection section) :
+    public ItemAvailabilityReadModel(ItemAvailability availability, IStore store, ISection section) :
         this(new ItemStoreReadModel(store), availability.Price, new ItemSectionReadModel(section))
     {
     }

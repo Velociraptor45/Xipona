@@ -18,13 +18,11 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
 
-    public ItemSearchReadModelConversionService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IManufacturerRepository> manufacturerRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemSearchReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
+        IManufacturerRepository manufacturerRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _manufacturerRepository = manufacturerRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
+        _manufacturerRepository = manufacturerRepository;
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items,
@@ -43,7 +41,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                 IItemCategory? itemCategory =
                     item.ItemCategoryId == null ? null : itemCategoryDict[item.ItemCategoryId.Value];
 
-                IItemAvailability storeAvailability = item.Availabilities
+                ItemAvailability storeAvailability = item.Availabilities
                     .Single(av => av.StoreId == store.Id);
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);
@@ -87,7 +85,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
             var requiredItemTypes = item.ItemTypes.Where(t => !t.IsDeleted && itemTypeIdsSet.Contains(t.Id));
             return requiredItemTypes.Select(type =>
             {
-                IItemAvailability storeAvailability = type.Availabilities
+                ItemAvailability storeAvailability = type.Availabilities
                     .Single(av => av.StoreId == store.Id);
 
                 var section = store.Sections.Single(s => s.Id == storeAvailability.DefaultSectionId);

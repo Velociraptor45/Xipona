@@ -142,4 +142,28 @@ public static class ItemCategoryEditorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(OpenDeleteItemCategoryDialogAction))]
+    public static ItemCategoryState OnOpenDeleteItemCategoryDialog(ItemCategoryState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteItemCategoryDialogAction))]
+    public static ItemCategoryState OnCloseDeleteItemCategoryDialog(ItemCategoryState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = false
+            }
+        };
+    }
 }

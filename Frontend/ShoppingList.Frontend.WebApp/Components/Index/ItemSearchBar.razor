@@ -9,10 +9,9 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<div class="mb-2 d-flex">
-    <Select OnFocus="OnSearchBarFocusIn"
-            Class="@(State.Value.SearchBar.IsActive ? "ml-1 mr-2 w-100 cursor-text" : "mx-1 w-100 cursor-text")"
-            Placeholder="Search for item..."
+<div class="d-flex">
+    <Select Class="mr-1 cursor-text"
+            Placeholder="Search for item"
             ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
             LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
             DataSource="State.Value.SearchBar.Results"
@@ -23,12 +22,7 @@
             Value="State.Value.SearchBar.Input"
             OnSearch="OnSearchInputChanged">
     </Select>
-
-    @if (State.Value.SearchBar.IsActive)
-    {
-        <TemporaryItemCreator></TemporaryItemCreator>
-        <Button Class="mx-1" OnClick="@OnSearchBarCancelButtonClicked">Cancel</Button>
-    }
+    <TemporaryItemCreator></TemporaryItemCreator>
 </div>
 
 @code {
@@ -43,15 +37,5 @@
             return;
 
         Dispatcher.Dispatch(new ItemForShoppingListSearchResultSelectedAction(item));
-    }
-
-    private void OnSearchBarCancelButtonClicked()
-    {
-        Dispatcher.Dispatch(new SetSearchBarInactiveAction());
-    }
-
-    private void OnSearchBarFocusIn()
-    {
-        Dispatcher.Dispatch(new SetSearchBarActiveAction());
     }
 }

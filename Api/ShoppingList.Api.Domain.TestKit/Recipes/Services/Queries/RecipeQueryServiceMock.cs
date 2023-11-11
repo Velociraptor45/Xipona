@@ -15,7 +15,7 @@ public class RecipeQueryServiceMock : Mock<IRecipeQueryService>
         Setup(m => m.SearchByNameAsync(searchInput)).ReturnsAsync(returnValue);
     }
 
-    public void SetupGetAsync(RecipeId recipeId, IRecipe returnValue)
+    public void SetupGetAsync(RecipeId recipeId, RecipeReadModel returnValue)
     {
         Setup(m => m.GetAsync(recipeId)).ReturnsAsync(returnValue);
     }

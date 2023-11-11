@@ -13,4 +13,9 @@ public static class ItemAvailabilityMother
     {
         return new ItemAvailabilityBuilder().WithStoreId(storeId);
     }
+
+    public static ItemAvailabilityBuilder ForDefaultSection(SectionId sectionId)
+    {
+        return new ItemAvailabilityBuilder().WithDefaultSectionId(sectionId);
+    }
 }

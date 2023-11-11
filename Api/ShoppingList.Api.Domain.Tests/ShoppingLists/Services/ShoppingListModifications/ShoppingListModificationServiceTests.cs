@@ -1307,33 +1307,22 @@ public class ShoppingListModificationServiceTests
 
     private abstract class ShoppingListModificationServiceFixture
     {
-        protected readonly AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
-        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-        protected readonly StoreRepositoryMock StoreRepositoryMock;
-        protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock;
-        protected readonly ItemFactoryMock ItemFactoryMock;
-
-        protected ShoppingListModificationServiceFixture()
-        {
-            AddItemToShoppingListServiceMock = new AddItemToShoppingListServiceMock(MockBehavior.Strict);
-            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            ShoppingListSectionFactoryMock = new ShoppingListSectionFactoryMock(MockBehavior.Strict);
-            ItemFactoryMock = new ItemFactoryMock(MockBehavior.Strict);
-        }
+        protected readonly AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock = new(MockBehavior.Strict);
+        protected readonly ItemFactoryMock ItemFactoryMock = new(MockBehavior.Strict);
 
         public ShoppingListModificationService CreateSut()
         {
             return new ShoppingListModificationService(
-                _ => AddItemToShoppingListServiceMock.Object,
-                _ => ShoppingListRepositoryMock.Object,
-                _ => ItemRepositoryMock.Object,
-                _ => StoreRepositoryMock.Object,
+                AddItemToShoppingListServiceMock.Object,
+                ShoppingListRepositoryMock.Object,
+                ItemRepositoryMock.Object,
+                StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
-                ItemFactoryMock.Object,
-                default);
+                ItemFactoryMock.Object);
         }
     }
 }

@@ -12,13 +12,13 @@
         <div class="font-weight-bold mr-2">Stores</div>
         <Button class="d-flex align-items-center" Size="@AntSizeLDSType.Small" OnClick="OnAddStoreButtonClicked"
                 Disabled="@(!Available.GetNotRegisteredStores(State.Value.Stores.Stores).Any())">
-            <Icon Type="plus"></Icon>
+            <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    <div class="py-2">
+    <div class="pt-2 stores">
         @foreach(var availability in Available.Availabilities)
         {
-            <div class="pb-3">
+            <div class="store">
                 <Availability Available="Available" Model="@availability"></Availability>
             </div>
         }

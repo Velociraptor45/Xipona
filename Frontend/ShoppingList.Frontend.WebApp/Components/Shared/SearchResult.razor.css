@@ -1,4 +1,8 @@
 ﻿.search-result:hover {
-    cursor: pointer;
-    background-color: aqua;
+  cursor: pointer;
+  background-color: #3498db;
+  color: white;
+}
+.search-result {
+  color: #34495e;
 }

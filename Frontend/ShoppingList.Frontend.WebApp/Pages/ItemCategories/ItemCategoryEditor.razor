@@ -5,44 +5,43 @@
 @using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States
+@using ProjectHermes.ShoppingList.Frontend.WebApp.Components.ItemCategories
 
 @inject IState<ItemCategoryState> State
 @inject IDispatcher Dispatcher
 
 @namespace ProjectHermes.ShoppingList.Frontend.WebApp.Pages.ItemCategories
 
-@if (State.Value.Editor?.ItemCategory is not null)
+@if (State.Value.Editor.ItemCategory is not null)
 {
-    <div>
+    <div class="mt-2 item-category">
         <div class="d-flex">
             <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
-                <Icon Type="arrow-left"></Icon>
+                <i class="bi bi-arrow-left"></i>
             </Button>
             <div class="mx-3">
-                <Input Placeholder="Name ..."
+                <Input Placeholder="Item category name"
                        TValue="string"
                        Value="@State.Value.Editor.ItemCategory.Name"
                        OnChange="OnNameChanged"/>
             </div>
             @if (State.Value.Editor.ItemCategory.Id != Guid.Empty)
             {
-                <Button Danger="true"
-                        Class="ml-auto"
-                        OnClick="@OnDeleteButtonClicked">
-                    Delete
-                </Button>
+                <DeleteItemCategory></DeleteItemCategory>
             }
         </div>
-        <div class="d-flex justify-content-end mt-2">
-
-            @if (State.Value.Editor.ItemCategory.Id == Guid.Empty)
-            {
-                <Button @onclick="@OnSaveButtonClicked">Create</Button>
-            }
-            else
-            {
-                <Button @onclick="@OnSaveButtonClicked">Save</Button>
-            }
+        <div class="d-flex justify-content-end mt-4">
+            <Button Type="@ButtonType.Primary" @onclick="@OnSaveButtonClicked"
+                    Loading="@State.Value.Editor.IsSaving">
+                @if (State.Value.Editor.ItemCategory.Id == Guid.Empty)
+                {
+                    @("Create")
+                }
+                else
+                {
+                    @("Save")
+                }
+            </Button>
         </div>
     </div>
 }
@@ -73,11 +72,5 @@
     private void OnSaveButtonClicked()
     {
         Dispatcher.Dispatch(new SaveItemCategoryAction());
-    }
-
-
-    private void OnDeleteButtonClicked()
-    {
-        Dispatcher.Dispatch(new DeleteItemCategoryAction());
     }
 }

@@ -8,6 +8,9 @@ namespace ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 
 public static partial class EquivalencyAssertionOptionsExtensions
 {
+    [GeneratedRegex(@"ItemTypes\[\d+\].Id")]
+    private static partial Regex ItemTypesId();
+
     [GeneratedRegex(@"ItemTypes\[\d+\].Item")]
     private static partial Regex ItemTypesItemCycle();
 
@@ -30,10 +33,16 @@ public static partial class EquivalencyAssertionOptionsExtensions
 
     public static EquivalencyAssertionOptions<T> ExcludeItemCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => ItemTypesItemCycle().IsMatch(info.Path)
+        return options.Excluding(info => info.Path == "Predecessor"
+                                         || ItemTypesItemCycle().IsMatch(info.Path)
                                          || ItemTypesPredecessorCycle().IsMatch(info.Path)
                                          || AvailableAtItemTypeCycle().IsMatch(info.Path)
                                          || AvailableAtItemCycle().IsMatch(info.Path));
+    }
+
+    public static EquivalencyAssertionOptions<T> ExcludeItemTypeId<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => ItemTypesId().IsMatch(info.Path));
     }
 
     [GeneratedRegex(@"ItemsOnList\[\d+\].ShoppingList")]

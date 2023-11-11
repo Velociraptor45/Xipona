@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
@@ -83,6 +84,16 @@ public class RecipeRepository : IRecipeRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId)
+    {
+        var entities = await GetRecipeQuery()
+            .Where(r => r.Ingredients.Any(i => i.DefaultItemId == defaultItemId
+                && i.DefaultItemTypeId == defaultItemTypeId))
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
     public async Task<IEnumerable<IRecipe>> FindByAsync(ItemId defaultItemId, ItemTypeId? defaultItemTypeId,
         StoreId defaultStoreId)
     {
@@ -90,6 +101,15 @@ public class RecipeRepository : IRecipeRepository
             .Where(r => r.Ingredients.Any(i => i.DefaultItemId == defaultItemId
                 && i.DefaultItemTypeId == defaultItemTypeId
                 && i.DefaultStoreId == defaultStoreId))
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
+    public async Task<IEnumerable<IRecipe>> FindByAsync(ItemCategoryId itemCategoryId)
+    {
+        var entities = await GetRecipeQuery()
+            .Where(r => r.Ingredients.Any(i => i.ItemCategoryId == itemCategoryId))
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
@@ -127,7 +147,7 @@ public class RecipeRepository : IRecipeRepository
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            _logger.LogInformation(ex, () => $"Saving recipe {recipe.Id.Value} failed due to concurrency violation");
+            _logger.LogInformation(ex, () => "Saving recipe '{RecipeId}' failed due to concurrency violation", recipe.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
 

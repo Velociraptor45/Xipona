@@ -7,11 +7,9 @@ public class ItemDeletionService : IItemDeletionService
 {
     private readonly IItemRepository _itemRepository;
 
-    public ItemDeletionService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemDeletionService(IItemRepository itemRepository)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepository;
     }
 
     public async Task DeleteAsync(ItemId itemId)

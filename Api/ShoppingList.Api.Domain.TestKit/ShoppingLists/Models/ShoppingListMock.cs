@@ -16,12 +16,12 @@ public class ShoppingListMock : Mock<IShoppingList>
         SetupSections(shoppingList.Sections);
     }
 
-    public IShoppingListItem GetRandomItem(CommonFixture commonFixture)
+    public ShoppingListItem GetRandomItem(CommonFixture commonFixture)
     {
         return commonFixture.ChooseRandom(Object.Items);
     }
 
-    public IShoppingListItem GetRandomItem(CommonFixture commonFixture, Func<IShoppingListItem, bool> condition)
+    public ShoppingListItem GetRandomItem(CommonFixture commonFixture, Func<ShoppingListItem, bool> condition)
     {
         var filteredItems = Object.Items.Where(condition);
 
@@ -42,7 +42,7 @@ public class ShoppingListMock : Mock<IShoppingList>
             .Returns(returnValue);
     }
 
-    public void SetupItems(IReadOnlyCollection<IShoppingListItem> items)
+    public void SetupItems(IReadOnlyCollection<ShoppingListItem> items)
     {
         Setup(i => i.Items)
             .Returns(items);
@@ -71,7 +71,7 @@ public class ShoppingListMock : Mock<IShoppingList>
         Setup(m => m.AddSection(section));
     }
 
-    public void SetupAddItem(IShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
+    public void SetupAddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
         Setup(m => m.AddItem(item, sectionId, throwIfAlreadyPresent));
     }
@@ -121,7 +121,7 @@ public class ShoppingListMock : Mock<IShoppingList>
         Verify(i => i.RemoveFromBasket(itemId, itemTypeId), Times.Once);
     }
 
-    public void VerifyAddItemOnce(IShoppingListItem listItem, SectionId sectionId, bool throwIfAlreadyPresent = true)
+    public void VerifyAddItemOnce(ShoppingListItem listItem, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
         Verify(i => i.AddItem(listItem, sectionId, throwIfAlreadyPresent),
             Times.Once);
@@ -130,7 +130,7 @@ public class ShoppingListMock : Mock<IShoppingList>
     public void VerifyAddItemNever()
     {
         Verify(i => i.AddItem(
-                It.IsAny<IShoppingListItem>(),
+                It.IsAny<ShoppingListItem>(),
                 It.IsAny<SectionId>(),
                 It.IsAny<bool>()),
             Times.Never);

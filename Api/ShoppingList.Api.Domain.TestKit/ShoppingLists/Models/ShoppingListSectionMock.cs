@@ -20,7 +20,7 @@ public class ShoppingListSectionMock : Mock<IShoppingListSection>
             .Returns(returnValue);
     }
 
-    public void SetupItems(IReadOnlyCollection<IShoppingListItem> returnValue)
+    public void SetupItems(IReadOnlyCollection<ShoppingListItem> returnValue)
     {
         Setup(i => i.Items)
             .Returns(returnValue);
@@ -51,10 +51,10 @@ public class ShoppingListSectionMock : Mock<IShoppingListSection>
             .Returns(Object.RemoveItemsInBasket());
     }
 
-    public void VerifyAddItemOnce(IShoppingListItem item, bool throwIfAlreadyPresent = true)
+    public void VerifyAddItemOnce(ShoppingListItem item, bool throwIfAlreadyPresent = true)
     {
         Verify(i => i.AddItem(
-                It.Is<IShoppingListItem>(itm => itm == item),
+                It.Is<ShoppingListItem>(itm => itm == item),
                 throwIfAlreadyPresent),
             Times.Once);
     }

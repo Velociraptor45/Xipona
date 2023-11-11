@@ -28,6 +28,7 @@ public record ShoppingListState(
     }
 
     public ShoppingListStore? SelectedStore => Stores.Stores.FirstOrDefault(s => s.Id == SelectedStoreId);
+    public bool AllItemsInBasketHidden => !ItemsInBasketVisible && (ShoppingList?.Sections.All(s => s.AllItemsHidden) ?? false);
 }
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
@@ -56,7 +57,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             true,
             false,
             null,
-            new SearchBar(string.Empty, false, new List<SearchItemForShoppingListResult>()),
+            new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
             new TemporaryItemCreator(string.Empty, null, 1f, 0, false, false, false),
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
             new Summary(false, false, DateTime.MinValue, false),

@@ -112,7 +112,7 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("")]
@@ -134,7 +134,7 @@ public class ItemCategoryController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -152,7 +152,7 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [Route("{id}")]
@@ -174,6 +174,6 @@ public class ItemCategoryController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        return Ok();
+        return NoContent();
     }
 }

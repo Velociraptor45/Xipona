@@ -24,8 +24,7 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ShoppingListControllerIntegrationTests
 {
-    [Collection(DockerCollection.Name)]
-    public sealed class FinishListAsync
+    public sealed class FinishListAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly FinishListAsyncFixture _fixture;
 
@@ -49,7 +48,7 @@ public class ShoppingListControllerIntegrationTests
             var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, null);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
             var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
             allShoppingLists.Should().HaveCount(2);
             allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
@@ -76,7 +75,7 @@ public class ShoppingListControllerIntegrationTests
             var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, _fixture.FinishedAt);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
             var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
             allShoppingLists.Should().HaveCount(2);
             allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
@@ -139,8 +138,7 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    [Collection(DockerCollection.Name)]
-    public sealed class AddTemporaryItemToShoppingListAsync
+    public sealed class AddTemporaryItemToShoppingListAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly AddTemporaryItemToShoppingListAsyncFixture _fixture;
 
@@ -170,7 +168,7 @@ public class ShoppingListControllerIntegrationTests
             var result = await sut.AddTemporaryItemToShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
+            result.Should().BeOfType<NoContentResult>();
 
             using var assertScope = _fixture.CreateServiceScope();
 

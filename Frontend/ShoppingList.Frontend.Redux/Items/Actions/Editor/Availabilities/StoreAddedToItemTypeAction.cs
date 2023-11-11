@@ -1,2 +1,2 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
-public record StoreAddedToItemTypeAction(Guid ItemTypeId);
+public record StoreAddedToItemTypeAction(Guid ItemTypeKey);

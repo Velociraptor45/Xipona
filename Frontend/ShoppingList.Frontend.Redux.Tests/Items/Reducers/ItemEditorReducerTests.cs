@@ -723,13 +723,31 @@ public class ItemEditorReducerTests
         }
 
         [Fact]
-        public void OnStoreAddedToItemType_WithInvalidTypeId_ShouldNotAddStore()
+        public void OnStoreAddedToItemType_WithInvalidTypeKey_ShouldNotAddStore()
         {
             // Arrange
             _fixture.SetupStores();
             _fixture.SetupItemTypes();
-            _fixture.SetupActionWithInvalidTypeId();
+            _fixture.SetupActionWithInvalidTypeKey();
             _fixture.SetupOneStoreAvailableForInvalidTypeId();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithOneStoreAvailable_WithTwoTypesWithSameId_ShouldAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypesWithInitialId();
+            _fixture.SetupAction();
+            _fixture.SetupOneStoreAvailable();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -779,35 +797,47 @@ public class ItemEditorReducerTests
         private sealed class OnStoreAddedToItemTypeFixture : ItemEditorReducerFixture
         {
             private List<ItemStore>? _stores;
-            private Guid? _typeId;
+            private Guid? _typeKey;
 
             public StoreAddedToItemTypeAction? Action { get; private set; }
 
             public void SetupAction()
             {
-                TestPropertyNotSetException.ThrowIfNull(_typeId);
-                Action = new StoreAddedToItemTypeAction(_typeId.Value);
+                TestPropertyNotSetException.ThrowIfNull(_typeKey);
+                Action = new StoreAddedToItemTypeAction(_typeKey.Value);
             }
 
-            public void SetupActionWithInvalidTypeId()
+            public void SetupActionWithInvalidTypeKey()
             {
                 Action = new StoreAddedToItemTypeAction(Guid.NewGuid());
             }
 
             public void SetupItemTypes()
             {
+                SetupItemTypes(false);
+            }
+
+            public void SetupItemTypesWithInitialId()
+            {
+                SetupItemTypes(true);
+            }
+
+            private void SetupItemTypes(bool withInitialId)
+            {
                 var types = new List<EditedItemType>()
                 {
                     new DomainTestBuilder<EditedItemType>().Create() with
                     {
+                        Id = withInitialId ? Guid.Empty : Guid.NewGuid(),
                         Availabilities = new List<EditedItemAvailability>()
                     },
                     new DomainTestBuilder<EditedItemType>().Create() with
                     {
+                        Id = withInitialId ? Guid.Empty : Guid.NewGuid(),
                         Availabilities = new List<EditedItemAvailability>()
                     }
                 };
-                _typeId = types.Last().Id;
+                _typeKey = types.Last().Key;
                 ExpectedState = ExpectedState with
                 {
                     Editor = ExpectedState.Editor with
@@ -2013,7 +2043,8 @@ public class ItemEditorReducerTests
             var result = ItemEditorReducer.OnItemTypeAdded(_fixture.InitialState);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState,
+                opt => opt.Excluding(info => info.Path == "Editor.Item.ItemTypes[0].Key"));
         }
 
         private sealed class OnItemTypeAddedFixture : ItemEditorReducerFixture
@@ -2026,7 +2057,7 @@ public class ItemEditorReducerTests
             public void SetupExpectedState()
             {
                 var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
-                itemTypes.Add(new(Guid.Empty, string.Empty, new List<EditedItemAvailability>()));
+                itemTypes.Insert(0, new(Guid.Empty, Guid.NewGuid(), string.Empty, new List<EditedItemAvailability>()));
 
                 ExpectedState = ExpectedState with
                 {
@@ -2236,7 +2267,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2247,7 +2278,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2258,7 +2289,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2310,7 +2341,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2321,7 +2352,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2332,7 +2363,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2384,7 +2415,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsUpdating = false
                     }
                 };
             }
@@ -2395,7 +2426,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsUpdating = true
                     }
                 };
             }
@@ -2406,7 +2437,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsUpdating = true
                     }
                 };
             }
@@ -2458,7 +2489,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsUpdating = true
                     }
                 };
             }
@@ -2469,7 +2500,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsUpdating = false
                     }
                 };
             }
@@ -2480,7 +2511,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsUpdating = false
                     }
                 };
             }
@@ -2532,7 +2563,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2543,7 +2574,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2554,7 +2585,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2606,7 +2637,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2617,7 +2648,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2628,7 +2659,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2680,7 +2711,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2691,7 +2722,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2702,7 +2733,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2754,7 +2785,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = true
+                        IsModifying = true
                     }
                 };
             }
@@ -2765,7 +2796,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2776,7 +2807,7 @@ public class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsSaving = false
+                        IsModifying = false
                     }
                 };
             }
@@ -2925,6 +2956,154 @@ public class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsDeleting = false
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnOpenDeleteItemDialog
+    {
+        private readonly OnOpenDeleteItemDialogFixture _fixture;
+
+        public OnOpenDeleteItemDialog()
+        {
+            _fixture = new OnOpenDeleteItemDialogFixture();
+        }
+
+        [Fact]
+        public void OnOpenDeleteItemDialog_WithDialogClosed_ShouldOpenDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnOpenDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnOpenDeleteItemDialog_WithDialogOpen_ShouldOpenDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithOpenDialog();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnOpenDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnOpenDeleteItemDialogFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithOpenDialog()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCloseDeleteItemDialog
+    {
+        private readonly OnCloseDeleteItemDialogFixture _fixture;
+
+        public OnCloseDeleteItemDialog()
+        {
+            _fixture = new OnCloseDeleteItemDialogFixture();
+        }
+
+        [Fact]
+        public void OnCloseDeleteItemDialog_WithDialogOpen_ShouldCloseDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnCloseDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCloseDeleteItemDialog_WithDialogClosed_ShouldCloseDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithClosedDialog();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnCloseDeleteItemDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCloseDeleteItemDialogFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithClosedDialog()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
                     }
                 };
             }

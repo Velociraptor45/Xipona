@@ -20,5 +20,8 @@ public interface IIngredient
     IIngredient RemoveDefaultItem();
 
     IIngredient ChangeDefaultItem(ItemId oldItemId, IItem newItem);
+
     IIngredient ChangeDefaultStore(IItem item);
+
+    IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<ItemAvailability> newAvailabilities);
 }

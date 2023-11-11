@@ -1,13 +1,13 @@
 ﻿using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
-using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters.ToContract.Recipes;
 
-public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContract>
+public class RecipeContractConverter : IToContractConverter<RecipeReadModel, RecipeContract>
 {
-    public RecipeContract ToContract(IRecipe source)
+    public RecipeContract ToContract(RecipeReadModel source)
     {
         var steps = source.PreparationSteps.Select(s => new PreparationStepContract(
             s.Id,
@@ -16,6 +16,7 @@ public class RecipeContractConverter : IToContractConverter<IRecipe, RecipeContr
 
         var ingredients = source.Ingredients.Select(i => new IngredientContract(
             i.Id,
+            i.Name,
             i.ItemCategoryId,
             i.QuantityType.ToInt(),
             i.Quantity.Value,

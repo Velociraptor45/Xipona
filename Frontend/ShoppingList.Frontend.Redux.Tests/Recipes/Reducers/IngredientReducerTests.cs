@@ -75,7 +75,7 @@ public class IngredientReducerTests
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState,
-                opt => opt.Excluding(info => info.Path == "Editor.Recipe.Ingredients[3].Key"));
+                opt => opt.Excluding(info => info.Path == "Editor.Recipe.Ingredients[0].Key"));
         }
 
         [Fact]
@@ -118,12 +118,13 @@ public class IngredientReducerTests
                     {
                         Recipe = ExpectedState.Editor.Recipe! with
                         {
-                            Ingredients = ExpectedState.Editor.Recipe!.Ingredients
-                                .Union(new List<EditedIngredient>
+                            Ingredients =
+                                new List<EditedIngredient>
                                 {
                                     new(
                                         Guid.NewGuid(),
                                         Guid.Empty,
+                                        string.Empty,
                                         Guid.Empty,
                                         ExpectedState.IngredientQuantityTypes.First().Id,
                                         1,
@@ -135,7 +136,8 @@ public class IngredientReducerTests
                                             new List<ItemCategorySearchResult>(),
                                             string.Empty),
                                         new ItemSelector(new List<SearchItemByItemCategoryResult>()))
-                                })
+                                }
+                                .Union(ExpectedState.Editor.Recipe!.Ingredients)
                                 .ToList()
                         }
                     }

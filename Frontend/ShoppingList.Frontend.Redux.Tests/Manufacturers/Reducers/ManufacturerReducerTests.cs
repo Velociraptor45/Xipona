@@ -146,6 +146,7 @@ public class ManufacturerReducerTests
                     Search = ExpectedState.Search with
                     {
                         IsLoadingSearchResults = isLoading,
+                        TriggeredAtLeastOnce = false,
                         SearchResults = new DomainTestBuilder<ManufacturerSearchResult>().CreateMany(2).ToList()
                     }
                 };
@@ -158,6 +159,7 @@ public class ManufacturerReducerTests
                     Search = ExpectedState.Search with
                     {
                         IsLoadingSearchResults = false,
+                        TriggeredAtLeastOnce = true,
                         SearchResults = new List<ManufacturerSearchResult>
                         {
                             new DomainTestBuilder<ManufacturerSearchResult>()
@@ -775,6 +777,152 @@ public class ManufacturerReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Manufacturer = new EditedManufacturer(Guid.Empty, string.Empty)
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnOpenDeleteManufacturerDialog
+    {
+        private readonly OnOpenDeleteManufacturerDialogFixture _fixture;
+
+        public OnOpenDeleteManufacturerDialog()
+        {
+            _fixture = new OnOpenDeleteManufacturerDialogFixture();
+        }
+
+        [Fact]
+        public void OnOpenDeleteManufacturerDialog_WithDialogNotOpen_ShouldOpenDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogNotOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ManufacturerReducer.OnOpenDeleteManufacturerDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnOpenDeleteManufacturerDialog_WithDialogOpen_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ManufacturerReducer.OnOpenDeleteManufacturerDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnOpenDeleteManufacturerDialogFixture : ManufacturerReducerFixture
+        {
+            public void SetupInitialStateWithDialogOpen()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateWithDialogNotOpen()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isDeleteDialogOpen)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = isDeleteDialogOpen
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCloseDeleteManufacturerDialog
+    {
+        private readonly OnCloseDeleteManufacturerDialogFixture _fixture;
+
+        public OnCloseDeleteManufacturerDialog()
+        {
+            _fixture = new OnCloseDeleteManufacturerDialogFixture();
+        }
+
+        [Fact]
+        public void OnCloseDeleteManufacturerDialog_WithDialogOpen_ShouldCloseDialog()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ManufacturerReducer.OnCloseDeleteManufacturerDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCloseDeleteManufacturerDialog_WithDialogClosed_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithDialogNotOpen();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ManufacturerReducer.OnCloseDeleteManufacturerDialog(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCloseDeleteManufacturerDialogFixture : ManufacturerReducerFixture
+        {
+            public void SetupInitialStateWithDialogOpen()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateWithDialogNotOpen()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isDeleteDialogOpen)
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = isDeleteDialogOpen
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsDeleteDialogOpen = false
                     }
                 };
             }

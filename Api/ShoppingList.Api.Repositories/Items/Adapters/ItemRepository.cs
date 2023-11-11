@@ -29,14 +29,14 @@ public class ItemRepository : IItemRepository
     public ItemRepository(ItemContext dbContext,
         IToDomainConverter<Item, IItem> toModelConverter,
         IToEntityConverter<IItem, Item> toEntityConverter,
-        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
+        IDomainEventDispatcher domainEventDispatcher,
         ILogger<ItemRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toEntityConverter = toEntityConverter;
-        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
+        _domainEventDispatcher = domainEventDispatcher;
         _logger = logger;
         _cancellationToken = cancellationToken;
     }
@@ -264,7 +264,7 @@ public class ItemRepository : IItemRepository
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogInformation(ex, () => $"Saving item {item.Id.Value} failed due to concurrency violation");
+                _logger.LogInformation(ex, () => "Saving item '{ItemId}' failed due to concurrency violation", item.Id.Value);
                 throw new DomainException(new ModelOutOfDateReason());
             }
             entityIdToLoad = updatedEntity.Id;

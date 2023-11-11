@@ -27,6 +27,7 @@ public static class ManufacturerReducer
             Search = state.Search with
             {
                 IsLoadingSearchResults = false,
+                TriggeredAtLeastOnce = true,
                 SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList()
             }
         };
@@ -165,6 +166,30 @@ public static class ManufacturerReducer
             Search = state.Search with
             {
                 SearchResults = results
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(OpenDeleteManufacturerDialogAction))]
+    public static ManufacturerState OnOpenDeleteManufacturerDialog(ManufacturerState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteManufacturerDialogAction))]
+    public static ManufacturerState OnCloseDeleteManufacturerDialog(ManufacturerState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleteDialogOpen = false
             }
         };
     }

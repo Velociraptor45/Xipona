@@ -104,27 +104,21 @@ public class AvailabilityValidationServiceTests
 
     private class LocalFixture
     {
-        private readonly StoreRepositoryMock _storeRepositoryMock;
-        private readonly SectionFactoryMock _sectionFactoryMock;
+        private readonly StoreRepositoryMock _storeRepositoryMock = new(MockBehavior.Strict);
+        private readonly SectionFactoryMock _sectionFactoryMock = new(MockBehavior.Strict);
 
         private readonly List<IStore> _stores = new();
 
-        public LocalFixture()
-        {
-            _storeRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            _sectionFactoryMock = new SectionFactoryMock(MockBehavior.Strict);
-        }
-
-        public List<IItemAvailability>? Availabilities { get; private set; }
+        public List<ItemAvailability>? Availabilities { get; private set; }
 
         public AvailabilityValidationService CreateSut()
         {
-            return new AvailabilityValidationService(_ => _storeRepositoryMock.Object, default);
+            return new AvailabilityValidationService(_storeRepositoryMock.Object);
         }
 
         public void SetupAvailabilitiesWithDuplicatedStoreIds()
         {
-            Availabilities = new List<IItemAvailability>();
+            Availabilities = new List<ItemAvailability>();
             var availability = ItemAvailabilityMother.Initial().Create();
             var availability2 = ItemAvailabilityMother.Initial().WithStoreId(availability.StoreId).Create();
             Availabilities.Add(availability);
@@ -134,7 +128,7 @@ public class AvailabilityValidationServiceTests
         public void SetupAvailabilities()
         {
             Availabilities =
-                ((IEnumerable<IItemAvailability>)ItemAvailabilityMother.Initial().CreateMany(3))
+                ((IEnumerable<ItemAvailability>)ItemAvailabilityMother.Initial().CreateMany(3))
                 .ToList();
         }
 

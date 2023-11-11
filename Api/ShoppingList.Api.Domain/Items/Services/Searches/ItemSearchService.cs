@@ -31,24 +31,23 @@ public class ItemSearchService : IItemSearchService
     private readonly IItemAvailabilityReadModelConversionService _availabilityConverter;
 
     public ItemSearchService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        Func<CancellationToken, IItemTypeReadRepository> itemTypeReadRepositoryDelegate,
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        Func<CancellationToken, IItemSearchReadModelConversionService> itemSearchReadModelConversionServiceDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        Func<CancellationToken, IItemAvailabilityReadModelConversionService> availabilityConverterDelegate,
-        CancellationToken cancellationToken)
+        IItemRepository itemRepository,
+        IShoppingListRepository shoppingListRepository,
+        IStoreRepository storeRepository,
+        IItemTypeReadRepository itemTypeReadRepository,
+        IItemCategoryRepository itemCategoryRepository,
+        IItemSearchReadModelConversionService itemSearchReadModelConversionService,
+        IValidator validator,
+        IItemAvailabilityReadModelConversionService availabilityConverter)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemTypeReadRepository = itemTypeReadRepositoryDelegate(cancellationToken);
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
-        _itemSearchReadModelConversionService = itemSearchReadModelConversionServiceDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
-        _availabilityConverter = availabilityConverterDelegate(cancellationToken);
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _storeRepository = storeRepository;
+        _itemTypeReadRepository = itemTypeReadRepository;
+        _itemCategoryRepository = itemCategoryRepository;
+        _itemSearchReadModelConversionService = itemSearchReadModelConversionService;
+        _validator = validator;
+        _availabilityConverter = availabilityConverter;
     }
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(IEnumerable<StoreId> storeIds,

@@ -151,11 +151,14 @@ public static class StoreEditorReducer
     [ReducerMethod]
     public static StoreState OnSectionRemoved(StoreState state, SectionRemovedAction action)
     {
-        if (state.Editor.Store is null)
+        if (state.Editor.Store is null || state.Editor.Store.Sections.Count <= 1)
             return state;
 
         var sections = state.Editor.Store.Sections.ToList();
         sections.Remove(action.Section);
+
+        if (action.Section.IsDefaultSection)
+            sections[0] = sections[0] with { IsDefaultSection = true };
 
         return state with
         {
@@ -266,8 +269,32 @@ public static class StoreEditorReducer
         };
     }
 
+    [ReducerMethod(typeof(DeleteStoreStartedAction))]
+    public static StoreState OnDeleteStoreStarted(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = true
+            }
+        };
+    }
+
     [ReducerMethod(typeof(DeleteStoreFinishedAction))]
     public static StoreState OnDeleteStoreFinished(StoreState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsDeleting = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseDeleteStoreDialogAction))]
+    public static StoreState OnCloseDeleteStoreDialog(StoreState state)
     {
         return state with
         {

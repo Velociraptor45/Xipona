@@ -1,7 +1,10 @@
-﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+﻿using ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.States;
+
+namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 public record EditedIngredient(
     Guid Key,
     Guid Id,
+    string Name,
     Guid ItemCategoryId,
     int QuantityTypeId,
     float Quantity,
@@ -28,5 +31,24 @@ public record EditedIngredient(
         return quantityTypes
             .FirstOrDefault(qt => qt.Id == QuantityTypeId)?
             .QuantityLabel ?? string.Empty;
+    }
+
+    public static EditedIngredient GetInitial(IEnumerable<IngredientQuantityType> quantityTypes)
+    {
+        return new EditedIngredient(
+            Guid.NewGuid(),
+            Guid.Empty,
+            string.Empty,
+            Guid.Empty,
+            quantityTypes.First().Id,
+            1,
+            null,
+            null,
+            null,
+            null,
+            new ItemCategorySelector(
+                new List<ItemCategorySearchResult>(0),
+                string.Empty),
+            new ItemSelector(new List<SearchItemByItemCategoryResult>(0)));
     }
 }

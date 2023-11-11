@@ -7,7 +7,7 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Select Class="min-w-100 max-w-200 mr-3"
+<Select Class="min-w-100 max-w-200 mr-1"
         DataSource="State.Value.Stores.Stores"
         Value="State.Value.SelectedStoreId"
         ValueName="@nameof(ShoppingListStore.Id)"

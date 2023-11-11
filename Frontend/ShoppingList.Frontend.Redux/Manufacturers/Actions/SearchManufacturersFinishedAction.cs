@@ -2,4 +2,4 @@
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
 
-public record SearchManufacturersFinishedAction(IList<ManufacturerSearchResult> SearchResults);
+public record SearchManufacturersFinishedAction(IReadOnlyCollection<ManufacturerSearchResult> SearchResults);

@@ -2,19 +2,19 @@
 
 public class ItemTypeFactory : IItemTypeFactory
 {
-    public IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
+    public IItemType Create(ItemTypeId id, ItemTypeName name, IEnumerable<ItemAvailability> availabilities,
         ItemTypeId? predecessorId, bool isDeleted)
     {
         var type = new ItemType(id, name, availabilities, predecessorId, isDeleted);
         return type;
     }
 
-    public IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities)
+    public IItemType CreateNew(ItemTypeName name, IEnumerable<ItemAvailability> availabilities)
     {
         return Create(ItemTypeId.New, name, availabilities, null, false);
     }
 
-    public IItemType CreateNew(ItemTypeName name, IEnumerable<IItemAvailability> availabilities,
+    public IItemType CreateNew(ItemTypeName name, IEnumerable<ItemAvailability> availabilities,
         ItemTypeId? predecessorId)
     {
         return Create(ItemTypeId.New, name, availabilities, predecessorId, false);

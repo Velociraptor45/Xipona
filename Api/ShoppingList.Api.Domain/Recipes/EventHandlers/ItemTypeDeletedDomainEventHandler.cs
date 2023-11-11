@@ -22,12 +22,18 @@ public class ItemTypeDeletedDomainEventHandler : IDomainEventHandler<ItemTypeDel
     public async Task HandleAsync(ItemTypeDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         _logger.LogDebug(
-            () => $"Started handling {nameof(ItemTypeDeletedDomainEvent)} for item '{domainEvent.ItemId.Value}' and type '{domainEvent.ItemTypeId.Value}' for recipes");
+            () => "Started handling {EventName} for item '{ItemId}' and type '{ItemTypeId}' for recipes",
+            nameof(ItemTypeDeletedDomainEvent),
+            domainEvent.ItemId.Value,
+            domainEvent.ItemTypeId.Value);
 
         var service = _recipeModificationServiceDelegate(cancellationToken);
         await service.RemoveDefaultItemAsync(domainEvent.ItemId, domainEvent.ItemTypeId);
 
         _logger.LogDebug(
-            () => $"Finished handling {nameof(ItemTypeDeletedDomainEvent)} for item '{domainEvent.ItemId.Value}' and type '{domainEvent.ItemTypeId.Value}' for recipes");
+            () => "Finished handling {EventName} for item '{ItemId}' and type '{ItemTypeId}' for recipes",
+            nameof(ItemTypeDeletedDomainEvent),
+            domainEvent.ItemId.Value,
+            domainEvent.ItemTypeId.Value);
     }
 }

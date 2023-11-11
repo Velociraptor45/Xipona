@@ -68,7 +68,6 @@ public class ShoppingListReducerTests
                     SearchBar = ExpectedState.SearchBar with
                     {
                         Input = string.Empty,
-                        IsActive = false,
                         Results = new List<SearchItemForShoppingListResult>()
                     }
                 };
@@ -269,7 +268,6 @@ public class ShoppingListReducerTests
                     SearchBar = ExpectedState.SearchBar with
                     {
                         Input = new DomainTestBuilder<string>().Create(),
-                        IsActive = true,
                         Results = new DomainTestBuilder<SearchItemForShoppingListResult>().CreateMany(2).ToList()
                     }
                 };
@@ -282,7 +280,6 @@ public class ShoppingListReducerTests
                     SearchBar = ExpectedState.SearchBar with
                     {
                         Input = string.Empty,
-                        IsActive = false,
                         Results = new List<SearchItemForShoppingListResult>()
                     }
                 };

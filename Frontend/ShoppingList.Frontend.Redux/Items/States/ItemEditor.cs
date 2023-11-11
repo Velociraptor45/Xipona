@@ -5,8 +5,10 @@ public record ItemEditor(
     ItemCategorySelector ItemCategorySelector,
     ManufacturerSelector ManufacturerSelector,
     bool IsLoadingEditedItem,
-    bool IsSaving,
-    bool IsDeleting)
+    bool IsUpdating,
+    bool IsModifying,
+    bool IsDeleting,
+    bool IsDeleteDialogOpen)
 {
     public bool DisableSaveButtons => Item is not null
                                       && Item.IsItemWithTypes

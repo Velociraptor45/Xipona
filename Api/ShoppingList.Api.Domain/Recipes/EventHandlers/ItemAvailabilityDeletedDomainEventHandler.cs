@@ -22,13 +22,17 @@ public class ItemAvailabilityDeletedDomainEventHandler : IDomainEventHandler<Ite
     public async Task HandleAsync(ItemAvailabilityDeletedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         _logger.LogDebug(
-            () => $"Started handling {nameof(ItemAvailabilityDeletedDomainEvent)} for item '{domainEvent.ItemId.Value}' for recipes");
+            () => "Started handling {EventName} for item '{ItemId}' for recipes",
+            nameof(ItemAvailabilityDeletedDomainEvent),
+            domainEvent.ItemId);
 
         var service = _recipeModificationServiceDelegate(cancellationToken);
         await service.ModifyIngredientsAfterAvailabilityWasDeletedAsync(domainEvent.ItemId, null,
             domainEvent.Availability.StoreId);
 
         _logger.LogDebug(
-            () => $"Started handling {nameof(ItemAvailabilityDeletedDomainEvent)} for item '{domainEvent.ItemId.Value}' for recipes");
+            () => "Finished handling {EventName} for item '{ItemId}' for recipes",
+            nameof(ItemAvailabilityDeletedDomainEvent),
+            domainEvent.ItemId);
     }
 }

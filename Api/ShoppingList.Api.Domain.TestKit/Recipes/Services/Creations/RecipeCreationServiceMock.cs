@@ -1,5 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
-using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Services.Creations;
 
@@ -9,7 +9,7 @@ public class RecipeCreationServiceMock : Mock<IRecipeCreationService>
     {
     }
 
-    public void SetupCreateAsync(RecipeCreation creation, IRecipe returnValue)
+    public void SetupCreateAsync(RecipeCreation creation, RecipeReadModel returnValue)
     {
         Setup(m => m.CreateAsync(creation))
             .ReturnsAsync(returnValue);

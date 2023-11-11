@@ -6,9 +6,9 @@ namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 public interface IShoppingListSection
 {
     SectionId Id { get; }
-    public IReadOnlyCollection<IShoppingListItem> Items { get; }
+    public IReadOnlyCollection<ShoppingListItem> Items { get; }
 
-    IShoppingListSection AddItem(IShoppingListItem item, bool throwIfAlreadyPresent = true);
+    IShoppingListSection AddItem(ShoppingListItem item, bool throwIfAlreadyPresent = true);
 
     IShoppingListSection ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 
