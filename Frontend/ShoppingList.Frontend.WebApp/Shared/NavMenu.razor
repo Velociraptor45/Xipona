@@ -1,6 +1,8 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
@@ -8,6 +10,7 @@
 @inject IState<SharedState> State
 @inject IDispatcher Dispatcher
 @inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
 
 <div class="nav-menu pt-2 pb-3">
     <ul class="nav d-flex justify-content-around">
@@ -36,7 +39,7 @@
             </NavLink>
         </li>
         <li class="nav-item nav-item-menu">
-            <div class="nav-link d-flex" onclick="@ToggleNavMenu">
+            <div class="nav-link d-flex" @onclick="ToggleNavMenu">
                 <i class="bi bi-list align-self-center"></i>
                 <div class="align-self-center">Others</div>
             </div>
@@ -55,6 +58,16 @@
                 </NavLink>
             </li>
         </div>
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item logout">
+                    <div class="nav-link d-flex" @onclick="LogOut">
+                        <i class="bi bi-power align-self-center"></i>
+                        <div class="align-self-center">Logout</div>
+                    </div>
+                </li>
+            </Authorized>
+        </AuthorizeView>
     </ul>
 </div>
 
@@ -77,5 +90,10 @@
     private void OnMenuItemClicked()
     {
         Dispatcher.Dispatch(new NavMenuItemClickedAction());
+    }
+
+    private void LogOut()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
     }
 }

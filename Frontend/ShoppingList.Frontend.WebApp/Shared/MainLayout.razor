@@ -1,4 +1,5 @@
-﻿@using Microsoft.Extensions.Logging
+﻿﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Logging
 @using Components.Common
 
 @inherits LayoutComponentBase
@@ -8,13 +9,10 @@
 <NavMenu />
 
 <div class="main">
-    <div class="top-row px-4 auth">
-        <LoginDisplay />
-    </div>
-
     <div class="content">
         @Body
     </div>
+
     <ErrorBoundary @ref="_errorBoundary">
         <ErrorContent Context="ex">
             @{ Logger.LogError(ex, "An unhandled exception occurred"); }

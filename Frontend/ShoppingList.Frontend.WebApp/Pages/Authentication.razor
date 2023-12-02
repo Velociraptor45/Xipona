@@ -1,9 +1,35 @@
 ﻿@page "/authentication/{action}"
 
+@inject NavigationManager Navigation
+
+@attribute [AllowAnonymous]
+
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-<RemoteAuthenticatorView Action="@Action" />
+<RemoteAuthenticatorView Action="@Action">
+    <LoggingIn></LoggingIn>
+    <CompletingLoggingIn></CompletingLoggingIn>
+    <LogOutSucceeded>
+        <div class="pt-2">
+            <div>You successfully logged out</div>
+            <div>
+                <span class="log-in" @onclick="LogIn">Log in</span>
+                <span>again</span>
+            </div>
+        </div>
+    </LogOutSucceeded>
+</RemoteAuthenticatorView>
 
 @code{
-    [Parameter] public string? Action { get; set; }
+    [Parameter] public string Action { get; set; }
+
+
+    private void LogIn()
+    {
+        Navigation.NavigateToLogin("authentication/login", new InteractiveRequestOptions()
+        {
+            Interaction = InteractionType.SignIn,
+            ReturnUrl = Navigation.BaseUri
+        });
+    }
 }
