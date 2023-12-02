@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,12 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             AddDependencies(builder);
             builder.Services.AddAntDesign();
 
+            builder.Services.AddOidcAuthentication(opt =>
+            {
+                builder.Configuration.Bind("Auth:Provider", opt.ProviderOptions);
+                builder.Configuration.Bind("Auth:User", opt.UserOptions);
+            });
+
             await builder.Build().RunAsync();
         }
 
@@ -44,7 +51,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
                 throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
 
             var uri = new Uri(uriString);
-            builder.Services.AddScoped(_ => new HttpClient { BaseAddress = uri });
+            builder.Services.AddHttpClient("Api", client => client.BaseAddress = uri)
+                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Api"));
         }
 
         private static void ConfigureLogging(WebAssemblyHostBuilder builder)
