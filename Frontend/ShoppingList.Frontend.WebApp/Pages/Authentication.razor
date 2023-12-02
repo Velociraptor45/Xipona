@@ -10,11 +10,10 @@
     <LoggingIn></LoggingIn>
     <CompletingLoggingIn></CompletingLoggingIn>
     <LogOutSucceeded>
-        <div class="pt-2">
+        <div class="logout-success">
             <div>You successfully logged out</div>
-            <div>
-                <span class="log-in" @onclick="LogIn">Log in</span>
-                <span>again</span>
+            <div class="login-button">
+                <Button Type="@ButtonType.Primary" OnClick="LogIn">Login</Button>
             </div>
         </div>
     </LogOutSucceeded>
@@ -22,7 +21,6 @@
 
 @code{
     [Parameter] public string Action { get; set; }
-
 
     private void LogIn()
     {

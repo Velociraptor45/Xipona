@@ -7,4 +7,5 @@ public static class PageRoutes
     public const string Manufacturers = "manufacturers";
     public const string Recipes = "recipes";
     public const string Stores = "stores";
+    public const string NavigationOthers = "navigation/other";
 }

@@ -1,5 +1,17 @@
-﻿.log-in {
-    color: blue;
-    cursor: pointer;
-    text-decoration: underline;
+﻿.login-button {
+    margin-top: 6px;
+}
+
+
+@media (min-width: 769px) {
+    .logout-success {
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .logout-success {
+        padding-left: 8px;
+        margin-top: 8px;
+    }
 }
