@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
@@ -23,6 +24,7 @@ using System.Threading;
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 [ApiController]
+[Authorize(Policy = "User")]
 [Route("v1/item-categories")]
 public class ItemCategoryController : ControllerBase
 {
@@ -82,7 +84,7 @@ public class ItemCategoryController : ControllerBase
         }
 
         var query = new ItemCategorySearchQuery(searchInput, includeDeleted);
-        var itemCategoryReadModels = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        var itemCategoryReadModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!itemCategoryReadModels.Any())
             return NoContent();
@@ -101,7 +103,7 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> GetAllActiveItemCategoriesAsync(CancellationToken cancellationToken = default)
     {
         var query = new AllActiveItemCategoriesQuery();
-        var readModels = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (!readModels.Any())
             return NoContent();

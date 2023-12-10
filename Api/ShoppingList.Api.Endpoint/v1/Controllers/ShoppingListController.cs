@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.ShoppingList.Api.ApplicationServices.Common.Queries;
@@ -36,6 +37,7 @@ using AddItemToShoppingListContract = ProjectHermes.ShoppingList.Api.Contracts.S
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 
 [ApiController]
+[Authorize(Policy = "User")]
 [Route("v1/shopping-lists")]
 public class ShoppingListController : ControllerBase
 {
