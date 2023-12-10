@@ -10,4 +10,4 @@
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Components.Shared
 @using AntDesign
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
+@attribute [Authorize(Policy = "User")]

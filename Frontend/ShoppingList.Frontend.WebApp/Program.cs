@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -10,6 +11,8 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Redux;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Auth;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Configs;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using Serilog;
@@ -38,6 +41,13 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             {
                 builder.Configuration.Bind("Auth:Provider", opt.ProviderOptions);
                 builder.Configuration.Bind("Auth:User", opt.UserOptions);
+            }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>();
+
+            builder.Services.AddAuthorizationCore(cfg =>
+            {
+                cfg.AddPolicy("User", new AuthorizationPolicyBuilder()
+                    .RequireRole("User")
+                    .Build());
             });
 
             await builder.Build().RunAsync();
@@ -45,14 +55,18 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
 
         private static void ConfigureHttpClient(WebAssemblyHostBuilder builder)
         {
-            var uriString = builder.Configuration["Connection:ApiUri"];
+            var connectionConfig = builder.Configuration.GetSection("Connection").Get<ConnectionConfig>();
 
-            if (uriString is null)
-                throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
+            builder.Services.AddSingleton(connectionConfig);
 
-            var uri = new Uri(uriString);
+            if (string.IsNullOrWhiteSpace(connectionConfig.ApiUri))
+                throw new InvalidOperationException($"The Connection:{nameof(ConnectionConfig.ApiUri)} section in the appsettings is missing");
+
+            builder.Services.AddScoped<CustomAddressAuthorizationMessageHandler>();
+
+            var uri = new Uri(connectionConfig.ApiUri);
             builder.Services.AddHttpClient("Api", client => client.BaseAddress = uri)
-                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+                .AddHttpMessageHandler<CustomAddressAuthorizationMessageHandler>();
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Api"));
         }
 
