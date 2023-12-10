@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,11 +16,13 @@ using ProjectHermes.ShoppingList.Api.Endpoint;
 using ProjectHermes.ShoppingList.Api.Repositories;
 using ProjectHermes.ShoppingList.Api.Repositories.Common.Services;
 using ProjectHermes.ShoppingList.Api.Vault;
+using ProjectHermes.ShoppingList.Api.WebApp.Auth;
 using ProjectHermes.ShoppingList.Api.WebApp.BackgroundServices;
 using ProjectHermes.ShoppingList.Api.WebApp.Configs;
 using ProjectHermes.ShoppingList.Api.WebApp.Extensions;
 using Serilog;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder();
@@ -54,6 +58,8 @@ builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
 builder.Services.AddHostedService<DatabaseMigrationBackgroundService>();
 
+SetupSecurity();
+
 var app = builder.Build();
 
 app.UseExceptionHandling();
@@ -75,12 +81,13 @@ app.UseCors(policyBuilder =>
     policyBuilder
         .WithOrigins(corsConfig.AllowedOrigins)
         .WithMethods("GET", "PUT", "POST", "DELETE")
-        .WithHeaders("Content-Type");
+        .WithHeaders("Content-Type", "authorization");
 });
 
 app.UseRouting();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -101,4 +108,38 @@ static void AddAppsettingsSourceTo(IList<IConfigurationSource> sources)
         ReloadOnChange = true
     };
     sources.Add(jsonSource);
+}
+
+void SetupSecurity()
+{
+    var authOptions = configuration.GetSection("Auth").Get<AuthenticationOptions>();
+
+    if (!authOptions.Enabled)
+    {
+        builder.Services.AddAuthorization(opt =>
+        {
+            opt.AddPolicy("User", new AuthorizationPolicyBuilder().RequireAssertion(_ => true).Build());
+        });
+        return;
+    }
+
+    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+    builder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(opt =>
+        {
+            opt.Authority = authOptions.Authority;
+            opt.Audience = authOptions.Audience;
+            opt.TokenValidationParameters = new()
+            {
+                ValidTypes = authOptions.ValidTypes,
+                NameClaimType = authOptions.NameClaimType,
+                RoleClaimType = authOptions.RoleClaimType,
+            };
+        });
+    builder.Services.AddAuthorization(opt =>
+    {
+        opt.AddPolicy("User", builder => builder.RequireRole(authOptions.UserRoleName));
+    });
 }
