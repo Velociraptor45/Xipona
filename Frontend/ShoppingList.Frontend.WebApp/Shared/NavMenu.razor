@@ -1,6 +1,8 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
@@ -8,59 +10,66 @@
 @inject IState<SharedState> State
 @inject IDispatcher Dispatcher
 @inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
 
 <div class="nav-menu pt-2 pb-3">
     <ul class="nav d-flex justify-content-around">
         <li class="nav-item">
-            <NavLink class="nav-link d-flex" href="" Match="NavLinkMatch.All" @onclick="OnMenuItemClicked">
+            <NavLink class="nav-link d-flex" href="" Match="NavLinkMatch.All">
                 <i class="bi bi-bag align-self-center"></i>
                 <div class="align-self-center">Shopping</div>
             </NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link d-flex" href="@PageRoutes.Items" @onclick="OnMenuItemClicked">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Items">
                 <i class="bi bi-clipboard align-self-center"></i>
                 <div class="align-self-center">Items</div>
             </NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link d-flex" href="@PageRoutes.Recipes" @onclick="OnMenuItemClicked">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Recipes">
                 <i class="bi bi-book align-self-center"></i>
                 <div class="align-self-center">Recipes</div>
             </NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link d-flex" href="@PageRoutes.Stores" @onclick="OnMenuItemClicked">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Stores">
                 <i class="bi bi-shop align-self-center"></i>
                 <div class="align-self-center">Stores</div>
             </NavLink>
         </li>
-        <li class="nav-item nav-item-menu">
-            <div class="nav-link d-flex" onclick="@ToggleNavMenu">
+        <li class="nav-item nav-item-other">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.NavigationOthers">
                 <i class="bi bi-list align-self-center"></i>
                 <div class="align-self-center">Others</div>
-            </div>
+            </NavLink>
         </li>
-        <div class="@NavMenuCssClass nav-menu-ext">
-            <li class="nav-item-ext">
-                <NavLink class="nav-link d-flex" href="@PageRoutes.Manufacturers" @onclick="OnMenuItemClicked">
-                    <i class="bi bi-briefcase align-self-center"></i>
-                    <div class="align-self-center">Manufacturers</div>
-                </NavLink>
-            </li>
-            <li class="nav-item-ext">
-                <NavLink class="nav-link d-flex" href="@PageRoutes.ItemCategories" @onclick="OnMenuItemClicked">
-                    <i class="bi bi-tag align-self-center"></i>
-                    <div class="align-self-center">Categories</div>
-                </NavLink>
-            </li>
-        </div>
+        <li class="nav-item hide-mobile">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.Manufacturers">
+                <i class="bi bi-briefcase align-self-center"></i>
+                <div class="align-self-center">Manufacturers</div>
+            </NavLink>
+        </li>
+        <li class="nav-item hide-mobile">
+            <NavLink class="nav-link d-flex" href="@PageRoutes.ItemCategories">
+                <i class="bi bi-tag align-self-center"></i>
+                <div class="align-self-center">Categories</div>
+            </NavLink>
+        </li>
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item logout hide-mobile">
+                    <div class="nav-link d-flex" @onclick="LogOut">
+                        <i class="bi bi-power align-self-center"></i>
+                        <div class="align-self-center">Logout</div>
+                    </div>
+                </li>
+            </Authorized>
+        </AuthorizeView>
     </ul>
 </div>
 
 @code {
-    private string NavMenuCssClass => State.Value.IsMobileNavMenuExpanded ? null : "nav-menu-ext-collapse";
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -69,13 +78,8 @@
         Dispatcher.Dispatch(new ApplicationInitializedAction(isMobile));
     }
 
-    private void ToggleNavMenu()
+    private void LogOut()
     {
-        Dispatcher.Dispatch(new ToggleMobileNavMenuExpansionAction());
-    }
-
-    private void OnMenuItemClicked()
-    {
-        Dispatcher.Dispatch(new NavMenuItemClickedAction());
+        Navigation.NavigateToLogout("authentication/logout");
     }
 }

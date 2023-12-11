@@ -1,5 +1,7 @@
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +11,8 @@ using ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 using ProjectHermes.ShoppingList.Frontend.Redux;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Auth;
+using ProjectHermes.ShoppingList.Frontend.WebApp.Configs;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 using ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification;
 using Serilog;
@@ -27,7 +31,10 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.RootComponents.Add<App>("app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            ConfigureHttpClient(builder);
+            var authConfig = builder.Configuration.GetSection("Auth").Get<AuthConfig>();
+            AddSecurity(builder, authConfig);
+
+            ConfigureHttpClient(builder, authConfig);
             ConfigureLogging(builder);
 
             AddDependencies(builder);
@@ -36,15 +43,25 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             await builder.Build().RunAsync();
         }
 
-        private static void ConfigureHttpClient(WebAssemblyHostBuilder builder)
+        private static void ConfigureHttpClient(WebAssemblyHostBuilder builder, AuthConfig authConfig)
         {
-            var uriString = builder.Configuration["Connection:ApiUri"];
+            var connectionConfig = builder.Configuration.GetSection("Connection").Get<ConnectionConfig>();
 
-            if (uriString is null)
-                throw new InvalidOperationException("The Connection:Uri section in the appsettings is missing");
+            builder.Services.AddSingleton(connectionConfig);
 
-            var uri = new Uri(uriString);
-            builder.Services.AddScoped(_ => new HttpClient { BaseAddress = uri });
+            if (string.IsNullOrWhiteSpace(connectionConfig.ApiUri))
+                throw new InvalidOperationException($"The Connection:{nameof(ConnectionConfig.ApiUri)} section in the appsettings is missing");
+
+            var uri = new Uri(connectionConfig.ApiUri);
+            var httpClientBuilder = builder.Services.AddHttpClient("Api", client => client.BaseAddress = uri);
+
+            if (authConfig.Enabled)
+            {
+                builder.Services.AddScoped<CustomAddressAuthorizationMessageHandler>();
+                httpClientBuilder.AddHttpMessageHandler<CustomAddressAuthorizationMessageHandler>();
+            }
+
+            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Api"));
         }
 
         private static void ConfigureLogging(WebAssemblyHostBuilder builder)
@@ -95,6 +112,33 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddRedux();
 
             builder.Services.AddBlazoredLocalStorage();
+        }
+
+        private static void AddSecurity(WebAssemblyHostBuilder builder, AuthConfig authConfig)
+        {
+            if (!authConfig.Enabled)
+            {
+                builder.Services.AddOidcAuthentication(_ => { });
+                builder.Services.AddAuthorizationCore(cfg =>
+                {
+                    cfg.AddPolicy("User", policy => policy.RequireAssertion(_ => true));
+                });
+                return;
+            }
+
+            builder.Services.AddOidcAuthentication(opt =>
+            {
+                builder.Configuration.Bind("Auth:Provider", opt.ProviderOptions);
+                builder.Configuration.Bind("Auth:User", opt.UserOptions);
+                opt.ProviderOptions.MetadataUrl = $"{opt.ProviderOptions.Authority}/.well-known/openid-configuration";
+            }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>();
+
+            builder.Services.AddAuthorizationCore(cfg =>
+            {
+                cfg.AddPolicy("User", new AuthorizationPolicyBuilder()
+                    .RequireRole(authConfig.UserRoleName)
+                    .Build());
+            });
         }
 
         private sealed class CollectRemoteLogsConfig
