@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using ProjectHermes.ShoppingList.Api.ApplicationServices;
 using ProjectHermes.ShoppingList.Api.Core;
 using ProjectHermes.ShoppingList.Api.Core.Files;
@@ -49,9 +50,37 @@ builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNa
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointControllers();
-builder.Services.AddSwaggerGen(options =>
+
+var authOptions = configuration.GetSection("Auth").Get<AuthenticationOptions>();
+
+builder.Services.AddSwaggerGen(opt =>
 {
-    options.CustomSchemaIds(type => type.ToString());
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoppingList API", Version = "v1" });
+    opt.CustomSchemaIds(type => type.ToString());
+
+    if (!authOptions.Enabled)
+        return;
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Auth",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.OpenIdConnect,
+        OpenIdConnectUrl = new Uri(authOptions.OidcUrl),
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Id = "Bearer",
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    opt.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
+    });
 });
 
 builder.Services.AddRepositories();
@@ -112,8 +141,6 @@ static void AddAppsettingsSourceTo(IList<IConfigurationSource> sources)
 
 void SetupSecurity()
 {
-    var authOptions = configuration.GetSection("Auth").Get<AuthenticationOptions>();
-
     if (!authOptions.Enabled)
     {
         builder.Services.AddAuthorization(opt =>
@@ -140,6 +167,6 @@ void SetupSecurity()
         });
     builder.Services.AddAuthorization(opt =>
     {
-        opt.AddPolicy("User", builder => builder.RequireRole(authOptions.UserRoleName));
+        opt.AddPolicy("User", policy => policy.RequireRole(authOptions.UserRoleName));
     });
 }
