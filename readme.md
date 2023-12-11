@@ -143,6 +143,19 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 It is possible to collect client-side logs (e.g. exceptions). The compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
 
+### Authentication & Authorization
+
+In order to only grant access to this application for certain users, it's possible to enable authentication & authorization with OIDC. This must be done in both frontend and api. It's disabled by default.<br/>
+Currently, there is only one user role that decides over full access or no access for authenticated users. By default, it's called `User` but can be overridden by the `UserRoleName` setting in the frontend & api's `Auth` section. This role must be returned by the role claim in the ID **and** access token.
+
+#### Frontend
+
+Set the `Auth` section in the respective appsettings file (*Frontend/ShoppingList.Frontend.WebApp/wwwroot/appsettings.\*.json*) to `"Enabled": true` and fill the `Provider` and `User` sections.
+
+#### API
+
+Set the `Auth` section in the respective appsettings file (*Api/ShoppingList.Api.WebApp/appsettings.\*.json*) to `"Enabled": true` and fill the remaining properties.
+
 ### Key Vault
 Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
 
