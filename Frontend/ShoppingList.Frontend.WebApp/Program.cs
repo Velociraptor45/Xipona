@@ -130,6 +130,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             {
                 builder.Configuration.Bind("Auth:Provider", opt.ProviderOptions);
                 builder.Configuration.Bind("Auth:User", opt.UserOptions);
+                opt.ProviderOptions.MetadataUrl = $"{opt.ProviderOptions.Authority}/.well-known/openid-configuration";
             }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>();
 
             builder.Services.AddAuthorizationCore(cfg =>
