@@ -135,7 +135,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp
             builder.Services.AddAuthorizationCore(cfg =>
             {
                 cfg.AddPolicy("User", new AuthorizationPolicyBuilder()
-                    .RequireRole("User")
+                    .RequireRole(authConfig.UserRoleName)
                     .Build());
             });
         }
