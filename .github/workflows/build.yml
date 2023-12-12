@@ -98,7 +98,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./Api
           file: ./Api/Dockerfile
           push: true
           tags: velocir4ptor/ph-shoppinglist-api:${{ needs.build.outputs.Semver }}
