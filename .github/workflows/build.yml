@@ -11,7 +11,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     outputs:
-      Semver: ${{ env.GITVERSION_SEMVER }}
+      Semver: ${{ steps.gitversion.outputs.GITVERSION_SEMVER }}
     steps:
       - name: Set up .net 7
         uses: actions/setup-dotnet@v3
@@ -31,6 +31,7 @@ jobs:
           versionSpec: '5.x'
 
       - name: Determine Git Version
+        id: gitversion
         uses: gittools/actions/gitversion/execute@v0
         with:
           useConfigFile: true
