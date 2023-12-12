@@ -10,6 +10,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    outputs:
+      Semver: ${{ env.GITVERSION_SEMVER }}
     steps:
       - name: Set up .net 7
         uses: actions/setup-dotnet@v3
@@ -86,7 +88,7 @@ jobs:
       
       - name: Build Docker Image
         run: |
-          docker build -t velocir4ptor/ph-shoppinglist-api:${{ env.GITVERSION_SEMVER }} ./Api
+          docker build -t velocir4ptor/ph-shoppinglist-api:${{ needs.build.outputs.GITVERSION_SEMVER }} ./Api
 
   docker-image-frontend:
     name: Docker Image Frontend
@@ -99,5 +101,5 @@ jobs:
       
       - name: Build Docker Image
         run: |
-          docker build -t velocir4ptor/ph-shoppinglist-frontend:${{ env.GITVERSION_SEMVER }} ./Frontend
+          docker build -t velocir4ptor/ph-shoppinglist-frontend:${{ needs.build.outputs.GITVERSION_SEMVER }} ./Frontend
       
