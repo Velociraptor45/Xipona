@@ -22,7 +22,7 @@ jobs:
           distribution: 'oracle'
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0
         with:
@@ -33,7 +33,6 @@ jobs:
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
-
       - name: Add Git Tag
         if: github.ref == 'refs/heads/main'
         run: |
@@ -61,17 +60,44 @@ jobs:
           dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/**,**/*.razor /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
       - name: Build Backend
         run: |
-          dotnet build Api/ShoppingListApi.sln
+          dotnet build Api/ShoppingListApi.sln --configuration Release
       - name: Build Frontend
         run: |
-          dotnet build Frontend/ShoppingList.Frontend.sln
+          dotnet build Frontend/ShoppingList.Frontend.sln --configuration Release
       - name: Test
         run: |
-          dotnet test ./Api/ShoppingListApi.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
-          dotnet test ./Frontend/ShoppingList.Frontend.sln --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
+          dotnet test ./Api/ShoppingListApi.sln --configuration Release --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
+          dotnet test ./Frontend/ShoppingList.Frontend.sln --configuration Release --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
       - name: End Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+  docker-image-api:
+    name: Docker Image Api
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Build Docker Image
+        run: |
+          docker build -t velocir4ptor/ph-shoppinglist-api:${{ env.GITVERSION_SEMVER }} ./Api
+
+  docker-image-frontend:
+    name: Docker Image Frontend
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Build Docker Image
+        run: |
+          docker build -t velocir4ptor/ph-shoppinglist-frontend:${{ env.GITVERSION_SEMVER }} ./Frontend
+      
