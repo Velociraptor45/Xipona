@@ -16,12 +16,7 @@ public class ItemEditorReducerTests
 {
     public class OnItemNameChanged
     {
-        private readonly OnItemNameChangedFixture _fixture;
-
-        public OnItemNameChanged()
-        {
-            _fixture = new OnItemNameChangedFixture();
-        }
+        private readonly OnItemNameChangedFixture _fixture = new();
 
         [Fact]
         public void OnItemNameChanged_WithValidName_ShouldSetName()
@@ -108,12 +103,7 @@ public class ItemEditorReducerTests
 
     public class OnQuantityTypeInPacketChanged
     {
-        private readonly OnQuantityTypeInPacketChangedFixture _fixture;
-
-        public OnQuantityTypeInPacketChanged()
-        {
-            _fixture = new OnQuantityTypeInPacketChangedFixture();
-        }
+        private readonly OnQuantityTypeInPacketChangedFixture _fixture = new();
 
         [Fact]
         public void OnQuantityTypeInPacketChanged_ShouldSetQuantityTypeInPacket()
@@ -161,12 +151,7 @@ public class ItemEditorReducerTests
 
     public class OnQuantityTypeChanged
     {
-        private readonly OnQuantityTypeChangedFixture _fixture;
-
-        public OnQuantityTypeChanged()
-        {
-            _fixture = new OnQuantityTypeChangedFixture();
-        }
+        private readonly OnQuantityTypeChangedFixture _fixture = new();
 
         [Fact]
         public void OnQuantityTypeChanged_WithUnitType_ShouldSetQuantityType()
@@ -288,12 +273,7 @@ public class ItemEditorReducerTests
 
     public class OnItemQuantityInPacketChanged
     {
-        private readonly OnItemQuantityInPacketChangedFixture _fixture;
-
-        public OnItemQuantityInPacketChanged()
-        {
-            _fixture = new OnItemQuantityInPacketChangedFixture();
-        }
+        private readonly OnItemQuantityInPacketChangedFixture _fixture = new();
 
         [Fact]
         public void OnItemQuantityInPacketChanged_ShouldSetQuantityInPacket()
@@ -341,12 +321,7 @@ public class ItemEditorReducerTests
 
     public class OnItemCommentChanged
     {
-        private readonly OnItemCommentChangedFixture _fixture;
-
-        public OnItemCommentChanged()
-        {
-            _fixture = new OnItemCommentChangedFixture();
-        }
+        private readonly OnItemCommentChangedFixture _fixture = new();
 
         [Fact]
         public void OnItemCommentChanged_ShouldSetComment()
@@ -394,12 +369,7 @@ public class ItemEditorReducerTests
 
     public class OnSetNewItem
     {
-        private readonly OnSetNewItemFixture _fixture;
-
-        public OnSetNewItem()
-        {
-            _fixture = new OnSetNewItemFixture();
-        }
+        private readonly OnSetNewItemFixture _fixture = new();
 
         [Fact]
         public void OnSetNewItem_ShouldSetItemAndSelectors()
@@ -472,12 +442,7 @@ public class ItemEditorReducerTests
 
     public class OnLoadItemForEditingStarted
     {
-        private readonly OnLoadItemForEditingStartedFixture _fixture;
-
-        public OnLoadItemForEditingStarted()
-        {
-            _fixture = new OnLoadItemForEditingStartedFixture();
-        }
+        private readonly OnLoadItemForEditingStartedFixture _fixture = new();
 
         [Fact]
         public void OnLoadItemForEditingStarted_ShouldSetIsLoadingEditedItem()
@@ -521,12 +486,7 @@ public class ItemEditorReducerTests
 
     public class OnLoadItemForEditingFinished
     {
-        private readonly OnLoadItemForEditingFinishedFixture _fixture;
-
-        public OnLoadItemForEditingFinished()
-        {
-            _fixture = new OnLoadItemForEditingFinishedFixture();
-        }
+        private readonly OnLoadItemForEditingFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadItemForEditingFinished_ShouldItemAndIsLoadingEditedItem()
@@ -584,12 +544,7 @@ public class ItemEditorReducerTests
 
     public class OnStoreAddedToItem
     {
-        private readonly OnStoreAddedToItemFixture _fixture;
-
-        public OnStoreAddedToItem()
-        {
-            _fixture = new OnStoreAddedToItemFixture();
-        }
+        private readonly OnStoreAddedToItemFixture _fixture = new();
 
         [Fact]
         public void OnStoreAddedToItem_WithOneStoreAvailable_ShouldAddStore()
@@ -715,12 +670,7 @@ public class ItemEditorReducerTests
 
     public class OnStoreAddedToItemType
     {
-        private readonly OnStoreAddedToItemTypeFixture _fixture;
-
-        public OnStoreAddedToItemType()
-        {
-            _fixture = new OnStoreAddedToItemTypeFixture();
-        }
+        private readonly OnStoreAddedToItemTypeFixture _fixture = new();
 
         [Fact]
         public void OnStoreAddedToItemType_WithInvalidTypeKey_ShouldNotAddStore()
@@ -1004,12 +954,7 @@ public class ItemEditorReducerTests
 
     public class OnStoreOfItemChanged
     {
-        private readonly OnStoreOfItemChangedFixture _fixture;
-
-        public OnStoreOfItemChanged()
-        {
-            _fixture = new OnStoreOfItemChangedFixture();
-        }
+        private readonly OnStoreOfItemChangedFixture _fixture = new();
 
         [Fact]
         public void OnStoreOfItemChanged_WithValidData_ShouldChangeStore()
@@ -1019,6 +964,24 @@ public class ItemEditorReducerTests
             _fixture.SetupExpectedState();
             _fixture.SetupInitialState();
             _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemChanged_WithSameStore_ShouldNotChangeAnything()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupExpectedStateWithRandomDefaultSection();
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithSameStore();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -1114,12 +1077,23 @@ public class ItemEditorReducerTests
             public void SetupExpectedState()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
+                SetupExpectedState(_store.DefaultSectionId);
+            }
+
+            public void SetupExpectedStateWithRandomDefaultSection()
+            {
+                SetupExpectedState(Guid.NewGuid());
+            }
+
+            private void SetupExpectedState(Guid defaultSectionId)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
 
                 var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
                 availabilities[0] = availabilities.First() with
                 {
                     StoreId = _store.Id,
-                    DefaultSectionId = _store.DefaultSectionId
+                    DefaultSectionId = defaultSectionId
                 };
 
                 ExpectedState = ExpectedState with
@@ -1140,6 +1114,13 @@ public class ItemEditorReducerTests
                 Action = new StoreOfItemChangedAction(InitialState.Editor.Item!.Availabilities.First(), _store.Id);
             }
 
+            public void SetupActionWithSameStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                var availability = InitialState.Editor.Item!.Availabilities.First();
+                Action = new StoreOfItemChangedAction(availability, availability.StoreId);
+            }
+
             public void SetupActionWithInvalidStoreId()
             {
                 Action = new StoreOfItemChangedAction(InitialState.Editor.Item!.Availabilities.First(), Guid.NewGuid());
@@ -1155,12 +1136,7 @@ public class ItemEditorReducerTests
 
     public class OnStoreOfItemTypeChanged
     {
-        private readonly OnStoreOfItemTypeChangedFixture _fixture;
-
-        public OnStoreOfItemTypeChanged()
-        {
-            _fixture = new OnStoreOfItemTypeChangedFixture();
-        }
+        private readonly OnStoreOfItemTypeChangedFixture _fixture = new();
 
         [Fact]
         public void OnStoreOfItemTypeChanged_WithValidData_ShouldChangeStore()
@@ -1170,6 +1146,24 @@ public class ItemEditorReducerTests
             _fixture.SetupExpectedState();
             _fixture.SetupInitialState();
             _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeChanged_WithSameStore_ShouldNotChangeAnything()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupExpectedStateWithRandomDefaultSection();
+            _fixture.SetupInitialStateEqualExpectedState();
+            _fixture.SetupActionWithSameStore();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -1284,13 +1278,25 @@ public class ItemEditorReducerTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
 
+                SetupExpectedState(_store.DefaultSectionId);
+            }
+
+            public void SetupExpectedStateWithRandomDefaultSection()
+            {
+                SetupExpectedState(Guid.NewGuid());
+            }
+
+            private void SetupExpectedState(Guid defaultSectionId)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
                 var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
 
                 var availabilities = itemTypes.First().Availabilities.ToList();
                 availabilities[0] = availabilities.First() with
                 {
                     StoreId = _store.Id,
-                    DefaultSectionId = _store.DefaultSectionId
+                    DefaultSectionId = defaultSectionId
                 };
 
                 itemTypes[0] = itemTypes.First() with { Availabilities = availabilities };
@@ -1314,6 +1320,15 @@ public class ItemEditorReducerTests
                 var itemType = InitialState.Editor.Item!.ItemTypes.First();
                 var availability = itemType.Availabilities.First();
                 Action = new StoreOfItemTypeChangedAction(itemType, availability, _store.Id);
+            }
+
+            public void SetupActionWithSameStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var itemType = InitialState.Editor.Item!.ItemTypes.First();
+                var availability = itemType.Availabilities.First();
+                Action = new StoreOfItemTypeChangedAction(itemType, availability, availability.StoreId);
             }
 
             public void SetupActionWithInvalidStoreId()
@@ -1347,12 +1362,7 @@ public class ItemEditorReducerTests
 
     public class OnDefaultSectionOfItemChanged
     {
-        private readonly OnDefaultSectionOfItemChangedFixture _fixture;
-
-        public OnDefaultSectionOfItemChanged()
-        {
-            _fixture = new OnDefaultSectionOfItemChangedFixture();
-        }
+        private readonly OnDefaultSectionOfItemChangedFixture _fixture = new();
 
         [Fact]
         public void OnDefaultSectionOfItemChanged_WithValidData_ShouldChangeDefaultSection()
@@ -1431,12 +1441,7 @@ public class ItemEditorReducerTests
 
     public class OnDefaultSectionOfItemTypeChanged
     {
-        private readonly OnDefaultSectionOfItemTypeChangedFixture _fixture;
-
-        public OnDefaultSectionOfItemTypeChanged()
-        {
-            _fixture = new OnDefaultSectionOfItemTypeChangedFixture();
-        }
+        private readonly OnDefaultSectionOfItemTypeChangedFixture _fixture = new();
 
         [Fact]
         public void OnDefaultSectionOfItemTypeChanged_WithValidData_ShouldChangeDefaultSection()
@@ -1548,12 +1553,7 @@ public class ItemEditorReducerTests
 
     public class OnPriceOfItemChanged
     {
-        private readonly OnPriceOfItemChangedFixture _fixture;
-
-        public OnPriceOfItemChanged()
-        {
-            _fixture = new OnPriceOfItemChangedFixture();
-        }
+        private readonly OnPriceOfItemChangedFixture _fixture = new();
 
         [Fact]
         public void OnPriceOfItemChanged_WithValidData_ShouldChangePrice()
@@ -1632,12 +1632,7 @@ public class ItemEditorReducerTests
 
     public class OnPriceOfItemTypeChanged
     {
-        private readonly OnPriceOfItemTypeChangedFixture _fixture;
-
-        public OnPriceOfItemTypeChanged()
-        {
-            _fixture = new OnPriceOfItemTypeChangedFixture();
-        }
+        private readonly OnPriceOfItemTypeChangedFixture _fixture = new();
 
         [Fact]
         public void OnPriceOfItemTypeChanged_WithValidData_ShouldChangePrice()
@@ -1749,12 +1744,7 @@ public class ItemEditorReducerTests
 
     public class OnStoreOfItemRemoved
     {
-        private readonly OnStoreOfItemRemovedFixture _fixture;
-
-        public OnStoreOfItemRemoved()
-        {
-            _fixture = new OnStoreOfItemRemovedFixture();
-        }
+        private readonly OnStoreOfItemRemovedFixture _fixture = new();
 
         [Fact]
         public void OnStoreOfItemRemoved_WithValidData_ShouldRemoveStore()
@@ -1829,12 +1819,7 @@ public class ItemEditorReducerTests
 
     public class OnStoreOfItemTypeRemoved
     {
-        private readonly OnStoreOfItemTypeRemovedFixture _fixture;
-
-        public OnStoreOfItemTypeRemoved()
-        {
-            _fixture = new OnStoreOfItemTypeRemovedFixture();
-        }
+        private readonly OnStoreOfItemTypeRemovedFixture _fixture = new();
 
         [Fact]
         public void OnStoreOfItemTypeRemoved_WithValidData_ShouldRemoveStore()
@@ -1941,12 +1926,7 @@ public class ItemEditorReducerTests
 
     public class OnItemTypeNameChanged
     {
-        private readonly OnItemTypeNameChangedFixture _fixture;
-
-        public OnItemTypeNameChanged()
-        {
-            _fixture = new OnItemTypeNameChangedFixture();
-        }
+        private readonly OnItemTypeNameChangedFixture _fixture = new();
 
         [Fact]
         public void OnItemTypeNameChanged_WithValidData_ShouldChangeName()
@@ -2025,12 +2005,7 @@ public class ItemEditorReducerTests
 
     public class OnItemTypeAdded
     {
-        private readonly OnItemTypeAddedFixture _fixture;
-
-        public OnItemTypeAdded()
-        {
-            _fixture = new OnItemTypeAddedFixture();
-        }
+        private readonly OnItemTypeAddedFixture _fixture = new();
 
         [Fact]
         public void OnItemTypeAdded_WithValidData_ShouldAddItemType()
@@ -2075,12 +2050,7 @@ public class ItemEditorReducerTests
 
     public class OnItemTypeRemoved
     {
-        private readonly OnItemTypeRemovedFixture _fixture;
-
-        public OnItemTypeRemoved()
-        {
-            _fixture = new OnItemTypeRemovedFixture();
-        }
+        private readonly OnItemTypeRemovedFixture _fixture = new();
 
         [Fact]
         public void OnItemTypeRemoved_WithValidData_ShouldRemoveType()
@@ -2156,12 +2126,7 @@ public class ItemEditorReducerTests
 
     public class OnEnterItemSearchPage
     {
-        private readonly OnEnterItemSearchPageFixture _fixture;
-
-        public OnEnterItemSearchPage()
-        {
-            _fixture = new OnEnterItemSearchPageFixture();
-        }
+        private readonly OnEnterItemSearchPageFixture _fixture = new();
 
         [Fact]
         public void OnEnterItemSearchPage_WithValidData_ShouldRemoveItem()
@@ -2224,12 +2189,7 @@ public class ItemEditorReducerTests
 
     public class OnCreateItemStarted
     {
-        private readonly OnCreateItemStartedFixture _fixture;
-
-        public OnCreateItemStarted()
-        {
-            _fixture = new OnCreateItemStartedFixture();
-        }
+        private readonly OnCreateItemStartedFixture _fixture = new();
 
         [Fact]
         public void OnCreateItemStarted_WithValidData_ShouldEnableSaving()
@@ -2298,12 +2258,7 @@ public class ItemEditorReducerTests
 
     public class OnCreateItemFinished
     {
-        private readonly OnCreateItemFinishedFixture _fixture;
-
-        public OnCreateItemFinished()
-        {
-            _fixture = new OnCreateItemFinishedFixture();
-        }
+        private readonly OnCreateItemFinishedFixture _fixture = new();
 
         [Fact]
         public void OnCreateItemFinished_WithValidData_ShouldDisableSaving()
@@ -2372,12 +2327,7 @@ public class ItemEditorReducerTests
 
     public class OnUpdateItemStarted
     {
-        private readonly OnUpdateItemStartedFixture _fixture;
-
-        public OnUpdateItemStarted()
-        {
-            _fixture = new OnUpdateItemStartedFixture();
-        }
+        private readonly OnUpdateItemStartedFixture _fixture = new();
 
         [Fact]
         public void OnUpdateItemStarted_WithNotSaving_ShouldEnableSaving()
@@ -2446,12 +2396,7 @@ public class ItemEditorReducerTests
 
     public class OnUpdateItemFinished
     {
-        private readonly OnUpdateItemFinishedFixture _fixture;
-
-        public OnUpdateItemFinished()
-        {
-            _fixture = new OnUpdateItemFinishedFixture();
-        }
+        private readonly OnUpdateItemFinishedFixture _fixture = new();
 
         [Fact]
         public void OnUpdateItemFinished_WithSaving_ShouldDisableSaving()
@@ -2520,12 +2465,7 @@ public class ItemEditorReducerTests
 
     public class OnModifyItemStarted
     {
-        private readonly OnModifyItemStartedFixture _fixture;
-
-        public OnModifyItemStarted()
-        {
-            _fixture = new OnModifyItemStartedFixture();
-        }
+        private readonly OnModifyItemStartedFixture _fixture = new();
 
         [Fact]
         public void OnModifyItemStarted_WithNotSaving_ShouldEnableSaving()
@@ -2594,12 +2534,7 @@ public class ItemEditorReducerTests
 
     public class OnModifyItemFinished
     {
-        private readonly OnModifyItemFinishedFixture _fixture;
-
-        public OnModifyItemFinished()
-        {
-            _fixture = new OnModifyItemFinishedFixture();
-        }
+        private readonly OnModifyItemFinishedFixture _fixture = new();
 
         [Fact]
         public void OnModifyItemFinished_WithSaving_ShouldDisableSaving()
@@ -2668,12 +2603,7 @@ public class ItemEditorReducerTests
 
     public class OnMakeItemPermanentStarted
     {
-        private readonly OnMakeItemPermanentStartedFixture _fixture;
-
-        public OnMakeItemPermanentStarted()
-        {
-            _fixture = new OnMakeItemPermanentStartedFixture();
-        }
+        private readonly OnMakeItemPermanentStartedFixture _fixture = new();
 
         [Fact]
         public void OnMakeItemPermanentStarted_WithNotSaving_ShouldEnableSaving()
@@ -2742,12 +2672,7 @@ public class ItemEditorReducerTests
 
     public class OnMakeItemPermanentFinished
     {
-        private readonly OnMakeItemPermanentFinishedFixture _fixture;
-
-        public OnMakeItemPermanentFinished()
-        {
-            _fixture = new OnMakeItemPermanentFinishedFixture();
-        }
+        private readonly OnMakeItemPermanentFinishedFixture _fixture = new();
 
         [Fact]
         public void OnMakeItemPermanentFinished_WithSaving_ShouldDisableSaving()
@@ -2816,12 +2741,7 @@ public class ItemEditorReducerTests
 
     public class OnDeleteItemStarted
     {
-        private readonly OnDeleteItemStartedFixture _fixture;
-
-        public OnDeleteItemStarted()
-        {
-            _fixture = new OnDeleteItemStartedFixture();
-        }
+        private readonly OnDeleteItemStartedFixture _fixture = new();
 
         [Fact]
         public void OnDeleteItemStarted_WithNotDeleting_ShouldEnableDeleting()
@@ -2890,12 +2810,7 @@ public class ItemEditorReducerTests
 
     public class OnDeleteItemFinished
     {
-        private readonly OnDeleteItemFinishedFixture _fixture;
-
-        public OnDeleteItemFinished()
-        {
-            _fixture = new OnDeleteItemFinishedFixture();
-        }
+        private readonly OnDeleteItemFinishedFixture _fixture = new();
 
         [Fact]
         public void OnDeleteItemFinished_WithDeleting_ShouldDisableDeleting()
@@ -2964,12 +2879,7 @@ public class ItemEditorReducerTests
 
     public class OnOpenDeleteItemDialog
     {
-        private readonly OnOpenDeleteItemDialogFixture _fixture;
-
-        public OnOpenDeleteItemDialog()
-        {
-            _fixture = new OnOpenDeleteItemDialogFixture();
-        }
+        private readonly OnOpenDeleteItemDialogFixture _fixture = new();
 
         [Fact]
         public void OnOpenDeleteItemDialog_WithDialogClosed_ShouldOpenDialog()
@@ -3038,12 +2948,7 @@ public class ItemEditorReducerTests
 
     public class OnCloseDeleteItemDialog
     {
-        private readonly OnCloseDeleteItemDialogFixture _fixture;
-
-        public OnCloseDeleteItemDialog()
-        {
-            _fixture = new OnCloseDeleteItemDialogFixture();
-        }
+        private readonly OnCloseDeleteItemDialogFixture _fixture = new();
 
         [Fact]
         public void OnCloseDeleteItemDialog_WithDialogOpen_ShouldCloseDialog()
