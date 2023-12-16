@@ -240,6 +240,9 @@ public static class ItemEditorReducer
     [ReducerMethod]
     public static ItemState OnStoreOfItemChanged(ItemState state, StoreOfItemChangedAction action)
     {
+        if (action.StoreId == action.Availability.StoreId)
+            return state;
+
         var availabilities = state.Editor.Item!.Availabilities.ToList();
 
         var availabilityIndex = availabilities.IndexOf(action.Availability);
@@ -268,6 +271,9 @@ public static class ItemEditorReducer
     [ReducerMethod]
     public static ItemState OnStoreOfItemTypeChanged(ItemState state, StoreOfItemTypeChangedAction action)
     {
+        if (action.StoreId == action.Availability.StoreId)
+            return state;
+
         var types = state.Editor.Item!.ItemTypes.ToList();
         var typeIndex = types.IndexOf(action.ItemType);
 
