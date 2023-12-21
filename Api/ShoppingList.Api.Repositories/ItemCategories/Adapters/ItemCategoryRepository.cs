@@ -24,14 +24,14 @@ public class ItemCategoryRepository : IItemCategoryRepository
     public ItemCategoryRepository(ItemCategoryContext dbContext,
         IToDomainConverter<Entities.ItemCategory, IItemCategory> toModelConverter,
         IToContractConverter<IItemCategory, Entities.ItemCategory> toContractConverter,
-        Func<CancellationToken, IDomainEventDispatcher> domainEventDispatcherDelegate,
+        IDomainEventDispatcher domainEventDispatcher,
         ILogger<ItemCategoryRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
         _toContractConverter = toContractConverter;
-        _domainEventDispatcher = domainEventDispatcherDelegate(cancellationToken);
+        _domainEventDispatcher = domainEventDispatcher;
         _logger = logger;
         _cancellationToken = cancellationToken;
     }
@@ -120,7 +120,7 @@ public class ItemCategoryRepository : IItemCategoryRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogInformation(ex,
-                () => $"Saving item category {model.Id.Value} failed due to concurrency violation");
+                () => "Saving item category '{ItemCategoryId}' failed due to concurrency violation", model.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
 

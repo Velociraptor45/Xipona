@@ -2,6 +2,7 @@
 using Polly;
 using Polly.Retry;
 using ProjectHermes.ShoppingList.Api.Core.Files;
+using System.Text.Json.Serialization;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.UserPass;
 
@@ -50,7 +51,7 @@ public class VaultService : IVaultService
             Console.WriteLine("Successfully retrieved database credentials from vault");
 
             var data = result.Data.Data;
-            return (data.username, data.password);
+            return (data.Username, password: data.Password);
         });
     }
 
@@ -65,10 +66,11 @@ public class VaultService : IVaultService
 
     private sealed class DatabaseSecret
     {
-        // leave those lowercase, they are mapped to the key vault secret keys
-        public string username { get; set; } = string.Empty;
+        [JsonPropertyName("username")]
+        public string Username { get; init; } = string.Empty;
 
-        public string password { get; set; } = string.Empty;
+        [JsonPropertyName("password")]
+        public string Password { get; init; } = string.Empty;
     }
 
     private sealed class KeyVaultConfig

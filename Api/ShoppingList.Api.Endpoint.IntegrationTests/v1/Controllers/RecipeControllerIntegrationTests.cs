@@ -57,9 +57,8 @@ public class RecipeControllerIntegrationTests
         public async Task CreateRecipeAsync_WithValidRequest_ShouldCreateRecipe()
         {
             // Arrange
-            _fixture.SetupModel();
-            _fixture.SetupContract();
             _fixture.SetupExpectedEntity();
+            _fixture.SetupContract();
             _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
 
@@ -73,26 +72,29 @@ public class RecipeControllerIntegrationTests
             var result = await sut.CreateRecipeAsync(_fixture.Contract);
 
             // Assert
+            using var assertScope = _fixture.CreateServiceScope();
             result.Should().BeOfType<CreatedAtActionResult>();
             var createdResult = result as CreatedAtActionResult;
             createdResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info =>
                 info.Path.EndsWith(".Id") || info.Path == "Id"));
 
-            var recipeEntities = (await _fixture.LoadAllRecipesAsync()).ToList();
+            var recipeEntities = (await _fixture.LoadAllRecipesAsync(assertScope)).ToList();
             recipeEntities.Should().HaveCount(1);
             recipeEntities.First().Should().BeEquivalentTo(_fixture.ExpectedEntity, opt => opt
                 .Excluding(info =>
                     info.Path.EndsWith(".Id")
                     || info.Path == "Id"
-                    || Regex.IsMatch(info.Path, @"Ingredients\[\d+\]\.Recipe")
-                    || Regex.IsMatch(info.Path, @"PreparationSteps\[\d+\]\.Recipe"))
+                    || Regex.IsMatch(info.Path, @"^Tags\[\d+\]\.Recipe")
+                    || Regex.IsMatch(info.Path, @"^Ingredients\[\d+\]\.Recipe")
+                    || Regex.IsMatch(info.Path, @"^PreparationSteps\[\d+\]\.Recipe"))
                 .ExcludeRowVersion()
             );
         }
 
         private sealed class CreateRecipeAsyncFixture : RecipeControllerFixture
         {
-            private IRecipe? _model;
+            private List<ItemCategory>? _itemCategories;
+            private List<Item>? _items;
 
             public CreateRecipeAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -104,46 +106,22 @@ public class RecipeControllerIntegrationTests
 
             public async Task PrepareDatabaseAsync()
             {
-                TestPropertyNotSetException.ThrowIfNull(_model);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedEntity);
                 TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategories);
+                TestPropertyNotSetException.ThrowIfNull(_items);
 
                 await ApplyMigrationsAsync(ArrangeScope);
                 await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
                 await using var tagContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
 
-                foreach (var ingredient in _model.Ingredients)
-                {
-                    var itemCategory = new TestBuilder<ItemCategory>()
-                        .FillPropertyWith(i => i.Id, ingredient.ItemCategoryId)
-                        .FillPropertyWith(i => i.Deleted, false)
-                        .Create();
-
-                    itemCategoryContext.Add(itemCategory);
-
-                    var item = new ItemEntityBuilder()
-                        .WithId(ingredient.DefaultItemId!.Value)
-                        .WithDeleted(false)
-                        .WithIsTemporary(false)
-                        .WithItemTypes(new ItemTypeEntityBuilder()
-                            .WithId(ingredient.DefaultItemTypeId!.Value)
-                            .WithoutItem()
-                            .WithAvailableAt(ItemTypeAvailableAtEntityMother.Initial().CreateMany(1).ToList())
-                            .WithoutPredecessorId()
-                            .WithoutPredecessor()
-                            .CreateMany(1)
-                            .ToList())
-                        .WithEmptyAvailableAt()
-                        .WithoutPredecessorId()
-                        .WithoutPredecessor()
-                        .Create();
-
-                    itemContext.Add(item);
-                }
+                await itemCategoryContext.AddRangeAsync(_itemCategories);
+                await itemContext.AddRangeAsync(_items);
 
                 foreach (var tagId in Contract.RecipeTagIds)
                 {
-                    tagContext.RecipeTags.Add(new RecipeTagEntityBuilder().WithId(tagId).Create());
+                    await tagContext.RecipeTags.AddAsync(new RecipeTagEntityBuilder().WithId(tagId).Create());
                 }
 
                 await itemCategoryContext.SaveChangesAsync();
@@ -153,83 +131,103 @@ public class RecipeControllerIntegrationTests
 
             public void SetupContract()
             {
-                TestPropertyNotSetException.ThrowIfNull(_model);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedEntity);
 
                 Contract = new CreateRecipeContract(
-                    _model.Name,
-                    _model.NumberOfServings,
-                    _model.Ingredients.Select(i => new CreateIngredientContract(
+                    ExpectedEntity.Name,
+                    ExpectedEntity.NumberOfServings,
+                    ExpectedEntity.Ingredients.Select(i => new CreateIngredientContract(
                         i.ItemCategoryId,
-                        (int)i.QuantityType,
-                        i.Quantity.Value,
+                        i.QuantityType,
+                        i.Quantity,
                         i.DefaultItemId,
                         i.DefaultItemTypeId,
-                        i.ShoppingListProperties?.DefaultStoreId,
-                        i.ShoppingListProperties?.AddToShoppingListByDefault)),
-                    _model.PreparationSteps.Select(p => new CreatePreparationStepContract(
-                        p.Instruction.Value,
+                        i.DefaultStoreId,
+                        i.AddToShoppingListByDefault)),
+                    ExpectedEntity.PreparationSteps.Select(p => new CreatePreparationStepContract(
+                        p.Instruction,
                         p.SortingIndex)),
-                    _model.Tags.Select(t => t.Value));
+                    ExpectedEntity.Tags.Select(t => t.RecipeTagId));
             }
 
             public void SetupExpectedResult()
             {
-                TestPropertyNotSetException.ThrowIfNull(_model);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedEntity);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategories);
+                TestPropertyNotSetException.ThrowIfNull(_items);
+
+                var ingredients = new List<IngredientContract>()
+                {
+                    CreateContract(ExpectedEntity.Ingredients.ElementAt(0), _itemCategories[0].Name),
+                    CreateContract(ExpectedEntity.Ingredients.ElementAt(1), _items[0].Name),
+                    CreateContract(ExpectedEntity.Ingredients.ElementAt(2), $"{_items[1].Name} {_items[1].ItemTypes.First().Name}")
+                };
 
                 ExpectedResult = new RecipeContract(
-                    _model.Id,
-                    _model.Name,
-                    _model.NumberOfServings,
-                    _model.Ingredients.Select(i => new IngredientContract(
-                        i.Id,
-                        i.ItemCategoryId,
-                        (int)i.QuantityType,
-                        i.Quantity.Value,
-                        i.ShoppingListProperties?.DefaultItemId,
-                        i.ShoppingListProperties?.DefaultItemTypeId,
-                        i.ShoppingListProperties?.DefaultStoreId,
-                        i.ShoppingListProperties?.AddToShoppingListByDefault)),
-                    _model.PreparationSteps.Select(p => new PreparationStepContract(
+                    ExpectedEntity.Id,
+                    ExpectedEntity.Name,
+                    ExpectedEntity.NumberOfServings,
+                    ingredients,
+                    ExpectedEntity.PreparationSteps.Select(p => new PreparationStepContract(
                         p.Id,
-                        p.Instruction.Value,
+                        p.Instruction,
                         p.SortingIndex)),
-                    _model.Tags.Select(t => t.Value));
+                    ExpectedEntity.Tags.Select(t => t.RecipeTagId));
+
+                IngredientContract CreateContract(Ingredient i, string name)
+                {
+                    return new IngredientContract(
+                        i.Id,
+                        name,
+                        i.ItemCategoryId,
+                        i.QuantityType,
+                        i.Quantity,
+                        i.DefaultItemId,
+                        i.DefaultItemTypeId,
+                        i.DefaultStoreId,
+                        i.AddToShoppingListByDefault);
+                }
             }
 
             public void SetupExpectedEntity()
             {
-                TestPropertyNotSetException.ThrowIfNull(_model);
-
-                ExpectedEntity = new Recipe
+                var ingredients = new List<Ingredient>()
                 {
-                    Id = _model.Id,
-                    Name = _model.Name,
-                    NumberOfServings = _model.NumberOfServings,
-                    Ingredients = _model.Ingredients.Select(i => new Ingredient
-                    {
-                        Id = i.Id,
-                        ItemCategoryId = i.ItemCategoryId,
-                        Quantity = i.Quantity.Value,
-                        QuantityType = (int)i.QuantityType,
-                        DefaultItemId = i.ShoppingListProperties?.DefaultItemId,
-                        DefaultItemTypeId = i.ShoppingListProperties?.DefaultItemTypeId,
-                        DefaultStoreId = i.ShoppingListProperties?.DefaultStoreId,
-                        AddToShoppingListByDefault = i.ShoppingListProperties?.AddToShoppingListByDefault,
-                        RecipeId = _model.Id
-                    }).ToList(),
-                    PreparationSteps = _model.PreparationSteps.Select(p => new PreparationStep
-                    {
-                        Id = p.Id,
-                        Instruction = p.Instruction.Value,
-                        SortingIndex = p.SortingIndex,
-                        RecipeId = _model.Id
-                    }).ToList(),
+                    new IngredientEntityBuilder().WithoutDefaultItemId().WithoutDefaultItemTypeId()
+                        .WithoutDefaultStoreId().WithoutAddToShoppingListByDefault().Create(),
+                    new IngredientEntityBuilder().WithoutDefaultItemTypeId().Create(),
+                    new IngredientEntityBuilder().Create()
                 };
+
+                ExpectedEntity = new RecipeEntityBuilder()
+                    .WithIngredients(ingredients)
+                    .Create();
+
+                SetupItemCategoriesAndItems();
             }
 
-            public void SetupModel()
+            private void SetupItemCategoriesAndItems()
             {
-                _model = new RecipeBuilder().Create();
+                TestPropertyNotSetException.ThrowIfNull(ExpectedEntity);
+
+                _itemCategories = ExpectedEntity.Ingredients
+                    .Select(i => new ItemCategoryEntityBuilder()
+                        .WithId(i.ItemCategoryId)
+                        .WithDeleted(false)
+                        .Create())
+                    .ToList();
+
+                _items = new List<Item>()
+                {
+                    ItemEntityMother.Initial()
+                        .WithId(ExpectedEntity.Ingredients.ElementAt(1).DefaultItemId!.Value)
+                        .Create(),
+                    ItemEntityMother.InitialWithTypes()
+                        .WithId(ExpectedEntity.Ingredients.ElementAt(2).DefaultItemId!.Value)
+                        .WithItemType(ItemTypeEntityMother.Initial()
+                            .WithId(ExpectedEntity.Ingredients.ElementAt(2).DefaultItemTypeId!.Value).Create())
+                        .Create(),
+                };
             }
         }
     }
@@ -393,8 +391,9 @@ public class RecipeControllerIntegrationTests
             var result = await sut.ModifyRecipeAsync(_fixture.RecipeId.Value, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<OkResult>();
-            var entities = (await _fixture.LoadAllRecipesAsync()).ToList();
+            using var assertScope = _fixture.CreateServiceScope();
+            result.Should().BeOfType<NoContentResult>();
+            var entities = (await _fixture.LoadAllRecipesAsync(assertScope)).ToList();
             entities.Should().HaveCount(1);
             var entity = entities.First();
             entity.Ingredients.Should().HaveCount(3);
@@ -903,17 +902,6 @@ public class RecipeControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
-        }
-
-        public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync()
-        {
-            using var assertScope = CreateServiceScope();
-            var recipeContext = GetContextInstance<RecipeContext>(assertScope);
-
-            return await recipeContext.Recipes.AsNoTracking()
-                .Include(r => r.Ingredients)
-                .Include(r => r.PreparationSteps)
-                .ToListAsync();
         }
 
         protected override void Dispose(bool disposing)

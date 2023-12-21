@@ -8,6 +8,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Reasons;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -20,32 +21,27 @@ public class RecipeQueryService : IRecipeQueryService
 {
     private readonly IRecipeRepository _recipeRepository;
     private readonly IItemRepository _itemRepository;
+    private readonly IRecipeConversionService _recipeConversionService;
     private readonly IStoreRepository _storeRepository;
     private readonly IQuantityTranslationService _quantityTranslationService;
     private readonly ILogger<RecipeQueryService> _logger;
 
-    public RecipeQueryService(
-        Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        IQuantityTranslationService quantityTranslationService,
-        ILogger<RecipeQueryService> logger,
-        CancellationToken cancellationToken)
+    public RecipeQueryService(IRecipeRepository recipeRepository, IItemRepository itemRepository,
+        IRecipeConversionService recipeConversionService, IStoreRepository storeRepository,
+        IQuantityTranslationService quantityTranslationService, ILogger<RecipeQueryService> logger)
     {
-        _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
+        _recipeRepository = recipeRepository;
+        _itemRepository = itemRepository;
+        _recipeConversionService = recipeConversionService;
+        _storeRepository = storeRepository;
         _quantityTranslationService = quantityTranslationService;
         _logger = logger;
     }
 
-    public async Task<IRecipe> GetAsync(RecipeId id)
+    public async Task<RecipeReadModel> GetAsync(RecipeId id)
     {
-        var recipe = await _recipeRepository.FindByAsync(id);
-        if (recipe is null)
-            throw new DomainException(new RecipeNotFoundReason(id));
-
-        return recipe;
+        var recipe = await LoadRecipeAsync(id);
+        return await _recipeConversionService.ToReadModelAsync(recipe);
     }
 
     public async Task<IEnumerable<RecipeSearchResult>> SearchByNameAsync(string searchInput)
@@ -55,7 +51,8 @@ public class RecipeQueryService : IRecipeQueryService
 
         var results = (await _recipeRepository.SearchByAsync(searchInput)).ToList();
 
-        _logger.LogInformation(() => $"Found {results.Count} result{(results.Count != 1 ? 's' : string.Empty)} for input '{searchInput}'");
+        _logger.LogInformation(() => "Found {ResultCount} result(s) for input '{Input}'",
+            results.Count, searchInput);
 
         return results;
     }
@@ -73,7 +70,7 @@ public class RecipeQueryService : IRecipeQueryService
 
     public async Task<IEnumerable<ItemAmountForOneServing>> GetItemAmountsForOneServingAsync(RecipeId recipeId)
     {
-        var recipe = await GetAsync(recipeId);
+        var recipe = await LoadRecipeAsync(recipeId);
         var itemIds = recipe.Ingredients.Select(i => i.DefaultItemId).Where(i => i is not null).Cast<ItemId>().ToList();
         var items = (await _itemRepository.FindByAsync(itemIds)).ToDictionary(i => i.Id);
         var storeIds = items.Values
@@ -145,5 +142,14 @@ public class RecipeQueryService : IRecipeQueryService
 
             throw new DomainException(new ItemTypeAtStoreNotAvailableReason(itemType.Id, storeId));
         }
+    }
+
+    private async Task<IRecipe> LoadRecipeAsync(RecipeId id)
+    {
+        var recipe = await _recipeRepository.FindByAsync(id);
+        if (recipe is null)
+            throw new DomainException(new RecipeNotFoundReason(id));
+
+        return recipe;
     }
 }

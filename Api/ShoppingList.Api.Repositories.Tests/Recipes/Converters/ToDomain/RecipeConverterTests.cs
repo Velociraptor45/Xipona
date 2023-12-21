@@ -19,11 +19,10 @@ public class RecipeConverterTests : ToDomainConverterTestBase<Recipe, IRecipe, R
         var validatorMock = new ValidatorMock(MockBehavior.Strict);
         return new RecipeConverter(
             t => new RecipeFactory(
-                t1 => new IngredientFactory(_ => validatorMock.Object, t1),
-                _ => validatorMock.Object,
-                new PreparationStepFactory(),
-                t),
-            new IngredientConverter(t2 => new IngredientFactory(_ => validatorMock.Object, t2)),
+                new IngredientFactory(validatorMock.Object),
+                validatorMock.Object,
+                new PreparationStepFactory()),
+            new IngredientConverter(t2 => new IngredientFactory(validatorMock.Object)),
             new PreparationStepConverter(new PreparationStepFactory()));
     }
 

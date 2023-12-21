@@ -31,7 +31,7 @@ public interface IItemType
 
     IItemType TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 
-    IItemType Delete(out IDomainEvent domainEventToPublish);
+    IItemType Delete(out IDomainEvent? domainEventToPublish);
 
     IItemType RemoveAvailabilitiesFor(StoreId storeId, out IEnumerable<IDomainEvent> domainEventsToPublish);
 }

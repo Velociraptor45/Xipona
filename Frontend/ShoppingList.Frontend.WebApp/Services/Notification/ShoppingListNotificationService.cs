@@ -48,7 +48,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             {
                 Message = title,
                 Description = message,
-                //NotificationType = NotificationType.Warning
+                NotificationType = NotificationType.Warning
             });
         }
 

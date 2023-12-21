@@ -101,9 +101,8 @@ public class ShoppingListDeletionServiceTests
         public ShoppingListDeletionService CreateSut()
         {
             return new ShoppingListDeletionService(
-                _ => ShoppingListRepositoryMock.Object,
-                new Mock<ILogger<ShoppingListDeletionService>>(MockBehavior.Loose).Object,
-                default);
+                ShoppingListRepositoryMock.Object,
+                new Mock<ILogger<ShoppingListDeletionService>>(MockBehavior.Loose).Object);
         }
     }
 }

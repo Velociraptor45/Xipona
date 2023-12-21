@@ -14,4 +14,10 @@ public class ItemTypeFactoryMock : Mock<IItemTypeFactory>
         Setup(m => m.CloneWithNewId(type))
             .Returns(returnValue);
     }
+
+    public void SetupCreateNew(ItemTypeName name, IEnumerable<ItemAvailability> availabilities, IItemType returnValue)
+    {
+        Setup(m => m.CreateNew(name, availabilities))
+            .Returns(returnValue);
+    }
 }

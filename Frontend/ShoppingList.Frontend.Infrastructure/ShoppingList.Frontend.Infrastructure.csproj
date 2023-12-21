@@ -6,8 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="ProjectHermes.ShoppingList.Api.Client" Version="0.10.2" />
+    <PackageReference Include="ProjectHermes.ShoppingList.Api.Client" Version="0.11.0" />
     <PackageReference Include="RestEase" Version="1.6.4" />
     <PackageReference Include="WebAssembly.Bindings" Version="3.0.2" />
   </ItemGroup>
@@ -23,6 +24,10 @@
     <Reference Include="ShoppingList.Api.Contracts">
       <HintPath>..\ShoppingList.Frontend.WebApp\ShoppingList.Api.Contracts.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
 </Project>

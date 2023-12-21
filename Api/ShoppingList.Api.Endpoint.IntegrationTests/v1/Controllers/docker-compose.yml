@@ -9,3 +9,4 @@ services:
       MYSQL_DATABASE: test-shoppinglist
     ports:
       - "15906:3306"
+    command: "--max-connections 400"

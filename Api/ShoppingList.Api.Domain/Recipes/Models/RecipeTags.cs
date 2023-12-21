@@ -20,9 +20,10 @@ public class RecipeTags : IEnumerable<RecipeTagId>
 
     public async Task ModifyAsync(IValidator validator, IEnumerable<RecipeTagId> recipeTagIds)
     {
-        var tags = recipeTagIds.ToList();
+        var tags = recipeTagIds.Distinct().ToList();
 
-        await validator.ValidateAsync(tags);
+        if (tags.Any())
+            await validator.ValidateAsync(tags);
 
         _tags = new HashSet<RecipeTagId>(tags);
     }

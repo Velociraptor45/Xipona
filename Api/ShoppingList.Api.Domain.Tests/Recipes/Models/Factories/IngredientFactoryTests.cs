@@ -184,7 +184,7 @@ public class IngredientFactoryTests
 
         public IngredientFactory CreateSut()
         {
-            return new IngredientFactory(_ => ValidatorMock.Object, default);
+            return new IngredientFactory(ValidatorMock.Object);
         }
     }
 }

@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
+using ProjectHermes.ShoppingList.Api.Domain.Tests.Recipes.Services.Shared;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit.Abstractions;
 
@@ -32,6 +33,7 @@ public class RecipeQueryServiceTests
             // Arrange
             _fixture.SetupRecipeId();
             _fixture.SetupFindingRecipe();
+            _fixture.SetupConvertingRecipe();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.RecipeId);
@@ -63,11 +65,13 @@ public class RecipeQueryServiceTests
 
         private sealed class GetAsyncFixture : RecipeQueryServiceFixture
         {
+            private Recipe? _foundRecipe;
+
             public GetAsyncFixture(ITestOutputHelper output) : base(output)
             {
             }
 
-            public IRecipe? ExpectedResult { get; private set; }
+            public RecipeReadModel? ExpectedResult { get; private set; }
             public RecipeId? RecipeId { get; private set; }
 
             public void SetupRecipeId()
@@ -78,9 +82,9 @@ public class RecipeQueryServiceTests
             public void SetupFindingRecipe()
             {
                 TestPropertyNotSetException.ThrowIfNull(RecipeId);
-                ExpectedResult = new RecipeBuilder().Create();
+                _foundRecipe = new RecipeBuilder().Create();
 
-                RecipeRepositoryMock.SetupFindByAsync(RecipeId.Value, ExpectedResult);
+                RecipeRepositoryMock.SetupFindByAsync(RecipeId.Value, _foundRecipe);
             }
 
             public void SetupNotFindingRecipe()
@@ -88,6 +92,15 @@ public class RecipeQueryServiceTests
                 TestPropertyNotSetException.ThrowIfNull(RecipeId);
 
                 RecipeRepositoryMock.SetupFindByAsync(RecipeId.Value, null);
+            }
+
+            public void SetupConvertingRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_foundRecipe);
+
+                ExpectedResult = new DomainTestBuilder<RecipeReadModel>().Create();
+
+                RecipeConversionServiceMock.SetupToReadModel(_foundRecipe, ExpectedResult);
             }
         }
     }
@@ -260,6 +273,7 @@ public class RecipeQueryServiceTests
         protected readonly RecipeRepositoryMock RecipeRepositoryMock = new(MockBehavior.Strict);
         protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
         protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
+        protected readonly RecipeConversionServiceMock RecipeConversionServiceMock = new(MockBehavior.Strict);
         private readonly ILogger<RecipeQueryService> _logger;
 
         protected RecipeQueryServiceFixture(ITestOutputHelper output)
@@ -269,8 +283,13 @@ public class RecipeQueryServiceTests
 
         public RecipeQueryService CreateSut()
         {
-            return new RecipeQueryService(_ => RecipeRepositoryMock.Object, _ => ItemRepositoryMock.Object,
-                _ => StoreRepositoryMock.Object, new QuantityTranslationService(), _logger, default);
+            return new RecipeQueryService(
+                RecipeRepositoryMock.Object,
+                ItemRepositoryMock.Object,
+                RecipeConversionServiceMock.Object,
+                StoreRepositoryMock.Object,
+                new QuantityTranslationService(),
+                _logger);
         }
     }
 }

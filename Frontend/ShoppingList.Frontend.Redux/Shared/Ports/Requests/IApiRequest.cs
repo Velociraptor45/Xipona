@@ -3,5 +3,6 @@
     public interface IApiRequest
     {
         public Guid RequestId { get; }
+        public string ItemName { get; }
     }
 }

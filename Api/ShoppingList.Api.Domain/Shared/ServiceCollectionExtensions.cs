@@ -21,13 +21,12 @@ public static class ServiceCollectionExtensions
                 .GetRequiredService<Func<CancellationToken, IManufacturerValidationService>>();
             var itemValidationService = provider.GetRequiredService<Func<CancellationToken, IItemValidationService>>();
             var recipeTagValidationService = provider.GetRequiredService<Func<CancellationToken, IRecipeTagValidationService>>();
-            return cancellationToken => new Validator(
-                availabilityValidationServiceDelegate,
-                itemCategoryValidationServiceDelegate,
-                manufacturerValidationServiceDelegate,
-                itemValidationService,
-                recipeTagValidationService,
-                cancellationToken);
+            return ct => new Validator(
+                availabilityValidationServiceDelegate(ct),
+                itemCategoryValidationServiceDelegate(ct),
+                manufacturerValidationServiceDelegate(ct),
+                itemValidationService(ct),
+                recipeTagValidationService(ct));
         });
     }
 }

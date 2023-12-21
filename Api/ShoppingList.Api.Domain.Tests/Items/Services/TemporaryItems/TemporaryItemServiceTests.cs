@@ -3,11 +3,10 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.TemporaryItems;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
-using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.TemporaryItems;
@@ -16,12 +15,7 @@ public class TemporaryItemServiceTests
 {
     public class MakePermanentAsyncTests
     {
-        private readonly MakePermanentAsyncFixture _fixture;
-
-        public MakePermanentAsyncTests()
-        {
-            _fixture = new MakePermanentAsyncFixture();
-        }
+        private readonly MakePermanentAsyncFixture _fixture = new();
 
         [Fact]
         public async Task MakePermanentAsync_WithInvalidItemId_ShouldThrowDomainException()
@@ -138,24 +132,22 @@ public class TemporaryItemServiceTests
 
             public void SetupPermanentItem()
             {
-                PermanentItem = Fixture.Create<PermanentItem>();
+                PermanentItem = new DomainTestBuilder<PermanentItem>().Create<PermanentItem>();
             }
 
             public void SetupPermanentItem(IEnumerable<ItemAvailability> availabilities)
             {
-                Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<ItemAvailability>>(
-                    nameof(availabilities), availabilities);
-
-                PermanentItem = Fixture.Create<PermanentItem>();
+                PermanentItem = new DomainTestBuilder<PermanentItem>()
+                    .FillConstructorWith(nameof(availabilities), availabilities)
+                    .Create();
             }
 
             public void SetupCommandWithoutManufacturerId(IEnumerable<ItemAvailability> availabilities)
             {
-                Fixture.ConstructorArgumentFor<PermanentItem, ManufacturerId?>("manufacturerId", null);
-                Fixture.ConstructorArgumentFor<PermanentItem, IEnumerable<ItemAvailability>>(
-                    nameof(availabilities), availabilities);
-
-                PermanentItem = Fixture.Create<PermanentItem>();
+                PermanentItem = new DomainTestBuilder<PermanentItem>()
+                    .FillConstructorWith("manufacturerId", (ManufacturerId?)null)
+                    .FillConstructorWith(nameof(availabilities), availabilities)
+                    .Create();
             }
 
             public void SetupItemMock()
@@ -251,23 +243,14 @@ public class TemporaryItemServiceTests
 
     private abstract class LocalFixture
     {
-        protected Fixture Fixture { get; }
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-        protected readonly ValidatorMock ValidatorMock;
-
-        protected LocalFixture()
-        {
-            Fixture = new CommonFixture().GetNewFixture();
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ValidatorMock = new ValidatorMock(MockBehavior.Strict);
-        }
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
 
         public TemporaryItemService CreateSut()
         {
             return new TemporaryItemService(
-                _ => ItemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
-                default);
+                ItemRepositoryMock.Object,
+                ValidatorMock.Object);
         }
     }
 }

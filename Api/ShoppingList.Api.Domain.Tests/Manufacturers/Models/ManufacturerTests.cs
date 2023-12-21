@@ -12,12 +12,7 @@ public class ManufacturerTests
 {
     public class Modify
     {
-        private readonly ModifyFixture _fixture;
-
-        public Modify()
-        {
-            _fixture = new ModifyFixture();
-        }
+        private readonly ModifyFixture _fixture = new();
 
         [Fact]
         public void Modify_WithDeleted_ShouldThrow()
@@ -66,12 +61,7 @@ public class ManufacturerTests
 
     public class Delete
     {
-        private readonly DeleteFixture _fixture;
-
-        public Delete()
-        {
-            _fixture = new DeleteFixture();
-        }
+        private readonly DeleteFixture _fixture = new();
 
         [Fact]
         public void Delete_WithNotDeleted_ShouldDeleteManufacturer()

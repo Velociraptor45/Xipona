@@ -12,15 +12,12 @@ public class StoreModificationService : IStoreModificationService
     private readonly IItemModificationService _itemModificationService;
     private readonly IShoppingListModificationService _shoppingListModificationService;
 
-    public StoreModificationService(
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        Func<CancellationToken, IItemModificationService> itemModificationServiceDelegate,
-        Func<CancellationToken, IShoppingListModificationService> shoppingListModificationServiceDelegate,
-        CancellationToken cancellationToken)
+    public StoreModificationService(IStoreRepository storeRepository, IItemModificationService itemModificationService,
+        IShoppingListModificationService shoppingListModificationService)
     {
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _itemModificationService = itemModificationServiceDelegate(cancellationToken);
-        _shoppingListModificationService = shoppingListModificationServiceDelegate(cancellationToken);
+        _storeRepository = storeRepository;
+        _itemModificationService = itemModificationService;
+        _shoppingListModificationService = shoppingListModificationService;
     }
 
     public async Task ModifyAsync(StoreModification update)

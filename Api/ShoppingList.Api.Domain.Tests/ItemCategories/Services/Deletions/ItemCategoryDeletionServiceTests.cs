@@ -17,12 +17,7 @@ public class ItemCategoryDeletionServiceTests
 {
     public class DeleteAsyncTests
     {
-        private readonly DeleteAsyncFixture _fixture;
-
-        public DeleteAsyncTests()
-        {
-            _fixture = new DeleteAsyncFixture();
-        }
+        private readonly DeleteAsyncFixture _fixture = new();
 
         [Fact]
         public async Task DeleteAsync_WithInvalidItemCategoryId_ShouldNotThrow()
@@ -548,26 +543,17 @@ public class ItemCategoryDeletionServiceTests
 
     private abstract class LocalFixture
     {
-        protected readonly ItemCategoryRepositoryMock ItemCategoryRepositoryMock;
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
-        protected readonly CommonFixture CommonFixture;
-
-        protected LocalFixture()
-        {
-            CommonFixture = new CommonFixture();
-            ItemCategoryRepositoryMock = new ItemCategoryRepositoryMock(MockBehavior.Strict);
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-        }
+        protected readonly ItemCategoryRepositoryMock ItemCategoryRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
+        protected readonly CommonFixture CommonFixture = new();
 
         public ItemCategoryDeletionService CreateSut()
         {
             return new ItemCategoryDeletionService(
-                _ => ItemCategoryRepositoryMock.Object,
-                _ => ItemRepositoryMock.Object,
-                _ => ShoppingListRepositoryMock.Object,
-                default);
+                ItemCategoryRepositoryMock.Object,
+                ItemRepositoryMock.Object,
+                ShoppingListRepositoryMock.Object);
         }
     }
 }

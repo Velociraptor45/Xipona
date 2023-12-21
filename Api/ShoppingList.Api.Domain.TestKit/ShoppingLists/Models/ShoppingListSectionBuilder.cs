@@ -12,6 +12,12 @@ public class ShoppingListSectionBuilder : DomainTestBuilderBase<ShoppingListSect
         Customize(new QuantityInBasketCustomization());
     }
 
+    public ShoppingListSectionBuilder(ShoppingListSection section) : this()
+    {
+        WithId(section.Id);
+        WithItems(section.Items);
+    }
+
     public ShoppingListSectionBuilder WithId(SectionId id)
     {
         FillConstructorWith("id", id);

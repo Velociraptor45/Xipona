@@ -18,7 +18,7 @@ public class IngredientConverterTests : ToDomainConverterTestBase<Ingredient, II
 {
     public override IngredientConverter CreateSut()
     {
-        return new(token => new IngredientFactory(_ => new ValidatorMock(MockBehavior.Strict).Object, token));
+        return new(_ => new IngredientFactory(new ValidatorMock(MockBehavior.Strict).Object));
     }
 
     protected override Ingredient CreateSource()

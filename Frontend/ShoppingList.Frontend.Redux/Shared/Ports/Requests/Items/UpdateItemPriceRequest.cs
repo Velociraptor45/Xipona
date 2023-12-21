@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.Items;
 
-public class UpdateItemPriceRequest : IApiRequest
+public class UpdateItemPriceRequest
 {
     public UpdateItemPriceRequest(Guid itemId, Guid? itemTypeId, Guid storeId, float price)
     {

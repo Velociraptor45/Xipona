@@ -134,10 +134,10 @@ public class ApiClient : IApiClient
             contract);
     }
 
-    public async Task UpdateItemAsync(UpdateItemRequest request)
+    public async Task UpdateItemAsync(EditedItem item)
     {
-        var contract = _converters.ToContract<EditedItem, UpdateItemContract>(request.Item);
-        await _client.UpdateItemAsync(request.Item.Id, contract);
+        var contract = _converters.ToContract<EditedItem, UpdateItemContract>(item);
+        await _client.UpdateItemAsync(item.Id, contract);
     }
 
     public async Task UpdateItemPriceAsync(UpdateItemPriceRequest request)
@@ -146,39 +146,39 @@ public class ApiClient : IApiClient
         await _client.UpdateItemPriceAsync(request.ItemId, contract);
     }
 
-    public async Task UpdateItemWithTypesAsync(UpdateItemWithTypesRequest request)
+    public async Task UpdateItemWithTypesAsync(EditedItem item)
     {
-        var contract = _converters.ToContract<EditedItem, UpdateItemWithTypesContract>(request.Item);
-        await _client.UpdateItemWithTypesAsync(request.Item.Id, contract);
+        var contract = _converters.ToContract<EditedItem, UpdateItemWithTypesContract>(item);
+        await _client.UpdateItemWithTypesAsync(item.Id, contract);
     }
 
-    public async Task ModifyItemAsync(ModifyItemRequest request)
+    public async Task ModifyItemAsync(EditedItem item)
     {
-        var contract = _converters.ToContract<EditedItem, ModifyItemContract>(request.Item);
-        await _client.ModifyItemAsync(request.Item.Id, contract);
+        var contract = _converters.ToContract<EditedItem, ModifyItemContract>(item);
+        await _client.ModifyItemAsync(item.Id, contract);
     }
 
-    public async Task ModifyItemWithTypesAsync(ModifyItemWithTypesRequest request)
+    public async Task ModifyItemWithTypesAsync(EditedItem item)
     {
-        var contract = _converters.ToContract<ModifyItemWithTypesRequest, ModifyItemWithTypesContract>(request);
-        await _client.ModifyItemWithTypesAsync(request.Item.Id, contract);
+        var contract = _converters.ToContract<EditedItem, ModifyItemWithTypesContract>(item);
+        await _client.ModifyItemWithTypesAsync(item.Id, contract);
     }
 
-    public async Task CreateItemAsync(CreateItemRequest request)
+    public async Task CreateItemAsync(EditedItem item)
     {
-        var contract = _converters.ToContract<EditedItem, CreateItemContract>(request.Item);
+        var contract = _converters.ToContract<EditedItem, CreateItemContract>(item);
         await _client.CreateItemAsync(contract);
     }
 
-    public async Task CreateItemWithTypesAsync(CreateItemWithTypesRequest request)
+    public async Task CreateItemWithTypesAsync(EditedItem item)
     {
-        var contract = _converters.ToContract<EditedItem, CreateItemWithTypesContract>(request.Item);
+        var contract = _converters.ToContract<EditedItem, CreateItemWithTypesContract>(item);
         await _client.CreateItemWithTypesAsync(contract);
     }
 
-    public async Task DeleteItemAsync(DeleteItemRequest request)
+    public async Task DeleteItemAsync(Guid itemId)
     {
-        await _client.DeleteItemAsync(request.ItemId);
+        await _client.DeleteItemAsync(itemId);
     }
 
     public async Task<EditedManufacturer> CreateManufacturerAsync(string name)

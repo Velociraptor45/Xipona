@@ -48,7 +48,7 @@ public class AddItemsToShoppingListsAsyncTests : ControllerCommandTestsBase<Shop
 
         public AddItemsToShoppingListsAsyncFixture()
         {
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.StoreNotFound,
                 ErrorReasonCode.ItemNotFound));
             PossibleResultsList.Add(new NotFoundStatusResult());

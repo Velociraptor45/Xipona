@@ -42,7 +42,7 @@ public class ManufacturerControllerIntegrationTests
             var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
-            response.Should().BeOfType<OkResult>();
+            response.Should().BeOfType<NoContentResult>();
         }
 
         [Fact]
@@ -97,7 +97,7 @@ public class ManufacturerControllerIntegrationTests
             var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
 
             // Assert
-            response.Should().BeOfType<OkResult>();
+            response.Should().BeOfType<NoContentResult>();
         }
 
         private class DeleteManufacturerAsyncFixture : ManufacturerControllerFixture

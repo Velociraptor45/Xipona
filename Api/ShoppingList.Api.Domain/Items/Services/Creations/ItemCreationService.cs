@@ -14,17 +14,13 @@ public class ItemCreationService : IItemCreationService
     private readonly IItemFactory _itemFactory;
     private readonly IItemReadModelConversionService _conversionService;
 
-    public ItemCreationService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        IItemFactory itemFactory,
-        Func<CancellationToken, IItemReadModelConversionService> conversionServiceDelegate,
-        CancellationToken cancellationToken)
+    public ItemCreationService(IItemRepository itemRepository, IValidator validator, IItemFactory itemFactory,
+        IItemReadModelConversionService conversionService)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
+        _itemRepository = itemRepository;
         _itemFactory = itemFactory;
-        _conversionService = conversionServiceDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
+        _conversionService = conversionService;
+        _validator = validator;
     }
 
     public async Task<ItemReadModel> CreateAsync(ItemCreation creation)

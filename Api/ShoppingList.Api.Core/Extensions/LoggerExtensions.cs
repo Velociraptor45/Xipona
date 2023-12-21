@@ -1,74 +1,72 @@
 ﻿using Microsoft.Extensions.Logging;
 
+#pragma warning disable CA2254
+
 namespace ProjectHermes.ShoppingList.Api.Core.Extensions;
 
 public static class LoggerExtensions
 {
-#pragma warning disable CA2254 // Template should be a static expression
-
-    public static void LogTrace<T>(this ILogger<T> logger, Func<string> logFunction)
+    public static void LogTrace<T>(this ILogger<T> logger, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        logger.LogTrace(logFunction());
+        logger.LogTrace(message(), args);
     }
 
-    public static void LogDebug<T>(this ILogger<T> logger, Func<string> logFunction)
+    public static void LogDebug<T>(this ILogger<T> logger, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        logger.LogDebug(logFunction());
+        logger.LogDebug(message(), args);
     }
 
-    public static void LogInformation<T>(this ILogger<T> logger, Exception e, Func<string> logFunction)
+    public static void LogInformation<T>(this ILogger<T> logger, Exception e, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        logger.LogInformation(e, logFunction());
+        logger.LogInformation(e, message(), args);
     }
 
-    public static void LogInformation<T>(this ILogger<T> logger, Func<string> logFunction)
+    public static void LogInformation<T>(this ILogger<T> logger, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        logger.LogInformation(logFunction());
+        logger.LogInformation(message(), args);
     }
 
-    public static void LogWarning<T>(this ILogger<T> logger, Func<string> logFunction)
+    public static void LogWarning<T>(this ILogger<T> logger, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        logger.LogWarning(logFunction());
+        logger.LogWarning(message(), args);
     }
 
-    public static void LogWarning<T>(this ILogger<T> logger, Exception ex, Func<string> logFunction)
+    public static void LogWarning<T>(this ILogger<T> logger, Exception ex, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        logger.LogWarning(ex, logFunction());
+        logger.LogWarning(ex, message(), args);
     }
 
-    public static void LogError<T>(this ILogger<T> logger, Exception ex, Func<string> logFunction)
+    public static void LogError<T>(this ILogger<T> logger, Exception ex, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        logger.LogError(ex, logFunction());
+        logger.LogError(ex, message(), args);
     }
 
-    public static void LogError<T>(this ILogger<T> logger, Func<string> logFunction)
+    public static void LogError<T>(this ILogger<T> logger, Func<string> message, params object[] args)
     {
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        logger.LogError(logFunction());
+        logger.LogError(message(), args);
     }
-
-#pragma warning restore CA2254 // Template should be a static expression
 }

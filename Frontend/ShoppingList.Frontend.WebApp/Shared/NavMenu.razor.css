@@ -29,16 +29,18 @@
         color: #ffffff;
     }
 
-    .nav-item,
-    .nav-item-ext {
+    .nav-item {
         padding: 6px 0;
     }
 
-    .nav-item-menu {
-        width: 0;
-        height: 0;
-        visibility: hidden;
-        padding: 0;
+    .nav-item-other {
+        display: none;
+    }
+
+    .logout {
+        cursor: pointer;
+        position: absolute;
+        bottom: 0;
     }
 }
 
@@ -64,23 +66,7 @@
         color: #ffffff;
     }
 
-    .nav-menu-ext {
-        position: fixed;
-        bottom: 71.15px;
-        right: 0;
-        background-color: #3498db;
-        padding: 0 8px;
-    }
-
-    .nav-item-menu {
-        cursor: pointer;
-    }
-
-    .nav-item-ext {
-        padding-top: 4px;
-    }
-
-    .nav-menu-ext-collapse {
-        visibility: hidden;
+    .hide-mobile {
+        display: none;
     }
 }

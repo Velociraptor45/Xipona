@@ -9,10 +9,9 @@ public class ItemCategoryModificationService : IItemCategoryModificationService
     private readonly IItemCategoryRepository _itemCategoryRepository;
 
     public ItemCategoryModificationService(
-        Func<CancellationToken, IItemCategoryRepository> itemCategoryRepositoryDelegate,
-        CancellationToken cancellationToken)
+        IItemCategoryRepository itemCategoryRepository)
     {
-        _itemCategoryRepository = itemCategoryRepositoryDelegate(cancellationToken);
+        _itemCategoryRepository = itemCategoryRepository;
     }
 
     public async Task ModifyAsync(ItemCategoryModification modification)

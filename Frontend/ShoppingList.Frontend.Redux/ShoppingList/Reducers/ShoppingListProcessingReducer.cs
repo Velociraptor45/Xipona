@@ -6,30 +6,6 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 
 public static class ShoppingListProcessingReducer
 {
-    [ReducerMethod(typeof(ApiRequestProcessingErrorOccurredAction))]
-    public static ShoppingListState OnApiRequestProcessingErrorOccurred(ShoppingListState state)
-    {
-        return state with
-        {
-            Errors = state.Errors with
-            {
-                HasErrors = true
-            }
-        };
-    }
-
-    [ReducerMethod(typeof(ApiRequestProcessingErrorResolvedAction))]
-    public static ShoppingListState OnApiRequestProcessingErrorResolved(ShoppingListState state)
-    {
-        return state with
-        {
-            Errors = state.Errors with
-            {
-                HasErrors = false
-            }
-        };
-    }
-
     [ReducerMethod(typeof(ApiConnectionDiedAction))]
     public static ShoppingListState OnApiConnectionDied(ShoppingListState state)
     {

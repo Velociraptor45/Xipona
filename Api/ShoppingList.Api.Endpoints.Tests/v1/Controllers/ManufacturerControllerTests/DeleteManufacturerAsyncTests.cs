@@ -51,7 +51,7 @@ public class DeleteManufacturerAsyncTests : ControllerCommandTestsBase<Manufactu
                 ErrorReasonCode.ItemNotFound
             }));
             PossibleResultsList.Add(new NotFoundStatusResult());
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
         }
 
         public override MethodInfo Method =>

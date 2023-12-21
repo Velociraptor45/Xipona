@@ -12,7 +12,6 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Services;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 using Xunit.Abstractions;
 
@@ -953,7 +952,7 @@ public class ShoppingListExchangeServiceTests
 
         public void SetupNewItemNotMatchingShoppingList()
         {
-            var storeId = new StoreIdBuilder().Create();
+            var storeId = StoreId.New;
             SetupNewItemForStore(storeId);
         }
 
@@ -1047,10 +1046,9 @@ public class ShoppingListExchangeServiceTests
         public ShoppingListExchangeService CreateSut()
         {
             return new ShoppingListExchangeService(
-                _ => ShoppingListRepositoryMock.Object,
-                _ => AddItemToShoppingListServiceMock.Object,
-                _logger,
-                default);
+                ShoppingListRepositoryMock.Object,
+                AddItemToShoppingListServiceMock.Object,
+                _logger);
         }
     }
 }

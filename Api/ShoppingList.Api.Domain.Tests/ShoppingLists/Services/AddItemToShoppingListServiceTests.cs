@@ -66,7 +66,7 @@ public class AddItemToShoppingListServiceTests
         {
             // Arrange
             var service = _fixture.CreateSut();
-            
+
             _fixture.SetupQuantity();
             _fixture.SetupItem();
             _fixture.SetupShoppingListMockMatchingItem();
@@ -130,14 +130,14 @@ public class AddItemToShoppingListServiceTests
         {
             // Arrange
             var service = _fixture.CreateSut();
-            
+
             _fixture.SetupQuantity();
             _fixture.SetupItem();
             _fixture.SetupShoppingListMockMatchingItem();
             _fixture.SetupShoppingListItem();
 
             _fixture.SetupStore();
-            
+
             _fixture.SetupFindingStore();
 
             _fixture.SetupEmptyShoppingListSection();
@@ -298,7 +298,7 @@ public class AddItemToShoppingListServiceTests
 
             public void SetupShoppingListMockNotMatchingItem()
             {
-                var storeId = new StoreIdBuilder().Create();
+                var storeId = StoreId.New;
 
                 var list = ShoppingListMother.Sections(3).WithStoreId(storeId).Create();
                 ShoppingListMock = new ShoppingListMock(list, MockBehavior.Strict);
@@ -1074,10 +1074,9 @@ public class AddItemToShoppingListServiceTests
         {
             return new AddItemToShoppingListService(
                 ShoppingListSectionFactoryMock.Object,
-                _ => StoreRepositoryMock.Object,
-                _ => ItemRepositoryMock.Object,
-                _ => ShoppingListRepositoryMock.Object,
-                default);
+                StoreRepositoryMock.Object,
+                ItemRepositoryMock.Object,
+                ShoppingListRepositoryMock.Object);
         }
 
         public void SetupShoppingListMock()

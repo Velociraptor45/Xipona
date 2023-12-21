@@ -47,7 +47,7 @@ public class ModifyManufacturerAsyncTests : ControllerCommandTestsBase<Manufactu
 
         public ModifyManufacturerAsyncFixture()
         {
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(new List<ErrorReasonCode>()
             {

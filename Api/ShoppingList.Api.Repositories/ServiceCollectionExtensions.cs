@@ -97,13 +97,15 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ItemContext>(),
                 provider.GetRequiredService<IToDomainConverter<Items.Entities.Item, IItem>>(),
                 provider.GetRequiredService<IToContractConverter<IItem, Items.Entities.Item>>(),
-                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>(),
+                provider.GetRequiredService<IDomainEventDispatcher>(),
                 provider.GetRequiredService<ILogger<ItemRepository>>(),
                 ct);
         });
         services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
         {
-            return ct => new ItemTypeReadRepository(provider.GetRequiredService<ItemContext>(), ct);
+            var dbContext = provider.GetRequiredService<ItemContext>();
+            var converter = provider.GetRequiredService<IToDomainConverter<Items.Entities.ItemType, IItemType>>();
+            return ct => new ItemTypeReadRepository(dbContext, converter, ct);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryRepository>>(provider =>
@@ -115,7 +117,7 @@ public static class ServiceCollectionExtensions
                 .GetRequiredService<IToContractConverter<IItemCategory, ItemCategories.Entities.ItemCategory>>();
             var dispatcher = provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>();
             var logger = provider.GetRequiredService<ILogger<ItemCategoryRepository>>();
-            return ct => new ItemCategoryRepository(context, toDomainConverter, toEntityConverter, dispatcher, logger,
+            return ct => new ItemCategoryRepository(context, toDomainConverter, toEntityConverter, dispatcher(ct), logger,
                 ct);
         });
         services.AddTransient<Func<CancellationToken, IManufacturerRepository>>(provider =>

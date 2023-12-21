@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
 {
-    public class FinishListRequest : IApiRequest
+    public class FinishListRequest
     {
         public FinishListRequest(Guid requestId, Guid shoppingListId, DateTimeOffset? finishedAt)
         {

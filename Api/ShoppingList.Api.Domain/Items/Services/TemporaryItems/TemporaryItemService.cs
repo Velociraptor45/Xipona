@@ -11,13 +11,10 @@ public class TemporaryItemService : ITemporaryItemService
     private readonly IItemRepository _itemRepository;
     private readonly IValidator _validator;
 
-    public TemporaryItemService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        CancellationToken cancellationToken)
+    public TemporaryItemService(IItemRepository itemRepository, IValidator validator)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
+        _itemRepository = itemRepository;
+        _validator = validator;
     }
 
     public async Task MakePermanentAsync(PermanentItem permanentItem)

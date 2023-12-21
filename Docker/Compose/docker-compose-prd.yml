@@ -16,7 +16,7 @@ services:
       - prd-ph-shoppinglist-db-root-pwd
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.10.2
+    image: velocir4ptor/ph-shoppinglist-api:0.11.0
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       PH_SL_DB_USERNAME_FILE: /run/secrets/prd-ph-shoppinglist-db-username
@@ -35,8 +35,18 @@ services:
       - prd-ph-shoppinglist-db-username
       - prd-ph-shoppinglist-db-password
 
+  # LogCollector: # uncomment this for frontend log support
+  #   image: velocir4ptor/web-assembly-log-collector:1.0.0
+  #   ports:
+  #     - "13880:80"
+  #   volumes:
+  #     - prd-ph-shoppinglist-log-collector-config:/app/config:ro
+  #     - prd-ph-shoppinglist-log-collector-logs:/app/logs
+  #   networks:
+  #     - prd-ph-shoppinglist
+
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.10.2
+    image: velocir4ptor/ph-shoppinglist-frontend:0.11.0
     ports: 
       - "14000:80"
     depends_on:
@@ -61,6 +71,10 @@ volumes:
     external: true
   prd-ph-shoppinglist-database:
     external: true
+  # prd-ph-shoppinglist-log-collector-config: # uncomment this for frontend log support
+  #   external: true
+  # prd-ph-shoppinglist-log-collector-logs:
+  #   external: true
 
 networks:
   prd-ph-shoppinglist:

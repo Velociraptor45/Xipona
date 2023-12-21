@@ -16,15 +16,12 @@ public class RecipeModificationService : IRecipeModificationService
     private readonly IValidator _validator;
     private readonly IItemRepository _itemRepository;
 
-    public RecipeModificationService(
-        Func<CancellationToken, IRecipeRepository> recipeRepositoryDelegate,
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        CancellationToken cancellationToken)
+    public RecipeModificationService(IRecipeRepository recipeRepository, IItemRepository itemRepository,
+        IValidator validator)
     {
-        _recipeRepository = recipeRepositoryDelegate(cancellationToken);
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
+        _recipeRepository = recipeRepository;
+        _itemRepository = itemRepository;
+        _validator = validator;
     }
 
     public async Task ModifyAsync(RecipeModification modification)
@@ -62,7 +59,7 @@ public class RecipeModificationService : IRecipeModificationService
     }
 
     public async Task ModifyIngredientsAfterAvailabilitiesChangedAsync(ItemId itemId, ItemTypeId? itemTypeId,
-        IEnumerable<ItemAvailability> oldAvailabilities, IEnumerable<ItemAvailability> newAvailabilities)
+        IEnumerable<ItemAvailability> newAvailabilities)
     {
         var recipes = await _recipeRepository.FindByAsync(itemId, itemTypeId);
         var item = await _itemRepository.FindActiveByAsync(itemId);
@@ -71,7 +68,7 @@ public class RecipeModificationService : IRecipeModificationService
 
         foreach (var recipe in recipes)
         {
-            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, oldAvailabilities, newAvailabilities);
+            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, newAvailabilities);
             await _recipeRepository.StoreAsync(recipe);
         }
     }

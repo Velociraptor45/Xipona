@@ -7,6 +7,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.TestKit.Recipes.Models;
 
 public class IngredientShoppingListPropertiesBuilder : DomainRecordTestBuilderBase<IngredientShoppingListProperties>
 {
+    public IngredientShoppingListPropertiesBuilder()
+    {
+    }
+
+    public IngredientShoppingListPropertiesBuilder(IngredientShoppingListProperties properties)
+    {
+        WithDefaultItemId(properties.DefaultItemId);
+        WithDefaultItemTypeId(properties.DefaultItemTypeId);
+        WithDefaultStoreId(properties.DefaultStoreId);
+        WithAddToShoppingListByDefault(properties.AddToShoppingListByDefault);
+    }
+
     public IngredientShoppingListPropertiesBuilder WithDefaultItemId(ItemId defaultItemId)
     {
         Modifiers.Add(x => x with { DefaultItemId = defaultItemId });

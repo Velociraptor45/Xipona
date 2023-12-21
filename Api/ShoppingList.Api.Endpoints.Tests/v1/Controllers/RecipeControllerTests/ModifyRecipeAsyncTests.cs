@@ -55,7 +55,7 @@ public class ModifyRecipeAsyncTests : ControllerCommandTestsBase<RecipeControlle
                 ErrorReasonCode.RecipeNotFound,
                 ErrorReasonCode.IngredientNotFound,
                 ErrorReasonCode.PreparationStepNotFound));
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 

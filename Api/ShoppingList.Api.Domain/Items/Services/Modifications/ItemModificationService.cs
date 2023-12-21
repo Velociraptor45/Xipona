@@ -18,16 +18,13 @@ public class ItemModificationService : IItemModificationService
     private readonly IStoreRepository _storeRepository;
     private readonly IValidator _validator;
 
-    public ItemModificationService(Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IValidator> validatorDelegate,
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        Func<CancellationToken, IStoreRepository> storeRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public ItemModificationService(IItemRepository itemRepository, IValidator validator,
+        IShoppingListRepository shoppingListRepository, IStoreRepository storeRepository)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _storeRepository = storeRepositoryDelegate(cancellationToken);
-        _validator = validatorDelegate(cancellationToken);
+        _itemRepository = itemRepository;
+        _shoppingListRepository = shoppingListRepository;
+        _storeRepository = storeRepository;
+        _validator = validator;
     }
 
     public async Task ModifyItemWithTypesAsync(ItemWithTypesModification modification)

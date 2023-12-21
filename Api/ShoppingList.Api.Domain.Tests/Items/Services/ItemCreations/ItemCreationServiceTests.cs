@@ -2,11 +2,11 @@
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
 using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
 
@@ -16,12 +16,7 @@ public class ItemCreationServiceTests
 {
     public class CreateAsyncTests
     {
-        private readonly CreateAsyncFixture _fixture;
-
-        public CreateAsyncTests()
-        {
-            _fixture = new CreateAsyncFixture();
-        }
+        private readonly CreateAsyncFixture _fixture = new();
 
         #region WithManufacturerId
 
@@ -233,11 +228,11 @@ public class ItemCreationServiceTests
             public void SetupItemCreation()
             {
                 TestPropertyNotSetException.ThrowIfNull(_availabilities);
-                Fixture.ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", _manufacturerId);
-                Fixture.ConstructorArgumentFor<ItemCreation, IEnumerable<ItemAvailability>>(
-                    "availabilities", _availabilities);
 
-                ItemCreation = Fixture.Create<ItemCreation>();
+                ItemCreation = new DomainTestBuilder<ItemCreation>()
+                    .ConstructorArgumentFor<ItemCreation, ManufacturerId?>("manufacturerId", _manufacturerId)
+                    .ConstructorArgumentFor<ItemCreation, IEnumerable<ItemAvailability>>("availabilities", _availabilities)
+                    .Create<ItemCreation>();
             }
 
             public void SetupManufacturerId()
@@ -296,7 +291,7 @@ public class ItemCreationServiceTests
             public void SetupConvertingItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
-                _itemReadModel = Fixture.Create<ItemReadModel>();
+                _itemReadModel = new DomainTestBuilder<ItemReadModel>().Create();
                 ConversionServiceMock.SetupConvertAsync(_item, _itemReadModel);
             }
 
@@ -377,31 +372,18 @@ public class ItemCreationServiceTests
 
     public abstract class LocalFixture
     {
-        protected Fixture Fixture;
-        protected CommonFixture CommonFixture = new();
-        protected ItemRepositoryMock ItemRepositoryMock;
-        protected ItemFactoryMock ItemFactoryMock;
-        protected ValidatorMock ValidatorMock;
-        protected ItemReadModelConversionServiceMock ConversionServiceMock;
-
-        protected LocalFixture()
-        {
-            Fixture = CommonFixture.GetNewFixture();
-
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ItemFactoryMock = new ItemFactoryMock(MockBehavior.Strict);
-            ValidatorMock = new ValidatorMock(MockBehavior.Strict);
-            ConversionServiceMock = new ItemReadModelConversionServiceMock(MockBehavior.Strict);
-        }
+        protected ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected ItemFactoryMock ItemFactoryMock = new(MockBehavior.Strict);
+        protected ValidatorMock ValidatorMock = new(MockBehavior.Strict);
+        protected ItemReadModelConversionServiceMock ConversionServiceMock = new(MockBehavior.Strict);
 
         public ItemCreationService CreateSut()
         {
             return new ItemCreationService(
-                _ => ItemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
+                ItemRepositoryMock.Object,
+                ValidatorMock.Object,
                 ItemFactoryMock.Object,
-                _ => ConversionServiceMock.Object,
-                default);
+                ConversionServiceMock.Object);
         }
     }
 }

@@ -9,13 +9,10 @@ public class RecipeTagCreationService : IRecipeTagCreationService
     private readonly IRecipeTagFactory _recipeTagFactory;
     private readonly IRecipeTagRepository _recipeTagRepository;
 
-    public RecipeTagCreationService(
-        IRecipeTagFactory recipeTagFactory,
-        Func<CancellationToken, IRecipeTagRepository> recipeTagRepositoryDelegate,
-        CancellationToken cancellationToken)
+    public RecipeTagCreationService(IRecipeTagFactory recipeTagFactory, IRecipeTagRepository recipeTagRepository)
     {
         _recipeTagFactory = recipeTagFactory;
-        _recipeTagRepository = recipeTagRepositoryDelegate(cancellationToken);
+        _recipeTagRepository = recipeTagRepository;
     }
 
     public async Task<IRecipeTag> CreateAsync(string name)

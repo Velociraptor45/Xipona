@@ -6,8 +6,7 @@
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 
-@inject NavigationManager _navigationManager;
-@inject IItemPriceCalculationService _itemPriceCalculationService;
+@inject IItemPriceCalculationService ItemPriceCalculationService;
 
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
@@ -98,40 +97,40 @@
 
         if (Model.IsInBasket)
         {
-            Dispatcher.Dispatch(new RemoveItemFromBasketAction(Model.Id, Model.TypeId));
+            Dispatcher.Dispatch(new RemoveItemFromBasketAction(Model.Id, Model.TypeId, Model.Name));
         }
         else
         {
-            Dispatcher.Dispatch(new PutItemInBasketAction(Model.Id, Model.TypeId));
+            Dispatcher.Dispatch(new PutItemInBasketAction(Model.Id, Model.TypeId, Model.Name));
         }
     }
 
     private float CalculatePrice()
     {
-        return _itemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
+        return ItemPriceCalculationService.CalculatePrice(Model.QuantityType.Id, Model.PricePerQuantity, Model.Quantity);
     }
 
     private void OnQuantityInputValueChanged(float quantity)
     {
         Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, quantity,
-            ChangeItemQuantityAction.ChangeType.Absolute));
+            ChangeItemQuantityAction.ChangeType.Absolute, Model.Name));
     }
 
     private void OnRemoveItemButtonClicked()
     {
-        Dispatcher.Dispatch(new RemoveItemFromShoppingListAction(Model.Id, Model.TypeId));
+        Dispatcher.Dispatch(new RemoveItemFromShoppingListAction(Model.Id, Model.TypeId, Model.Name));
     }
 
     private void OnIncrementQuantityButtonClicked()
     {
         Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, Model.QuantityType.DefaultQuantity,
-            ChangeItemQuantityAction.ChangeType.Diff));
+            ChangeItemQuantityAction.ChangeType.Diff, Model.Name));
     }
 
     private void OnDecrementQuantityButtonClicked()
     {
         Dispatcher.Dispatch(new ChangeItemQuantityAction(Model.Id, Model.TypeId, -Model.QuantityType.DefaultQuantity,
-            ChangeItemQuantityAction.ChangeType.Diff));
+            ChangeItemQuantityAction.ChangeType.Diff, Model.Name));
     }
 
     private void OnMakeItemPermanentButtonClicked()

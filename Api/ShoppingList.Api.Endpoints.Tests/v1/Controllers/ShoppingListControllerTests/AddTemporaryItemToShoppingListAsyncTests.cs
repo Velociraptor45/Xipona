@@ -48,7 +48,7 @@ AddTemporaryItemToShoppingListCommand, bool, AddTemporaryItemToShoppingListAsync
 
         public AddTemporaryItemToShoppingListAsyncFixture()
         {
-            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new BadRequestStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.ShoppingListNotFound));
             PossibleResultsList.Add(new NotFoundStatusResult());

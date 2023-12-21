@@ -11,13 +11,11 @@ public class ShoppingListQueryService : IShoppingListQueryService
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IShoppingListReadModelConversionService _shoppingListReadModelConversionService;
 
-    public ShoppingListQueryService(
-        Func<CancellationToken, IShoppingListRepository> shoppingListRepositoryDelegate,
-        Func<CancellationToken, IShoppingListReadModelConversionService> shoppingListReadModelConversionServiceDelegate,
-        CancellationToken cancellationToken)
+    public ShoppingListQueryService(IShoppingListRepository shoppingListRepository,
+        IShoppingListReadModelConversionService shoppingListReadModelConversionService)
     {
-        _shoppingListRepository = shoppingListRepositoryDelegate(cancellationToken);
-        _shoppingListReadModelConversionService = shoppingListReadModelConversionServiceDelegate(cancellationToken);
+        _shoppingListRepository = shoppingListRepository;
+        _shoppingListReadModelConversionService = shoppingListReadModelConversionService;
     }
 
     public async Task<ShoppingListReadModel> GetActiveAsync(StoreId storeId)

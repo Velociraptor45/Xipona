@@ -4,7 +4,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.ShoppingList.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.ShoppingList.Api.Core.TestKit;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
-using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Endpoint.v1.Controllers;
 using ProjectHermes.ShoppingList.Api.Endpoints.Tests.Common;
@@ -15,7 +15,7 @@ using System.Reflection;
 namespace ProjectHermes.ShoppingList.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
 public class CreateRecipeAsyncTests :
-    ControllerCommandWithReturnTypeTestsBase<RecipeController, CreateRecipeCommand, IRecipe, RecipeContract,
+    ControllerCommandWithReturnTypeTestsBase<RecipeController, CreateRecipeCommand, RecipeReadModel, RecipeContract,
         CreateRecipeAsyncTests.CreateRecipeAsyncFixture>
 {
     public CreateRecipeAsyncTests() : base(new CreateRecipeAsyncFixture())

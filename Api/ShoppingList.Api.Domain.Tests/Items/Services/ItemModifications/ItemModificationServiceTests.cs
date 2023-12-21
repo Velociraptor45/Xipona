@@ -3,6 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
@@ -19,12 +20,7 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Tests.Items.Services.ItemModific
 
 public class ItemModificationServiceTests
 {
-    private readonly LocalFixture _localFixture;
-
-    public ItemModificationServiceTests()
-    {
-        _localFixture = new LocalFixture();
-    }
+    private readonly LocalFixture _localFixture = new();
 
     [Fact]
     public async Task ModifyItemWithTypesAsync_WithNotFindingItem_ShouldThrowDomainException()
@@ -349,7 +345,6 @@ public class ItemModificationServiceTests
 
     private class LocalFixture : ItemModificationServiceFixture
     {
-        private readonly Fixture _fixture;
         private readonly CommonFixture _commonFixture = new();
 
         private Dictionary<ItemTypeId, List<ShoppingListMock>>? _shoppingListDict;
@@ -358,23 +353,19 @@ public class ItemModificationServiceTests
         private ItemMock? _itemMock;
         private List<ItemTypeModification>? _modifiedItemTypes;
 
-        public LocalFixture()
-        {
-            _fixture = _commonFixture.GetNewFixture();
-        }
-
         public ItemWithTypesModification? Modification { get; private set; }
 
         public void SetupModification()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
+            var builder = new DomainTestBuilder<ItemWithTypesModification>();
             if (_modifiedItemTypes != null)
             {
-                _fixture.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<ItemTypeModification>>("itemTypes",
+                builder.ConstructorArgumentFor<ItemWithTypesModification, IEnumerable<ItemTypeModification>>("itemTypes",
                     _modifiedItemTypes);
             }
-            _fixture.ConstructorArgumentFor<ItemWithTypesModification, ItemId>("id", _itemMock.Object.Id);
-            Modification = _fixture.Create<ItemWithTypesModification>();
+            builder.ConstructorArgumentFor<ItemWithTypesModification, ItemId>("id", _itemMock.Object.Id);
+            Modification = builder.Create<ItemWithTypesModification>();
         }
 
         private void SetupFindingItem()
@@ -428,7 +419,7 @@ public class ItemModificationServiceTests
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
             _modifiedItemTypes = _itemMock.Object.ItemTypes
                 .Select(t => new ItemTypeModification(t.Id, t.Name, t.Availabilities))
-                .Union(_fixture.CreateMany<ItemTypeModification>(1))
+                .Union(new DomainTestBuilder<ItemTypeModification>().CreateMany(1))
                 .ToList();
         }
 
@@ -466,7 +457,7 @@ public class ItemModificationServiceTests
             var dict = new Dictionary<ItemTypeId, List<ShoppingListMock>>();
             foreach (var type in _itemMock.Object.ItemTypes)
             {
-                var storeId = StoreIdMother.OneFrom(type.Availabilities).Create();
+                var storeId = _commonFixture.ChooseRandom(type.Availabilities).StoreId;
                 var shoppingLists = new ShoppingListBuilder()
                     .WithStoreId(storeId)
                     .CreateMany(1)
@@ -488,8 +479,8 @@ public class ItemModificationServiceTests
             {
                 var storeId =
                     type.Id == _removedStoreByTypeId.Item1
-                        ? new StoreIdBuilder().Create()
-                        : StoreIdMother.OneFrom(type.Availabilities).Create();
+                        ? StoreId.New
+                        : _commonFixture.ChooseRandom(type.Availabilities).StoreId;
                 var shoppingListMocks = new ShoppingListBuilder()
                     .WithStoreId(storeId)
                     .CreateMany(1)
@@ -719,12 +710,7 @@ public class ItemModificationServiceTests
 
     public class TransferToSectionAsync
     {
-        private readonly TransferToSectionAsyncFixture _fixture;
-
-        public TransferToSectionAsync()
-        {
-            _fixture = new TransferToSectionAsyncFixture();
-        }
+        private readonly TransferToSectionAsyncFixture _fixture = new();
 
         [Fact]
         public async Task TransferToSectionAsync_WithNotFindingStore_ShouldThrowDomainException()
@@ -988,27 +974,18 @@ public class ItemModificationServiceTests
 
     public abstract class ItemModificationServiceFixture
     {
-        protected readonly ItemRepositoryMock ItemRepositoryMock;
-        protected readonly ValidatorMock ValidatorMock;
-        protected readonly StoreRepositoryMock StoreRepositoryMock;
-        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock;
-
-        protected ItemModificationServiceFixture()
-        {
-            ItemRepositoryMock = new ItemRepositoryMock(MockBehavior.Strict);
-            ValidatorMock = new ValidatorMock(MockBehavior.Strict);
-            StoreRepositoryMock = new StoreRepositoryMock(MockBehavior.Strict);
-            ShoppingListRepositoryMock = new ShoppingListRepositoryMock(MockBehavior.Strict);
-        }
+        protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
+        protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
 
         public ItemModificationService CreateSut()
         {
             return new ItemModificationService(
-                _ => ItemRepositoryMock.Object,
-                _ => ValidatorMock.Object,
-                _ => ShoppingListRepositoryMock.Object,
-                _ => StoreRepositoryMock.Object,
-                default);
+                ItemRepositoryMock.Object,
+                ValidatorMock.Object,
+                ShoppingListRepositoryMock.Object,
+                StoreRepositoryMock.Object);
         }
     }
 }

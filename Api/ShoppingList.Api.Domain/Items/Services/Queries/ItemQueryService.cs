@@ -11,13 +11,11 @@ public class ItemQueryService : IItemQueryService
     private readonly IItemRepository _itemRepository;
     private readonly IItemReadModelConversionService _itemReadModelConversionService;
 
-    public ItemQueryService(
-        Func<CancellationToken, IItemRepository> itemRepositoryDelegate,
-        Func<CancellationToken, IItemReadModelConversionService> itemReadModelConversionServiceDelegate,
-        CancellationToken cancellationToken)
+    public ItemQueryService(IItemRepository itemRepository,
+        IItemReadModelConversionService itemReadModelConversionService)
     {
-        _itemRepository = itemRepositoryDelegate(cancellationToken);
-        _itemReadModelConversionService = itemReadModelConversionServiceDelegate(cancellationToken);
+        _itemRepository = itemRepository;
+        _itemReadModelConversionService = itemReadModelConversionService;
     }
 
     public async Task<ItemReadModel> GetAsync(ItemId itemId)

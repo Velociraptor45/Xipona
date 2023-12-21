@@ -19,15 +19,14 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemCategoryValidationService>>(provider =>
         {
             return ct => new ItemCategoryValidationService(
-                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>(),
-                ct);
+                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryQueryService>>(provider =>
         {
             var itemCategoryRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
-            return cancellationToken => new ItemCategoryQueryService(itemCategoryRepositoryDelegate, cancellationToken);
+            return ct => new ItemCategoryQueryService(itemCategoryRepositoryDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryCreationService>>(provider =>
@@ -35,8 +34,7 @@ public static class ServiceCollectionExtensions
             var itemCategoryRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
             var itemCategoryFactory = provider.GetRequiredService<IItemCategoryFactory>();
-            return cancellationToken => new ItemCategoryCreationService(itemCategoryRepositoryDelegate, itemCategoryFactory,
-                cancellationToken);
+            return ct => new ItemCategoryCreationService(itemCategoryRepositoryDelegate(ct), itemCategoryFactory);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryDeletionService>>(provider =>
@@ -45,15 +43,15 @@ public static class ServiceCollectionExtensions
                 .GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
             var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
-            return cancellationToken => new ItemCategoryDeletionService(itemCategoryRepositoryDelegate,
-                itemRepositoryDelegate, shoppingListRepositoryDelegate, cancellationToken);
+            return ct => new ItemCategoryDeletionService(itemCategoryRepositoryDelegate(ct),
+                itemRepositoryDelegate(ct), shoppingListRepositoryDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryModificationService>>(provider =>
         {
             var itemCategoryRepositoryDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
-            return cancellationToken => new ItemCategoryModificationService(itemCategoryRepositoryDelegate, cancellationToken);
+            return ct => new ItemCategoryModificationService(itemCategoryRepositoryDelegate(ct));
         });
     }
 }
