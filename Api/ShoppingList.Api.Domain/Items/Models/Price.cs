@@ -23,4 +23,9 @@ public readonly record struct Price
     {
         return price.Value;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString("##,###");
+    }
 }

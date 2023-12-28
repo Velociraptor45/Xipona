@@ -18,4 +18,9 @@ public readonly record struct RecipeId
     {
         return recipeId.Value;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
+    }
 }
