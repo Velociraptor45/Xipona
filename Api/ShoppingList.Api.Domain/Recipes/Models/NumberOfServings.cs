@@ -23,4 +23,9 @@ public readonly record struct NumberOfServings
     {
         return numberOfServings.Value;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

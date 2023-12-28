@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 public readonly record struct StoreId
 {
@@ -21,5 +19,10 @@ public readonly record struct StoreId
     public static implicit operator Guid(StoreId storeId)
     {
         return storeId.Value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
     }
 }

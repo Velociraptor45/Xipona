@@ -5,7 +5,7 @@ public abstract record Name
     protected Name(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("A name's 'Value' cannot be null or whitespace.", nameof(value));
+            throw new ArgumentException("A name cannot be null or whitespace.", nameof(value));
 
         Value = value;
     }

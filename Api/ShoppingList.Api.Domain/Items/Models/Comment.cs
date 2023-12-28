@@ -3,4 +3,9 @@
 public sealed record Comment(string Value)
 {
     public static Comment Empty => new(string.Empty);
+
+    public override string ToString()
+    {
+        return Value;
+    }
 }

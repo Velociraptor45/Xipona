@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 
-public record struct RecipeTagId
+public readonly record struct RecipeTagId
 {
     public RecipeTagId()
     {
@@ -19,5 +19,10 @@ public record struct RecipeTagId
     public static implicit operator Guid(RecipeTagId itemId)
     {
         return itemId.Value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
     }
 }

@@ -1,6 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
-
-namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
+﻿namespace ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
 public readonly record struct PreparationStepId
 {
     public PreparationStepId()
@@ -20,5 +18,10 @@ public readonly record struct PreparationStepId
     public static implicit operator Guid(PreparationStepId preparationStepId)
     {
         return preparationStepId.Value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
     }
 }

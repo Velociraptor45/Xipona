@@ -20,4 +20,9 @@ public readonly record struct ManufacturerId
     {
         return manufacturerId.Value;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
+    }
 }
