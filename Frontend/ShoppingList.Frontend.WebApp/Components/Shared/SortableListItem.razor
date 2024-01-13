@@ -25,6 +25,10 @@
         {
             <Input Placeholder="@Placeholder" TValue="string" Value="@Model.Name" ValueChanged="OnChanged" />
         }
+        @if (ErrorMessage is not null)
+        {
+            <div class="error-message">@ErrorMessage</div>
+        }
     </div>
     <div class="ml-2">
         <Button Class="align-items-center justify-content-center d-flex"
@@ -56,6 +60,8 @@
     public Action<T> OnDecrement { get; set; }
     [Parameter]
     public Func<bool> DisableRemove { get; set; } = () => false;
+    [Parameter]
+    public string? ErrorMessage { get; set; }
 
     private string _textContentClasses = string.Empty;
 

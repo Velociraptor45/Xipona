@@ -120,12 +120,30 @@ public class StoreEditorEffectsTests
         private readonly HandleSaveStoreActionFixture _fixture = new();
 
         [Fact]
-        public async Task HandleSaveStoreAction_WithStoreNull_ShouldDispatchAnything()
+        public async Task HandleSaveStoreAction_WithStoreNull_ShouldNotDispatchAnything()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupStoreNull();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSaveStoreAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSaveStoreAction_WithValidationErrors_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupStoreId();
+                _fixture.SetupValidationErrors();
             });
             var sut = _fixture.CreateSut();
 
@@ -304,6 +322,17 @@ public class StoreEditorEffectsTests
                             Id = _storeId.Value,
                             Name = _storeName
                         }
+                    }
+                };
+            }
+
+            public void SetupValidationErrors()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }

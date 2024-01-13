@@ -20,6 +20,10 @@
             <div class="mx-3">
                 <Input TValue="string" Value="@State.Value.Editor.Store.Name" OnChange="OnNameChanged"
                        Placeholder="Store name"/>
+                @if(State.Value.Editor.ValidationResult.Name is not null)
+                {
+                    <div class="error-message">@State.Value.Editor.ValidationResult.Name</div>
+                }
             </div>
             @if (State.Value.Editor.Store.Id != Guid.Empty)
             {
@@ -34,16 +38,17 @@
         <Sections></Sections>
 
         <div class="d-flex justify-content-end mt-2">
+            
             @if (State.Value.Editor.Store.Id == Guid.Empty)
             {
-                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving" 
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving"
                         Type="@ButtonType.Primary">
                     Create
                 </Button>
             }
             else
             {
-                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving" 
+                <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving"
                         Type="@ButtonType.Primary">
                     Save
                 </Button>

@@ -11,15 +11,165 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Stores.Reducers;
 
 public class StoreEditorReducerTests
 {
+    public class OnSaveStore
+    {
+        private readonly OnSaveStoreFixture _fixture = new();
+
+        [Fact]
+        public void OnSaveStore_WithStoreNull_ShouldNotChangeAnything()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateStoreNull();
+            _fixture.SetupInitialStateEqualsExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStore(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSaveStore_WithAllValuesValid_ShouldNotSetValidationErrors()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStore(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSaveStore_WithStoreNameEmpty_ShouldSetValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithStoreNameValidationError();
+            _fixture.SetupInitialStateWithoutValidationErrors();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStore(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSaveStore_WithSectionNameEmpty_ShouldSetValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithSectionNameValidationError();
+            _fixture.SetupInitialStateWithoutValidationErrors();
+
+            // Act
+            var result = StoreEditorReducer.OnSaveStore(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSaveStoreFixture : StoreEditorReducerFixture
+        {
+            public void SetupInitialStateEqualsExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialStateWithoutValidationErrors()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult()
+                    }
+                };
+            }
+
+            public void SetupExpectedStateStoreNull()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = null
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithStoreNameValidationError()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Name = string.Empty
+                        },
+                        ValidationResult = new EditorValidationResult
+                        {
+                            Name = "Name must not be empty"
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithSectionNameValidationError()
+            {
+                var key = Guid.NewGuid();
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(
+                                new[]
+                                {
+                                    new EditedSection(key, Guid.Empty, string.Empty, false, 0),
+                                    new EditedSection(Guid.NewGuid(), Guid.Empty, "Default", true, 1)
+                                }, new SortingIndexComparer())
+                        },
+                        ValidationResult = new EditorValidationResult
+                        {
+                            SectionNames = new Dictionary<Guid, string>
+                            {
+                                { key, "Section name must not be empty" }
+                            }
+                        }
+                    }
+                };
+            }
+        }
+    }
+
     public class OnSetNewStore
     {
         private readonly OnSetNewStoreFixture _fixture = new();
 
         [Fact]
-        public void OnSetNewStore_WithValidData_ShouldSetStore()
+        public void OnSetNewStore_WithoutExistingValidationErrors_ShouldSetStore()
         {
             // Arrange
             _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = StoreEditorReducer.OnSetNewStore(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState,
+                opt => opt.Excluding(info => info.Path == "Editor.Store.Sections[0].Key"));
+        }
+
+        [Fact]
+        public void OnSetNewStore_WithExistingValidationErrors_ShouldClearValidationErrors()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithValidationErrors();
             _fixture.SetupExpectedState();
 
             // Act
@@ -37,6 +187,20 @@ public class StoreEditorReducerTests
                 InitialState = ExpectedState;
             }
 
+            public void SetupInitialStateWithValidationErrors()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult
+                        {
+                            Name = "Name must not be empty"
+                        }
+                    }
+                };
+            }
+
             public void SetupExpectedState()
             {
                 var sections = new List<EditedSection>
@@ -51,7 +215,8 @@ public class StoreEditorReducerTests
                         Store = new EditedStore(
                             Guid.Empty,
                             string.Empty,
-                            new SortedSet<EditedSection>(sections, new SortingIndexComparer()))
+                            new SortedSet<EditedSection>(sections, new SortingIndexComparer())),
+                        ValidationResult = new EditorValidationResult()
                     }
                 };
             }
@@ -63,10 +228,28 @@ public class StoreEditorReducerTests
         private readonly OnLoadStoreForEditingFinishedFixture _fixture = new();
 
         [Fact]
-        public void OnLoadStoreForEditingFinished_WithValidData_ShouldSetStore()
+        public void OnLoadStoreForEditingFinished_WithoutExistingValidationErrors_ShouldSetStore()
         {
             // Arrange
+            _fixture.SetupExpectedStoreWithoutValidationErrors();
             _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnLoadStoreForEditingFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnLoadStoreForEditingFinished_WithExistingValidationErrors_ShouldClearValidationErrors()
+        {
+            // Arrange
+            _fixture.SetupExpectedStoreWithoutValidationErrors();
+            _fixture.SetupInitialStateWithValidationErrors();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -87,6 +270,31 @@ public class StoreEditorReducerTests
                 InitialState = ExpectedState;
             }
 
+            public void SetupInitialStateWithValidationErrors()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult
+                        {
+                            Name = "Name must not be empty"
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStoreWithoutValidationErrors()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult()
+                    }
+                };
+            }
+
             public void SetupAction()
             {
                 Action = new LoadStoreForEditingFinishedAction(ExpectedState.Editor.Store!);
@@ -103,6 +311,40 @@ public class StoreEditorReducerTests
         {
             // Arrange
             _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnStoreNameChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreNameChanged_WithStoreNameEmpty_ShouldHaveValidationError()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualsExpectedState();
+            _fixture.SetupExpectedStateStoreNameEmpty();
+            _fixture.SetupActionForStoreNameEmpty();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnStoreNameChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreNameChanged_WithExistingValidationErrorAndStoreNameNotEmpty_ShouldHaveNoValidationError()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithValidationError();
+            _fixture.SetupExpectedStatePreviousValidationError();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -140,6 +382,20 @@ public class StoreEditorReducerTests
                 InitialState = ExpectedState;
             }
 
+            public void SetupInitialStateWithValidationError()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult
+                        {
+                            Name = "Name must not be empty"
+                        }
+                    }
+                };
+            }
+
             public void SetupExpectedStateStoreNull()
             {
                 ExpectedState = ExpectedState with
@@ -151,9 +407,43 @@ public class StoreEditorReducerTests
                 };
             }
 
+            public void SetupExpectedStateStoreNameEmpty()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Name = string.Empty
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = "Name must not be empty"
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStatePreviousValidationError()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult()
+                    }
+                };
+            }
+
             public void SetupAction()
             {
                 Action = new StoreNameChangedAction(ExpectedState.Editor.Store!.Name);
+            }
+
+            public void SetupActionForStoreNameEmpty()
+            {
+                Action = new StoreNameChangedAction(string.Empty);
             }
 
             public void SetupActionForStoreNull()
@@ -802,6 +1092,57 @@ public class StoreEditorReducerTests
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
+        [Fact]
+        public void OnSectionTextChanged_WithSectionNameEmpty_ShouldHaveValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithSectionNameValidationError();
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionTextChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionTextChanged_WithExistingValidationErrorAndNameNotEmpty_ShouldRemoveValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithoutValidationError();
+            _fixture.SetupInitialStateWithSectionNameValidationError();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionTextChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSectionTextChanged_WithExistingValidationErrorInDifferentSectionAndNameNotEmpty_ShouldNotValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithDifferentSectionNameValidationError();
+            _fixture.SetupInitialStateWithDifferentSectionNameValidationError();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = StoreEditorReducer.OnSectionTextChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
         private sealed class OnSectionTextChangedFixture : StoreEditorReducerFixture
         {
             public SectionTextChangedAction? Action { get; private set; }
@@ -813,8 +1154,27 @@ public class StoreEditorReducerTests
 
             public void SetupInitialState()
             {
+                SetupInitialState(new DomainTestBuilder<string>().Create(), new Dictionary<Guid, string>(0));
+            }
+
+            public void SetupInitialStateWithDifferentSectionNameValidationError()
+            {
+                SetupInitialState(new DomainTestBuilder<string>().Create(),
+                    ExpectedState.Editor.ValidationResult.SectionNames);
+            }
+
+            public void SetupInitialStateWithSectionNameValidationError()
+            {
+                SetupInitialState(string.Empty, new Dictionary<Guid, string>
+                {
+                    { ExpectedState.Editor.Store!.Sections.First().Key, "Section name must not be empty" }
+                });
+            }
+
+            private void SetupInitialState(string name, IReadOnlyDictionary<Guid, string> sectionNameErrors)
+            {
                 var sections = ExpectedState.Editor.Store!.Sections.ToList();
-                sections[0] = sections[0] with { Name = new DomainTestBuilder<string>().Create() };
+                sections[0] = sections[0] with { Name = name };
 
                 InitialState = ExpectedState with
                 {
@@ -823,6 +1183,10 @@ public class StoreEditorReducerTests
                         Store = ExpectedState.Editor.Store with
                         {
                             Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                        },
+                        ValidationResult = new EditorValidationResult
+                        {
+                            SectionNames = sectionNameErrors
                         }
                     }
                 };
@@ -835,6 +1199,71 @@ public class StoreEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Store = null
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithoutValidationError()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = new EditorValidationResult()
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithSectionNameValidationError()
+            {
+                var key = Guid.NewGuid();
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(
+                                new[]
+                                {
+                                    new EditedSection(key, Guid.Empty, string.Empty, false, 0),
+                                    new EditedSection(Guid.NewGuid(), Guid.Empty, "Default", true, 1)
+                                }, new SortingIndexComparer())
+                        },
+                        ValidationResult = new EditorValidationResult
+                        {
+                            SectionNames = new Dictionary<Guid, string>
+                            {
+                                { key, "Section name must not be empty" }
+                            }
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithDifferentSectionNameValidationError()
+            {
+                var key = Guid.NewGuid();
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Store = ExpectedState.Editor.Store! with
+                        {
+                            Sections = new SortedSet<EditedSection>(
+                                new[]
+                                {
+                                    new EditedSection(Guid.NewGuid(), Guid.Empty, "Default", true, 0),
+                                    new EditedSection(key, Guid.Empty, string.Empty, false, 1)
+                                }, new SortingIndexComparer())
+                        },
+                        ValidationResult = new EditorValidationResult
+                        {
+                            SectionNames = new Dictionary<Guid, string>
+                            {
+                                { key, "Section name must not be empty" }
+                            }
+                        }
                     }
                 };
             }
@@ -1454,7 +1883,19 @@ public class StoreEditorReducerTests
 
     private abstract class StoreEditorReducerFixture
     {
-        public StoreState ExpectedState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();
+        protected StoreEditorReducerFixture()
+        {
+            var rawExpectedState = new DomainTestBuilder<StoreState>().Create();
+            ExpectedState = rawExpectedState with
+            {
+                Editor = rawExpectedState.Editor with
+                {
+                    ValidationResult = new EditorValidationResult()
+                }
+            };
+        }
+
+        public StoreState ExpectedState { get; protected set; }
         public StoreState InitialState { get; protected set; } = new DomainTestBuilder<StoreState>().Create();
     }
 }
