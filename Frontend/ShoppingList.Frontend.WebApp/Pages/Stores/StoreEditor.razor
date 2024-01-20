@@ -22,7 +22,7 @@
                        Placeholder="Store name"/>
                 @if(State.Value.Editor.ValidationResult.Name is not null)
                 {
-                    <div class="error-message">@State.Value.Editor.ValidationResult.Name</div>
+                    <div class="validation-error-message">@State.Value.Editor.ValidationResult.Name</div>
                 }
             </div>
             @if (State.Value.Editor.Store.Id != Guid.Empty)
