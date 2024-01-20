@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.Validators;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor.Sections;
@@ -9,7 +10,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.Reducers;
 
 public static class StoreEditorReducer
 {
-    private static readonly StoreNameValidator _storeNameValidator = new();
+    private static readonly NameValidator _storeNameValidator = new();
     private static readonly StoreSectionNameValidator _storeSectionNameValidator = new();
 
     [ReducerMethod(typeof(SaveStoreAction))]

@@ -4,7 +4,9 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.States.Validators;
 using ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.Validators;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Reducers;
 
@@ -12,9 +14,72 @@ public static class ItemEditorReducer
 {
     private const int _weightQuantityTypeId = 1;
 
+    private static readonly NameValidator _nameValidator = new();
+    private static readonly ItemCategoryValidator _itemCategoryValidator = new();
+    private static readonly StoresOrTypesValidator _storesOrTypesValidator = new();
+    private static readonly TypesValidator _typesValidator = new();
+    private static readonly StoresValidator _storesValidator = new();
+    private static readonly TypeStoresValidator _typeStoresValidator = new();
+    private static readonly DuplicatedStoresValidator _duplicatedStoresValidator = new();
+
+    [ReducerMethod(typeof(ModifyItemAction))]
+    public static ItemState OnModifyItem(ItemState state)
+    {
+        var item = state.Editor.Item;
+        if (item == null)
+            return state;
+
+        _nameValidator.Validate(item.Name, out var nameError);
+        _itemCategoryValidator.Validate(item.ItemCategoryId, out var itemCategoryError);
+        _storesOrTypesValidator.Validate((item.ItemMode, item.Availabilities, item.ItemTypes), out var storesOrTypesError);
+        _typesValidator.Validate((item.ItemMode, item.ItemTypes), out var typesError);
+        _storesValidator.Validate((item.ItemMode, item.Availabilities), out var noStoresError);
+
+        var typeNameResults = new Dictionary<Guid, string>();
+        var noTypeStoreResults = new Dictionary<Guid, string>();
+        var duplicatedTypeStoreResults = new Dictionary<Guid, string>();
+        foreach (var itemType in item.ItemTypes)
+        {
+            _nameValidator.Validate(itemType.Name, out var typeNameError);
+            _typeStoresValidator.Validate(itemType.Availabilities, out var typeStoresError);
+            _duplicatedStoresValidator.Validate(itemType.Availabilities, out var duplicatedTypeStoresError);
+
+            if (typeNameError is not null)
+                typeNameResults.Add(itemType.Key, typeNameError);
+            if (typeStoresError is not null)
+                noTypeStoreResults.Add(itemType.Key, typeStoresError);
+            if (duplicatedTypeStoresError is not null)
+                duplicatedTypeStoreResults.Add(itemType.Key, duplicatedTypeStoresError);
+        }
+
+        _duplicatedStoresValidator.Validate(item.Availabilities, out var duplicatedStoresError);
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ValidationResult = new EditorValidationResult(
+                    nameError,
+                    itemCategoryError,
+                    storesOrTypesError,
+                    noStoresError,
+                    typesError,
+                    typeNameResults,
+                    noTypeStoreResults,
+                    duplicatedTypeStoreResults,
+                    duplicatedStoresError)
+            }
+        };
+    }
+
     [ReducerMethod]
     public static ItemState OnItemNameChanged(ItemState state, ItemNameChangedAction action)
     {
+        if (state.Editor.Item is null)
+            return state;
+
+        _nameValidator.Validate(action.Name, out var nameError);
+
         return state with
         {
             Editor = state.Editor with
@@ -22,6 +87,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item! with
                 {
                     Name = action.Name ?? string.Empty
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    Name = nameError
                 }
             }
         };
@@ -196,6 +265,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item with
                 {
                     Availabilities = availabilities
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    NoStores = null,
                 }
             }
         };
@@ -204,7 +277,6 @@ public static class ItemEditorReducer
     [ReducerMethod]
     public static ItemState OnStoreAddedToItemType(ItemState state, StoreAddedToItemTypeAction action)
     {
-        Console.WriteLine(action.ItemTypeKey);
         var types = state.Editor.Item!.ItemTypes.ToList();
         var type = types.FirstOrDefault(t => t.Key == action.ItemTypeKey);
         if (type == null)
@@ -225,6 +297,10 @@ public static class ItemEditorReducer
         var itemType = type with { Availabilities = availabilities };
         types[typeIndex] = itemType;
 
+        var noTypeStores = state.Editor.ValidationResult.NoTypeStores.ToDictionary(x => x.Key, x => x.Value);
+        if (noTypeStores.ContainsKey(type.Key))
+            noTypeStores.Remove(type.Key);
+
         return state with
         {
             Editor = state.Editor with
@@ -232,6 +308,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item with
                 {
                     ItemTypes = types
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    NoTypeStores = noTypeStores
                 }
             }
         };
@@ -256,6 +336,8 @@ public static class ItemEditorReducer
         availabilities[availabilityIndex] =
             new EditedItemAvailability(store.Id, store.DefaultSectionId, action.Availability.PricePerQuantity);
 
+        _duplicatedStoresValidator.Validate(availabilities, out var duplicatedStoresError);
+
         return state with
         {
             Editor = state.Editor with
@@ -263,6 +345,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item with
                 {
                     Availabilities = availabilities
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    DuplicatedStores = duplicatedStoresError
                 }
             }
         };
@@ -296,6 +382,15 @@ public static class ItemEditorReducer
         var itemType = action.ItemType with { Availabilities = availabilities };
         types[typeIndex] = itemType;
 
+        var duplicatedTypeStoresError = state.Editor.ValidationResult.DuplicatedTypeStores
+            .ToDictionary(x => x.Key, x => x.Value);
+
+        _duplicatedStoresValidator.Validate(availabilities, out var duplicatedStoresError);
+        if (duplicatedStoresError is null)
+            duplicatedTypeStoresError.Remove(action.ItemType.Key);
+        else
+            duplicatedTypeStoresError[action.ItemType.Key] = duplicatedStoresError;
+
         return state with
         {
             Editor = state.Editor with
@@ -303,6 +398,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item with
                 {
                     ItemTypes = types
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    DuplicatedTypeStores = duplicatedTypeStoresError
                 }
             }
         };
