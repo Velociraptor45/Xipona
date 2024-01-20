@@ -123,6 +123,9 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(CreateItemAction))]
     public async Task HandleCreateItemAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new CreateItemStartedAction());
 
         var item = _state.Value.Editor.Item!;
@@ -158,6 +161,9 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(UpdateItemAction))]
     public async Task HandleUpdateItemAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new UpdateItemStartedAction());
 
         var item = _state.Value.Editor.Item!;
@@ -193,6 +199,9 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(ModifyItemAction))]
     public async Task HandleModifyItemAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new ModifyItemStartedAction());
 
         var item = _state.Value.Editor.Item!;
@@ -228,6 +237,9 @@ public sealed class ItemEditorEffects
     [EffectMethod(typeof(MakeItemPermanentAction))]
     public async Task HandleMakeItemPermanentAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new MakeItemPermanentStartedAction());
 
         var item = _state.Value.Editor.Item!;

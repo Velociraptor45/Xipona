@@ -12,6 +12,17 @@ public class ItemEffectsFixtureBase : EffectsFixtureBase
     protected readonly NavigationManagerMock NavigationManagerMock = new(MockBehavior.Strict);
     protected ItemState State = new DomainTestBuilder<ItemState>().Create();
 
+    public ItemEffectsFixtureBase()
+    {
+        State = State with
+        {
+            Editor = State.Editor with
+            {
+                ValidationResult = new EditorValidationResult()
+            }
+        };
+    }
+
     public void SetupStateReturningState()
     {
         ItemStateMock.SetupValue(State);
