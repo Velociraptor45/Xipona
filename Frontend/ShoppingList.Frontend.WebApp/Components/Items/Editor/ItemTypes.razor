@@ -23,6 +23,10 @@
                 <hr class="my-3"/>
             }
         }
+        @if(State.Value.Editor.ValidationResult.NoTypes is not null)
+        {
+            <div class="validation-error-message">@State.Value.Editor.ValidationResult.NoTypes</div>
+        }
     </div>
 </div>
 
