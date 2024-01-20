@@ -26,14 +26,6 @@
         </div>
     </div>
     <div class="availabilities ml-4">
-        @if(State.Value.Editor.ValidationResult.DuplicatedTypeStores.ContainsKey(Model.Key))
-        {
-            <div class="validation-error-message">@State.Value.Editor.ValidationResult.DuplicatedTypeStores[Model.Key]</div>
-        }
-        @if(State.Value.Editor.ValidationResult.NoTypeStores.ContainsKey(Model.Key))
-        {
-            <div class="validation-error-message">@State.Value.Editor.ValidationResult.NoTypeStores[Model.Key]</div>
-        }
         <Availabilities Available="@Model"></Availabilities>
     </div>
 </div>

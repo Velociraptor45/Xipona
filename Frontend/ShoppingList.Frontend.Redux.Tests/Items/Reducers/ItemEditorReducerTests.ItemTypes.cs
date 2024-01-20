@@ -123,6 +123,305 @@ public partial class ItemEditorReducerTests
         }
     }
 
+    public class OnStoreAddedToItemType
+    {
+        private readonly OnStoreAddedToItemTypeFixture _fixture = new();
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithInvalidTypeKey_ShouldNotAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypes();
+            _fixture.SetupActionWithInvalidTypeKey();
+            _fixture.SetupOneStoreAvailableForInvalidTypeId();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithOneStoreAvailable_WithTwoTypesWithSameId_ShouldAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypesWithInitialId();
+            _fixture.SetupAction();
+            _fixture.SetupOneStoreAvailable();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithOneStoreAvailable_ShouldAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypes();
+            _fixture.SetupAction();
+            _fixture.SetupOneStoreAvailable();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreAddedToItemType_WithNoStoreAvailable_ShouldNotAddStore()
+        {
+            // Arrange
+            _fixture.SetupStores();
+            _fixture.SetupItemTypes();
+            _fixture.SetupAction();
+            _fixture.SetupNoStoreAvailable();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnStoreAddedToItemTypeFixture : ItemEditorReducerFixture
+        {
+            private List<ItemStore>? _stores;
+            private Guid? _typeKey;
+
+            public StoreAddedToItemTypeAction? Action { get; private set; }
+
+            public void SetupAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_typeKey);
+                Action = new StoreAddedToItemTypeAction(_typeKey.Value);
+            }
+
+            public void SetupActionWithInvalidTypeKey()
+            {
+                Action = new StoreAddedToItemTypeAction(Guid.NewGuid());
+            }
+
+            public void SetupItemTypes()
+            {
+                SetupItemTypes(false);
+            }
+
+            public void SetupItemTypesWithInitialId()
+            {
+                SetupItemTypes(true);
+            }
+
+            private void SetupItemTypes(bool withInitialId)
+            {
+                var types = new List<EditedItemType>()
+                {
+                    new DomainTestBuilder<EditedItemType>().Create() with
+                    {
+                        Id = withInitialId ? Guid.Empty : Guid.NewGuid(),
+                        Availabilities = new List<EditedItemAvailability>()
+                    },
+                    new DomainTestBuilder<EditedItemType>().Create() with
+                    {
+                        Id = withInitialId ? Guid.Empty : Guid.NewGuid(),
+                        Availabilities = new List<EditedItemAvailability>()
+                    }
+                };
+                _typeKey = types.Last().Key;
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            ItemTypes = types
+                        }
+                    }
+                };
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = types
+                        }
+                    }
+                };
+            }
+
+            public void SetupStores()
+            {
+                _stores = new List<ItemStore>
+                {
+                    ItemStoreMother.GetValid(),
+                    ItemStoreMother.GetValid()
+                };
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new ActiveStores(_stores)
+                };
+                InitialState = InitialState with
+                {
+                    Stores = new ActiveStores(_stores)
+                };
+            }
+
+            public void SetupOneStoreAvailableForInvalidTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                InitialState.Editor.Item.ItemTypes.First(),
+                                InitialState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = InitialState;
+            }
+
+            public void SetupOneStoreAvailable()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                InitialState.Editor.Item.ItemTypes.First(),
+                                InitialState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f)
+                                    }
+                                }
+                            }
+                        },
+                        ValidationResult = InitialState.Editor.ValidationResult with
+                        {
+                            NoTypeStores = new Dictionary<Guid, string>
+                            {
+                                { InitialState.Editor.Item.ItemTypes.First().Key, "Add at least one store" },
+                                { _typeKey!.Value, "Add at least one store" }
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                InitialState.Editor.Item.ItemTypes.First(),
+                                InitialState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f),
+                                        new(
+                                            _stores.First().Id,
+                                            _stores.First().DefaultSectionId,
+                                            1f),
+                                    }
+                                }
+                            }
+                        },
+                        ValidationResult = InitialState.Editor.ValidationResult with
+                        {
+                            NoTypeStores = new Dictionary<Guid, string>
+                            {
+                                { InitialState.Editor.Item.ItemTypes.First().Key, "Add at least one store" },
+                            }
+                        }
+                    }
+                };
+            }
+
+            public void SetupNoStoreAvailable()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            ItemTypes = new List<EditedItemType>
+                            {
+                                ExpectedState.Editor.Item.ItemTypes.First(),
+                                ExpectedState.Editor.Item.ItemTypes.Last() with
+                                {
+                                    Availabilities = new List<EditedItemAvailability>
+                                    {
+                                        new(
+                                            _stores.Last().Id,
+                                            _stores.Last().DefaultSectionId,
+                                            4.67f),
+                                        new(
+                                            _stores.First().Id,
+                                            _stores.First().DefaultSectionId,
+                                            13.98f),
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                ExpectedState = InitialState;
+            }
+        }
+    }
+
     public class OnStoreOfItemTypeRemoved
     {
         private readonly OnStoreOfItemTypeRemovedFixture _fixture = new();
@@ -133,6 +432,40 @@ public partial class ItemEditorReducerTests
             // Arrange
             _fixture.SetupInitialStateEqualExpectedState();
             _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeRemoved_WithDuplicatedStores_DuplicationRemoved_ShouldRemoveValidationError()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRemovedStoreDuplicated();
+            _fixture.SetupExpectedStateWithRemovedStoreDuplicated();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemTypeRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemTypeRemoved_WithDuplicatedStores_DuplicationNotRemoved_ShouldNotRemoveValidationError()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithNotRemovedStoreDuplicated();
+            _fixture.SetupExpectedStateWithNotRemovedStoreDuplicated();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -185,6 +518,48 @@ public partial class ItemEditorReducerTests
                 InitialState = ExpectedState;
             }
 
+            public void SetupInitialStateWithNotRemovedStoreDuplicated()
+            {
+                SetupInitialStateWithDuplication(2);
+            }
+
+            public void SetupInitialStateWithRemovedStoreDuplicated()
+            {
+                SetupInitialStateWithDuplication(0);
+            }
+
+            private void SetupInitialStateWithDuplication(int duplicatedStoreIndex)
+            {
+                var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
+
+                var availabilities = itemTypes.First().Availabilities.ToList();
+                availabilities[1] = availabilities[1] with
+                {
+                    StoreId = availabilities[duplicatedStoreIndex].StoreId
+                };
+
+                itemTypes[0] = itemTypes.First() with { Availabilities = availabilities };
+
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            ItemTypes = itemTypes
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            DuplicatedTypeStores = new Dictionary<Guid, string>
+                            {
+                                { ExpectedState.Editor.Item!.ItemTypes.First().Key, "There are duplicated stores" },
+                                { ExpectedState.Editor.Item!.ItemTypes.Last().Key, "There are duplicated stores" }
+                            }
+                        }
+                    }
+                };
+            }
+
             public void SetupExpectedState()
             {
                 var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
@@ -201,6 +576,52 @@ public partial class ItemEditorReducerTests
                         Item = ExpectedState.Editor.Item with
                         {
                             ItemTypes = itemTypes
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithNotRemovedStoreDuplicated()
+            {
+                SetupExpectedStateWithDuplication(false, 2);
+            }
+
+            public void SetupExpectedStateWithRemovedStoreDuplicated()
+            {
+                SetupExpectedStateWithDuplication(true, 0);
+            }
+
+            private void SetupExpectedStateWithDuplication(bool duplicationRemoved, int duplicatedStoreIndex)
+            {
+                var itemTypes = ExpectedState.Editor.Item!.ItemTypes.ToList();
+
+                var availabilities = itemTypes.First().Availabilities.ToList();
+                availabilities[1] = availabilities[1] with
+                {
+                    StoreId = availabilities[duplicatedStoreIndex].StoreId
+                };
+                availabilities.RemoveAt(0);
+
+                itemTypes[0] = itemTypes.First() with { Availabilities = availabilities };
+
+                var duplicatedTypeStoresErrors = new Dictionary<Guid, string>
+                {
+                    { itemTypes.Last().Key, "There are duplicated stores" }
+                };
+                if (!duplicationRemoved)
+                    duplicatedTypeStoresErrors.Add(itemTypes.First().Key, "There are duplicated stores");
+
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item with
+                        {
+                            ItemTypes = itemTypes
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            DuplicatedTypeStores = duplicatedTypeStoresErrors
                         }
                     }
                 };
@@ -421,7 +842,8 @@ public partial class ItemEditorReducerTests
                     {
                         ValidationResult = ExpectedState.Editor.ValidationResult with
                         {
-                            NoTypes = "No types selected"
+                            NoTypes = "No types selected",
+                            StoreOrTypes = "Select a store or a type"
                         }
                     }
                 };
@@ -442,7 +864,8 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = ExpectedState.Editor.ValidationResult with
                         {
-                            NoTypes = null
+                            NoTypes = null,
+                            StoreOrTypes = null
                         }
                     }
                 };

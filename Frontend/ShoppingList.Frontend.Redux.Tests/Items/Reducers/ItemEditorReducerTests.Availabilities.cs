@@ -83,7 +83,8 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = InitialState.Editor.ValidationResult with
                         {
-                            NoStores = "Add at least one store"
+                            NoStores = "Add at least one store",
+                            StoreOrTypes = "Add at least one store or type"
                         }
                     }
                 };
@@ -108,7 +109,8 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = InitialState.Editor.ValidationResult with
                         {
-                            NoStores = null
+                            NoStores = null,
+                            StoreOrTypes = null
                         }
                     }
                 };
@@ -134,305 +136,6 @@ public partial class ItemEditorReducerTests
                                     _stores.First().Id,
                                     _stores.First().DefaultSectionId,
                                     13.98f),
-                            }
-                        }
-                    }
-                };
-
-                ExpectedState = InitialState;
-            }
-        }
-    }
-
-    public class OnStoreAddedToItemType
-    {
-        private readonly OnStoreAddedToItemTypeFixture _fixture = new();
-
-        [Fact]
-        public void OnStoreAddedToItemType_WithInvalidTypeKey_ShouldNotAddStore()
-        {
-            // Arrange
-            _fixture.SetupStores();
-            _fixture.SetupItemTypes();
-            _fixture.SetupActionWithInvalidTypeKey();
-            _fixture.SetupOneStoreAvailableForInvalidTypeId();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
-            // Act
-            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
-
-            // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
-        }
-
-        [Fact]
-        public void OnStoreAddedToItemType_WithOneStoreAvailable_WithTwoTypesWithSameId_ShouldAddStore()
-        {
-            // Arrange
-            _fixture.SetupStores();
-            _fixture.SetupItemTypesWithInitialId();
-            _fixture.SetupAction();
-            _fixture.SetupOneStoreAvailable();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
-            // Act
-            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
-
-            // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
-        }
-
-        [Fact]
-        public void OnStoreAddedToItemType_WithOneStoreAvailable_ShouldAddStore()
-        {
-            // Arrange
-            _fixture.SetupStores();
-            _fixture.SetupItemTypes();
-            _fixture.SetupAction();
-            _fixture.SetupOneStoreAvailable();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
-            // Act
-            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
-
-            // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
-        }
-
-        [Fact]
-        public void OnStoreAddedToItemType_WithNoStoreAvailable_ShouldNotAddStore()
-        {
-            // Arrange
-            _fixture.SetupStores();
-            _fixture.SetupItemTypes();
-            _fixture.SetupAction();
-            _fixture.SetupNoStoreAvailable();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
-            // Act
-            var result = ItemEditorReducer.OnStoreAddedToItemType(_fixture.InitialState, _fixture.Action);
-
-            // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
-        }
-
-        private sealed class OnStoreAddedToItemTypeFixture : ItemEditorReducerFixture
-        {
-            private List<ItemStore>? _stores;
-            private Guid? _typeKey;
-
-            public StoreAddedToItemTypeAction? Action { get; private set; }
-
-            public void SetupAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_typeKey);
-                Action = new StoreAddedToItemTypeAction(_typeKey.Value);
-            }
-
-            public void SetupActionWithInvalidTypeKey()
-            {
-                Action = new StoreAddedToItemTypeAction(Guid.NewGuid());
-            }
-
-            public void SetupItemTypes()
-            {
-                SetupItemTypes(false);
-            }
-
-            public void SetupItemTypesWithInitialId()
-            {
-                SetupItemTypes(true);
-            }
-
-            private void SetupItemTypes(bool withInitialId)
-            {
-                var types = new List<EditedItemType>()
-                {
-                    new DomainTestBuilder<EditedItemType>().Create() with
-                    {
-                        Id = withInitialId ? Guid.Empty : Guid.NewGuid(),
-                        Availabilities = new List<EditedItemAvailability>()
-                    },
-                    new DomainTestBuilder<EditedItemType>().Create() with
-                    {
-                        Id = withInitialId ? Guid.Empty : Guid.NewGuid(),
-                        Availabilities = new List<EditedItemAvailability>()
-                    }
-                };
-                _typeKey = types.Last().Key;
-                ExpectedState = ExpectedState with
-                {
-                    Editor = ExpectedState.Editor with
-                    {
-                        Item = ExpectedState.Editor.Item! with
-                        {
-                            ItemTypes = types
-                        }
-                    }
-                };
-                InitialState = InitialState with
-                {
-                    Editor = InitialState.Editor with
-                    {
-                        Item = InitialState.Editor.Item! with
-                        {
-                            ItemTypes = types
-                        }
-                    }
-                };
-            }
-
-            public void SetupStores()
-            {
-                _stores = new List<ItemStore>
-                {
-                    ItemStoreMother.GetValid(),
-                    ItemStoreMother.GetValid()
-                };
-                ExpectedState = ExpectedState with
-                {
-                    Stores = new ActiveStores(_stores)
-                };
-                InitialState = InitialState with
-                {
-                    Stores = new ActiveStores(_stores)
-                };
-            }
-
-            public void SetupOneStoreAvailableForInvalidTypeId()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_stores);
-
-                InitialState = InitialState with
-                {
-                    Editor = InitialState.Editor with
-                    {
-                        Item = InitialState.Editor.Item! with
-                        {
-                            ItemTypes = new List<EditedItemType>
-                            {
-                                InitialState.Editor.Item.ItemTypes.First(),
-                                InitialState.Editor.Item.ItemTypes.Last() with
-                                {
-                                    Availabilities = new List<EditedItemAvailability>
-                                    {
-                                        new(
-                                            _stores.Last().Id,
-                                            _stores.Last().DefaultSectionId,
-                                            4.67f)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                };
-
-                ExpectedState = InitialState;
-            }
-
-            public void SetupOneStoreAvailable()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_stores);
-
-                InitialState = InitialState with
-                {
-                    Editor = InitialState.Editor with
-                    {
-                        Item = InitialState.Editor.Item! with
-                        {
-                            ItemTypes = new List<EditedItemType>
-                            {
-                                InitialState.Editor.Item.ItemTypes.First(),
-                                InitialState.Editor.Item.ItemTypes.Last() with
-                                {
-                                    Availabilities = new List<EditedItemAvailability>
-                                    {
-                                        new(
-                                            _stores.Last().Id,
-                                            _stores.Last().DefaultSectionId,
-                                            4.67f)
-                                    }
-                                }
-                            }
-                        },
-                        ValidationResult = InitialState.Editor.ValidationResult with
-                        {
-                            NoTypeStores = new Dictionary<Guid, string>
-                            {
-                                { InitialState.Editor.Item.ItemTypes.First().Key, "Add at least one store" },
-                                { _typeKey!.Value, "Add at least one store" }
-                            }
-                        }
-                    }
-                };
-
-                ExpectedState = InitialState with
-                {
-                    Editor = InitialState.Editor with
-                    {
-                        Item = InitialState.Editor.Item! with
-                        {
-                            ItemTypes = new List<EditedItemType>
-                            {
-                                InitialState.Editor.Item.ItemTypes.First(),
-                                InitialState.Editor.Item.ItemTypes.Last() with
-                                {
-                                    Availabilities = new List<EditedItemAvailability>
-                                    {
-                                        new(
-                                            _stores.Last().Id,
-                                            _stores.Last().DefaultSectionId,
-                                            4.67f),
-                                        new(
-                                            _stores.First().Id,
-                                            _stores.First().DefaultSectionId,
-                                            1f),
-                                    }
-                                }
-                            }
-                        },
-                        ValidationResult = InitialState.Editor.ValidationResult with
-                        {
-                            NoTypeStores = new Dictionary<Guid, string>
-                            {
-                                { InitialState.Editor.Item.ItemTypes.First().Key, "Add at least one store" },
-                            }
-                        }
-                    }
-                };
-            }
-
-            public void SetupNoStoreAvailable()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_stores);
-
-                InitialState = ExpectedState with
-                {
-                    Editor = ExpectedState.Editor with
-                    {
-                        Item = ExpectedState.Editor.Item! with
-                        {
-                            ItemTypes = new List<EditedItemType>
-                            {
-                                ExpectedState.Editor.Item.ItemTypes.First(),
-                                ExpectedState.Editor.Item.ItemTypes.Last() with
-                                {
-                                    Availabilities = new List<EditedItemAvailability>
-                                    {
-                                        new(
-                                            _stores.Last().Id,
-                                            _stores.Last().DefaultSectionId,
-                                            4.67f),
-                                        new(
-                                            _stores.First().Id,
-                                            _stores.First().DefaultSectionId,
-                                            13.98f),
-                                    }
-                                }
                             }
                         }
                     }
@@ -887,6 +590,40 @@ public partial class ItemEditorReducerTests
         }
 
         [Fact]
+        public void OnStoreOfItemRemoved_WithDuplication_DuplicationRemoved_ShouldRemoveValidationError()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRemovedStoreDuplicated();
+            _fixture.SetupExpectedStateWithRemovedStoreDuplicated();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnStoreOfItemRemoved_WithDuplication_DuplicationNotRemoved_ShouldNotRemoveValidationError()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithNotRemovedStoreDuplicated();
+            _fixture.SetupExpectedStateWithNotRemovedStoreDuplicated();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnStoreOfItemRemoved(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
         public void OnStoreOfItemRemoved_WithInvalidAvailability_ShouldNotRemoveStore()
         {
             // Arrange
@@ -911,6 +648,40 @@ public partial class ItemEditorReducerTests
                 InitialState = ExpectedState;
             }
 
+            public void SetupInitialStateWithNotRemovedStoreDuplicated()
+            {
+                SetupInitialStateWithDuplication(2);
+            }
+
+            public void SetupInitialStateWithRemovedStoreDuplicated()
+            {
+                SetupInitialStateWithDuplication(0);
+            }
+
+            private void SetupInitialStateWithDuplication(int duplicatedStoreIndex)
+            {
+                var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
+                availabilities[1] = availabilities[1] with
+                {
+                    StoreId = availabilities[duplicatedStoreIndex].StoreId
+                };
+
+                InitialState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item! with
+                        {
+                            Availabilities = availabilities
+                        },
+                        ValidationResult = InitialState.Editor.ValidationResult with
+                        {
+                            DuplicatedStores = "There are duplicated stores"
+                        }
+                    }
+                };
+            }
+
             public void SetupExpectedState()
             {
                 var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
@@ -923,6 +694,41 @@ public partial class ItemEditorReducerTests
                         Item = ExpectedState.Editor.Item with
                         {
                             Availabilities = availabilities
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            DuplicatedStores = null
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithNotRemovedStoreDuplicated()
+            {
+                SetupExpectedStateWithDuplication(false);
+            }
+
+            public void SetupExpectedStateWithRemovedStoreDuplicated()
+            {
+                SetupExpectedStateWithDuplication(true);
+            }
+
+            private void SetupExpectedStateWithDuplication(bool duplicationRemoved)
+            {
+                var availabilities = InitialState.Editor.Item!.Availabilities.ToList();
+                availabilities.RemoveAt(0);
+
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Item = InitialState.Editor.Item with
+                        {
+                            Availabilities = availabilities
+                        },
+                        ValidationResult = InitialState.Editor.ValidationResult with
+                        {
+                            DuplicatedStores = duplicationRemoved ? null : "There are duplicated stores"
                         }
                     }
                 };

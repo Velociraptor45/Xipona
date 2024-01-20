@@ -37,14 +37,6 @@
         @if (State.Value.Editor.Item.ItemMode == ItemMode.WithoutTypes
              || (!State.Value.Editor.Item.ItemTypes.Any() && State.Value.Editor.Item.ItemMode == ItemMode.NotDefined))
         {
-            @if(State.Value.Editor.ValidationResult.DuplicatedStores is not null)
-            {
-                <div class="validation-error-message">@State.Value.Editor.ValidationResult.DuplicatedStores</div>
-            }
-            @if(State.Value.Editor.ValidationResult.NoStores is not null)
-            {
-                <div class="validation-error-message">@State.Value.Editor.ValidationResult.NoStores</div>
-            }
             <Availabilities Available="@State.Value.Editor.Item"></Availabilities>
         }
         @if (State.Value.Editor.Item.ItemMode == ItemMode.WithTypes
@@ -54,7 +46,7 @@
         }
         @if(State.Value.Editor.ValidationResult.StoreOrTypes is not null)
         {
-            <div class="validation-error-message">@State.Value.Editor.ValidationResult.StoreOrTypes</div>
+            <div class="validation-error-message store-or-types">@State.Value.Editor.ValidationResult.StoreOrTypes</div>
         }
         <div class="pb-2 pt-4">
             <TextArea Placeholder="Comment" MinRows="2" 

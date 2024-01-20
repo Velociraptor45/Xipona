@@ -15,14 +15,25 @@
             <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    <div class="pt-2 stores">
-        @foreach(var availability in Available.Availabilities)
-        {
-            <div class="store">
-                <Availability Available="Available" Model="@availability"></Availability>
-            </div>
-        }
-    </div>
+    @if (TryGetDuplicatedStoreMessage(out var duplicationMessage))
+    {
+        <div class="validation-error-message">@duplicationMessage</div>
+    }
+    @if (TryGetNoStoresMessage(out var noStoresMessage))
+    {
+        <div class="validation-error-message">@noStoresMessage</div>
+    }
+    @if (Available.Availabilities.Any())
+    {
+        <div class="pt-2 stores">
+            @foreach (var availability in Available.Availabilities)
+            {
+                <div class="store">
+                    <Availability Available="Available" Model="@availability"></Availability>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 @code {
@@ -31,5 +42,29 @@
     private void OnAddStoreButtonClicked()
     {
         Dispatcher.Dispatch(new AddStoreAction(Available));
+    }
+
+    private bool TryGetDuplicatedStoreMessage(out string? message)
+    {
+        if (Available is EditedItem)
+        {
+            message = State.Value.Editor.ValidationResult.DuplicatedStores;
+            return State.Value.Editor.ValidationResult.DuplicatedStores is not null;
+        }
+
+        var type = (EditedItemType)Available;
+        return State.Value.Editor.ValidationResult.DuplicatedTypeStores.TryGetValue(type.Key, out message);
+    }
+
+    private bool TryGetNoStoresMessage(out string? message)
+    {
+        if (Available is EditedItem)
+        {
+            message = State.Value.Editor.ValidationResult.NoStores;
+            return State.Value.Editor.ValidationResult.NoStores is not null;
+        }
+
+        var type = (EditedItemType)Available;
+        return State.Value.Editor.ValidationResult.NoTypeStores.TryGetValue(type.Key, out message);
     }
 }

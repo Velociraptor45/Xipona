@@ -463,7 +463,8 @@ public partial class ItemEditorReducerTests
                         ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
                         {
                             Manufacturers = new List<ManufacturerSearchResult>(0)
-                        }
+                        },
+                        ValidationResult = new()
                     }
                 };
             }
@@ -482,7 +483,8 @@ public partial class ItemEditorReducerTests
                         ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
                         {
                             Manufacturers = new DomainTestBuilder<ManufacturerSearchResult>().CreateMany(3).ToList()
-                        }
+                        },
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }
@@ -572,7 +574,8 @@ public partial class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsLoadingEditedItem = false
+                        IsLoadingEditedItem = false,
+                        ValidationResult = new()
                     }
                 };
             }
@@ -584,7 +587,8 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Item = new DomainTestBuilder<EditedItem>().Create(),
-                        IsLoadingEditedItem = true
+                        IsLoadingEditedItem = true,
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }
