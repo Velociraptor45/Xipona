@@ -12,12 +12,7 @@ public class ItemCategorySelectorReducerTests
 {
     public class OnLoadInitialItemCategoryFinished
     {
-        private readonly OnLoadInitialItemCategoryFinishedFixture _fixture;
-
-        public OnLoadInitialItemCategoryFinished()
-        {
-            _fixture = new OnLoadInitialItemCategoryFinishedFixture();
-        }
+        private readonly OnLoadInitialItemCategoryFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadInitialItemCategoryFinished_WithValidData_ShouldSetItemCategory()
@@ -79,12 +74,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnCreateNewItemCategoryFinished
     {
-        private readonly OnCreateNewItemCategoryFinishedFixture _fixture;
-
-        public OnCreateNewItemCategoryFinished()
-        {
-            _fixture = new OnCreateNewItemCategoryFinishedFixture();
-        }
+        private readonly OnCreateNewItemCategoryFinishedFixture _fixture = new();
 
         [Fact]
         public void OnCreateNewItemCategoryFinished_WithValidData_ShouldSetItemCategoryAndItemCategoryId()
@@ -156,12 +146,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnItemCategoryInputChanged
     {
-        private readonly OnItemCategoryInputChangedFixture _fixture;
-
-        public OnItemCategoryInputChanged()
-        {
-            _fixture = new OnItemCategoryInputChangedFixture();
-        }
+        private readonly OnItemCategoryInputChangedFixture _fixture = new();
 
         [Fact]
         public void OnItemCategoryInputChanged_WithValidInput_ShouldSetInput()
@@ -207,12 +192,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnSearchItemCategoryFinished
     {
-        private readonly OnSearchItemCategoryFinishedFixture _fixture;
-
-        public OnSearchItemCategoryFinished()
-        {
-            _fixture = new OnSearchItemCategoryFinishedFixture();
-        }
+        private readonly OnSearchItemCategoryFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSearchItemCategoryFinished_WithItemCategorySelected_ShouldSetItemCategoriesAndKeepSelected()
@@ -349,17 +329,13 @@ public class ItemCategorySelectorReducerTests
 
     public class OnSelectedItemCategoryChanged
     {
-        private readonly OnSelectedItemCategoryChangedFixture _fixture;
-
-        public OnSelectedItemCategoryChanged()
-        {
-            _fixture = new OnSelectedItemCategoryChangedFixture();
-        }
+        private readonly OnSelectedItemCategoryChangedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedItemCategoryChanged_WithValidData_ShouldSetItemCategoryId()
         {
             // Arrange
+            _fixture.SetupExpectedState();
             _fixture.SetupInitialState();
             _fixture.SetupAction();
 
@@ -386,6 +362,24 @@ public class ItemCategorySelectorReducerTests
                         Item = ExpectedState.Editor.Item! with
                         {
                             ItemCategoryId = Guid.NewGuid()
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            ItemCategory = "Item category must be selected"
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            ItemCategory = null
                         }
                     }
                 };
