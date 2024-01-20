@@ -25,6 +25,29 @@ public static class ItemEditorReducer
     [ReducerMethod(typeof(ModifyItemAction))]
     public static ItemState OnModifyItem(ItemState state)
     {
+        return OnSaveItem(state);
+    }
+
+    [ReducerMethod(typeof(UpdateItemAction))]
+    public static ItemState OnUpdateItem(ItemState state)
+    {
+        return OnSaveItem(state);
+    }
+
+    [ReducerMethod(typeof(CreateItemAction))]
+    public static ItemState OnCreateItem(ItemState state)
+    {
+        return OnSaveItem(state);
+    }
+
+    [ReducerMethod(typeof(MakeItemPermanentAction))]
+    public static ItemState OnMakeItemPermanent(ItemState state)
+    {
+        return OnSaveItem(state);
+    }
+
+    private static ItemState OnSaveItem(ItemState state)
+    {
         var item = state.Editor.Item;
         if (item == null)
             return state;
@@ -298,8 +321,7 @@ public static class ItemEditorReducer
         types[typeIndex] = itemType;
 
         var noTypeStores = state.Editor.ValidationResult.NoTypeStores.ToDictionary(x => x.Key, x => x.Value);
-        if (noTypeStores.ContainsKey(type.Key))
-            noTypeStores.Remove(type.Key);
+        noTypeStores.Remove(type.Key);
 
         return state with
         {
@@ -570,7 +592,15 @@ public static class ItemEditorReducer
         if (typeIndex == -1)
             return state;
 
-        types[typeIndex] = action.ItemType with { Name = action.Name ?? string.Empty };
+        var modifiedType = action.ItemType with { Name = action.Name ?? string.Empty };
+        types[typeIndex] = modifiedType;
+
+        var typeNameResults = state.Editor.ValidationResult.TypeNames.ToDictionary(x => x.Key, x => x.Value);
+
+        if (_nameValidator.Validate(modifiedType.Name, out var nameErrorMessage))
+            typeNameResults.Remove(modifiedType.Key);
+        else
+            typeNameResults[modifiedType.Key] = nameErrorMessage!;
 
         return state with
         {
@@ -579,6 +609,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item with
                 {
                     ItemTypes = types
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    TypeNames = typeNameResults
                 }
             }
         };
@@ -597,6 +631,10 @@ public static class ItemEditorReducer
                 Item = state.Editor.Item with
                 {
                     ItemTypes = types
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    NoTypes = null
                 }
             }
         };
