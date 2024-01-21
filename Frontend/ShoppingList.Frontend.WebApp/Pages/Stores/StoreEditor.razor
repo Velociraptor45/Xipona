@@ -42,6 +42,7 @@
             @if (State.Value.Editor.Store.Id == Guid.Empty)
             {
                 <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving"
+                        Disabled="@(State.Value.Editor.Store.Name.Length == 0)"
                         Type="@ButtonType.Primary">
                     Create
                 </Button>
@@ -49,6 +50,7 @@
             else
             {
                 <Button @onclick="@OnSaveButtonClicked" Loading="State.Value.Editor.IsSaving"
+                        Disabled="@(State.Value.Editor.Store.Name.Length == 0)"
                         Type="@ButtonType.Primary">
                     Save
                 </Button>

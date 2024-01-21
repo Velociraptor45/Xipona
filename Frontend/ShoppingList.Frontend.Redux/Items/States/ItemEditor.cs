@@ -9,9 +9,4 @@ public record ItemEditor(
     bool IsModifying,
     bool IsDeleting,
     bool IsDeleteDialogOpen,
-    EditorValidationResult ValidationResult)
-{
-    public bool DisableSaveButtons => Item is not null
-                                      && Item.IsItemWithTypes
-                                      && !Item.ItemTypes.Any();
-};
+    EditorValidationResult ValidationResult);
