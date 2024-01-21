@@ -384,8 +384,8 @@ public class ItemCategorySelectorReducerTests
                         {
                             IngredientItemCategory = new Dictionary<Guid, string>
                             {
-                                { ingredients[0].Key, "Please select an item category" },
-                                { ingredients[1].Key, "Please select an item category" }
+                                { ingredients[0].Key, "Item category must not be empty" },
+                                { ingredients[1].Key, "Item category must not be empty" }
                             }
                         }
                     }
@@ -424,7 +424,7 @@ public class ItemCategorySelectorReducerTests
                         {
                             IngredientItemCategory = new Dictionary<Guid, string>
                             {
-                                { ingredients[1].Key, "Please select an item category" }
+                                { ingredients[1].Key, "Item category must not be empty" }
                             }
                         }
                     }

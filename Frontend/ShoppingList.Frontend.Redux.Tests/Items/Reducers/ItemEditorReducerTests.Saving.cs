@@ -820,7 +820,7 @@ public partial class ItemEditorReducerTests
                     {
                         DuplicatedTypeStores = new Dictionary<Guid, string>
                             {
-                                { key, "There are duplicated stores" }
+                                { key, "Duplicated stores are not allowed" }
                             }
                     }
                 }
@@ -851,7 +851,7 @@ public partial class ItemEditorReducerTests
                     },
                     ValidationResult = new EditorValidationResult
                     {
-                        DuplicatedStores = "There are duplicated stores"
+                        DuplicatedStores = "Duplicated stores are not allowed"
                     }
                 }
             };

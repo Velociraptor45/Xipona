@@ -552,8 +552,8 @@ public partial class ItemEditorReducerTests
                         {
                             DuplicatedTypeStores = new Dictionary<Guid, string>
                             {
-                                { ExpectedState.Editor.Item!.ItemTypes.First().Key, "There are duplicated stores" },
-                                { ExpectedState.Editor.Item!.ItemTypes.Last().Key, "There are duplicated stores" }
+                                { ExpectedState.Editor.Item!.ItemTypes.First().Key, "Duplicated stores are not allowed" },
+                                { ExpectedState.Editor.Item!.ItemTypes.Last().Key, "Duplicated stores are not allowed" }
                             }
                         }
                     }
@@ -606,10 +606,10 @@ public partial class ItemEditorReducerTests
 
                 var duplicatedTypeStoresErrors = new Dictionary<Guid, string>
                 {
-                    { itemTypes.Last().Key, "There are duplicated stores" }
+                    { itemTypes.Last().Key, "Duplicated stores are not allowed" }
                 };
                 if (!duplicationRemoved)
-                    duplicatedTypeStoresErrors.Add(itemTypes.First().Key, "There are duplicated stores");
+                    duplicatedTypeStoresErrors.Add(itemTypes.First().Key, "Duplicated stores are not allowed");
 
                 ExpectedState = ExpectedState with
                 {
@@ -1107,8 +1107,8 @@ public partial class ItemEditorReducerTests
                         {
                             DuplicatedTypeStores = new Dictionary<Guid, string>
                             {
-                                { itemTypes.First().Key, "There are duplicated stores" },
-                                { itemTypes.Last().Key, "There are duplicated stores" }
+                                { itemTypes.First().Key, "Duplicated stores are not allowed" },
+                                { itemTypes.Last().Key, "Duplicated stores are not allowed" }
                             }
                         }
                     }
@@ -1140,7 +1140,7 @@ public partial class ItemEditorReducerTests
                         {
                             DuplicatedTypeStores = new Dictionary<Guid, string>
                             {
-                                { itemTypes.Last().Key, "There are duplicated stores" }
+                                { itemTypes.Last().Key, "Duplicated stores are not allowed" }
                             }
                         }
                     }
@@ -1186,7 +1186,7 @@ public partial class ItemEditorReducerTests
                         {
                             DuplicatedTypeStores = new Dictionary<Guid, string>
                             {
-                                { itemTypes.Last().Key, "There are duplicated stores" }
+                                { itemTypes.Last().Key, "Duplicated stores are not allowed" }
                             }
                         }
                     }
@@ -1224,8 +1224,8 @@ public partial class ItemEditorReducerTests
                         {
                             DuplicatedTypeStores = new Dictionary<Guid, string>
                             {
-                                { itemTypes.First().Key, "There are duplicated stores" },
-                                { itemTypes.Last().Key, "There are duplicated stores" }
+                                { itemTypes.First().Key, "Duplicated stores are not allowed" },
+                                { itemTypes.Last().Key, "Duplicated stores are not allowed" }
                             }
                         }
                     }

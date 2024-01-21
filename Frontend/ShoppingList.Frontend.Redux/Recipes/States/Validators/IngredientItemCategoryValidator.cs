@@ -8,7 +8,7 @@ public class IngredientItemCategoryValidator : IValidator<Guid>
     {
         if (property == Guid.Empty)
         {
-            errorMessage = "Please select an item category";
+            errorMessage = "Item category must not be empty";
             return false;
         }
 

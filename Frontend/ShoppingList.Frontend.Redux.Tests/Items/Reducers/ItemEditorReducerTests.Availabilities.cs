@@ -284,7 +284,7 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = ExpectedState.Editor.ValidationResult with
                         {
-                            DuplicatedStores = "There are duplicated stores"
+                            DuplicatedStores = "Duplicated stores are not allowed"
                         }
                     }
                 };
@@ -351,7 +351,7 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = ExpectedState.Editor.ValidationResult with
                         {
-                            DuplicatedStores = "There are duplicated stores"
+                            DuplicatedStores = "Duplicated stores are not allowed"
                         }
                     }
                 };
@@ -676,7 +676,7 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = InitialState.Editor.ValidationResult with
                         {
-                            DuplicatedStores = "There are duplicated stores"
+                            DuplicatedStores = "Duplicated stores are not allowed"
                         }
                     }
                 };
@@ -728,7 +728,7 @@ public partial class ItemEditorReducerTests
                         },
                         ValidationResult = InitialState.Editor.ValidationResult with
                         {
-                            DuplicatedStores = duplicationRemoved ? null : "There are duplicated stores"
+                            DuplicatedStores = duplicationRemoved ? null : "Duplicated stores are not allowed"
                         }
                     }
                 };

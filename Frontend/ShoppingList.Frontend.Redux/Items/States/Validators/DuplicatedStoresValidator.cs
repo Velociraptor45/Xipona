@@ -12,7 +12,7 @@ public class DuplicatedStoresValidator : IValidator<IReadOnlyCollection<EditedIt
 
         if (duplicatedStores)
         {
-            errorMessage = "There are duplicated stores";
+            errorMessage = "Duplicated stores are not allowed";
             return false;
         }
 

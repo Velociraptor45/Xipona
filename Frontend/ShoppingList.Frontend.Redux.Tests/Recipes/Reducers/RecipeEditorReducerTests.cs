@@ -246,7 +246,7 @@ public class RecipeEditorReducerTests
                     {
                         IngredientItemCategory = new Dictionary<Guid, string>
                             {
-                                { ingredients[0].Key, "Please select an item category" }
+                                { ingredients[0].Key, "Item category must not be empty" }
                             }
                     }
                 }
