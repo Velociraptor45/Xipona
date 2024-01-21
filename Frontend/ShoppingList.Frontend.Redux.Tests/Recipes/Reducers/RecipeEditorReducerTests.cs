@@ -284,7 +284,8 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
-                        IsInEditMode = false
+                        IsInEditMode = false,
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }
@@ -322,7 +323,8 @@ public class RecipeEditorReducerTests
                                 new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
                             },
                             new List<Guid>(0)),
-                        IsInEditMode = true
+                        IsInEditMode = true,
+                        ValidationResult = new()
                     }
                 };
             }
@@ -361,7 +363,8 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
-                        IsInEditMode = true
+                        IsInEditMode = true,
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }
@@ -372,7 +375,8 @@ public class RecipeEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsInEditMode = false
+                        IsInEditMode = false,
+                        ValidationResult = new()
                     }
                 };
             }

@@ -69,7 +69,8 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = recipe,
-                IsInEditMode = true
+                IsInEditMode = true,
+                ValidationResult = new()
             }
         };
     }
@@ -82,7 +83,8 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = action.Recipe,
-                IsInEditMode = false
+                IsInEditMode = false,
+                ValidationResult = new()
             }
         };
     }
