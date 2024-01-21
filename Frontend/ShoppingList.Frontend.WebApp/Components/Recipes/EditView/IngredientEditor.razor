@@ -29,6 +29,10 @@
                                 OnDropdownClosed="OnItemCategoryDropdownClosed"
                                 CanAddItem="true">
             </SingleSearchSelect>
+            @if(TryGetItemCategoryErrorMessage(out var errorMessage))
+            {
+                <div class="validation-error-message">@errorMessage</div>
+            }
             @if (Model.ItemCategoryId != Guid.Empty && Model.ItemSelector.Items.Any())
             {
                 <Select Class="mt-2 min-w-150"
@@ -109,6 +113,11 @@
 
         Dispatcher.Dispatch(new LoadInitialItemsAction(Model));
         Dispatcher.Dispatch(new LoadInitialItemCategoryAction(Model));
+    }
+
+    private bool TryGetItemCategoryErrorMessage(out string? errorMessage)
+    {
+        return State.Value.Editor.ValidationResult.IngredientItemCategory.TryGetValue(Model.Key, out errorMessage);
     }
 
     private void OnItemChanged(SearchItemByItemCategoryResult itemSearchResult)

@@ -75,6 +75,9 @@ public sealed class RecipeEditorEffects
     [EffectMethod(typeof(ModifyRecipeAction))]
     public async Task HandleModifyRecipeAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new ModifyRecipeStartedAction());
 
         var recipe = _state.Value.Editor.Recipe!;
@@ -103,6 +106,9 @@ public sealed class RecipeEditorEffects
     [EffectMethod(typeof(CreateRecipeAction))]
     public async Task HandleCreateRecipeAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new CreateRecipeStartedAction());
 
         var recipe = _state.Value.Editor.Recipe!;

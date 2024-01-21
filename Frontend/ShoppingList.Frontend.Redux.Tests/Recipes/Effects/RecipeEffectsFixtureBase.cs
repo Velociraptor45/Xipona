@@ -12,6 +12,17 @@ public class RecipeEffectsFixtureBase : EffectsFixtureBase
     protected readonly NavigationManagerMock NavigationManagerMock = new(MockBehavior.Strict);
     protected RecipeState State = new DomainTestBuilder<RecipeState>().Create();
 
+    public RecipeEffectsFixtureBase()
+    {
+        State = State with
+        {
+            Editor = State.Editor with
+            {
+                ValidationResult = new()
+            }
+        };
+    }
+
     public void SetupStateReturningState()
     {
         RecipeStateMock.SetupValue(State);

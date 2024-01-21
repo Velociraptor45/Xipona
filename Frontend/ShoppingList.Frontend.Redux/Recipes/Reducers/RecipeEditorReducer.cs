@@ -93,6 +93,8 @@ public static class RecipeEditorReducer
         if (state.Editor.Recipe is null)
             return state;
 
+        _recipeNameValidator.Validate(action.Name, out var nameErrorMessage);
+
         return state with
         {
             Editor = state.Editor with
@@ -100,6 +102,10 @@ public static class RecipeEditorReducer
                 Recipe = state.Editor.Recipe with
                 {
                     Name = action.Name
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    Name = nameErrorMessage
                 }
             }
         };

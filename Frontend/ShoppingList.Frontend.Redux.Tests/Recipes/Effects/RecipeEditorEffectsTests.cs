@@ -334,6 +334,22 @@ public class RecipeEditorEffectsTests
         private readonly HandleModifyRecipeActionFixture _fixture = new();
 
         [Fact]
+        public async Task HandleModifyRecipeAction_WithValidationErrors_ShouldNotDoAnything()
+        {
+            // Arrange
+            _fixture.SetupRecipe();
+            _fixture.SetupState();
+            _fixture.SetupValidationErrors();
+            var queue = CallQueue.Create(_ => { });
+
+            // Act
+            await _fixture.CreateSut().HandleModifyRecipeAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
         public async Task HandleModifyRecipeAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
         {
             // Arrange
@@ -465,6 +481,22 @@ public class RecipeEditorEffectsTests
     public class HandleCreateRecipeAction
     {
         private readonly HandleCreateRecipeActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleCreateRecipeAction_WithValidationErrors_ShouldDoNothing()
+        {
+            // Arrange
+            _fixture.SetupRecipe();
+            _fixture.SetupState();
+            _fixture.SetupValidationErrors();
+            var queue = CallQueue.Create(_ => { });
+
+            // Act
+            await _fixture.CreateSut().HandleCreateRecipeAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
 
         [Fact]
         public async Task HandleCreateRecipeAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
@@ -1061,6 +1093,17 @@ public class RecipeEditorEffectsTests
             SetupStateReturningState();
             return new RecipeEditorEffects(ApiClientMock.Object, RecipeStateMock.Object, NavigationManagerMock.Object,
                 ShoppingListNotificationServiceMock.Object);
+        }
+
+        public void SetupValidationErrors()
+        {
+            State = State with
+            {
+                Editor = State.Editor with
+                {
+                    ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
+                }
+            };
         }
     }
 }

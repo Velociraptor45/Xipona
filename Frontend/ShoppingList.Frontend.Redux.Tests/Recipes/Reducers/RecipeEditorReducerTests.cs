@@ -392,7 +392,25 @@ public class RecipeEditorReducerTests
         public void OnRecipeNameChanged_WithValidData_ShouldSetName()
         {
             // Arrange
+            _fixture.SetupExpectedState();
             _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeNameChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnRecipeNameChanged_WithEmptyName_ShouldSetValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithNameEmpty();
+            _fixture.SetupInitialStateWithNameEmpty();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -433,7 +451,29 @@ public class RecipeEditorReducerTests
                     {
                         Recipe = ExpectedState.Editor.Recipe! with
                         {
+                            Name = string.Empty
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
                             Name = new DomainTestBuilder<string>().Create()
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithNameEmpty()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Name = new DomainTestBuilder<string>().Create()
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = null
                         }
                     }
                 };
@@ -446,6 +486,38 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = null
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = null
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithNameEmpty()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Name = string.Empty
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = "Name must not be empty"
+                        }
                     }
                 };
             }
