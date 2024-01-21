@@ -48,6 +48,7 @@ public class RecipeFeatureState : Feature<RecipeState>
                 false,
                 false,
                 false,
-                null));
+                null,
+                new()));
     }
 }

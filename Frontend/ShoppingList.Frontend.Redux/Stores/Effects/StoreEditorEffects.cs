@@ -61,6 +61,9 @@ public class StoreEditorEffects
         if (store is null)
             return;
 
+        if (_state.Value.Editor.ValidationResult.HasErrors)
+            return;
+
         dispatcher.Dispatch(new SaveStoreStartedAction());
 
         if (store.Id == Guid.Empty)

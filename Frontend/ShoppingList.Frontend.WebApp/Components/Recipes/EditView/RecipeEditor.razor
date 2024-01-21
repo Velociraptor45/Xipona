@@ -14,8 +14,12 @@
         <i class="bi bi-arrow-left"></i>
     </Button>
     <div class="mx-3 editor-top-row-item">
-        <Input TValue="string" Value="@State.Value.Editor.Recipe.Name"
+        <Input TValue="string" Value="@State.Value.Editor.Recipe!.Name"
                Placeholder="Recipe name" OnInput="OnNameChanged" />
+        @if (State.Value.Editor.ValidationResult.Name is not null)
+        {
+            <div class="validation-error-message">@State.Value.Editor.ValidationResult.Name</div>
+        }
     </div>
     <Button Class="editor-top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
         <i class="bi bi-pencil-fill"></i>

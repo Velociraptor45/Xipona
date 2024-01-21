@@ -20,7 +20,11 @@
             </Button>
             <div class="mx-3">
                 <Input TValue="string" Value="@State.Value.Editor.Item.Name"
-                       OnChange="OnNameChanged" Placeholder="Item name"/>
+                       OnChange="OnNameChanged" Placeholder="Item name" />
+                @if (State.Value.Editor.ValidationResult.Name is not null)
+                {
+                    <div class="validation-error-message">@State.Value.Editor.ValidationResult.Name</div>
+                }
             </div>
             <DeleteItem></DeleteItem>
         </div>
@@ -40,6 +44,10 @@
         {
             <ItemTypes></ItemTypes>
         }
+        @if(State.Value.Editor.ValidationResult.StoreOrTypes is not null)
+        {
+            <div class="validation-error-message store-or-types">@State.Value.Editor.ValidationResult.StoreOrTypes</div>
+        }
         <div class="pb-2 pt-4">
             <TextArea Placeholder="Comment" MinRows="2" 
                 Value="@State.Value.Editor.Item.Comment" OnChange="OnCommentChanged"></TextArea>
@@ -48,6 +56,7 @@
             @if (State.Value.Editor.Item.Id == Guid.Empty)
             {
                 <Button OnClick="@OnCreateButtonClicked"
+                        Disabled="@(State.Value.Editor.Item.Name.Length == 0)"
                         Loading="@State.Value.Editor.IsModifying">
                     Create
                 </Button>
@@ -55,18 +64,19 @@
             else if (State.Value.Editor.Item.IsTemporary)
             {
                 <Button OnClick="@OnMakeItemPermanentButtonClicked"
+                        Disabled="@(State.Value.Editor.Item.Name.Length == 0)"
                         Loading="@State.Value.Editor.IsModifying">
                     Make Permanent
                 </Button>
             }
             else
             {
-                <Button Disabled="@State.Value.Editor.DisableSaveButtons"
+                <Button Disabled="@(State.Value.Editor.Item.Name.Length == 0)"
                         Loading="@State.Value.Editor.IsModifying"
                         OnClick="@OnModifyButtonClicked">Modify</Button>
                 <Button Type="@ButtonType.Primary"
                         Class="ml-2"
-                        Disabled="@State.Value.Editor.DisableSaveButtons"
+                        Disabled="@(State.Value.Editor.Item.Name.Length == 0)"
                         Loading="@State.Value.Editor.IsUpdating"
                         OnClick="@OnUpdateButtonClicked">Update</Button>
             }

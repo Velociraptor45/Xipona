@@ -1,11 +1,52 @@
 ﻿using Fluxor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States.Validators;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.Validators;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 
 public static class RecipeEditorReducer
 {
+    private static readonly NameValidator _recipeNameValidator = new();
+    private static readonly IngredientItemCategoryValidator _ingredientItemCategoryValidator = new();
+
+    [ReducerMethod(typeof(CreateRecipeAction))]
+    public static RecipeState OnCreateRecipe(RecipeState state)
+    {
+        return OnSaveRecipe(state);
+    }
+
+    [ReducerMethod(typeof(ModifyRecipeAction))]
+    public static RecipeState OnModifyRecipe(RecipeState state)
+    {
+        return OnSaveRecipe(state);
+    }
+
+    private static RecipeState OnSaveRecipe(RecipeState state)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        _recipeNameValidator.Validate(state.Editor.Recipe.Name, out var recipeNameError);
+
+        var ingredientItemCategoryErrors = new Dictionary<Guid, string>();
+        foreach (var ingredient in state.Editor.Recipe.Ingredients)
+        {
+            _ingredientItemCategoryValidator.Validate(ingredient.ItemCategoryId, out var error);
+            if (error is not null)
+                ingredientItemCategoryErrors.Add(ingredient.Key, error);
+        }
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ValidationResult = new(recipeNameError, ingredientItemCategoryErrors)
+            }
+        };
+    }
+
     [ReducerMethod(typeof(SetNewRecipeAction))]
     public static RecipeState OnSetNewRecipe(RecipeState state)
     {
@@ -28,7 +69,8 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = recipe,
-                IsInEditMode = true
+                IsInEditMode = true,
+                ValidationResult = new()
             }
         };
     }
@@ -41,7 +83,8 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = action.Recipe,
-                IsInEditMode = false
+                IsInEditMode = false,
+                ValidationResult = new()
             }
         };
     }
@@ -52,6 +95,8 @@ public static class RecipeEditorReducer
         if (state.Editor.Recipe is null)
             return state;
 
+        _recipeNameValidator.Validate(action.Name, out var nameErrorMessage);
+
         return state with
         {
             Editor = state.Editor with
@@ -59,6 +104,10 @@ public static class RecipeEditorReducer
                 Recipe = state.Editor.Recipe with
                 {
                     Name = action.Name
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    Name = nameErrorMessage
                 }
             }
         };

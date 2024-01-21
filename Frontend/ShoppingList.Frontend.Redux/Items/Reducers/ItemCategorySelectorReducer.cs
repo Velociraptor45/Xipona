@@ -93,6 +93,10 @@ public static class ItemCategorySelectorReducer
                 Item = state.Editor.Item! with
                 {
                     ItemCategoryId = action.ItemCategoryId
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    ItemCategory = null
                 }
             }
         };

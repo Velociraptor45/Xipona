@@ -12,12 +12,7 @@ public class ItemCategorySelectorReducerTests
 {
     public class OnItemCategoryInputChanged
     {
-        private readonly OnItemCategoryInputChangedFixture _fixture;
-
-        public OnItemCategoryInputChanged()
-        {
-            _fixture = new OnItemCategoryInputChangedFixture();
-        }
+        private readonly OnItemCategoryInputChangedFixture _fixture = new();
 
         [Fact]
         public void OnItemCategoryInputChanged_WithValidData_ShouldChangeInput()
@@ -134,12 +129,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnItemCategoryDropdownClosed
     {
-        private readonly OnItemCategoryDropdownClosedFixture _fixture;
-
-        public OnItemCategoryDropdownClosed()
-        {
-            _fixture = new OnItemCategoryDropdownClosedFixture();
-        }
+        private readonly OnItemCategoryDropdownClosedFixture _fixture = new();
 
         [Fact]
         public void OnItemCategoryDropdownClosed_WithValidData_ShouldChangeInput()
@@ -278,12 +268,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnSelectedItemCategoryChanged
     {
-        private readonly OnSelectedItemCategoryChangedFixture _fixture;
-
-        public OnSelectedItemCategoryChanged()
-        {
-            _fixture = new OnSelectedItemCategoryChangedFixture();
-        }
+        private readonly OnSelectedItemCategoryChangedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedItemCategoryChanged_WithValidData_ShouldChangeItemCategory()
@@ -394,6 +379,14 @@ public class ItemCategorySelectorReducerTests
                         Recipe = ExpectedState.Editor.Recipe with
                         {
                             Ingredients = ingredients
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            IngredientItemCategory = new Dictionary<Guid, string>
+                            {
+                                { ingredients[0].Key, "Item category must not be empty" },
+                                { ingredients[1].Key, "Item category must not be empty" }
+                            }
                         }
                     }
                 };
@@ -426,6 +419,13 @@ public class ItemCategorySelectorReducerTests
                         Recipe = ExpectedState.Editor.Recipe with
                         {
                             Ingredients = ingredients
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            IngredientItemCategory = new Dictionary<Guid, string>
+                            {
+                                { ingredients[1].Key, "Item category must not be empty" }
+                            }
                         }
                     }
                 };
@@ -453,12 +453,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnLoadInitialItemCategoryFinished
     {
-        private readonly OnLoadInitialItemCategoryFinishedFixture _fixture;
-
-        public OnLoadInitialItemCategoryFinished()
-        {
-            _fixture = new OnLoadInitialItemCategoryFinishedFixture();
-        }
+        private readonly OnLoadInitialItemCategoryFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadInitialItemCategoryFinished_WithValidData_ShouldSetSearchResult()
@@ -603,12 +598,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnSearchItemCategoriesFinished
     {
-        private readonly OnSearchItemCategoriesFinishedFixture _fixture;
-
-        public OnSearchItemCategoriesFinished()
-        {
-            _fixture = new OnSearchItemCategoriesFinishedFixture();
-        }
+        private readonly OnSearchItemCategoriesFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSearchItemCategoriesFinished_WithCurrentlySelectedNotPartOfResults_ShouldSetSearchResult()
@@ -767,12 +757,7 @@ public class ItemCategorySelectorReducerTests
 
     public class OnCreateNewItemCategoryFinished
     {
-        private readonly OnCreateNewItemCategoryFinishedFixture _fixture;
-
-        public OnCreateNewItemCategoryFinished()
-        {
-            _fixture = new OnCreateNewItemCategoryFinishedFixture();
-        }
+        private readonly OnCreateNewItemCategoryFinishedFixture _fixture = new();
 
         [Fact]
         public void OnCreateNewItemCategoryFinished_WithValidData_ShouldSetSearchResult()

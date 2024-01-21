@@ -10,14 +10,253 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Recipes.Reducers;
 
 public class RecipeEditorReducerTests
 {
+    public class OnCreateRecipe
+    {
+        private readonly OnCreateRecipeFixture _fixture = new();
+
+        [Fact]
+        public void OnCreateRecipe_WithRecipeNull_ShouldSetRecipeNull()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupInitialStateEqualToExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateRecipe_WithValidData_ShouldSetValidationResultWithoutErrors()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithoutValidationErrors();
+            _fixture.SetupInitialStateWithValidationErrors();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateRecipe_WithRecipeNameEmpty_ShouldSetValidationResultWithNameEmpty()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithNameEmpty();
+            _fixture.SetupInitialStateWithNameEmpty();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCreateRecipe_WithIngredientItemCategoryEmpty_ShouldSetValidationResultWithIngredientItemCategoryEmpty()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithIngredientItemCategoryEmpty();
+            _fixture.SetupInitialStateWithItemCategoryEmpty();
+
+            // Act
+            var result = RecipeEditorReducer.OnCreateRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCreateRecipeFixture : OnSaveRecipeFixture
+        {
+        }
+    }
+
+    public class OnModifyRecipe
+    {
+        private readonly OnModifyRecipeFixture _fixture = new();
+
+        [Fact]
+        public void OnModifyRecipe_WithRecipeNull_ShouldSetRecipeNull()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithRecipeNull();
+            _fixture.SetupInitialStateEqualToExpectedState();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnModifyRecipe_WithValidData_ShouldSetValidationResultWithoutErrors()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithoutValidationErrors();
+            _fixture.SetupInitialStateWithValidationErrors();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnModifyRecipe_WithRecipeNameEmpty_ShouldSetValidationResultWithNameEmpty()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithNameEmpty();
+            _fixture.SetupInitialStateWithNameEmpty();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnModifyRecipe_WithIngredientItemCategoryEmpty_ShouldSetValidationResultWithIngredientItemCategoryEmpty()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithIngredientItemCategoryEmpty();
+            _fixture.SetupInitialStateWithItemCategoryEmpty();
+
+            // Act
+            var result = RecipeEditorReducer.OnModifyRecipe(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnModifyRecipeFixture : OnSaveRecipeFixture
+        {
+        }
+    }
+
+    private abstract class OnSaveRecipeFixture : RecipeEditorReducerFixture
+    {
+        public void SetupInitialStateEqualToExpectedState()
+        {
+            InitialState = ExpectedState;
+        }
+
+        public void SetupInitialStateWithNameEmpty()
+        {
+            InitialState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    ValidationResult = ExpectedState.Editor.ValidationResult with
+                    {
+                        Name = null
+                    }
+                }
+            };
+        }
+
+        public void SetupInitialStateWithItemCategoryEmpty()
+        {
+            InitialState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    ValidationResult = ExpectedState.Editor.ValidationResult with
+                    {
+                        IngredientItemCategory = new Dictionary<Guid, string>(0)
+                    }
+                }
+            };
+        }
+
+        public void SetupInitialStateWithValidationErrors()
+        {
+            InitialState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
+                }
+            };
+        }
+
+        public void SetupExpectedStateWithRecipeNull()
+        {
+            ExpectedState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    Recipe = null
+                }
+            };
+        }
+
+        public void SetupExpectedStateWithoutValidationErrors()
+        {
+            ExpectedState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    ValidationResult = new()
+                }
+            };
+        }
+
+        public void SetupExpectedStateWithNameEmpty()
+        {
+            ExpectedState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    Recipe = ExpectedState.Editor.Recipe! with
+                    {
+                        Name = string.Empty
+                    },
+                    ValidationResult = new()
+                    {
+                        Name = "Name must not be empty"
+                    }
+                }
+            };
+        }
+
+        public void SetupExpectedStateWithIngredientItemCategoryEmpty()
+        {
+            var ingredients = ExpectedState.Editor.Recipe!.Ingredients.ToList();
+            ingredients[0] = ingredients[0] with
+            {
+                ItemCategoryId = Guid.Empty
+            };
+
+            ExpectedState = ExpectedState with
+            {
+                Editor = ExpectedState.Editor with
+                {
+                    Recipe = ExpectedState.Editor.Recipe with
+                    {
+                        Ingredients = ingredients
+                    },
+                    ValidationResult = new()
+                    {
+                        IngredientItemCategory = new Dictionary<Guid, string>
+                            {
+                                { ingredients[0].Key, "Item category must not be empty" }
+                            }
+                    }
+                }
+            };
+        }
+    }
+
     public class OnSetNewRecipe
     {
-        private readonly OnSetNewRecipeFixture _fixture;
-
-        public OnSetNewRecipe()
-        {
-            _fixture = new OnSetNewRecipeFixture();
-        }
+        private readonly OnSetNewRecipeFixture _fixture = new();
 
         [Fact]
         public void OnSetNewRecipe_WithValidData_ShouldSetRecipeAndLeaveEditMode()
@@ -45,7 +284,8 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
-                        IsInEditMode = false
+                        IsInEditMode = false,
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }
@@ -83,7 +323,8 @@ public class RecipeEditorReducerTests
                                 new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
                             },
                             new List<Guid>(0)),
-                        IsInEditMode = true
+                        IsInEditMode = true,
+                        ValidationResult = new()
                     }
                 };
             }
@@ -92,12 +333,7 @@ public class RecipeEditorReducerTests
 
     public class OnLoadRecipeForEditingFinished
     {
-        private readonly OnLoadRecipeForEditingFinishedFixture _fixture;
-
-        public OnLoadRecipeForEditingFinished()
-        {
-            _fixture = new OnLoadRecipeForEditingFinishedFixture();
-        }
+        private readonly OnLoadRecipeForEditingFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadRecipeForEditingFinished_WithValidData_ShouldSetRecipeAndLeaveEditMode()
@@ -127,7 +363,8 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
-                        IsInEditMode = true
+                        IsInEditMode = true,
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
                     }
                 };
             }
@@ -138,7 +375,8 @@ public class RecipeEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsInEditMode = false
+                        IsInEditMode = false,
+                        ValidationResult = new()
                     }
                 };
             }
@@ -152,18 +390,31 @@ public class RecipeEditorReducerTests
 
     public class OnRecipeNameChanged
     {
-        private readonly OnRecipeNameChangedFixture _fixture;
-
-        public OnRecipeNameChanged()
-        {
-            _fixture = new OnRecipeNameChangedFixture();
-        }
+        private readonly OnRecipeNameChangedFixture _fixture = new();
 
         [Fact]
         public void OnRecipeNameChanged_WithValidData_ShouldSetName()
         {
             // Arrange
+            _fixture.SetupExpectedState();
             _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnRecipeNameChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnRecipeNameChanged_WithEmptyName_ShouldSetValidationError()
+        {
+            // Arrange
+            _fixture.SetupExpectedStateWithNameEmpty();
+            _fixture.SetupInitialStateWithNameEmpty();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -204,7 +455,29 @@ public class RecipeEditorReducerTests
                     {
                         Recipe = ExpectedState.Editor.Recipe! with
                         {
+                            Name = string.Empty
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
                             Name = new DomainTestBuilder<string>().Create()
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithNameEmpty()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Name = new DomainTestBuilder<string>().Create()
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = null
                         }
                     }
                 };
@@ -217,6 +490,38 @@ public class RecipeEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Recipe = null
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = null
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithNameEmpty()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            Name = string.Empty
+                        },
+                        ValidationResult = ExpectedState.Editor.ValidationResult with
+                        {
+                            Name = "Name must not be empty"
+                        }
                     }
                 };
             }
@@ -246,12 +551,7 @@ public class RecipeEditorReducerTests
 
     public class OnToggleEditMode
     {
-        private readonly OnToggleEditModeFixture _fixture;
-
-        public OnToggleEditMode()
-        {
-            _fixture = new OnToggleEditModeFixture();
-        }
+        private readonly OnToggleEditModeFixture _fixture = new();
 
         [Fact]
         public void OnToggleEditMode_WithEditorInEditMode_ShouldSetNotInEditMode()
@@ -293,7 +593,7 @@ public class RecipeEditorReducerTests
                 SetupInitialState(false);
             }
 
-            public void SetupInitialState(bool isInEditMode)
+            private void SetupInitialState(bool isInEditMode)
             {
                 InitialState = ExpectedState with
                 {
@@ -314,7 +614,7 @@ public class RecipeEditorReducerTests
                 SetupExpectedState(false);
             }
 
-            public void SetupExpectedState(bool isInEditMode)
+            private void SetupExpectedState(bool isInEditMode)
             {
                 ExpectedState = ExpectedState with
                 {
@@ -329,12 +629,7 @@ public class RecipeEditorReducerTests
 
     public class OnRecipeTagInputChanged
     {
-        private readonly OnRecipeTagInputChangedFixture _fixture;
-
-        public OnRecipeTagInputChanged()
-        {
-            _fixture = new OnRecipeTagInputChangedFixture();
-        }
+        private readonly OnRecipeTagInputChangedFixture _fixture = new();
 
         [Fact]
         public void OnRecipeTagInputChanged_WithValidData_ShouldSetInput()
@@ -376,12 +671,7 @@ public class RecipeEditorReducerTests
 
     public class OnRecipeTagsDropdownClosed
     {
-        private readonly OnRecipeTagsDropdownClosedFixture _fixture;
-
-        public OnRecipeTagsDropdownClosed()
-        {
-            _fixture = new OnRecipeTagsDropdownClosedFixture();
-        }
+        private readonly OnRecipeTagsDropdownClosedFixture _fixture = new();
 
         [Fact]
         public void OnRecipeTagsDropdownClosed_ShouldClearRecipeTagInput()
@@ -425,12 +715,7 @@ public class RecipeEditorReducerTests
 
     public class OnRecipeTagsChanged
     {
-        private readonly OnRecipeTagsChangedFixture _fixture;
-
-        public OnRecipeTagsChanged()
-        {
-            _fixture = new OnRecipeTagsChangedFixture();
-        }
+        private readonly OnRecipeTagsChangedFixture _fixture = new();
 
         [Fact]
         public void OnRecipeTagsChanged_WithValidData_ShouldSetRecipeTagIds()
@@ -519,12 +804,7 @@ public class RecipeEditorReducerTests
 
     public class OnCreateNewRecipeTagFinished
     {
-        private readonly OnCreateNewRecipeTagFinishedFixture _fixture;
-
-        public OnCreateNewRecipeTagFinished()
-        {
-            _fixture = new OnCreateNewRecipeTagFinishedFixture();
-        }
+        private readonly OnCreateNewRecipeTagFinishedFixture _fixture = new();
 
         [Fact]
         public void OnCreateNewRecipeTagFinished_WithValidData_ShouldSetRecipeTagIds()
@@ -640,12 +920,7 @@ public class RecipeEditorReducerTests
 
     public class OnRecipeNumberOfServingsChanged
     {
-        private readonly OnRecipeNumberOfServingsChangedFixture _fixture;
-
-        public OnRecipeNumberOfServingsChanged()
-        {
-            _fixture = new OnRecipeNumberOfServingsChangedFixture();
-        }
+        private readonly OnRecipeNumberOfServingsChangedFixture _fixture = new();
 
         [Fact]
         public void OnRecipeNumberOfServingsChanged_WithValidData_ShouldSetNumberOfServings()
@@ -734,12 +1009,7 @@ public class RecipeEditorReducerTests
 
     public class OnModifyRecipeStarted
     {
-        private readonly OnModifyRecipeStartedFixture _fixture;
-
-        public OnModifyRecipeStarted()
-        {
-            _fixture = new OnModifyRecipeStartedFixture();
-        }
+        private readonly OnModifyRecipeStartedFixture _fixture = new();
 
         [Fact]
         public void OnModifyRecipeStarted_WithNotSaving_ShouldSetSaving()
@@ -807,12 +1077,7 @@ public class RecipeEditorReducerTests
 
     public class OnModifyRecipeFinished
     {
-        private readonly OnModifyRecipeFinishedFixture _fixture;
-
-        public OnModifyRecipeFinished()
-        {
-            _fixture = new OnModifyRecipeFinishedFixture();
-        }
+        private readonly OnModifyRecipeFinishedFixture _fixture = new();
 
         [Fact]
         public void OnModifyRecipeFinished_WithSaving_ShouldSetNotSaving()
@@ -880,12 +1145,7 @@ public class RecipeEditorReducerTests
 
     public class OnCreateRecipeStarted
     {
-        private readonly OnCreateRecipeStartedFixture _fixture;
-
-        public OnCreateRecipeStarted()
-        {
-            _fixture = new OnCreateRecipeStartedFixture();
-        }
+        private readonly OnCreateRecipeStartedFixture _fixture = new();
 
         [Fact]
         public void OnCreateRecipeStarted_WithNotSaving_ShouldSetSaving()
@@ -953,12 +1213,7 @@ public class RecipeEditorReducerTests
 
     public class OnCreateRecipeFinished
     {
-        private readonly OnCreateRecipeFinishedFixture _fixture;
-
-        public OnCreateRecipeFinished()
-        {
-            _fixture = new OnCreateRecipeFinishedFixture();
-        }
+        private readonly OnCreateRecipeFinishedFixture _fixture = new();
 
         [Fact]
         public void OnCreateRecipeFinished_WithSaving_ShouldSetNotSaving()

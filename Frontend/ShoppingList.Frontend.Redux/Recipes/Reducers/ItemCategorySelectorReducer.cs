@@ -100,6 +100,10 @@ public static class ItemCategorySelectorReducer
             AddToShoppingListByDefault = null
         };
 
+        var ingredientErrors = state.Editor.ValidationResult.IngredientItemCategory
+            .ToDictionary(x => x.Key, x => x.Value);
+        ingredientErrors.Remove(action.IngredientKey);
+
         return state with
         {
             Editor = state.Editor with
@@ -107,6 +111,10 @@ public static class ItemCategorySelectorReducer
                 Recipe = state.Editor.Recipe with
                 {
                     Ingredients = ingredients
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    IngredientItemCategory = ingredientErrors
                 }
             }
         };

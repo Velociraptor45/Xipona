@@ -25,6 +25,13 @@
     }
 }
 
+.validation-error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    margin-left: 12px;
+}
+
 .item-editing .remove-item {
     border-color: #ecf0f1;
 }
@@ -33,11 +40,6 @@
     width: 70px;
 }
 
-.ant-select-multiple span.ant-select-selection-item {
-    background-color: #3498db;
-    color: #ffffff;
-    border-radius: 5px;
-}
 /* shopping list */
 .ant-input-number.price-update-input {
     width: 95px;
@@ -46,10 +48,12 @@
 .shopping-list-summary-finish-time-editing {
     color: #27ae60;
 }
+
 /* item editor */
 .item-editor .in-packet-input {
     width: 60px;
 }
+
 /* recipes */
 .recipes .recipe-search-tabs {
     width: 100%;

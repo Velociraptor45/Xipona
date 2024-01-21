@@ -8,7 +8,6 @@
 @inject IDispatcher Dispatcher
 @inject IState<StoreState> State
 
-
 <div class="my-3">
     <div class="d-flex align-items-center pb-1">
         <div class="font-weight-bold">
@@ -33,7 +32,8 @@
             OnDecrement="OnDecrementSection"
             OnRemove="OnRemoveSection"
             OnTextChanged="OnSectionTextChanged"
-            DisableRemove="() => State.Value.Editor.Store.Sections.Count == 1"></SortableListItem>
+            DisableRemove="() => State.Value.Editor.Store.Sections.Count == 1"
+            ErrorMessage="@GetErrorMessage(section)"></SortableListItem>
     }
 </div>
 
@@ -50,6 +50,11 @@
 </div>
 
 @code {
+    private string? GetErrorMessage(EditedSection section)
+    {
+        return State.Value.Editor.ValidationResult.SectionNames.TryGetValue(section.Key, out var msg) ? msg : null;
+    }
+
     private void OnDefaultSectionChanged(EditedSection section)
     {
         Dispatcher.Dispatch(new DefaultSectionChangedAction(section.Key));
