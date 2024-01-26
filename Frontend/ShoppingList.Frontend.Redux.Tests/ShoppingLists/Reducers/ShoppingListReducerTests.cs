@@ -35,9 +35,6 @@ public class ShoppingListReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    QuantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList(),
-                    QuantityTypesInPacket = new DomainTestBuilder<QuantityTypeInPacket>().CreateMany(2).ToList(),
-                    Stores = new AllActiveStores(new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()),
                     SelectedStoreId = Guid.NewGuid(),
                     ItemsInBasketVisible = false,
                     EditModeActive = true,
