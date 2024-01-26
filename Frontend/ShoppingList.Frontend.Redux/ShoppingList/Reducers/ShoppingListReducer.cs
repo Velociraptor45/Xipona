@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Reducers;
 
@@ -13,12 +13,6 @@ public static class ShoppingListReducer
     {
         return state with
         {
-            QuantityTypes = new List<QuantityType>(),
-            QuantityTypesInPacket = new List<QuantityTypeInPacket>(),
-            Stores = state.Stores with
-            {
-                Stores = new List<ShoppingListStore>()
-            },
             SelectedStoreId = Guid.Empty,
             ItemsInBasketVisible = true,
             EditModeActive = false,
@@ -114,6 +108,29 @@ public static class ShoppingListReducer
             ShoppingList = state.ShoppingList with
             {
                 Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(SaveStoreFinishedAction))]
+    public static ShoppingListState OnSaveStoreFinished(ShoppingListState state)
+    {
+        return ClearStores(state);
+    }
+
+    [ReducerMethod(typeof(DeleteStoreFinishedAction))]
+    public static ShoppingListState OnDeleteStoreFinished(ShoppingListState state)
+    {
+        return ClearStores(state);
+    }
+
+    private static ShoppingListState ClearStores(ShoppingListState state)
+    {
+        return state with
+        {
+            Stores = state.Stores with
+            {
+                Stores = new List<ShoppingListStore>(0)
             }
         };
     }
