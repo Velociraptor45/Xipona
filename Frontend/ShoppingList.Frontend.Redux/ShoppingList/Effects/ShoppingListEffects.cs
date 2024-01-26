@@ -35,6 +35,9 @@ public class ShoppingListEffects
     [EffectMethod(typeof(LoadQuantityTypesAction))]
     public async Task HandleLoadQuantityTypesAction(IDispatcher dispatcher)
     {
+        if (_state.Value.QuantityTypes.Any())
+            return;
+
         IEnumerable<QuantityType> quantityTypes;
         try
         {
@@ -56,6 +59,9 @@ public class ShoppingListEffects
     [EffectMethod(typeof(LoadQuantityTypesInPacketAction))]
     public async Task HandleLoadQuantityTypesInPacketAction(IDispatcher dispatcher)
     {
+        if (_state.Value.QuantityTypesInPacket.Any())
+            return;
+
         IEnumerable<QuantityTypeInPacket> quantityTypes;
         try
         {
@@ -77,6 +83,9 @@ public class ShoppingListEffects
     [EffectMethod(typeof(LoadAllActiveStoresAction))]
     public async Task HandleLoadAllActiveStoresAction(IDispatcher dispatcher)
     {
+        if (_state.Value.Stores.Stores.Any())
+            return;
+
         List<ShoppingListStore> stores;
         try
         {
