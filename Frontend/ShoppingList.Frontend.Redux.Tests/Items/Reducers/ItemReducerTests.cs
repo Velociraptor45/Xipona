@@ -13,12 +13,7 @@ public class ItemReducerTests
 {
     public class OnSearchItemStarted
     {
-        private readonly OnSearchItemStartedFixture _fixture;
-
-        public OnSearchItemStarted()
-        {
-            _fixture = new OnSearchItemStartedFixture();
-        }
+        private readonly OnSearchItemStartedFixture _fixture = new();
 
         [Fact]
         public void OnSearchItemStarted_WithSearchNotLoading_ShouldSetLoading()
@@ -87,15 +82,10 @@ public class ItemReducerTests
 
     public class OnSearchItemFinished
     {
-        private readonly OnSearchItemFinishedFixture _fixture;
-
-        public OnSearchItemFinished()
-        {
-            _fixture = new OnSearchItemFinishedFixture();
-        }
+        private readonly OnSearchItemFinishedFixture _fixture = new();
 
         [Fact]
-        public void OnSearchItemFinished_WithSearchNotLoading_ShouldSetLoadingAndSortResults()
+        public void OnSearchItemFinished_WithSearchNotLoading_ShouldSetNotLoadingAndSortResults()
         {
             // Arrange
             _fixture.SetupExpectedSearchLoading();
@@ -112,7 +102,7 @@ public class ItemReducerTests
         }
 
         [Fact]
-        public void OnSearchItemFinished_WithSearchLoading_ShouldSetLoadingAndSortResults()
+        public void OnSearchItemFinished_WithSearchLoading_ShouldSetNotLoadingAndSortResults()
         {
             // Arrange
             _fixture.SetupExpectedSearchLoading();
@@ -188,12 +178,7 @@ public class ItemReducerTests
 
     public class OnLoadQuantityTypesFinished
     {
-        private readonly OnLoadQuantityTypesFinishedFixture _fixture;
-
-        public OnLoadQuantityTypesFinished()
-        {
-            _fixture = new OnLoadQuantityTypesFinishedFixture();
-        }
+        private readonly OnLoadQuantityTypesFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadQuantityTypesFinished_WithValidData_ShouldSetQuantityTypes()
@@ -232,12 +217,7 @@ public class ItemReducerTests
 
     public class OnLoadQuantityTypesInPacketFinished
     {
-        private readonly OnLoadQuantityTypesInPacketFinishedFixture _fixture;
-
-        public OnLoadQuantityTypesInPacketFinished()
-        {
-            _fixture = new OnLoadQuantityTypesInPacketFinishedFixture();
-        }
+        private readonly OnLoadQuantityTypesInPacketFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadQuantityTypesInPacketFinished_WithValidData_ShouldSetQuantityTypesInPacket()
@@ -276,12 +256,7 @@ public class ItemReducerTests
 
     public class OnLoadActiveStoresFinished
     {
-        private readonly OnLoadActiveStoresFinishedFixture _fixture;
-
-        public OnLoadActiveStoresFinished()
-        {
-            _fixture = new OnLoadActiveStoresFinishedFixture();
-        }
+        private readonly OnLoadActiveStoresFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadActiveStoresFinished_WithValidData_ShouldSetStores()
@@ -314,6 +289,88 @@ public class ItemReducerTests
             public void SetupAction()
             {
                 Action = new LoadActiveStoresFinishedAction(ExpectedState.Stores);
+            }
+        }
+    }
+
+    public class OnSaveStoreFinished
+    {
+        private readonly OnSaveStoreFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnSaveStoreFinished_WithValidData_ShouldClearStores()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemReducer.OnSaveStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSaveStoreFinishedFixture : ItemReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ItemStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new ActiveStores(new List<ItemStore>(0))
+                };
+            }
+        }
+    }
+
+    public class OnDeleteStoreFinished
+    {
+        private readonly OnDeleteStoreFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnDeleteStoreFinished_WithValidData_ShouldClearStores()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemReducer.OnDeleteStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDeleteStoreFinishedFixture : ItemReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ItemStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new ActiveStores(new List<ItemStore>(0))
+                };
             }
         }
     }
