@@ -13,12 +13,7 @@ public class ShoppingListReducerTests
 {
     public class OnShoppingListEntered
     {
-        private readonly OnShoppingListEnteredFixture _fixture;
-
-        public OnShoppingListEntered()
-        {
-            _fixture = new OnShoppingListEnteredFixture();
-        }
+        private readonly OnShoppingListEnteredFixture _fixture = new();
 
         [Fact]
         public void OnShoppingListEntered_WithValidData_ShouldResetState()
@@ -77,12 +72,7 @@ public class ShoppingListReducerTests
 
     public class OnLoadQuantityTypesFinished
     {
-        private readonly OnLoadQuantityTypesFinishedFixture _fixture;
-
-        public OnLoadQuantityTypesFinished()
-        {
-            _fixture = new OnLoadQuantityTypesFinishedFixture();
-        }
+        private readonly OnLoadQuantityTypesFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadQuantityTypesFinished_WithValidData_ShouldSetQuantityTypes()
@@ -121,12 +111,7 @@ public class ShoppingListReducerTests
 
     public class OnLoadQuantityTypesInPacketFinished
     {
-        private readonly OnLoadQuantityTypesInPacketFinishedFixture _fixture;
-
-        public OnLoadQuantityTypesInPacketFinished()
-        {
-            _fixture = new OnLoadQuantityTypesInPacketFinishedFixture();
-        }
+        private readonly OnLoadQuantityTypesInPacketFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadQuantityTypesInPacketFinished_WithValidData_ShouldSetQuantityTypesInPacket()
@@ -165,12 +150,7 @@ public class ShoppingListReducerTests
 
     public class OnLoadAllActiveStoresFinished
     {
-        private readonly OnLoadAllActiveStoresFinishedFixture _fixture;
-
-        public OnLoadAllActiveStoresFinished()
-        {
-            _fixture = new OnLoadAllActiveStoresFinishedFixture();
-        }
+        private readonly OnLoadAllActiveStoresFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadAllActiveStoresFinished_WithValidData_ShouldSetAndOrderStores()
@@ -232,12 +212,7 @@ public class ShoppingListReducerTests
 
     public class OnSelectedStoreChanged
     {
-        private readonly OnSelectedStoreChangedFixture _fixture;
-
-        public OnSelectedStoreChanged()
-        {
-            _fixture = new OnSelectedStoreChangedFixture();
-        }
+        private readonly OnSelectedStoreChangedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedStoreChanged_WithValidData_ShouldSetSelectedStoreId()
@@ -294,12 +269,7 @@ public class ShoppingListReducerTests
 
     public class OnLoadShoppingListFinished
     {
-        private readonly OnLoadShoppingListFinishedFixture _fixture;
-
-        public OnLoadShoppingListFinished()
-        {
-            _fixture = new OnLoadShoppingListFinishedFixture();
-        }
+        private readonly OnLoadShoppingListFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadShoppingListFinished_WithEditModeActive_WithItemsInBasketNotVisible_ShouldResetToDefaultsAndSetShoppingList()
@@ -350,12 +320,7 @@ public class ShoppingListReducerTests
 
     public class OnToggleItemsInBasketVisible
     {
-        private readonly OnToggleItemsInBasketVisibleFixture _fixture;
-
-        public OnToggleItemsInBasketVisible()
-        {
-            _fixture = new OnToggleItemsInBasketVisibleFixture();
-        }
+        private readonly OnToggleItemsInBasketVisibleFixture _fixture = new();
 
         [Fact]
         public void OnToggleItemsInBasketVisible_WithItemsInBasketVisible_ShouldSetToNotVisible()
@@ -423,12 +388,7 @@ public class ShoppingListReducerTests
 
     public class OnToggleEditMode
     {
-        private readonly OnToggleEditModeFixture _fixture;
-
-        public OnToggleEditMode()
-        {
-            _fixture = new OnToggleEditModeFixture();
-        }
+        private readonly OnToggleEditModeFixture _fixture = new();
 
         [Fact]
         public void OnToggleEditMode_WithEditModeActive_ShouldSetToInactive()
@@ -496,12 +456,7 @@ public class ShoppingListReducerTests
 
     public class OnToggleShoppingListSectionExpansion
     {
-        private readonly OnToggleShoppingListSectionExpansionFixture _fixture;
-
-        public OnToggleShoppingListSectionExpansion()
-        {
-            _fixture = new OnToggleShoppingListSectionExpansionFixture();
-        }
+        private readonly OnToggleShoppingListSectionExpansionFixture _fixture = new();
 
         [Fact]
         public void OnToggleShoppingListSectionExpansion_WithSectionExpanded_ShouldCollapseSection()
@@ -656,6 +611,88 @@ public class ShoppingListReducerTests
             public void SetupRandomAction()
             {
                 Action = new ToggleShoppingListSectionExpansionAction(Guid.NewGuid());
+            }
+        }
+    }
+
+    public class OnSaveStoreFinished
+    {
+        private readonly OnSaveStoreFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnSaveStoreFinished_WithValidData_ShouldClearStores()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ShoppingListReducer.OnSaveStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSaveStoreFinishedFixture : ShoppingListReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new AllActiveStores(new List<ShoppingListStore>(0))
+                };
+            }
+        }
+    }
+
+    public class OnDeleteStoreFinished
+    {
+        private readonly OnDeleteStoreFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnDeleteStoreFinished_WithValidData_ShouldClearStores()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ShoppingListReducer.OnDeleteStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnDeleteStoreFinishedFixture : ShoppingListReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Stores = ExpectedState.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Stores = new AllActiveStores(new List<ShoppingListStore>(0))
+                };
             }
         }
     }
