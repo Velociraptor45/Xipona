@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
@@ -14,12 +13,6 @@ public static class ShoppingListReducer
     {
         return state with
         {
-            QuantityTypes = new List<QuantityType>(),
-            QuantityTypesInPacket = new List<QuantityTypeInPacket>(),
-            Stores = state.Stores with
-            {
-                Stores = new List<ShoppingListStore>()
-            },
             SelectedStoreId = Guid.Empty,
             ItemsInBasketVisible = true,
             EditModeActive = false,

@@ -475,6 +475,74 @@ public class ShoppingListEffectsTests
         }
     }
 
+    public class HandleShoppingListEnteredAction
+    {
+        private readonly HandleShoppingListEnteredActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleShoppingListEnteredAction_WithStateContainingNoStores_ShouldNotDoAnything()
+        {
+            // Arrange
+            _fixture.SetupStateContainingNoStores();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleShoppingListEnteredAction_WithStateContainingStores_ShouldDispatchStoreChangedAction()
+        {
+            // Arrange
+            _fixture.SetupStateContainingStores();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStoreChangedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleShoppingListEnteredActionFixture : ShoppingListEffectsFixture
+        {
+            public void SetupStateContainingNoStores()
+            {
+                State = State with
+                {
+                    Stores = State.Stores with
+                    {
+                        Stores = new List<ShoppingListStore>()
+                    }
+                };
+            }
+
+            public void SetupStateContainingStores()
+            {
+                State = State with
+                {
+                    Stores = State.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupDispatchingStoreChangedAction()
+            {
+                SetupDispatchingAction(new SelectedStoreChangedAction(State.Stores.Stores.First().Id));
+            }
+        }
+    }
+
     public class HandleSelectedStoreChangedAction
     {
         private readonly HandleSelectedStoreChangedActionFixture _fixture = new();

@@ -50,12 +50,6 @@ public class ShoppingListReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    QuantityTypes = new List<QuantityType>(),
-                    QuantityTypesInPacket = new List<QuantityTypeInPacket>(),
-                    Stores = ExpectedState.Stores with
-                    {
-                        Stores = new List<ShoppingListStore>()
-                    },
                     SelectedStoreId = Guid.Empty,
                     ItemsInBasketVisible = true,
                     EditModeActive = false,
