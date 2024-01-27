@@ -1,6 +1,7 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Fluxor
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Items
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
@@ -9,9 +10,11 @@
 @inject IItemPriceCalculationService ItemPriceCalculationService;
 
 @inject IState<ShoppingListState> State
+@inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
 
-<li class="py-2 mb-1 @(State.Value.EditModeActive ? "item-editing" : "item") @(Model.IsInBasket ? "in-basket" : "not-in-basket")" @onclick="OnItemClicked">
+<li class="py-2 mb-1 @(State.Value.EditModeActive ? "item-editing" : "item") @(Model.IsInBasket ? "in-basket" : "not-in-basket")" 
+        @onclick="OnItemClicked">
     @if (State.Value.EditModeActive)
     {
         <div class="d-flex flex-column ml-2">
@@ -50,17 +53,20 @@
                     </div>
                     @if (Model.IsTemporary)
                     {
+                        <!-- make item permanent -->
                         <div class="px-2 m-0 ml-auto">
                             <Button Class="px-2" OnClick="@OnMakeItemPermanentButtonClicked"
-                                    Disabled="@(Model.Id.ActualId == null)">
+                                    Disabled="@(Model.Id.ActualId == null || !SharedState.Value.IsOnline)">
                                 <i class="bi bi-download"></i>
                             </Button>
                         </div>
                     }
                     else
                     {
+                        <!-- update item price -->
                         <div class="px-2 m-0 ml-auto">
-                            <Button Class="px-2" OnClick="OnOpenUpdatePriceClicked">
+                            <Button Class="px-2" OnClick="OnOpenUpdatePriceClicked"
+                                    Disabled="@(!SharedState.Value.IsOnline)">
                                 <i class="bi bi-currency-dollar"></i>
                             </Button>
                         </div>
