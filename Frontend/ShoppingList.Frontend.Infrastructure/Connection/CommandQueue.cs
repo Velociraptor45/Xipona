@@ -90,6 +90,7 @@ public class CommandQueue : ICommandQueue, IDisposable
 
         _connectionAlive = true;
 
+        _dispatcher.Dispatch(new ApiConnectionRecoveredAction());
         _dispatcher.Dispatch(new QueueProcessedAction());
     }
 
