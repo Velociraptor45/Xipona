@@ -10,28 +10,29 @@ public class ShoppingListNotificationServiceMock : Mock<IShoppingListNotificatio
     {
     }
 
-    public void SetupNotifyWarning(string title, string message)
+    public void SetupNotifyWarningAsync(string title, string message)
     {
-        this.SetupInOrder(x => x.NotifyWarning(title, message));
+        this.SetupInOrder(x => x.NotifyWarningAsync(title, message)).Returns(Task.CompletedTask);
     }
 
-    public void SetupNotifyWarningContains(string title, string messagePart)
+    public void SetupNotifyWarningAsyncContains(string title, string messagePart)
     {
-        this.SetupInOrder(x => x.NotifyWarning(title, It.Is<string>(s => s.Contains(messagePart))));
+        this.SetupInOrder(x => x.NotifyWarningAsync(title, It.Is<string>(s => s.Contains(messagePart))))
+            .Returns(Task.CompletedTask);
     }
 
-    public void SetupNotifySuccess(string title, string message)
+    public void SetupNotifySuccessAsync(string title, string message)
     {
-        this.SetupInOrder(x => x.NotifySuccess(title, message));
+        this.SetupInOrder(x => x.NotifySuccessAsync(title, message)).Returns(Task.CompletedTask);
     }
 
-    public void SetupNotifySuccess(string message, double? duration = 2)
+    public void SetupNotifySuccessAsync(string message, double? duration = 2)
     {
-        this.SetupInOrder(x => x.NotifySuccess(message, duration));
+        this.SetupInOrder(x => x.NotifySuccessAsync(message, duration)).Returns(Task.CompletedTask);
     }
 
-    public void SetupNotifyError(string title, string message)
+    public void SetupNotifyErrorAsync(string title, string message)
     {
-        this.SetupInOrder(x => x.NotifyError(title, message));
+        this.SetupInOrder(x => x.NotifyErrorAsync(title, message)).Returns(Task.CompletedTask);
     }
 }

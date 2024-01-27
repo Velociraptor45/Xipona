@@ -100,7 +100,7 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new ModifyRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
-        _notificationService.NotifySuccess($"Successfully modified recipe {recipe.Name}");
+        await _notificationService.NotifySuccessAsync($"Successfully modified recipe {recipe.Name}");
     }
 
     [EffectMethod(typeof(CreateRecipeAction))]
@@ -131,7 +131,7 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new CreateRecipeFinishedAction());
         dispatcher.Dispatch(new LeaveRecipeEditorAction());
-        _notificationService.NotifySuccess($"Successfully created recipe {recipe.Name}");
+        await _notificationService.NotifySuccessAsync($"Successfully created recipe {recipe.Name}");
     }
 
     [EffectMethod(typeof(CreateNewRecipeTagAction))]
@@ -211,7 +211,7 @@ public sealed class RecipeEditorEffects
 
         dispatcher.Dispatch(new AddItemsToShoppingListFinishedAction());
         dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
-        _notificationService.NotifySuccess("Successfully added items to shopping lists");
+        await _notificationService.NotifySuccessAsync("Successfully added items to shopping lists");
     }
 
     private async Task LoadIngredientQuantityTypes(IDispatcher dispatcher)

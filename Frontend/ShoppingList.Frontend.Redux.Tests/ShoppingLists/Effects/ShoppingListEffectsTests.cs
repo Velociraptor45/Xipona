@@ -1152,7 +1152,7 @@ public class ShoppingListEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully updated item price");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync("Successfully updated item price");
             }
         }
     }
@@ -1308,7 +1308,7 @@ public class ShoppingListEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess("Finished shopping list");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync("Finished shopping list");
             }
         }
     }

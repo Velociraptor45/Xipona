@@ -558,14 +558,14 @@ public class ManufacturerEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created manufacturer {_manufacturerName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully created manufacturer {_manufacturerName}");
             }
 
             public void SetupSuccessModifyNotification()
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified manufacturer {_manufacturerName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully modified manufacturer {_manufacturerName}");
             }
 
             public void SetupDispatchingFinishedAction()
@@ -722,7 +722,7 @@ public class ManufacturerEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted manufacturer {State.Editor.Manufacturer!.Name}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully deleted manufacturer {State.Editor.Manufacturer!.Name}");
             }
         }
     }

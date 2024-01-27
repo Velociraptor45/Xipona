@@ -384,12 +384,12 @@ public class StoreEditorEffectsTests
 
             public void SetupSuccessCreateNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created store {_storeName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully created store {_storeName}");
             }
 
             public void SetupSuccessModifyNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified store {_storeName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully modified store {_storeName}");
             }
         }
     }
@@ -546,7 +546,7 @@ public class StoreEditorEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted store {_storeName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully deleted store {_storeName}");
             }
         }
     }

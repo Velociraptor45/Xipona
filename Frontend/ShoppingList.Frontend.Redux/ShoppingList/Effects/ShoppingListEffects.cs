@@ -212,7 +212,7 @@ public class ShoppingListEffects
             _state.Value.PriceUpdate.Price));
 
         dispatcher.Dispatch(new ClosePriceUpdaterAction());
-        _notificationService.NotifySuccess("Successfully updated item price");
+        await _notificationService.NotifySuccessAsync("Successfully updated item price");
     }
 
     [EffectMethod(typeof(FinishShoppingListAction))]
@@ -247,7 +247,7 @@ public class ShoppingListEffects
 
         dispatcher.Dispatch(new FinishShoppingListFinishedAction());
         dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
-        _notificationService.NotifySuccess("Finished shopping list");
+        await _notificationService.NotifySuccessAsync("Finished shopping list");
     }
 
     private async Task LoadShoppingList(Guid storeId, IDispatcher dispatcher)

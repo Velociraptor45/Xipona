@@ -46,7 +46,7 @@ public class NotificationEffectsTests
 
             public void SetupNotifyError()
             {
-                NotificationServiceMock.SetupNotifyError(_title, _message);
+                NotificationServiceMock.SetupNotifyErrorAsync(_title, _message);
             }
 
             public void SetupAction()
@@ -88,7 +88,7 @@ public class NotificationEffectsTests
 
             public void SetupNotifyError()
             {
-                NotificationServiceMock.SetupNotifyError(_title, _message);
+                NotificationServiceMock.SetupNotifyErrorAsync(_title, _message);
             }
 
             public void SetupAction()
@@ -146,7 +146,7 @@ public class NotificationEffectsTests
 
             public void SetupNotifyError()
             {
-                NotificationServiceMock.SetupNotifyError("An error occurred", _message);
+                NotificationServiceMock.SetupNotifyErrorAsync("An error occurred", _message);
             }
 
             public void SetupAction()
