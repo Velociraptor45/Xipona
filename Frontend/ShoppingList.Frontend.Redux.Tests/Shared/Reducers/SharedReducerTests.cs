@@ -98,6 +98,108 @@ public class SharedReducerTests
         }
     }
 
+    public class OnApiConnectionDied
+    {
+        private readonly OnApiConnectionDiedFixture _fixture = new();
+
+        [Fact]
+        public void OnApiConnectionDied_WithApplicationOnline_ShouldSetIsOnlineFalse()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithIsOnline();
+            _fixture.SetupExpectedStateWithIsNotOnline();
+
+            // Act
+            var result = SharedReducer.OnApiConnectionDied(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnApiConnectionDied_WithApplicationNotOnline_ShouldSetIsOnlineFalse()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithIsNotOnline();
+            _fixture.SetupExpectedStateWithIsNotOnline();
+
+            // Act
+            var result = SharedReducer.OnApiConnectionDied(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnApiConnectionDiedFixture : SharedReducerFixture
+        {
+            public void SetupInitialStateWithIsOnline()
+            {
+                InitialState = ExpectedState with { IsOnline = true };
+            }
+
+            public void SetupInitialStateWithIsNotOnline()
+            {
+                InitialState = ExpectedState with { IsOnline = false };
+            }
+
+            public void SetupExpectedStateWithIsNotOnline()
+            {
+                ExpectedState = ExpectedState with { IsOnline = false };
+            }
+        }
+    }
+
+    public class OnApiConnectionRecovered
+    {
+        private readonly OnApiConnectionRecoveredFixture _fixture = new();
+
+        [Fact]
+        public void OnApiConnectionRecovered_WithApplicationOnline_ShouldSetIsOnlineTrue()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithIsOnline();
+            _fixture.SetupExpectedStateWithIsOnline();
+
+            // Act
+            var result = SharedReducer.OnApiConnectionRecovered(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnApiConnectionRecovered_WithApplicationNotOnline_ShouldSetIsOnlineTrue()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithIsNotOnline();
+            _fixture.SetupExpectedStateWithIsOnline();
+
+            // Act
+            var result = SharedReducer.OnApiConnectionRecovered(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnApiConnectionRecoveredFixture : SharedReducerFixture
+        {
+            public void SetupInitialStateWithIsOnline()
+            {
+                InitialState = ExpectedState with { IsOnline = true };
+            }
+
+            public void SetupInitialStateWithIsNotOnline()
+            {
+                InitialState = ExpectedState with { IsOnline = false };
+            }
+
+            public void SetupExpectedStateWithIsOnline()
+            {
+                ExpectedState = ExpectedState with { IsOnline = true };
+            }
+        }
+    }
+
     private abstract class SharedReducerFixture
     {
         public SharedState ExpectedState { get; protected set; } = new DomainTestBuilder<SharedState>().Create();

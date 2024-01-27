@@ -107,9 +107,9 @@ public class NotificationEffectsTests
 
             private sealed class ApiExceptionContentDeserializer : IApiExceptionContentDeserializer
             {
-                public T Deserialize<T>(string content)
+                public T Deserialize<T>(string? content)
                 {
-                    return JsonSerializer.Deserialize<T>(content)!;
+                    return JsonSerializer.Deserialize<T>(content!)!;
                 }
             }
         }

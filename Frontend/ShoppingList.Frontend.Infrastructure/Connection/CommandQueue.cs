@@ -17,7 +17,7 @@ using System.Timers;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Connection;
 
-public class CommandQueue : ICommandQueue
+public class CommandQueue : ICommandQueue, IDisposable
 {
     private readonly IApiClient _commandClient;
     private readonly IRequestSenderStrategy _senderStrategy;
@@ -26,6 +26,7 @@ public class CommandQueue : ICommandQueue
 
     private bool _connectionAlive = true;
     private static readonly List<IApiRequest> _queue = new();
+    private readonly Timer _timer;
 
     public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher,
         CommandQueueConfig config, ILogger<CommandQueue> logger)
@@ -40,13 +41,13 @@ public class CommandQueue : ICommandQueue
 
         try
         {
-            var timer = new Timer(config.ConnectionRetryInterval);
-            timer.Elapsed += async (_, _) =>
+            _timer = new Timer(config.ConnectionRetryInterval);
+            _timer.Elapsed += async (_, _) =>
             {
                 if (!_connectionAlive)
                     await RetryConnectionAsync();
             };
-            timer.Start();
+            _timer.Start();
         }
         catch (Exception e)
         {
@@ -89,6 +90,7 @@ public class CommandQueue : ICommandQueue
 
         _connectionAlive = true;
 
+        _dispatcher.Dispatch(new ApiConnectionRecoveredAction());
         _dispatcher.Dispatch(new QueueProcessedAction());
     }
 
@@ -193,5 +195,10 @@ public class CommandQueue : ICommandQueue
         {
             NeedsReload = true;
         }
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
     }
 }
