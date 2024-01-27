@@ -391,14 +391,14 @@ public class ItemCategoryEditorEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item category {_manufacturerName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully created item category {_manufacturerName}");
             }
 
             public void SetupSuccessModifyNotification()
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item category {_manufacturerName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully modified item category {_manufacturerName}");
             }
 
             public void SetupDispatchingFinishedAction()
@@ -555,7 +555,7 @@ public class ItemCategoryEditorEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted item category {State.Editor.ItemCategory!.Name}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully deleted item category {State.Editor.ItemCategory!.Name}");
             }
         }
     }

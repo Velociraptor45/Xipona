@@ -1,32 +1,45 @@
-﻿﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using Fluxor
+﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Extensions.Logging
-@using Components.Common
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions
 
 @inherits LayoutComponentBase
 
 @inject ILogger<MainLayout> Logger
+@inject IDispatcher Dispatcher
 
 <NavMenu />
 
 <div class="main">
-    <div class="content">
-        @Body
-    </div>
-
     <ErrorBoundary @ref="_errorBoundary">
+        <ChildContent>
+            <div class="content">
+                @Body
+            </div>
+        </ChildContent>
         <ErrorContent Context="ex">
-            @{ Logger.LogError(ex, "An unhandled exception occurred"); }
+            @{
+                OnError(ex);
+            }
+            <div class="content">
+                @Body
+            </div>
         </ErrorContent>
     </ErrorBoundary>
 </div>
 
 @code {
-
     private ErrorBoundary _errorBoundary;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         _errorBoundary?.Recover();
+    }
+
+    private void OnError(Exception ex)
+    {
+        Logger.LogError(ex, "An unhandled exception occurred");
+        Dispatcher.Dispatch(new DisplayUnhandledErrorAction(ex.Message));
     }
 }

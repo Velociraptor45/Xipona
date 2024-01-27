@@ -53,7 +53,7 @@ public class ShoppingListProcessingEffectsTests
             public void SetupNotifyWarning()
             {
                 TestPropertyNotSetException.ThrowIfNull(_request);
-                NotificationServiceMock.SetupNotifyWarningContains("Request failed", _request.ItemName);
+                NotificationServiceMock.SetupNotifyWarningAsyncContains("Request failed", _request.ItemName);
             }
 
             public void SetupAction(Type requestType)
@@ -91,7 +91,7 @@ public class ShoppingListProcessingEffectsTests
         {
             public void SetupNotifyWarning()
             {
-                NotificationServiceMock.SetupNotifyWarningContains("Connection interrupted", "Connection to the server was interrupted.");
+                NotificationServiceMock.SetupNotifyWarningAsyncContains("Connection interrupted", "Connection to the server was interrupted.");
             }
         }
     }
@@ -123,7 +123,7 @@ public class ShoppingListProcessingEffectsTests
         {
             public void SetupNotifySuccess()
             {
-                NotificationServiceMock.SetupNotifySuccess("Sync completed", "Synchronization with the server completed.");
+                NotificationServiceMock.SetupNotifySuccessAsync("Sync completed", "Synchronization with the server completed.");
             }
 
             public void SetupDispatchingReloadCurrentShoppingListAction()

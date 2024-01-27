@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports
+﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports
 {
     public interface IShoppingListNotificationService
     {
-        void Notify(string title, string message);
+        Task NotifyAsync(string title, string message);
 
-        void NotifySuccess(string title, string message);
+        Task NotifySuccessAsync(string title, string message);
 
-        void NotifySuccess(string message, double? duration = 2);
+        Task NotifySuccessAsync(string message, double? duration = 2);
 
-        void NotifyWarning(string title, string message);
+        Task NotifyWarningAsync(string title, string message);
 
-        void NotifyError(string title, string message);
-
-        void NotifyError(string title, string message, RenderFragment button);
+        Task NotifyErrorAsync(string title, string message);
     }
 }

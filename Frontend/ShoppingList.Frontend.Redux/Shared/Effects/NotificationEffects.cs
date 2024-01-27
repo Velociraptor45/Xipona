@@ -15,19 +15,23 @@ public class NotificationEffects
     }
 
     [EffectMethod]
-    public Task HandleDisplayErrorNotificationAction(DisplayErrorNotificationAction action, IDispatcher dispatcher)
+    public async Task HandleDisplayErrorNotificationAction(DisplayErrorNotificationAction action, IDispatcher dispatcher)
     {
-        _notificationService.NotifyError(action.Title, action.Message);
-        return Task.CompletedTask;
+        await _notificationService.NotifyErrorAsync(action.Title, action.Message);
     }
 
     [EffectMethod]
-    public Task HandleDisplayApiExceptionNotificationAction(DisplayApiExceptionNotificationAction action,
+    public async Task HandleDisplayApiExceptionNotificationAction(DisplayApiExceptionNotificationAction action,
         IDispatcher dispatcher)
     {
         var contract = action.Exception.DeserializeContent<ErrorContract>();
 
-        _notificationService.NotifyError(action.Title, contract.Message);
-        return Task.CompletedTask;
+        await _notificationService.NotifyErrorAsync(action.Title, contract.Message);
+    }
+
+    [EffectMethod]
+    public async Task HandleDisplayUnhandledErrorAction(DisplayUnhandledErrorAction action, IDispatcher dispatcher)
+    {
+        await _notificationService.NotifyErrorAsync("An error occurred", action.Message);
     }
 }
