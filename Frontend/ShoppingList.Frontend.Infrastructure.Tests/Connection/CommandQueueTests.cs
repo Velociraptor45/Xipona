@@ -51,6 +51,7 @@ public class CommandQueueTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupApiAlive();
+                _fixture.SetupDispatchingConnectionRecoverAction();
                 _fixture.SetupDispatchingProcessedAction();
             });
             var sut = _fixture.CreateSut();
@@ -72,6 +73,7 @@ public class CommandQueueTests
             {
                 _fixture.SetupApiAlive();
                 _fixture.SetupSendingRequestSucceeded();
+                _fixture.SetupDispatchingConnectionRecoverAction();
                 _fixture.SetupDispatchingProcessedAction();
             });
             var sut = _fixture.CreateSut();
@@ -101,6 +103,7 @@ public class CommandQueueTests
                 _fixture.SetupDispatchingErrorOccurredAction();
                 _fixture.SetupDispatchingLogAction();
                 _fixture.SetupDispatchingRequestReloadAction();
+                _fixture.SetupDispatchingConnectionRecoverAction();
                 _fixture.SetupDispatchingProcessedAction();
             });
             var sut = _fixture.CreateSut();
@@ -155,6 +158,7 @@ public class CommandQueueTests
                 _fixture.SetupDispatchingErrorOccurredAction();
                 _fixture.SetupDispatchingLogAction();
                 _fixture.SetupDispatchingRequestReloadAction();
+                _fixture.SetupDispatchingConnectionRecoverAction();
                 _fixture.SetupDispatchingProcessedAction();
             });
             var sut = _fixture.CreateSut();
@@ -229,6 +233,11 @@ public class CommandQueueTests
             public void SetupDispatchingProcessedAction()
             {
                 DispatcherMock.SetupDispatch(new QueueProcessedAction());
+            }
+
+            public void SetupDispatchingConnectionRecoverAction()
+            {
+                DispatcherMock.SetupDispatch(new ApiConnectionRecoveredAction());
             }
 
             public void SetupDispatchingErrorOccurredAction()
