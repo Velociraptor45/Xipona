@@ -58,7 +58,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             {
                 Message = title,
                 Description = message,
-                //NotificationType = NotificationType.Error
+                NotificationType = NotificationType.Error
             });
         }
 
@@ -68,7 +68,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             {
                 Message = title,
                 Description = message,
-                //NotificationType = NotificationType.Error,
+                NotificationType = NotificationType.Error,
                 Btn = button
             });
         }

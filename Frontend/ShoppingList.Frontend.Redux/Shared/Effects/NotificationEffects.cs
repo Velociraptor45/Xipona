@@ -30,4 +30,11 @@ public class NotificationEffects
         _notificationService.NotifyError(action.Title, contract.Message);
         return Task.CompletedTask;
     }
+
+    [EffectMethod]
+    public Task HandleDisplayUnhandledErrorAction(DisplayUnhandledErrorAction action, IDispatcher dispatcher)
+    {
+        _notificationService.NotifyError("An error occurred", action.Message);
+        return Task.CompletedTask;
+    }
 }

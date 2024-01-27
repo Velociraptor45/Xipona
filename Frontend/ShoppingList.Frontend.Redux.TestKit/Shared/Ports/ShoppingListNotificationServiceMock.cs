@@ -29,4 +29,9 @@ public class ShoppingListNotificationServiceMock : Mock<IShoppingListNotificatio
     {
         this.SetupInOrder(x => x.NotifySuccess(message, duration));
     }
+
+    public void SetupNotifyError(string title, string message)
+    {
+        this.SetupInOrder(x => x.NotifyError(title, message));
+    }
 }
