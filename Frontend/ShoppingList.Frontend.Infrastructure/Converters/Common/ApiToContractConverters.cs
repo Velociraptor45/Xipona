@@ -1,21 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common
 {
-    [Serializable]
     public class ApiToContractConverters : Dictionary<(Type, Type), IToContractConverter>
     {
-        public ApiToContractConverters()
-        {
-        }
-
-        protected ApiToContractConverters(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
         public IEnumerable<TContract> ToContract<TDomain, TContract>(IEnumerable<TDomain> domain)
         {
             if (domain == null)
