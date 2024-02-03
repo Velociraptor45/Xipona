@@ -25,6 +25,11 @@ public class NotificationEffects
         IDispatcher dispatcher)
     {
         var contract = action.Exception.DeserializeContent<ErrorContract>();
+        if (contract is null)
+        {
+            await _notificationService.NotifyErrorAsync(action.Title, action.Exception.Message);
+            return;
+        }
 
         await _notificationService.NotifyErrorAsync(action.Title, contract.Message);
     }
