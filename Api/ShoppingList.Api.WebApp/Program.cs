@@ -151,6 +151,7 @@ void SetupSecurity()
     }
 
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+    JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
