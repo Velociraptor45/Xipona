@@ -812,7 +812,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -1022,7 +1022,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -1230,7 +1230,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -1407,7 +1407,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()

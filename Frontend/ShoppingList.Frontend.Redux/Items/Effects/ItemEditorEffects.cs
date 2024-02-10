@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Search;
 using ProjectHermes.ShoppingList.Frontend.Redux.Items.States;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Constants;
@@ -107,8 +108,8 @@ public sealed class ItemEditorEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod(typeof(LeaveItemEditorAction))]
-    public Task HandleLeaveItemEditorAction(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleLeaveItemEditorAction(LeaveItemEditorAction action, IDispatcher dispatcher)
     {
         if (_leaveEditorTimer is not null)
         {
@@ -117,6 +118,10 @@ public sealed class ItemEditorEffects
         }
 
         _navigationManager.NavigateTo(PageRoutes.Items);
+
+        if(action.TriggeredBySave)
+            dispatcher.Dispatch(new SearchItemsAction());
+
         return Task.CompletedTask;
     }
 
@@ -154,7 +159,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction(true));
         _notificationService.NotifySuccess($"Successfully created item {item.Name}");
     }
 
@@ -192,7 +197,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction(true));
         _notificationService.NotifySuccess($"Successfully updated item {item.Name}");
     }
 
@@ -230,7 +235,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new ModifyItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction(true));
         _notificationService.NotifySuccess($"Successfully modified item {item.Name}");
     }
 
@@ -272,7 +277,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction());
+        dispatcher.Dispatch(new LeaveItemEditorAction(true));
         _notificationService.NotifySuccess($"Successfully made item {item.Name} permanent");
     }
 
@@ -319,7 +324,7 @@ public sealed class ItemEditorEffects
 
         _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
         _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction());
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction(true));
         _leaveEditorTimer.Start();
 
         return Task.CompletedTask;
