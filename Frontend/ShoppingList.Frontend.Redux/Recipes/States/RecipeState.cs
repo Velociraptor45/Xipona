@@ -41,6 +41,7 @@ public class RecipeFeatureState : Feature<RecipeState>
                 string.Empty,
                 false,
                 false,
+                SearchType.None,
                 new List<RecipeSearchResult>(0),
                 new List<Guid>(0)),
             new RecipeEditor(

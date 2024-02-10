@@ -27,7 +27,7 @@ public class RecipeEffects
     {
         if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
-            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0)));
+            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0), SearchType.Name));
             return;
         }
 
@@ -47,7 +47,7 @@ public class RecipeEffects
             return;
         }
 
-        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList()));
+        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList(), SearchType.Name));
     }
 
     [EffectMethod(typeof(SearchRecipeByTagsAction))]
@@ -55,7 +55,7 @@ public class RecipeEffects
     {
         if (!_state.Value.Search.SelectedRecipeTagIds.Any())
         {
-            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0)));
+            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0), SearchType.Tag));
             return;
         }
 
@@ -75,7 +75,7 @@ public class RecipeEffects
             return;
         }
 
-        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList()));
+        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList(), SearchType.Tag));
     }
 
     [EffectMethod]

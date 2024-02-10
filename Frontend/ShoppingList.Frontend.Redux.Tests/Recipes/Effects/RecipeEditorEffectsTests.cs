@@ -467,7 +467,7 @@ public class RecipeEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveRecipeEditorAction>();
+                SetupDispatchingAction(new LeaveRecipeEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -617,7 +617,7 @@ public class RecipeEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveRecipeEditorAction>();
+                SetupDispatchingAction(new LeaveRecipeEditorAction(true));
             }
 
             public void SetupSuccessNotification()

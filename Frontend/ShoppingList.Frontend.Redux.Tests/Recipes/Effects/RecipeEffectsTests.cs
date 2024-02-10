@@ -137,13 +137,13 @@ public class RecipeEffectsTests
 
             public void SetupDispatchingEmptyFinishedAction()
             {
-                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>()));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Name));
             }
 
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Name));
             }
         }
     }
@@ -279,13 +279,13 @@ public class RecipeEffectsTests
 
             public void SetupDispatchingEmptyFinishedAction()
             {
-                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>()));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Tag));
             }
 
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Tag));
             }
         }
     }

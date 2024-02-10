@@ -65,10 +65,24 @@ public sealed class RecipeEditorEffects
         dispatcher.Dispatch(new LoadRecipeForEditingFinishedAction(result));
     }
 
-    [EffectMethod(typeof(LeaveRecipeEditorAction))]
-    public Task HandleLeaveRecipeEditor(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleLeaveRecipeEditor(LeaveRecipeEditorAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo(PageRoutes.Recipes);
+
+        if (action.TriggeredBySave)
+        {
+            switch (_state.Value.Search.LastSearchType)
+            {
+                case SearchType.Name:
+                    dispatcher.Dispatch(new SearchRecipeByNameAction());
+                    break;
+                case SearchType.Tag:
+                    dispatcher.Dispatch(new SearchRecipeByTagsAction());
+                    break;
+            }
+        }
+
         return Task.CompletedTask;
     }
 
@@ -99,7 +113,7 @@ public sealed class RecipeEditorEffects
         }
 
         dispatcher.Dispatch(new ModifyRecipeFinishedAction());
-        dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        dispatcher.Dispatch(new LeaveRecipeEditorAction(true));
         _notificationService.NotifySuccess($"Successfully modified recipe {recipe.Name}");
     }
 
@@ -130,7 +144,7 @@ public sealed class RecipeEditorEffects
         }
 
         dispatcher.Dispatch(new CreateRecipeFinishedAction());
-        dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        dispatcher.Dispatch(new LeaveRecipeEditorAction(true));
         _notificationService.NotifySuccess($"Successfully created recipe {recipe.Name}");
     }
 

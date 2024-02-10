@@ -127,7 +127,8 @@ public class RecipeReducerTests
                     Search = ExpectedState.Search with
                     {
                         TriggeredAtLeastOnce = false,
-                        SearchResults = new DomainTestBuilder<RecipeSearchResult>().CreateMany(2).ToList()
+                        SearchResults = new DomainTestBuilder<RecipeSearchResult>().CreateMany(2).ToList(),
+                        LastSearchType = new DomainTestBuilder<SearchType>().Create()
                     }
                 };
             }
@@ -157,7 +158,9 @@ public class RecipeReducerTests
 
             public void SetupAction()
             {
-                Action = new SearchRecipeFinishedAction(ExpectedState.Search.SearchResults.Reverse().ToList());
+                Action = new SearchRecipeFinishedAction(
+                    ExpectedState.Search.SearchResults.Reverse().ToList(),
+                    ExpectedState.Search.LastSearchType);
             }
         }
     }

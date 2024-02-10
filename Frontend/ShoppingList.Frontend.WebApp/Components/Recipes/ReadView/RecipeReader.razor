@@ -69,7 +69,7 @@
 @code {
     private void OnBackButtonClicked()
     {
-        Dispatcher.Dispatch(new LeaveRecipeEditorAction());
+        Dispatcher.Dispatch(new LeaveRecipeEditorAction(false));
     }
 
     private void OnToggleEditModeButtonClicked()
