@@ -9,14 +9,51 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.ItemCategories.Reducer
 
 public class ItemCategoryReducerTests
 {
+    public class OnItemCategorySearchInputChanged
+    {
+        private readonly OnItemCategorySearchInputChangedFixture _fixture = new();
+
+        [Fact]
+        public void OnItemCategorySearchInputChanged_WithSearchNotLoading_ShouldSetLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemCategoryReducer.OnItemCategorySearchInputChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemCategorySearchInputChangedFixture : ItemCategoryReducerFixture
+        {
+            public ItemCategorySearchInputChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        Input = new DomainTestBuilder<string>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new ItemCategorySearchInputChangedAction(ExpectedState.Search.Input);
+            }
+        }
+    }
+
     public class OnSearchItemCategoriesStarted
     {
-        private readonly OnSearchItemCategoriesStartedFixture _fixture;
-
-        public OnSearchItemCategoriesStarted()
-        {
-            _fixture = new OnSearchItemCategoriesStartedFixture();
-        }
+        private readonly OnSearchItemCategoriesStartedFixture _fixture = new();
 
         [Fact]
         public void OnSearchItemCategoriesStarted_WithSearchNotLoading_ShouldSetLoading()
@@ -84,12 +121,7 @@ public class ItemCategoryReducerTests
 
     public class OnSearchItemCategoriesFinished
     {
-        private readonly OnSearchItemCategoriesFinishedFixture _fixture;
-
-        public OnSearchItemCategoriesFinished()
-        {
-            _fixture = new OnSearchItemCategoriesFinishedFixture();
-        }
+        private readonly OnSearchItemCategoriesFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSearchItemCategoriesFinished_WithSearchNotLoading_ShouldSetNotLoadingAndSortResults()
