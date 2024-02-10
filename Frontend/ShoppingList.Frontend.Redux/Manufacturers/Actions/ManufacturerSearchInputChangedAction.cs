@@ -1,3 +1,2 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Actions;
-
-public record SearchManufacturersAction();
+public record ManufacturerSearchInputChangedAction(string Input);

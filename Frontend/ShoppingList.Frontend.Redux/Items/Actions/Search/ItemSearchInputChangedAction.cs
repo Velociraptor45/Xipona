@@ -1,2 +1,2 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Items.Actions.Search;
-public record SearchItemsAction();
+public record ItemSearchInputChangedAction(string Input);

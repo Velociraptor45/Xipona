@@ -16,6 +16,7 @@ public class ItemCategoryFeatureState : Feature<ItemCategoryState>
     {
         return new ItemCategoryState(
             new ItemCategorySearch(
+                string.Empty,
                 false,
                 false,
                 new List<ItemCategorySearchResult>()),

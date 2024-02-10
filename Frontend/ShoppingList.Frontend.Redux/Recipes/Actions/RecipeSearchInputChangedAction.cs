@@ -1,2 +1,2 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Actions;
-public record SearchRecipeByNameAction();
+public record RecipeSearchInputChangedAction(string Input);

@@ -8,15 +8,14 @@
 @inject IDispatcher Dispatcher
 
 <div class="d-flex search-bar">
-    <Input TValue="string" @bind-value="@input" @ref="_searchInput" 
-           OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name"></Input>
+    <Input TValue="string" OnInput="OnSearchInputChanged" @ref="_searchInput"
+           Value="@State.Value.Search.Input" OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name"></Input>
     <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">
         <i class="bi bi-search"></i>
     </Button>
 </div>
 
 @code {
-    private string input = "";
     private Input<string> _searchInput;
 
     protected override void OnAfterRender(bool firstRender)
@@ -27,8 +26,14 @@
             _searchInput.Focus();
     }
 
+    private void OnSearchInputChanged(ChangeEventArgs args)
+    {
+        var input = args.Value?.ToString() ?? string.Empty;
+        Dispatcher.Dispatch(new ItemSearchInputChangedAction(input));
+    }
+
     private void OnLoadButtonClicked()
     {
-        Dispatcher.Dispatch(new SearchItemsAction(input));
+        Dispatcher.Dispatch(new SearchItemsAction());
     }
 }

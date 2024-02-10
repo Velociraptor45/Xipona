@@ -467,13 +467,13 @@ public class RecipeEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveRecipeEditorAction>();
+                SetupDispatchingAction(new LeaveRecipeEditorAction(true));
             }
 
             public void SetupSuccessNotification()
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully modified recipe {_recipe.Name}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified recipe {_recipe.Name}");
             }
         }
     }
@@ -617,13 +617,13 @@ public class RecipeEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveRecipeEditorAction>();
+                SetupDispatchingAction(new LeaveRecipeEditorAction(true));
             }
 
             public void SetupSuccessNotification()
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully created recipe {_recipe.Name}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created recipe {_recipe.Name}");
             }
         }
     }
@@ -1078,7 +1078,7 @@ public class RecipeEditorEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync("Successfully added items to shopping lists");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully added items to shopping lists");
             }
         }
     }

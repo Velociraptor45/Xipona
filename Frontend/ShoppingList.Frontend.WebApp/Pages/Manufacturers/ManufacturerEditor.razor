@@ -68,7 +68,7 @@
 
     private void OnBackButtonClicked()
     {
-        Dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        Dispatcher.Dispatch(new LeaveManufacturerEditorAction(false));
     }
 
     private void OnSaveButtonClicked()

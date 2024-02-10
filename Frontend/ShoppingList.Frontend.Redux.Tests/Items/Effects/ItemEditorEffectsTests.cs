@@ -812,12 +812,12 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully created item {_itemName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item {_itemName}");
             }
         }
     }
@@ -1022,12 +1022,12 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully updated item {_itemName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully updated item {_itemName}");
             }
         }
     }
@@ -1230,12 +1230,12 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully modified item {_itemName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item {_itemName}");
             }
         }
     }
@@ -1407,12 +1407,12 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully made item {_itemName} permanent");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully made item {_itemName} permanent");
             }
         }
     }
@@ -1551,7 +1551,7 @@ public class ItemEditorEffectsTests
 
             public void SetupSuccessNotification()
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccessAsync($"Successfully deleted item {_itemName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted item {_itemName}");
             }
         }
     }

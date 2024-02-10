@@ -510,4 +510,26 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.DeleteItemCategoryAsync(manufacturerId)).ThrowsAsync(ex);
     }
+
+    public void SetupSearchItemsAsync(string searchInput, IEnumerable<ItemSearchResult> returnValue)
+    {
+        this.SetupInOrder(m => m.SearchItemsAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupSearchItemsAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.SearchItemsAsync(searchInput)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetAllActiveStoresForItemAsync(IEnumerable<ItemStore> returnValue)
+    {
+        this.SetupInOrder(m => m.GetAllActiveStoresForItemAsync())
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetAllActiveStoresForItemAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllActiveStoresForItemAsync()).ThrowsAsync(ex);
+    }
 }

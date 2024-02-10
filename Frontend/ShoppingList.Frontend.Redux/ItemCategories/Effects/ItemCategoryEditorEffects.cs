@@ -29,10 +29,14 @@ public class ItemCategoryEditorEffects
         _notificationService = notificationService;
     }
 
-    [EffectMethod(typeof(LeaveItemCategoryEditorAction))]
-    public Task HandleLeaveItemCategoryEditorAction(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleLeaveItemCategoryEditorAction(LeaveItemCategoryEditorAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo(PageRoutes.ItemCategories);
+
+        if(action.TriggeredBySave)
+            dispatcher.Dispatch(new SearchItemCategoriesAction());
+
         return Task.CompletedTask;
     }
 
@@ -86,7 +90,7 @@ public class ItemCategoryEditorEffects
                 dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
                 return;
             }
-            await _notificationService.NotifySuccessAsync($"Successfully created item category {editor.ItemCategory.Name}");
+            _notificationService.NotifySuccess($"Successfully created item category {editor.ItemCategory.Name}");
         }
         else
         {
@@ -112,11 +116,11 @@ public class ItemCategoryEditorEffects
                 editor.ItemCategory.Id,
                 editor.ItemCategory.Name);
             dispatcher.Dispatch(updateAction);
-            await _notificationService.NotifySuccessAsync($"Successfully modified item category {editor.ItemCategory.Name}");
+            _notificationService.NotifySuccess($"Successfully modified item category {editor.ItemCategory.Name}");
         }
 
         dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
-        dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
+        dispatcher.Dispatch(new LeaveItemCategoryEditorAction(true));
     }
 
     [EffectMethod(typeof(DeleteItemCategoryAction))]
@@ -144,7 +148,7 @@ public class ItemCategoryEditorEffects
 
         dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
         dispatcher.Dispatch(new CloseDeleteItemCategoryDialogAction(true));
-        await _notificationService.NotifySuccessAsync($"Successfully deleted item category {itemCategory.Name}");
+        _notificationService.NotifySuccess($"Successfully deleted item category {itemCategory.Name}");
     }
 
     [EffectMethod]
@@ -161,7 +165,7 @@ public class ItemCategoryEditorEffects
 
         _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
         _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemCategoryEditorAction(true));
         _leaveEditorTimer.Start();
 
         return Task.CompletedTask;

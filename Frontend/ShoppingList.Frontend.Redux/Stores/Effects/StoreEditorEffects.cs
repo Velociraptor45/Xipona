@@ -84,7 +84,7 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
-            await _notificationService.NotifySuccessAsync($"Successfully created store {store.Name}");
+            _notificationService.NotifySuccess($"Successfully created store {store.Name}");
         }
         else
         {
@@ -104,7 +104,7 @@ public class StoreEditorEffects
                 dispatcher.Dispatch(new SaveStoreFinishedAction());
                 return;
             }
-            await _notificationService.NotifySuccessAsync($"Successfully modified store {store.Name}");
+            _notificationService.NotifySuccess($"Successfully modified store {store.Name}");
         }
 
         dispatcher.Dispatch(new SaveStoreFinishedAction());
@@ -140,6 +140,6 @@ public class StoreEditorEffects
         dispatcher.Dispatch(new DeleteStoreFinishedAction());
         dispatcher.Dispatch(new CloseDeleteStoreDialogAction());
         dispatcher.Dispatch(new LeaveStoreEditorAction());
-        await _notificationService.NotifySuccessAsync($"Successfully deleted store {store.Name}");
+        _notificationService.NotifySuccess($"Successfully deleted store {store.Name}");
     }
 }

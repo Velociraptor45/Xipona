@@ -14,7 +14,7 @@ public class ShoppingListNotificationServiceTests
         private readonly NotifyAsyncFixture _fixture = new();
 
         [Fact]
-        public async Task NotifyAsync_WithMessage_CallsNotificationService()
+        public void NotifyAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -24,7 +24,7 @@ public class ShoppingListNotificationServiceTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.NotifyAsync(_fixture.Title, _fixture.Message);
+            sut.Notify(_fixture.Title, _fixture.Message);
 
             // Assert
             queue.VerifyOrder();
@@ -51,7 +51,7 @@ public class ShoppingListNotificationServiceTests
         private readonly NotifySuccessAsyncFixture _fixture = new();
 
         [Fact]
-        public async Task NotifySuccessAsync_WithMessage_CallsNotificationService()
+        public void NotifySuccessAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -61,7 +61,7 @@ public class ShoppingListNotificationServiceTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.NotifySuccessAsync(_fixture.Title, _fixture.Message);
+            sut.NotifySuccess(_fixture.Title, _fixture.Message);
 
             // Assert
             queue.VerifyOrder();
@@ -89,7 +89,7 @@ public class ShoppingListNotificationServiceTests
         private readonly NotifySuccessAsyncFixture _fixture = new();
 
         [Fact]
-        public async Task NotifySuccessAsync_WithDuration_CallsNotificationService()
+        public void NotifySuccessAsync_WithDuration_CallsNotificationService()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -99,14 +99,14 @@ public class ShoppingListNotificationServiceTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.NotifySuccessAsync(_fixture.Message, _fixture.Duration);
+            sut.NotifySuccess(_fixture.Message, _fixture.Duration);
 
             // Assert
             queue.VerifyOrder();
         }
 
         [Fact]
-        public async Task NotifySuccessAsync_WithoutDuration_CallsNotificationService()
+        public void NotifySuccessAsync_WithoutDuration_CallsNotificationService()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -116,7 +116,7 @@ public class ShoppingListNotificationServiceTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.NotifySuccessAsync(_fixture.Message);
+            sut.NotifySuccess(_fixture.Message);
 
             // Assert
             queue.VerifyOrder();
@@ -154,7 +154,7 @@ public class ShoppingListNotificationServiceTests
         private readonly NotifyWarningAsyncFixture _fixture = new();
 
         [Fact]
-        public async Task NotifyWarningAsync_WithMessage_CallsNotificationService()
+        public void NotifyWarningAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -164,7 +164,7 @@ public class ShoppingListNotificationServiceTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.NotifyWarningAsync(_fixture.Title, _fixture.Message);
+            sut.NotifyWarning(_fixture.Title, _fixture.Message);
 
             // Assert
             queue.VerifyOrder();
@@ -192,7 +192,7 @@ public class ShoppingListNotificationServiceTests
         private readonly NotifyErrorAsyncFixture _fixture = new();
 
         [Fact]
-        public async Task NotifyErrorAsync_WithMessage_CallsNotificationService()
+        public void NotifyErrorAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -202,7 +202,7 @@ public class ShoppingListNotificationServiceTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.NotifyErrorAsync(_fixture.Title, _fixture.Message);
+            sut.NotifyError(_fixture.Title, _fixture.Message);
 
             // Assert
             queue.VerifyOrder();
