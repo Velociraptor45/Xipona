@@ -29,8 +29,8 @@ public class ManufacturerEffects
         _notificationService = notificationService;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchManufacturersAction(SearchManufacturersAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchManufacturersAction))]
+    public async Task HandleSearchManufacturersAction(IDispatcher dispatcher)
     {
         if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {

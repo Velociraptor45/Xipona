@@ -25,15 +25,12 @@ public class ManufacturerEffectsTests
             {
                 _fixture.SetupSearchInputEmpty();
                 _fixture.SetupSearchResultEmpty();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchManufacturersAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchManufacturersAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -47,17 +44,14 @@ public class ManufacturerEffectsTests
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchResult();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchSucceeded();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchManufacturersAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchManufacturersAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -70,17 +64,14 @@ public class ManufacturerEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchFailedWithErrorInApi();
                 _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchManufacturersAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchManufacturersAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -93,17 +84,14 @@ public class ManufacturerEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest();
                 _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchManufacturersAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchManufacturersAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -113,7 +101,6 @@ public class ManufacturerEffectsTests
         {
             private string? _searchInput;
             private IReadOnlyCollection<ManufacturerSearchResult>? _searchResult;
-            public SearchManufacturersAction? Action { get; private set; }
 
             public void SetupSearchInput()
             {
@@ -171,11 +158,6 @@ public class ManufacturerEffectsTests
 
                 ApiClientMock.SetupGetManufacturerSearchResultsAsyncThrowing(_searchInput,
                     new DomainTestBuilder<HttpRequestException>().Create());
-            }
-
-            public void SetupAction()
-            {
-                Action = new SearchManufacturersAction();
             }
 
             public void SetupDispatchingFinishedAction()

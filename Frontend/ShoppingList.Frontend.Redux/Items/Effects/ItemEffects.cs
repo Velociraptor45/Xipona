@@ -35,8 +35,8 @@ public class ItemEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchItemsAction(SearchItemsAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchItemsAction))]
+    public async Task HandleSearchItemsAction(IDispatcher dispatcher)
     {
         if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
