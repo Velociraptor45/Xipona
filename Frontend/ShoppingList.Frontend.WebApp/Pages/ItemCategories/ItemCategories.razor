@@ -17,6 +17,7 @@
     <div class="d-flex mt-2 top-bar">
         <div class="d-flex search-bar">
             <Input TValue="string" OnInput="OnInputChanged" @ref="_searchInput"
+                   Value="@State.Value.Search.Input"
                    OnPressEnter="@OnLoadButtonClicked" 
                    Placeholder="Item category name"></Input>
             <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">

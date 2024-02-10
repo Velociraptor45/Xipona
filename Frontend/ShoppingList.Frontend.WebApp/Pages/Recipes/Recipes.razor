@@ -20,6 +20,7 @@
                 <div class="d-flex">
                     <Input TValue="string"
                            OnInput="OnInputChanged"
+                           Value="@State.Value.Search.Input"
                            OnPressEnter="@OnLoadByNameButtonClicked"
                            Placeholder="Recipe name"
                            @ref="_searchInput"></Input>

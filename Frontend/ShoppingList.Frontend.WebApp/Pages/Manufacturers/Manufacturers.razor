@@ -16,6 +16,7 @@
         <div class="d-flex search-bar">
             <Input TValue="string"
                    OnInput="OnInputChanged"
+                   Value="@State.Value.Search.Input"
                    @ref="_searchInput"
                    OnPressEnter="@OnLoadButtonClicked"
                    Placeholder="Manufacturer name"></Input>

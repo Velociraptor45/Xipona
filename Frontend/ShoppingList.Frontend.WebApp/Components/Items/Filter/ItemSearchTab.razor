@@ -8,8 +8,8 @@
 @inject IDispatcher Dispatcher
 
 <div class="d-flex search-bar">
-    <Input TValue="string" OnInput="OnSearchInputChanged" @ref="_searchInput" 
-           OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name"></Input>
+    <Input TValue="string" OnInput="OnSearchInputChanged" @ref="_searchInput"
+           Value="@State.Value.Search.Input" OnPressEnter="@OnLoadButtonClicked" Placeholder="Item name"></Input>
     <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">
         <i class="bi bi-search"></i>
     </Button>
