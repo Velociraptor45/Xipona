@@ -14,7 +14,8 @@
 <div class="manufacturers">
     <div class="d-flex mt-2 top-bar">
         <div class="d-flex search-bar">
-            <Input TValue="string" @bind-value="@_input"
+            <Input TValue="string"
+                   OnInput="OnInputChanged"
                    @ref="_searchInput"
                    OnPressEnter="@OnLoadButtonClicked"
                    Placeholder="Manufacturer name"></Input>
@@ -42,7 +43,6 @@
 </div>
 
 @code {
-    private string _input = "";
     private Input<string> _searchInput;
 
     protected override void OnAfterRender(bool firstRender)
@@ -52,10 +52,16 @@
         if (firstRender)
             _searchInput.Focus();
     }
+
+    private void OnInputChanged(ChangeEventArgs args)
+    {
+        var input = args.Value?.ToString() ?? string.Empty;
+        Dispatcher.Dispatch(new ManufacturerSearchInputChangedAction(input));
+    }
     
     private void OnLoadButtonClicked()
     {
-        Dispatcher.Dispatch(new SearchManufacturersAction(_input));
+        Dispatcher.Dispatch(new SearchManufacturersAction());
     }
 
     private void OnCreateManufacturerButtonClicked()

@@ -32,7 +32,7 @@ public class ManufacturerEffects
     [EffectMethod]
     public async Task HandleSearchManufacturersAction(SearchManufacturersAction action, IDispatcher dispatcher)
     {
-        if (string.IsNullOrWhiteSpace(action.SearchInput))
+        if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
             dispatcher.Dispatch(new SearchManufacturersFinishedAction(new List<ManufacturerSearchResult>()));
             return;
@@ -43,7 +43,7 @@ public class ManufacturerEffects
         IEnumerable<ManufacturerSearchResult> result;
         try
         {
-            result = await _client.GetManufacturerSearchResultsAsync(action.SearchInput);
+            result = await _client.GetManufacturerSearchResultsAsync(_state.Value.Search.Input);
         }
         catch (ApiException e)
         {

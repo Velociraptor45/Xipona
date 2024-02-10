@@ -118,11 +118,25 @@ public class ManufacturerEffectsTests
             public void SetupSearchInput()
             {
                 _searchInput = new DomainTestBuilder<string>().Create();
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
             }
 
             public void SetupSearchInputEmpty()
             {
                 _searchInput = string.Empty;
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
             }
 
             public void SetupSearchResult()
@@ -161,9 +175,7 @@ public class ManufacturerEffectsTests
 
             public void SetupAction()
             {
-                TestPropertyNotSetException.ThrowIfNull(_searchInput);
-
-                Action = new SearchManufacturersAction(_searchInput);
+                Action = new SearchManufacturersAction();
             }
 
             public void SetupDispatchingFinishedAction()
