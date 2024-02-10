@@ -67,10 +67,14 @@ public class ManufacturerEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod(typeof(LeaveManufacturerEditorAction))]
-    public Task HandleLeaveManufacturerEditorAction(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleLeaveManufacturerEditorAction(LeaveManufacturerEditorAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo(PageRoutes.Manufacturers);
+
+        if (action.TriggeredBySave)
+            dispatcher.Dispatch(new SearchManufacturersAction());
+
         return Task.CompletedTask;
     }
 
@@ -153,7 +157,7 @@ public class ManufacturerEffects
         }
 
         dispatcher.Dispatch(new SavingManufacturerFinishedAction());
-        dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        dispatcher.Dispatch(new LeaveManufacturerEditorAction(true));
     }
 
     [EffectMethod(typeof(DeleteManufacturerAction))]
@@ -198,7 +202,7 @@ public class ManufacturerEffects
 
         _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
         _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveManufacturerEditorAction(true));
         _leaveEditorTimer.Start();
 
         return Task.CompletedTask;

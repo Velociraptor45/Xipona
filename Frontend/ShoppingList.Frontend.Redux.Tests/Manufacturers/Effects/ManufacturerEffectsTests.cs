@@ -584,7 +584,7 @@ public class ManufacturerEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveManufacturerEditorAction>();
+                SetupDispatchingAction(new LeaveManufacturerEditorAction(true));
             }
         }
     }
