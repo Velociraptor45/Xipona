@@ -7,8 +7,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common
     {
         public IEnumerable<TDomain> ToDomain<TContract, TDomain>(IEnumerable<TContract> contract)
         {
-            if (contract is null)
-                throw new ArgumentNullException(nameof(contract));
+            ArgumentNullException.ThrowIfNull(contract);
 
             var typedConverter = GetConverter<TContract, TDomain>();
 
@@ -17,8 +16,7 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Common
 
         public TDomain ToDomain<TContract, TDomain>(TContract contract)
         {
-            if (contract == null)
-                throw new ArgumentNullException(nameof(contract));
+            ArgumentNullException.ThrowIfNull(contract);
 
             var typedConverter = GetConverter<TContract, TDomain>();
 
