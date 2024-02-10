@@ -127,7 +127,7 @@ public class ManufacturerEffects
                 dispatcher.Dispatch(new SavingManufacturerFinishedAction());
                 return;
             }
-            await _notificationService.NotifySuccessAsync($"Successfully created manufacturer {editor.Manufacturer.Name}");
+            _notificationService.NotifySuccess($"Successfully created manufacturer {editor.Manufacturer.Name}");
         }
         else
         {
@@ -153,7 +153,7 @@ public class ManufacturerEffects
                 editor.Manufacturer.Id,
                 editor.Manufacturer.Name);
             dispatcher.Dispatch(updateAction);
-            await _notificationService.NotifySuccessAsync($"Successfully modified manufacturer {editor.Manufacturer.Name}");
+            _notificationService.NotifySuccess($"Successfully modified manufacturer {editor.Manufacturer.Name}");
         }
 
         dispatcher.Dispatch(new SavingManufacturerFinishedAction());
@@ -185,7 +185,7 @@ public class ManufacturerEffects
 
         dispatcher.Dispatch(new DeletingManufacturerFinishedAction());
         dispatcher.Dispatch(new CloseDeleteManufacturerDialogAction(true));
-        await _notificationService.NotifySuccessAsync($"Successfully deleted manufacturer {manufacturer.Name}");
+        _notificationService.NotifySuccess($"Successfully deleted manufacturer {manufacturer.Name}");
     }
 
     [EffectMethod]

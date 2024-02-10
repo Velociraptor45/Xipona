@@ -20,7 +20,7 @@ public class ShoppingListProcessingEffects
     }
 
     [EffectMethod]
-    public async Task HandleApiRequestProcessingErrorOccurredAction(ApiRequestProcessingErrorOccurredAction action,
+    public Task HandleApiRequestProcessingErrorOccurredAction(ApiRequestProcessingErrorOccurredAction action,
         IDispatcher dispatcher)
     {
         var requestName = action.FailedRequest.GetType().Name;
@@ -34,20 +34,23 @@ public class ShoppingListProcessingEffects
             _ => "Processing the request failed."
         };
 
-        await _notificationService.NotifyWarningAsync("Request failed", message);
+        _notificationService.NotifyWarning("Request failed", message);
+        return Task.CompletedTask;
     }
 
     [EffectMethod(typeof(ApiConnectionDiedAction))]
-    public async Task HandleApiConnectionDiedAction(IDispatcher dispatcher)
+    public Task HandleApiConnectionDiedAction(IDispatcher dispatcher)
     {
-        await _notificationService.NotifyWarningAsync("Connection interrupted", "Connection to the server was interrupted.");
+        _notificationService.NotifyWarning("Connection interrupted", "Connection to the server was interrupted.");
+        return Task.CompletedTask;
     }
 
     [EffectMethod(typeof(QueueProcessedAction))]
-    public async Task HandleQueueProcessedAction(IDispatcher dispatcher)
+    public Task HandleQueueProcessedAction(IDispatcher dispatcher)
     {
-        await _notificationService.NotifySuccessAsync("Sync completed", "Synchronization with the server completed.");
+        _notificationService.NotifySuccess("Sync completed", "Synchronization with the server completed.");
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
+        return Task.CompletedTask;
     }
 
     [EffectMethod(typeof(ReloadAfterErrorAction))]

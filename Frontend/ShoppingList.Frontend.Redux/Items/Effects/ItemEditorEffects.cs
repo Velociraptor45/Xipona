@@ -155,7 +155,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
-        await _notificationService.NotifySuccessAsync($"Successfully created item {item.Name}");
+        _notificationService.NotifySuccess($"Successfully created item {item.Name}");
     }
 
     [EffectMethod(typeof(UpdateItemAction))]
@@ -193,7 +193,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
-        await _notificationService.NotifySuccessAsync($"Successfully updated item {item.Name}");
+        _notificationService.NotifySuccess($"Successfully updated item {item.Name}");
     }
 
     [EffectMethod(typeof(ModifyItemAction))]
@@ -231,7 +231,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new ModifyItemFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
-        await _notificationService.NotifySuccessAsync($"Successfully modified item {item.Name}");
+        _notificationService.NotifySuccess($"Successfully modified item {item.Name}");
     }
 
     [EffectMethod(typeof(MakeItemPermanentAction))]
@@ -273,7 +273,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
         dispatcher.Dispatch(new LeaveItemEditorAction());
-        await _notificationService.NotifySuccessAsync($"Successfully made item {item.Name} permanent");
+        _notificationService.NotifySuccess($"Successfully made item {item.Name} permanent");
     }
 
     [EffectMethod(typeof(DeleteItemAction))]
@@ -302,7 +302,7 @@ public sealed class ItemEditorEffects
 
         dispatcher.Dispatch(new DeleteItemFinishedAction());
         dispatcher.Dispatch(new CloseDeleteItemDialogAction(true));
-        await _notificationService.NotifySuccessAsync($"Successfully deleted item {item.Name}");
+        _notificationService.NotifySuccess($"Successfully deleted item {item.Name}");
     }
 
     [EffectMethod]

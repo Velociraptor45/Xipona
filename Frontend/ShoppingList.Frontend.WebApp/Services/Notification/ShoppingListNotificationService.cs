@@ -13,18 +13,18 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             _notificationService = notificationService;
         }
 
-        public async Task NotifyAsync(string title, string message)
+        public void Notify(string title, string message)
         {
-            await _notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message
             });
         }
 
-        public async Task NotifySuccessAsync(string title, string message)
+        public void NotifySuccess(string title, string message)
         {
-            await _notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,
@@ -32,9 +32,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             });
         }
 
-        public async Task NotifySuccessAsync(string message, double? duration = 2)
+        public void NotifySuccess(string message, double? duration = 2D)
         {
-            await _notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Description = message,
                 NotificationType = NotificationType.Success,
@@ -42,9 +42,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             });
         }
 
-        public async Task NotifyWarningAsync(string title, string message)
+        public void NotifyWarning(string title, string message)
         {
-            await _notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,
@@ -52,9 +52,9 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             });
         }
 
-        public async Task NotifyErrorAsync(string title, string message)
+        public void NotifyError(string title, string message)
         {
-            await _notificationService.Open(new NotificationConfig
+            _notificationService.Open(new NotificationConfig
             {
                 Message = title,
                 Description = message,

@@ -86,7 +86,7 @@ public class ItemCategoryEditorEffects
                 dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
                 return;
             }
-            await _notificationService.NotifySuccessAsync($"Successfully created item category {editor.ItemCategory.Name}");
+            _notificationService.NotifySuccess($"Successfully created item category {editor.ItemCategory.Name}");
         }
         else
         {
@@ -112,7 +112,7 @@ public class ItemCategoryEditorEffects
                 editor.ItemCategory.Id,
                 editor.ItemCategory.Name);
             dispatcher.Dispatch(updateAction);
-            await _notificationService.NotifySuccessAsync($"Successfully modified item category {editor.ItemCategory.Name}");
+            _notificationService.NotifySuccess($"Successfully modified item category {editor.ItemCategory.Name}");
         }
 
         dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
@@ -144,7 +144,7 @@ public class ItemCategoryEditorEffects
 
         dispatcher.Dispatch(new DeleteItemCategoryFinishedAction());
         dispatcher.Dispatch(new CloseDeleteItemCategoryDialogAction(true));
-        await _notificationService.NotifySuccessAsync($"Successfully deleted item category {itemCategory.Name}");
+        _notificationService.NotifySuccess($"Successfully deleted item category {itemCategory.Name}");
     }
 
     [EffectMethod]
