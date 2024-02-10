@@ -9,14 +9,51 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Recipes.Reducers;
 
 public class RecipeReducerTests
 {
+    public class OnRecipeSearchInputChanged
+    {
+        private readonly OnRecipeSearchInputChangedFixture _fixture = new();
+
+        [Fact]
+        public void OnRecipeSearchInputChanged_WithValidData_ShouldSetRecipeNull()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeReducer.OnRecipeSearchInputChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRecipeSearchInputChangedFixture : RecipeReducerFixture
+        {
+            public RecipeSearchInputChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        Input = new DomainTestBuilder<string>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new RecipeSearchInputChangedAction(ExpectedState.Search.Input);
+            }
+        }
+    }
+
     public class OnEnterRecipeSearchPage
     {
-        private readonly OnEnterRecipeSearchPageFixture _fixture;
-
-        public OnEnterRecipeSearchPage()
-        {
-            _fixture = new OnEnterRecipeSearchPageFixture();
-        }
+        private readonly OnEnterRecipeSearchPageFixture _fixture = new();
 
         [Fact]
         public void OnEnterRecipeSearchPage_WithValidData_ShouldSetRecipeNull()
@@ -60,12 +97,7 @@ public class RecipeReducerTests
 
     public class OnSearchRecipeFinished
     {
-        private readonly OnSearchRecipeFinishedFixture _fixture;
-
-        public OnSearchRecipeFinished()
-        {
-            _fixture = new OnSearchRecipeFinishedFixture();
-        }
+        private readonly OnSearchRecipeFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSearchRecipeFinished_WithValidData_ShouldSortResults()
@@ -132,12 +164,7 @@ public class RecipeReducerTests
 
     public class OnLoadRecipeTagsFinished
     {
-        private readonly OnLoadRecipeTagsFinishedFixture _fixture;
-
-        public OnLoadRecipeTagsFinished()
-        {
-            _fixture = new OnLoadRecipeTagsFinishedFixture();
-        }
+        private readonly OnLoadRecipeTagsFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadRecipeTagsFinished_WithValidData_ShouldSortResults()
@@ -196,12 +223,7 @@ public class RecipeReducerTests
 
     public class OnSelectedSearchRecipeTagIdsChanged
     {
-        private readonly OnSelectedSearchRecipeTagIdsChangedFixture _fixture;
-
-        public OnSelectedSearchRecipeTagIdsChanged()
-        {
-            _fixture = new OnSelectedSearchRecipeTagIdsChangedFixture();
-        }
+        private readonly OnSelectedSearchRecipeTagIdsChangedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedSearchRecipeTagIdsChanged_WithValidData_ShouldSetRecipeTagIds()

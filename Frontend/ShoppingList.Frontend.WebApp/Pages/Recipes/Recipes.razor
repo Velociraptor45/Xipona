@@ -18,7 +18,8 @@
         <Tabs Class="recipe-search-tabs mr-2">
             <TabPane Tab="By Name" Key="1">
                 <div class="d-flex">
-                    <Input TValue="string" @bind-value="@input"
+                    <Input TValue="string"
+                           OnInput="OnInputChanged"
                            OnPressEnter="@OnLoadByNameButtonClicked"
                            Placeholder="Recipe name"
                            @ref="_searchInput"></Input>
@@ -68,7 +69,6 @@
 </div>
 
 @code {
-    private string input = "";
     private Input<string> _searchInput;
 
     protected override void OnInitialized()
@@ -86,9 +86,15 @@
             _searchInput.Focus();
     }
 
+    private void OnInputChanged(ChangeEventArgs args)
+    {
+        var input = args.Value?.ToString() ?? string.Empty;
+        Dispatcher.Dispatch(new RecipeSearchInputChangedAction(input));
+    }
+
     private void OnLoadByNameButtonClicked()
     {
-        Dispatcher.Dispatch(new SearchRecipeByNameAction(input));
+        Dispatcher.Dispatch(new SearchRecipeByNameAction());
     }
 
     private void OnLoadByTagsButtonClicked()

@@ -38,6 +38,7 @@ public class RecipeFeatureState : Feature<RecipeState>
             new List<IngredientQuantityType>(0),
             new List<RecipeTag>(0),
             new RecipeSearch(
+                string.Empty,
                 false,
                 false,
                 new List<RecipeSearchResult>(0),
