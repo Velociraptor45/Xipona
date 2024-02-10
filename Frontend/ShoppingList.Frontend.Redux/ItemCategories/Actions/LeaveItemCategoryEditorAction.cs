@@ -1,2 +1,2 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Actions;
-public record LeaveItemCategoryEditorAction;
+public record LeaveItemCategoryEditorAction(bool TriggeredBySave);

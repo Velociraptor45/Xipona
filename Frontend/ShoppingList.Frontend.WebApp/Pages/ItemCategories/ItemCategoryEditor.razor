@@ -62,7 +62,7 @@
     
     private void OnBackButtonClicked()
     {
-        Dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
+        Dispatcher.Dispatch(new LeaveItemCategoryEditorAction(false));
     }
 
     private void OnNameChanged(string name)

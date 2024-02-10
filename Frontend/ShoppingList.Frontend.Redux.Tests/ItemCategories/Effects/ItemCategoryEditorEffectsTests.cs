@@ -423,7 +423,7 @@ public class ItemCategoryEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemCategoryEditorAction>();
+                SetupDispatchingAction(new LeaveItemCategoryEditorAction(true));
             }
         }
     }

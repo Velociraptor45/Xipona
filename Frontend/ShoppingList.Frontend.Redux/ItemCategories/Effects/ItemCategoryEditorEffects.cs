@@ -29,10 +29,14 @@ public class ItemCategoryEditorEffects
         _notificationService = notificationService;
     }
 
-    [EffectMethod(typeof(LeaveItemCategoryEditorAction))]
-    public Task HandleLeaveItemCategoryEditorAction(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleLeaveItemCategoryEditorAction(LeaveItemCategoryEditorAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo(PageRoutes.ItemCategories);
+
+        if(action.TriggeredBySave)
+            dispatcher.Dispatch(new SearchItemCategoriesAction());
+
         return Task.CompletedTask;
     }
 
@@ -116,7 +120,7 @@ public class ItemCategoryEditorEffects
         }
 
         dispatcher.Dispatch(new SaveItemCategoryFinishedAction());
-        dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
+        dispatcher.Dispatch(new LeaveItemCategoryEditorAction(true));
     }
 
     [EffectMethod(typeof(DeleteItemCategoryAction))]
@@ -161,7 +165,7 @@ public class ItemCategoryEditorEffects
 
         _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
         _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemCategoryEditorAction());
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemCategoryEditorAction(true));
         _leaveEditorTimer.Start();
 
         return Task.CompletedTask;
