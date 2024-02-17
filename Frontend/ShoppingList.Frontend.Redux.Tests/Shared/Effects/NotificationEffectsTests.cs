@@ -61,10 +61,10 @@ public class NotificationEffectsTests
         private readonly HandleDisplayApiExceptionNotificationActionFixture _fixture = new();
 
         [Fact]
-        public async Task HandleDisplayApiExceptionNotificationAction_WithValidData_ShouldCallNotificationService()
+        public async Task HandleDisplayApiExceptionNotificationAction_WithContractData_ShouldCallNotificationService()
         {
             // Arrange
-            _fixture.SetupAction();
+            _fixture.SetupActionWithSerializedErrorContract();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupNotifyError();
@@ -80,10 +80,30 @@ public class NotificationEffectsTests
             queue.VerifyOrder();
         }
 
+        [Fact]
+        public async Task HandleDisplayApiExceptionNotificationAction_WithoutContractData_ShouldCallNotificationService()
+        {
+            // Arrange
+            _fixture.SetupActionWithoutSerializedErrorContract();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupNotifyErrorWithoutSerializedErrorContract();
+            });
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            await sut.HandleDisplayApiExceptionNotificationAction(_fixture.Action, _fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
         private sealed class HandleDisplayApiExceptionNotificationActionFixture : NotificationEffectsFixture
         {
-            private readonly string _title = new DomainTestBuilder<string>().Create();
-            private readonly string _message = new DomainTestBuilder<string>().Create();
+            private static readonly string _title = new DomainTestBuilder<string>().Create();
+            private static readonly string _message = new DomainTestBuilder<string>().Create();
             public DisplayApiExceptionNotificationAction? Action { get; private set; }
 
             public void SetupNotifyError()
@@ -91,7 +111,23 @@ public class NotificationEffectsTests
                 NotificationServiceMock.SetupNotifyError(_title, _message);
             }
 
-            public void SetupAction()
+            public void SetupNotifyErrorWithoutSerializedErrorContract()
+            {
+                NotificationServiceMock.SetupNotifyErrorAsyncContaining(_title,
+                    "failed because response status code does not indicate success");
+            }
+
+            public void SetupActionWithoutSerializedErrorContract()
+            {
+                var apiException = new ApiException(
+                    new DomainTestBuilder<HttpRequestMessage>().Create(),
+                    new DomainTestBuilder<HttpResponseMessage>().Create(),
+                    _message,
+                    new ApiExceptionContentDeserializer());
+                Action = new(_title, apiException);
+            }
+
+            public void SetupActionWithSerializedErrorContract()
             {
                 var errorContract = new DomainTestBuilder<ErrorContract>()
                     .FillConstructorWith("message", _message)
@@ -109,6 +145,9 @@ public class NotificationEffectsTests
             {
                 public T Deserialize<T>(string? content)
                 {
+                    if (content == _message)
+                        return (T)(object)null!;
+
                     return JsonSerializer.Deserialize<T>(content!)!;
                 }
             }
