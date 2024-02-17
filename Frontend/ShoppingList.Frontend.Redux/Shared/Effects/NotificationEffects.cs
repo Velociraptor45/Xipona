@@ -28,8 +28,8 @@ public class NotificationEffects
         var contract = action.Exception.DeserializeContent<ErrorContract>();
         if (contract is null)
         {
-            await _notificationService.NotifyErrorAsync(action.Title, action.Exception.Message);
-            return;
+            _notificationService.NotifyError(action.Title, action.Exception.Message);
+            return Task.CompletedTask;
         }
 
         _notificationService.NotifyError(action.Title, contract.Message);

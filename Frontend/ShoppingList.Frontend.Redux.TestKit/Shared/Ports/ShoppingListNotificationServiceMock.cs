@@ -37,7 +37,6 @@ public class ShoppingListNotificationServiceMock : Mock<IShoppingListNotificatio
 
     public void SetupNotifyErrorAsyncContaining(string title, string messagePart)
     {
-        this.SetupInOrder(x => x.NotifyErrorAsync(title, It.Is<string>(msg => msg.Contains(messagePart))))
-            .Returns(Task.CompletedTask);
+        this.SetupInOrder(x => x.NotifyError(title, It.Is<string>(msg => msg.Contains(messagePart))));
     }
 }
