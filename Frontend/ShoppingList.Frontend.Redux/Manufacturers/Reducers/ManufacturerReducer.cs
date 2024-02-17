@@ -6,6 +6,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Manufacturers.Reducers;
 
 public static class ManufacturerReducer
 {
+    [ReducerMethod]
+    public static ManufacturerState OnManufacturerSearchInputChanged(ManufacturerState state,
+        ManufacturerSearchInputChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Input = action.Input
+            }
+        };
+    }
+
     [ReducerMethod(typeof(SearchManufacturersStartedAction))]
     public static ManufacturerState OnSearchManufacturersStarted(ManufacturerState state)
     {

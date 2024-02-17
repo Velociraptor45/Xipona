@@ -6,6 +6,19 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.ItemCategories.Reducers;
 
 public static class ItemCategoryReducer
 {
+    [ReducerMethod]
+    public static ItemCategoryState OnItemCategorySearchInputChanged(ItemCategoryState state,
+        ItemCategorySearchInputChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Input = action.Input
+            }
+        };
+    }
+
     [ReducerMethod(typeof(SearchItemCategoriesStartedAction))]
     public static ItemCategoryState OnSearchItemCategoriesStarted(ItemCategoryState state)
     {

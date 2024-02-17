@@ -25,6 +25,7 @@ public class ItemFeatureState : Feature<ItemState>
             new List<QuantityTypeInPacket>(),
             new ActiveStores(new List<ItemStore>()),
             new ItemSearch(
+                string.Empty,
                 false,
                 false,
                 new List<ItemSearchResult>()),

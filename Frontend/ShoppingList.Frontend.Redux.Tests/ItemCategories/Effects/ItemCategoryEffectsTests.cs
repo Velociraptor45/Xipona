@@ -22,15 +22,12 @@ public class ItemCategoryEffectsTests
             {
                 _fixture.SetupSearchInputEmpty();
                 _fixture.SetupSearchResultEmpty();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchItemCategoriesAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchItemCategoriesAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -44,17 +41,14 @@ public class ItemCategoryEffectsTests
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchResult();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchSucceeded();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchItemCategoriesAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchItemCategoriesAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -67,17 +61,14 @@ public class ItemCategoryEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchFailedWithErrorInApi();
                 _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchItemCategoriesAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchItemCategoriesAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -90,17 +81,14 @@ public class ItemCategoryEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest();
                 _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchItemCategoriesAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchItemCategoriesAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -110,16 +98,29 @@ public class ItemCategoryEffectsTests
         {
             private string? _searchInput;
             private IReadOnlyCollection<ItemCategorySearchResult>? _searchResult;
-            public SearchItemCategoriesAction? Action { get; private set; }
 
             public void SetupSearchInput()
             {
                 _searchInput = new DomainTestBuilder<string>().Create();
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
             }
 
             public void SetupSearchInputEmpty()
             {
                 _searchInput = string.Empty;
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
             }
 
             public void SetupSearchResult()
@@ -156,13 +157,6 @@ public class ItemCategoryEffectsTests
                     new DomainTestBuilder<HttpRequestException>().Create());
             }
 
-            public void SetupAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_searchInput);
-
-                Action = new SearchItemCategoriesAction(_searchInput);
-            }
-
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
@@ -182,7 +176,8 @@ public class ItemCategoryEffectsTests
         public ItemCategoryEffects CreateSut()
         {
             SetupStateReturningState();
-            return new ItemCategoryEffects(ApiClientMock.Object, NavigationManagerMock.Object);
+            return new ItemCategoryEffects(ApiClientMock.Object, NavigationManagerMock.Object,
+                ItemCategoryStateMock.Object);
         }
     }
 }

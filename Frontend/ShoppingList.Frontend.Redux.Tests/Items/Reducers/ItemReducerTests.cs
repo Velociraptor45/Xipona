@@ -11,6 +11,48 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Items.Reducers;
 
 public class ItemReducerTests
 {
+    public class OnItemSearchInputChanged
+    {
+        private readonly OnItemSearchInputChangedFixture _fixture = new();
+
+        [Fact]
+        public void OnItemSearchInputChanged_WithSearchNotLoading_ShouldSetLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemReducer.OnItemSearchInputChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnItemSearchInputChangedFixture : ItemReducerFixture
+        {
+            public ItemSearchInputChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        Input = new DomainTestBuilder<string>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new ItemSearchInputChangedAction(ExpectedState.Search.Input);
+            }
+        }
+    }
+
     public class OnSearchItemStarted
     {
         private readonly OnSearchItemStartedFixture _fixture = new();

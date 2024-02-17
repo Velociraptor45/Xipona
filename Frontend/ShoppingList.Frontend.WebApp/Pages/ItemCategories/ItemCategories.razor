@@ -16,7 +16,8 @@
 <div class="item-categories">
     <div class="d-flex mt-2 top-bar">
         <div class="d-flex search-bar">
-            <Input TValue="string" @bind-value="@_input" @ref="_searchInput"
+            <Input TValue="string" OnInput="OnInputChanged" @ref="_searchInput"
+                   Value="@State.Value.Search.Input"
                    OnPressEnter="@OnLoadButtonClicked" 
                    Placeholder="Item category name"></Input>
             <Button @onclick="@OnLoadButtonClicked" Class="ml-1 mr-4">
@@ -45,7 +46,6 @@
 </div>
 
 @code {
-    private string _input = "";
     private Input<string> _searchInput;
 
     protected override void OnAfterRender(bool firstRender)
@@ -56,9 +56,15 @@
             _searchInput.Focus();
     }
 
+    private void OnInputChanged(ChangeEventArgs args)
+    {
+        var input = args.Value?.ToString() ?? string.Empty;
+        Dispatcher.Dispatch(new ItemCategorySearchInputChangedAction(input));
+    }
+
     private void OnLoadButtonClicked()
     {
-        Dispatcher.Dispatch(new SearchItemCategoriesAction(_input));
+        Dispatcher.Dispatch(new SearchItemCategoriesAction());
     }
 
     private void OnCreateItemCategoryButtonClicked()

@@ -9,14 +9,51 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Tests.Manufacturers.Reducers
 
 public class ManufacturerReducerTests
 {
+    public class OnManufacturerSearchInputChanged
+    {
+        private readonly OnManufacturerSearchInputChangedFixture _fixture = new();
+
+        [Fact]
+        public void OnManufacturerSearchInputChangedAction_WithSearchNotLoading_ShouldSetLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ManufacturerReducer.OnManufacturerSearchInputChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnManufacturerSearchInputChangedFixture : ManufacturerReducerFixture
+        {
+            public ManufacturerSearchInputChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        Input = new DomainTestBuilder<string>().Create(),
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new ManufacturerSearchInputChangedAction(ExpectedState.Search.Input);
+            }
+        }
+    }
+
     public class OnSearchManufacturersStarted
     {
-        private readonly OnSearchManufacturersStartedFixture _fixture;
-
-        public OnSearchManufacturersStarted()
-        {
-            _fixture = new OnSearchManufacturersStartedFixture();
-        }
+        private readonly OnSearchManufacturersStartedFixture _fixture = new();
 
         [Fact]
         public void OnSearchManufacturersStarted_WithSearchNotLoading_ShouldSetLoading()
@@ -84,12 +121,7 @@ public class ManufacturerReducerTests
 
     public class OnSearchManufacturersFinished
     {
-        private readonly OnSearchManufacturersFinishedFixture _fixture;
-
-        public OnSearchManufacturersFinished()
-        {
-            _fixture = new OnSearchManufacturersFinishedFixture();
-        }
+        private readonly OnSearchManufacturersFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSearchManufacturersFinished_WithSearchNotLoading_ShouldSetNotLoadingAndSortResults()
@@ -185,12 +217,7 @@ public class ManufacturerReducerTests
 
     public class OnLoadManufacturerForEditingStarted
     {
-        private readonly OnLoadManufacturerForEditingStartedFixture _fixture;
-
-        public OnLoadManufacturerForEditingStarted()
-        {
-            _fixture = new OnLoadManufacturerForEditingStartedFixture();
-        }
+        private readonly OnLoadManufacturerForEditingStartedFixture _fixture = new();
 
         [Fact]
         public void OnLoadManufacturerForEditingStarted_WithEditorNotLoading_ShouldSetLoading()
@@ -258,12 +285,7 @@ public class ManufacturerReducerTests
 
     public class OnLoadManufacturerForEditingFinished
     {
-        private readonly OnLoadManufacturerForEditingFinishedFixture _fixture;
-
-        public OnLoadManufacturerForEditingFinished()
-        {
-            _fixture = new OnLoadManufacturerForEditingFinishedFixture();
-        }
+        private readonly OnLoadManufacturerForEditingFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadManufacturerForEditingFinished_WithEditorNotLoading_ShouldSetNotLoadingAndManufacturer()
@@ -345,12 +367,7 @@ public class ManufacturerReducerTests
 
     public class OnEditedManufacturerNameChanged
     {
-        private readonly OnEditedManufacturerNameChangedFixture _fixture;
-
-        public OnEditedManufacturerNameChanged()
-        {
-            _fixture = new OnEditedManufacturerNameChangedFixture();
-        }
+        private readonly OnEditedManufacturerNameChangedFixture _fixture = new();
 
         [Fact]
         public void OnEditedManufacturerNameChanged_WithValidData_ShouldSetManufacturerName()
@@ -395,12 +412,7 @@ public class ManufacturerReducerTests
 
     public class OnLeaveManufacturerEditor
     {
-        private readonly OnLeaveManufacturerEditorFixture _fixture;
-
-        public OnLeaveManufacturerEditor()
-        {
-            _fixture = new OnLeaveManufacturerEditorFixture();
-        }
+        private readonly OnLeaveManufacturerEditorFixture _fixture = new();
 
         [Fact]
         public void OnLeaveManufacturerEditor_WithValidData_ShouldSetManufacturerNull()
@@ -444,12 +456,7 @@ public class ManufacturerReducerTests
 
     public class OnSavingManufacturerStarted
     {
-        private readonly OnSavingManufacturerStartedFixture _fixture;
-
-        public OnSavingManufacturerStarted()
-        {
-            _fixture = new OnSavingManufacturerStartedFixture();
-        }
+        private readonly OnSavingManufacturerStartedFixture _fixture = new();
 
         [Fact]
         public void OnSavingManufacturerStarted_WithEditorNotSaving_ShouldSetSaving()
@@ -517,12 +524,7 @@ public class ManufacturerReducerTests
 
     public class OnSavingManufacturerFinished
     {
-        private readonly OnSavingManufacturerFinishedFixture _fixture;
-
-        public OnSavingManufacturerFinished()
-        {
-            _fixture = new OnSavingManufacturerFinishedFixture();
-        }
+        private readonly OnSavingManufacturerFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSavingManufacturerFinished_WithEditorNotSaving_ShouldSetNotSaving()
@@ -590,12 +592,7 @@ public class ManufacturerReducerTests
 
     public class OnDeletingManufacturerStarted
     {
-        private readonly OnDeletingManufacturerStartedFixture _fixture;
-
-        public OnDeletingManufacturerStarted()
-        {
-            _fixture = new OnDeletingManufacturerStartedFixture();
-        }
+        private readonly OnDeletingManufacturerStartedFixture _fixture = new();
 
         [Fact]
         public void OnDeletingManufacturerStarted_WithEditorNotDeleting_ShouldSetDeleting()
@@ -663,12 +660,7 @@ public class ManufacturerReducerTests
 
     public class OnDeletingManufacturerFinished
     {
-        private readonly OnDeletingManufacturerFinishedFixture _fixture;
-
-        public OnDeletingManufacturerFinished()
-        {
-            _fixture = new OnDeletingManufacturerFinishedFixture();
-        }
+        private readonly OnDeletingManufacturerFinishedFixture _fixture = new();
 
         [Fact]
         public void OnDeletingManufacturerFinished_WithEditorNotDeleting_ShouldSetNotDeleting()
@@ -736,12 +728,7 @@ public class ManufacturerReducerTests
 
     public class OnSetNewManufacturer
     {
-        private readonly OnSetNewManufacturerFixture _fixture;
-
-        public OnSetNewManufacturer()
-        {
-            _fixture = new OnSetNewManufacturerFixture();
-        }
+        private readonly OnSetNewManufacturerFixture _fixture = new();
 
         [Fact]
         public void OnSetNewManufacturer_WithValidData_ShouldSetEmptyManufacturer()
@@ -785,12 +772,7 @@ public class ManufacturerReducerTests
 
     public class OnOpenDeleteManufacturerDialog
     {
-        private readonly OnOpenDeleteManufacturerDialogFixture _fixture;
-
-        public OnOpenDeleteManufacturerDialog()
-        {
-            _fixture = new OnOpenDeleteManufacturerDialogFixture();
-        }
+        private readonly OnOpenDeleteManufacturerDialogFixture _fixture = new();
 
         [Fact]
         public void OnOpenDeleteManufacturerDialog_WithDialogNotOpen_ShouldOpenDialog()
@@ -858,12 +840,7 @@ public class ManufacturerReducerTests
 
     public class OnCloseDeleteManufacturerDialog
     {
-        private readonly OnCloseDeleteManufacturerDialogFixture _fixture;
-
-        public OnCloseDeleteManufacturerDialog()
-        {
-            _fixture = new OnCloseDeleteManufacturerDialogFixture();
-        }
+        private readonly OnCloseDeleteManufacturerDialogFixture _fixture = new();
 
         [Fact]
         public void OnCloseDeleteManufacturerDialog_WithDialogOpen_ShouldCloseDialog()
