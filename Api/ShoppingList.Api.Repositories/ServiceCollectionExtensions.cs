@@ -97,7 +97,7 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ItemContext>(),
                 provider.GetRequiredService<IToDomainConverter<Items.Entities.Item, IItem>>(),
                 provider.GetRequiredService<IToContractConverter<IItem, Items.Entities.Item>>(),
-                provider.GetRequiredService<IDomainEventDispatcher>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>()(ct),
                 provider.GetRequiredService<ILogger<ItemRepository>>(),
                 ct);
         });
