@@ -1,15 +1,17 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemPriceCalculationService _priceCalculationService;
+@inject IItemPriceCalculationService PriceCalculationService;
 
 @using Fluxor;
 @using System.Text
 @using System.Globalization;
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Summary
 @using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States
 @using ProjectHermes.ShoppingList.Frontend.WebApp.Services;
 
 @inject IState<ShoppingListState> State
+@inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
 
 @if (State.Value.ShoppingList != null)
@@ -31,7 +33,7 @@
         <Button Type="@ButtonType.Primary"
                 OnClick="@OnSummaryButtonClicked"
                 Class="ml-auto"
-                Disabled="@(!State.Value.ShoppingList.AnyItemInBasket)">
+                Disabled="@(!State.Value.ShoppingList.AnyItemInBasket || !SharedState.Value.IsOnline)">
             Summary
         </Button>
         <Modal TitleTemplate="@GetTitle()"
@@ -86,13 +88,13 @@
 
     private string GetTotalListPrice()
     {
-        var price = _priceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
+        var price = PriceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
         return price.ToString("0.00");
     }
 
     private string GetInBasketPrice()
     {
-        var price = _priceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
+        var price = PriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
         return price.ToString("0.00");
     }
 

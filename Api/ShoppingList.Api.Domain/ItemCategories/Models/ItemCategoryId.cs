@@ -20,4 +20,9 @@ public readonly record struct ItemCategoryId
     {
         return itemCategoryId.Value;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
+    }
 }

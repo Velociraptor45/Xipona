@@ -2,7 +2,7 @@
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
-public record struct QuantityInBasket
+public readonly record struct QuantityInBasket
 {
     public QuantityInBasket()
     {
@@ -37,5 +37,10 @@ public record struct QuantityInBasket
     public static QuantityInBasket operator /(QuantityInBasket a, QuantityInBasket b)
     {
         return new QuantityInBasket(a.Value / b.Value);
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("##,###");
     }
 }

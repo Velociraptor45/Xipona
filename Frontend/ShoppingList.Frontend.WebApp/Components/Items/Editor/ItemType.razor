@@ -12,6 +12,10 @@
         <div class="name">
             <Input TValue="string" Value="@Model.Name"
                    ValueChanged="OnNameChanged" Placeholder="Type name ..."></Input>
+            @if(State.Value.Editor.ValidationResult.TypeNames.ContainsKey(Model.Key))
+            {
+                <div class="validation-error-message">@State.Value.Editor.ValidationResult.TypeNames[Model.Key]</div>
+            }
         </div>
         <div class="ml-2 ml-auto">
             <Button Class="d-flex align-items-center"

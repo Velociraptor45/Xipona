@@ -1,4 +1,10 @@
-﻿/* button */
+﻿.ant-select-multiple span.ant-select-selection-item {
+    background-color: #3498db;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+/* button */
 
 .ant-btn span .anticon {
     margin-bottom: 8px;

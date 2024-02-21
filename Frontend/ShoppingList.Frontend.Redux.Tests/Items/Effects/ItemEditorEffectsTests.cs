@@ -152,12 +152,7 @@ public class ItemEditorEffectsTests
 
     public class HandleAddStoreAction
     {
-        private readonly HandleAddStoreActionFixture _fixture;
-
-        public HandleAddStoreAction()
-        {
-            _fixture = new HandleAddStoreActionFixture();
-        }
+        private readonly HandleAddStoreActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleAddStoreAction_WithItem_ShouldDispatchCorrectActions()
@@ -228,12 +223,7 @@ public class ItemEditorEffectsTests
 
     public class HandleChangeStoreAction
     {
-        private readonly HandleChangeStoreActionFixture _fixture;
-
-        public HandleChangeStoreAction()
-        {
-            _fixture = new HandleChangeStoreActionFixture();
-        }
+        private readonly HandleChangeStoreActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleChangeStoreAction_WithItem_ShouldDispatchCorrectActions()
@@ -312,12 +302,7 @@ public class ItemEditorEffectsTests
 
     public class HandleChangePriceAction
     {
-        private readonly HandleChangePriceActionFixture _fixture;
-
-        public HandleChangePriceAction()
-        {
-            _fixture = new HandleChangePriceActionFixture();
-        }
+        private readonly HandleChangePriceActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleChangePriceAction_WithItem_ShouldDispatchCorrectActions()
@@ -396,12 +381,7 @@ public class ItemEditorEffectsTests
 
     public class HandleChangeDefaultSectionAction
     {
-        private readonly HandleChangeDefaultSectionActionFixture _fixture;
-
-        public HandleChangeDefaultSectionAction()
-        {
-            _fixture = new HandleChangeDefaultSectionActionFixture();
-        }
+        private readonly HandleChangeDefaultSectionActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleChangeDefaultSectionAction_WithItem_ShouldDispatchCorrectActions()
@@ -480,12 +460,7 @@ public class ItemEditorEffectsTests
 
     public class HandleRemoveStoreAction
     {
-        private readonly HandleRemoveStoreActionFixture _fixture;
-
-        public HandleRemoveStoreAction()
-        {
-            _fixture = new HandleRemoveStoreActionFixture();
-        }
+        private readonly HandleRemoveStoreActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleRemoveStoreAction_WithItem_ShouldDispatchCorrectActions()
@@ -562,11 +537,22 @@ public class ItemEditorEffectsTests
 
     public class HandleCreateItemAction
     {
-        private readonly HandleCreateItemActionFixture _fixture;
+        private readonly HandleCreateItemActionFixture _fixture = new();
 
-        public HandleCreateItemAction()
+        [Fact]
+        public async Task HandleCreateItemAction_WithValidationErrors_ShouldNotDispatchAnything()
         {
-            _fixture = new HandleCreateItemActionFixture();
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            _fixture.SetupValidationErrors();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
         }
 
         [Fact]
@@ -826,7 +812,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -838,11 +824,22 @@ public class ItemEditorEffectsTests
 
     public class HandleUpdateItemAction
     {
-        private readonly HandleUpdateItemActionFixture _fixture;
+        private readonly HandleUpdateItemActionFixture _fixture = new();
 
-        public HandleUpdateItemAction()
+        [Fact]
+        public async Task HandleUpdateItemAction_WithValidationErrors_ShouldNotDispatchAnything()
         {
-            _fixture = new HandleUpdateItemActionFixture();
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            _fixture.SetupValidationErrors();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleUpdateItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
         }
 
         [Fact]
@@ -1025,7 +1022,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -1037,11 +1034,22 @@ public class ItemEditorEffectsTests
 
     public class HandleModifyItemAction
     {
-        private readonly HandleModifyItemActionFixture _fixture;
+        private readonly HandleModifyItemActionFixture _fixture = new();
 
-        public HandleModifyItemAction()
+        [Fact]
+        public async Task HandleModifyItemAction_WithValidationErrors_ShouldNotDispatchAnything()
         {
-            _fixture = new HandleModifyItemActionFixture();
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            _fixture.SetupValidationErrors();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleModifyItemAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
         }
 
         [Fact]
@@ -1222,7 +1230,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -1234,11 +1242,22 @@ public class ItemEditorEffectsTests
 
     public class HandleMakeItemPermanentAction
     {
-        private readonly HandleMakeItemPermanentActionFixture _fixture;
+        private readonly HandleMakeItemPermanentActionFixture _fixture = new();
 
-        public HandleMakeItemPermanentAction()
+        [Fact]
+        public async Task HandleMakeItemPermanentAction_WithValidationError_ShouldNotDispatchAnything()
         {
-            _fixture = new HandleMakeItemPermanentActionFixture();
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            _fixture.SetupValidationErrors();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleMakeItemPermanentAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
         }
 
         [Fact]
@@ -1388,7 +1407,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction()
             {
-                SetupDispatchingAction<LeaveItemEditorAction>();
+                SetupDispatchingAction(new LeaveItemEditorAction(true));
             }
 
             public void SetupSuccessNotification()
@@ -1400,12 +1419,7 @@ public class ItemEditorEffectsTests
 
     public class HandleDeleteItemAction
     {
-        private readonly HandleDeleteItemActionFixture _fixture;
-
-        public HandleDeleteItemAction()
-        {
-            _fixture = new HandleDeleteItemActionFixture();
-        }
+        private readonly HandleDeleteItemActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleDeleteItemAction_WithCallSuccessful_ShouldDispatchActionsInCorrectOrder()
@@ -1552,6 +1566,17 @@ public class ItemEditorEffectsTests
             SetupStateReturningState();
             return new ItemEditorEffects(ApiClientMock.Object, ItemStateMock.Object, NavigationManagerMock.Object,
                 ShoppingListNotificationServiceMock.Object);
+        }
+
+        public void SetupValidationErrors()
+        {
+            State = State with
+            {
+                Editor = State.Editor with
+                {
+                    ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
+                }
+            };
         }
     }
 }

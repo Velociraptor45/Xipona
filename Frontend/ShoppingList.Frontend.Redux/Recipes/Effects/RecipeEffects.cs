@@ -22,19 +22,19 @@ public class RecipeEffects
         _state = state;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchRecipeByNameAction(SearchRecipeByNameAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchRecipeByNameAction))]
+    public async Task HandleSearchRecipeByNameAction(IDispatcher dispatcher)
     {
-        if (string.IsNullOrWhiteSpace(action.SearchInput))
+        if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
-            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0)));
+            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0), SearchType.Name));
             return;
         }
 
         IEnumerable<RecipeSearchResult> results;
         try
         {
-            results = await _client.SearchRecipesByNameAsync(action.SearchInput);
+            results = await _client.SearchRecipesByNameAsync(_state.Value.Search.Input);
         }
         catch (ApiException e)
         {
@@ -47,7 +47,7 @@ public class RecipeEffects
             return;
         }
 
-        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList()));
+        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList(), SearchType.Name));
     }
 
     [EffectMethod(typeof(SearchRecipeByTagsAction))]
@@ -55,7 +55,7 @@ public class RecipeEffects
     {
         if (!_state.Value.Search.SelectedRecipeTagIds.Any())
         {
-            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0)));
+            dispatcher.Dispatch(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(0), SearchType.Tag));
             return;
         }
 
@@ -75,7 +75,7 @@ public class RecipeEffects
             return;
         }
 
-        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList()));
+        dispatcher.Dispatch(new SearchRecipeFinishedAction(results.ToList(), SearchType.Tag));
     }
 
     [EffectMethod]

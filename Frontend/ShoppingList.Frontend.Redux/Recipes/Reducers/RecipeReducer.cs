@@ -6,6 +6,18 @@ namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.Reducers;
 
 public static class RecipeReducer
 {
+    [ReducerMethod]
+    public static RecipeState OnRecipeSearchInputChanged(RecipeState state, RecipeSearchInputChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Input = action.Input
+            }
+        };
+    }
+
     [ReducerMethod(typeof(EnterRecipeSearchPageAction))]
     public static RecipeState OnEnterRecipeSearchPage(RecipeState state)
     {
@@ -26,7 +38,8 @@ public static class RecipeReducer
             Search = state.Search with
             {
                 TriggeredAtLeastOnce = true,
-                SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList()
+                SearchResults = action.SearchResults.OrderBy(r => r.Name).ToList(),
+                LastSearchType = action.SearchType
             }
         };
     }

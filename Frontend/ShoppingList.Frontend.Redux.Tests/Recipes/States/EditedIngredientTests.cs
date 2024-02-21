@@ -10,12 +10,7 @@ public class EditedIngredientTests
 {
     public class SelectedItemCategoryName
     {
-        private readonly SelectedItemCategoryNameFixture _fixture;
-
-        public SelectedItemCategoryName()
-        {
-            _fixture = new SelectedItemCategoryNameFixture();
-        }
+        private readonly SelectedItemCategoryNameFixture _fixture = new();
 
         [Fact]
         public void SelectedItemCategoryName_WithItemCategoryInSelector_ShouldReturnItemCategoryName()
@@ -115,12 +110,7 @@ public class EditedIngredientTests
 
     public class GetSelectedQuantityLabel
     {
-        private readonly GetSelectedQuantityLabelFixture _fixture;
-
-        public GetSelectedQuantityLabel()
-        {
-            _fixture = new GetSelectedQuantityLabelFixture();
-        }
+        private readonly GetSelectedQuantityLabelFixture _fixture = new();
 
         [Fact]
         public void GetSelectedQuantityLabel_WithQuantityTypeMatchingId_ShouldReturnExpectedLabel()
@@ -146,7 +136,7 @@ public class EditedIngredientTests
             // Arrange
             _fixture.SetupExpectedResultEmpty();
             var sut = GetSelectedQuantityLabelFixture.CreateSut();
-            _fixture.SetupQuantityTypes();
+            _fixture.SetupQuantityTypes(sut.QuantityTypeId);
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
             TestPropertyNotSetException.ThrowIfNull(_fixture.QuantityTypes);
@@ -188,11 +178,23 @@ public class EditedIngredientTests
                     .ToList();
             }
 
-            public void SetupQuantityTypes()
+            public void SetupQuantityTypes(int quantityTypeId)
             {
-                QuantityTypes = new DomainTestBuilder<IngredientQuantityType>()
+                var types = new DomainTestBuilder<IngredientQuantityType>()
                     .CreateMany(3)
                     .ToList();
+
+                for (var i = 0; i < types.Count; i++)
+                {
+                    var type = types[i];
+                    if (type.Id == quantityTypeId)
+                    {
+                        // ensure that the id is not matching
+                        types[i] = type with { Id = type.Id + 1 };
+                    }
+                }
+
+                QuantityTypes = types;
             }
 
             public static EditedIngredient CreateSut()

@@ -1,13 +1,45 @@
 ﻿using Fluxor;
+using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States.Validators;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States.Comparer;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.Actions.Editor.Sections;
 using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States;
+using ProjectHermes.ShoppingList.Frontend.Redux.Stores.States.Validators;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.Stores.Reducers;
 
 public static class StoreEditorReducer
 {
+    private static readonly NameValidator _storeNameValidator = new();
+    private static readonly StoreSectionNameValidator _storeSectionNameValidator = new();
+
+    [ReducerMethod(typeof(SaveStoreAction))]
+    public static StoreState OnSaveStore(StoreState state)
+    {
+        var store = state.Editor.Store;
+        if (store is null)
+            return state;
+
+        _storeNameValidator.Validate(store.Name, out var nameResult);
+
+        var sectionNameResults = new Dictionary<Guid, string>();
+        foreach (var section in store.Sections)
+        {
+            if (_storeSectionNameValidator.Validate(section.Name, out var errorMessage))
+                continue;
+
+            sectionNameResults.Add(section.Key, errorMessage!);
+        }
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ValidationResult = new EditorValidationResult(nameResult, sectionNameResults)
+            }
+        };
+    }
+
     [ReducerMethod(typeof(SetNewStoreAction))]
     public static StoreState OnSetNewStore(StoreState state)
     {
@@ -23,7 +55,8 @@ public static class StoreEditorReducer
                 Store = new EditedStore(
                     Guid.Empty,
                     string.Empty,
-                    new SortedSet<EditedSection>(sections, new SortingIndexComparer()))
+                    new SortedSet<EditedSection>(sections, new SortingIndexComparer())),
+                ValidationResult = new EditorValidationResult()
             }
         };
     }
@@ -35,7 +68,8 @@ public static class StoreEditorReducer
         {
             Editor = state.Editor with
             {
-                Store = action.Store
+                Store = action.Store,
+                ValidationResult = new EditorValidationResult()
             }
         };
     }
@@ -46,6 +80,8 @@ public static class StoreEditorReducer
         if (state.Editor.Store is null)
             return state;
 
+        _storeNameValidator.Validate(action.Name, out var errorMessage);
+
         return state with
         {
             Editor = state.Editor with
@@ -53,6 +89,10 @@ public static class StoreEditorReducer
                 Store = state.Editor.Store with
                 {
                     Name = action.Name
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    Name = errorMessage
                 }
             }
         };
@@ -179,12 +219,20 @@ public static class StoreEditorReducer
             return state;
 
         var sections = state.Editor.Store.Sections.ToList();
-        var step = sections.FirstOrDefault(s => s.Key == action.SectionKey);
-        if (step is null)
+        var section = sections.FirstOrDefault(s => s.Key == action.SectionKey);
+        if (section is null)
             return state;
 
-        var stepIndex = sections.IndexOf(step);
-        sections[stepIndex] = step with { Name = action.Text };
+        var stepIndex = sections.IndexOf(section);
+        sections[stepIndex] = section with { Name = action.Text };
+
+        var sectionNameErrors = state.Editor.ValidationResult.SectionNames.ToDictionary(x => x.Key, y => y.Value);
+        var isNameValid = _storeSectionNameValidator.Validate(action.Text, out var errorMessage);
+
+        if (isNameValid)
+            sectionNameErrors.Remove(action.SectionKey);
+        else
+            sectionNameErrors[action.SectionKey] = errorMessage!;
 
         return state with
         {
@@ -193,6 +241,10 @@ public static class StoreEditorReducer
                 Store = state.Editor.Store with
                 {
                     Sections = new SortedSet<EditedSection>(sections, new SortingIndexComparer())
+                },
+                ValidationResult = state.Editor.ValidationResult with
+                {
+                    SectionNames = sectionNameErrors
                 }
             }
         };

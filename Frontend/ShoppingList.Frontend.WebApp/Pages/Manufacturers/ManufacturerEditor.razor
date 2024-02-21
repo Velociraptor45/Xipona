@@ -32,6 +32,7 @@
         </div>
         <div class="d-flex justify-content-end mt-4">
             <Button Type="@ButtonType.Primary" @onclick="@OnSaveButtonClicked"
+                    Disabled="@(State.Value.Editor.Manufacturer.Name.Length == 0)"
                     Loading="@State.Value.Editor.IsSaving">
                 @if (State.Value.Editor.Manufacturer.Id == Guid.Empty)
                 {
@@ -67,7 +68,7 @@
 
     private void OnBackButtonClicked()
     {
-        Dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        Dispatcher.Dispatch(new LeaveManufacturerEditorAction(false));
     }
 
     private void OnSaveButtonClicked()

@@ -12,4 +12,9 @@ public readonly record struct IngredientQuantity
         Value = value;
     }
     public float Value { get; }
+
+    public override string ToString()
+    {
+        return Value.ToString("##,###");
+    }
 }

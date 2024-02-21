@@ -34,7 +34,7 @@ builder.Logging.AddSerilog();
 
 AddAppsettingsSourceTo(builder.Configuration.Sources);
 
-IConfiguration configuration = builder.Configuration;
+var configuration = builder.Configuration;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
@@ -143,14 +143,14 @@ void SetupSecurity()
 {
     if (!authOptions.Enabled)
     {
-        builder.Services.AddAuthorization(opt =>
-        {
-            opt.AddPolicy("User", new AuthorizationPolicyBuilder().RequireAssertion(_ => true).Build());
-        });
+        builder.Services
+            .AddAuthorizationBuilder()
+            .AddPolicy("User", new AuthorizationPolicyBuilder().RequireAssertion(_ => true).Build());
         return;
     }
 
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+    JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -165,8 +165,7 @@ void SetupSecurity()
                 RoleClaimType = authOptions.RoleClaimType,
             };
         });
-    builder.Services.AddAuthorization(opt =>
-    {
-        opt.AddPolicy("User", policy => policy.RequireRole(authOptions.UserRoleName));
-    });
+    builder.Services
+        .AddAuthorizationBuilder()
+        .AddPolicy("User", policy => policy.RequireRole(authOptions.UserRoleName));
 }

@@ -22,15 +22,12 @@ public class RecipeEffectsTests
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchingSuccessfully();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingFinishedAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -45,15 +42,12 @@ public class RecipeEffectsTests
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput(searchInput);
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingEmptyFinishedAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -67,15 +61,12 @@ public class RecipeEffectsTests
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchingFailedWithErrorInApi();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingExceptionNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -89,15 +80,12 @@ public class RecipeEffectsTests
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupAction();
                 _fixture.SetupDispatchingErrorNotificationAction();
             });
             var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
             // Act
-            await sut.HandleSearchRecipeByNameAction(_fixture.Action, _fixture.DispatcherMock.Object);
+            await sut.HandleSearchRecipeByNameAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -107,7 +95,6 @@ public class RecipeEffectsTests
         {
             private string? _searchInput;
             private List<RecipeSearchResult>? _expectedRecipeSearchResults;
-            public SearchRecipeByNameAction? Action { get; private set; }
 
             public void SetupSearchInput()
             {
@@ -117,6 +104,13 @@ public class RecipeEffectsTests
             public void SetupSearchInput(string searchInput)
             {
                 _searchInput = searchInput;
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
             }
 
             public void SetupSearchingSuccessfully()
@@ -141,21 +135,15 @@ public class RecipeEffectsTests
                     new DomainTestBuilder<HttpRequestException>().Create());
             }
 
-            public void SetupAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_searchInput);
-                Action = new SearchRecipeByNameAction(_searchInput);
-            }
-
             public void SetupDispatchingEmptyFinishedAction()
             {
-                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>()));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Name));
             }
 
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Name));
             }
         }
     }
@@ -291,13 +279,13 @@ public class RecipeEffectsTests
 
             public void SetupDispatchingEmptyFinishedAction()
             {
-                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>()));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Tag));
             }
 
             public void SetupDispatchingFinishedAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Tag));
             }
         }
     }

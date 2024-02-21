@@ -6,6 +6,19 @@
     z-index: 999;
 }
 
+.nav-item-disabled.shopping-list .nav-link {
+    color: white;
+}
+
+    .nav-item-disabled.shopping-list .nav-link:hover {
+        color: white;
+    }
+
+.nav-item-disabled .nav-link:hover {
+    cursor: pointer;
+    color: grey;
+}
+
 @media (min-width: 769px) {
     .nav {
         flex-direction: column;
@@ -29,7 +42,8 @@
         color: #ffffff;
     }
 
-    .nav-item {
+    .nav-item,
+    .nav-item-disabled {
         padding: 6px 0;
     }
 

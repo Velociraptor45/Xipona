@@ -1,14 +1,14 @@
 ﻿using AntDesign;
-using Microsoft.AspNetCore.Components;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
 {
     public class ShoppingListNotificationService : IShoppingListNotificationService
     {
-        private readonly NotificationService _notificationService;
+        private readonly INotificationService _notificationService;
 
-        public ShoppingListNotificationService(NotificationService notificationService)
+        public ShoppingListNotificationService(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }
@@ -32,7 +32,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             });
         }
 
-        public void NotifySuccess(string message, double? duration = 2)
+        public void NotifySuccess(string message, double? duration = 2D)
         {
             _notificationService.Open(new NotificationConfig
             {
@@ -58,18 +58,7 @@ namespace ProjectHermes.ShoppingList.Frontend.WebApp.Services.Notification
             {
                 Message = title,
                 Description = message,
-                //NotificationType = NotificationType.Error
-            });
-        }
-
-        public void NotifyError(string title, string message, RenderFragment button)
-        {
-            _notificationService.Open(new NotificationConfig
-            {
-                Message = title,
-                Description = message,
-                //NotificationType = NotificationType.Error,
-                Btn = button
+                NotificationType = NotificationType.Error
             });
         }
     }

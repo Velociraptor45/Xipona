@@ -26,8 +26,20 @@ public class NotificationEffects
         IDispatcher dispatcher)
     {
         var contract = action.Exception.DeserializeContent<ErrorContract>();
+        if (contract is null)
+        {
+            _notificationService.NotifyError(action.Title, action.Exception.Message);
+            return Task.CompletedTask;
+        }
 
         _notificationService.NotifyError(action.Title, contract.Message);
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod]
+    public Task HandleDisplayUnhandledErrorAction(DisplayUnhandledErrorAction action, IDispatcher dispatcher)
+    {
+        _notificationService.NotifyError("An error occurred", action.Message);
         return Task.CompletedTask;
     }
 }

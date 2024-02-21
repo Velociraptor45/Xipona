@@ -13,17 +13,19 @@ public class ItemCategoryEffects
 {
     private readonly IApiClient _client;
     private readonly NavigationManager _navigationManager;
+    private readonly IState<ItemCategoryState> _state;
 
-    public ItemCategoryEffects(IApiClient client, NavigationManager navigationManager)
+    public ItemCategoryEffects(IApiClient client, NavigationManager navigationManager, IState<ItemCategoryState> state)
     {
         _client = client;
         _navigationManager = navigationManager;
+        _state = state;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchItemCategoriesAction(SearchItemCategoriesAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchItemCategoriesAction))]
+    public async Task HandleSearchItemCategoriesAction(IDispatcher dispatcher)
     {
-        if (string.IsNullOrWhiteSpace(action.SearchInput))
+        if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
             dispatcher.Dispatch(new SearchItemCategoriesFinishedAction(new List<ItemCategorySearchResult>()));
             return;
@@ -35,7 +37,7 @@ public class ItemCategoryEffects
 
         try
         {
-            result = await _client.GetItemCategorySearchResultsAsync(action.SearchInput);
+            result = await _client.GetItemCategorySearchResultsAsync(_state.Value.Search.Input);
         }
         catch (ApiException e)
         {

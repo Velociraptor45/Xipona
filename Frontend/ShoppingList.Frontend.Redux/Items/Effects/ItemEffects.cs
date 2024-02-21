@@ -35,10 +35,10 @@ public class ItemEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchItemsAction(SearchItemsAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchItemsAction))]
+    public async Task HandleSearchItemsAction(IDispatcher dispatcher)
     {
-        if (string.IsNullOrWhiteSpace(action.SearchInput))
+        if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
             dispatcher.Dispatch(new SearchItemsFinishedAction(new List<ItemSearchResult>()));
             return;
@@ -49,7 +49,7 @@ public class ItemEffects
         IEnumerable<ItemSearchResult> result;
         try
         {
-            result = await _client.SearchItemsAsync(action.SearchInput);
+            result = await _client.SearchItemsAsync(_state.Value.Search.Input);
         }
         catch (ApiException e)
         {

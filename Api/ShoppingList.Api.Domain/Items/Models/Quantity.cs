@@ -3,7 +3,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 
-public record struct Quantity
+public readonly record struct Quantity
 {
     public Quantity()
     {
@@ -23,5 +23,10 @@ public record struct Quantity
     public static implicit operator float(Quantity quantity)
     {
         return quantity.Value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("##.###");
     }
 }

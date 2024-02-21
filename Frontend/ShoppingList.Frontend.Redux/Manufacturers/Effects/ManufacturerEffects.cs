@@ -29,10 +29,10 @@ public class ManufacturerEffects
         _notificationService = notificationService;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchManufacturersAction(SearchManufacturersAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchManufacturersAction))]
+    public async Task HandleSearchManufacturersAction(IDispatcher dispatcher)
     {
-        if (string.IsNullOrWhiteSpace(action.SearchInput))
+        if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
             dispatcher.Dispatch(new SearchManufacturersFinishedAction(new List<ManufacturerSearchResult>()));
             return;
@@ -43,7 +43,7 @@ public class ManufacturerEffects
         IEnumerable<ManufacturerSearchResult> result;
         try
         {
-            result = await _client.GetManufacturerSearchResultsAsync(action.SearchInput);
+            result = await _client.GetManufacturerSearchResultsAsync(_state.Value.Search.Input);
         }
         catch (ApiException e)
         {
@@ -67,10 +67,14 @@ public class ManufacturerEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod(typeof(LeaveManufacturerEditorAction))]
-    public Task HandleLeaveManufacturerEditorAction(IDispatcher dispatcher)
+    [EffectMethod]
+    public Task HandleLeaveManufacturerEditorAction(LeaveManufacturerEditorAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo(PageRoutes.Manufacturers);
+
+        if (action.TriggeredBySave)
+            dispatcher.Dispatch(new SearchManufacturersAction());
+
         return Task.CompletedTask;
     }
 
@@ -153,7 +157,7 @@ public class ManufacturerEffects
         }
 
         dispatcher.Dispatch(new SavingManufacturerFinishedAction());
-        dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        dispatcher.Dispatch(new LeaveManufacturerEditorAction(true));
     }
 
     [EffectMethod(typeof(DeleteManufacturerAction))]
@@ -198,7 +202,7 @@ public class ManufacturerEffects
 
         _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
         _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveManufacturerEditorAction());
+        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveManufacturerEditorAction(true));
         _leaveEditorTimer.Start();
 
         return Task.CompletedTask;

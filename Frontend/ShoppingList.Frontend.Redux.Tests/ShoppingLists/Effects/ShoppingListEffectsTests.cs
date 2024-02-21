@@ -25,9 +25,25 @@ public class ShoppingListEffectsTests
         private readonly HandleLoadQuantityTypesActionFixture _fixture = new();
 
         [Fact]
+        public async Task HandleLoadQuantityTypesAction_WithQuantityTypesInState_ShouldNotDoAnything()
+        {
+            // Arrange
+            _fixture.SetupStateContainingQuantityTypes();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
         public async Task HandleLoadQuantityTypesAction_WithSuccessfulRequest_ShouldDispatchFinishedAction()
         {
             // Arrange
+            _fixture.SetupStateContainingNoQuantityTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedQuantityTypes();
@@ -47,6 +63,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadQuantityTypesAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
+            _fixture.SetupStateContainingNoQuantityTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesThrowsApiException();
@@ -65,6 +82,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadQuantityTypesAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
+            _fixture.SetupStateContainingNoQuantityTypes();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
@@ -114,6 +132,16 @@ public class ShoppingListEffectsTests
                 _expectedLoadFinishedAction = new LoadQuantityTypesFinishedAction(_expectedQuantityTypes);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
             }
+
+            public void SetupStateContainingNoQuantityTypes()
+            {
+                State = State with { QuantityTypes = new List<QuantityType>() };
+            }
+
+            public void SetupStateContainingQuantityTypes()
+            {
+                State = State with { QuantityTypes = new List<QuantityType> { new DomainTestBuilder<QuantityType>().Create() } };
+            }
         }
     }
 
@@ -122,9 +150,25 @@ public class ShoppingListEffectsTests
         private readonly HandleLoadQuantityTypesInPacketActionFixture _fixture = new();
 
         [Fact]
+        public async Task HandleLoadQuantityTypesInPacketAction_WithQuantityTypesInState_ShouldNotDoAnything()
+        {
+            // Arrange
+            _fixture.SetupStateContainingQuantityTypesInPacket();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
         public async Task HandleLoadQuantityTypesInPacketAction_WithSuccessfulRequest_ShouldDispatchFinishedAction()
         {
             // Arrange
+            _fixture.SetupStateContainingNoQuantityTypesInPacket();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedQuantityTypesInPacket();
@@ -144,6 +188,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadQuantityTypesInPacketAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
+            _fixture.SetupStateContainingNoQuantityTypesInPacket();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
@@ -162,6 +207,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadQuantityTypesInPacketAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
+            _fixture.SetupStateContainingNoQuantityTypesInPacket();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
@@ -211,6 +257,22 @@ public class ShoppingListEffectsTests
                 _expectedLoadFinishedAction = new LoadQuantityTypesInPacketFinishedAction(_expectedQuantityTypesInPacket);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
             }
+
+            public void SetupStateContainingNoQuantityTypesInPacket()
+            {
+                State = State with { QuantityTypesInPacket = new List<QuantityTypeInPacket>() };
+            }
+
+            public void SetupStateContainingQuantityTypesInPacket()
+            {
+                State = State with
+                {
+                    QuantityTypesInPacket = new List<QuantityTypeInPacket>
+                    {
+                        new DomainTestBuilder<QuantityTypeInPacket>().Create()
+                    }
+                };
+            }
         }
     }
 
@@ -219,9 +281,25 @@ public class ShoppingListEffectsTests
         private readonly HandleLoadAllActiveStoresActionFixture _fixture = new();
 
         [Fact]
+        public async Task HandleLoadAllActiveStoresAction_WithStateContainingStores_ShouldNotDoAnything()
+        {
+            // Arrange
+            _fixture.SetupStateContainingStores();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
         public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldDispatchFinishedAction()
         {
             // Arrange
+            _fixture.SetupStateContainingNoStores();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedStoresEmpty();
@@ -241,6 +319,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldNotDispatchChangeAction()
         {
             // Arrange
+            _fixture.SetupStateContainingNoStores();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedStoresEmpty();
@@ -261,6 +340,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithStores_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
+            _fixture.SetupStateContainingNoStores();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedStores();
@@ -281,6 +361,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithApiException_ShouldDispatchExceptionNotificationAction()
         {
             // Arrange
+            _fixture.SetupStateContainingNoStores();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedStores();
@@ -300,6 +381,7 @@ public class ShoppingListEffectsTests
         public async Task HandleLoadAllActiveStoresAction_WithHttpRequestException_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
+            _fixture.SetupStateContainingNoStores();
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupExpectedStores();
@@ -367,6 +449,96 @@ public class ShoppingListEffectsTests
 
                 _expectedLoadFinishedAction = new LoadAllActiveStoresFinishedAction(_expectedStoresForShoppingList);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
+            }
+
+            public void SetupStateContainingNoStores()
+            {
+                State = State with
+                {
+                    Stores = State.Stores with
+                    {
+                        Stores = new List<ShoppingListStore>()
+                    }
+                };
+            }
+
+            public void SetupStateContainingStores()
+            {
+                State = State with
+                {
+                    Stores = State.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+        }
+    }
+
+    public class HandleShoppingListEnteredAction
+    {
+        private readonly HandleShoppingListEnteredActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleShoppingListEnteredAction_WithStateContainingNoStores_ShouldNotDoAnything()
+        {
+            // Arrange
+            _fixture.SetupStateContainingNoStores();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleShoppingListEnteredAction_WithStateContainingStores_ShouldDispatchStoreChangedAction()
+        {
+            // Arrange
+            _fixture.SetupStateContainingStores();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingStoreChangedAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleShoppingListEnteredActionFixture : ShoppingListEffectsFixture
+        {
+            public void SetupStateContainingNoStores()
+            {
+                State = State with
+                {
+                    Stores = State.Stores with
+                    {
+                        Stores = new List<ShoppingListStore>()
+                    }
+                };
+            }
+
+            public void SetupStateContainingStores()
+            {
+                State = State with
+                {
+                    Stores = State.Stores with
+                    {
+                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
+                    }
+                };
+            }
+
+            public void SetupDispatchingStoreChangedAction()
+            {
+                SetupDispatchingAction(new SelectedStoreChangedAction(State.Stores.Stores.First().Id));
             }
         }
     }
@@ -500,7 +672,6 @@ public class ShoppingListEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupAction();
                 _fixture.SetupStoreId();
                 _fixture.SetupExpectedShoppingList();
                 _fixture.SetupGettingQuantityTypesInPacket();
@@ -521,7 +692,6 @@ public class ShoppingListEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupAction();
                 _fixture.SetupStoreId();
                 _fixture.SetupGettingQuantityTypesInPacketThrowsApiException();
                 _fixture.SetupDispatchingExceptionNotificationAction();
@@ -541,7 +711,6 @@ public class ShoppingListEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupAction();
                 _fixture.SetupStoreId();
                 _fixture.SetupGettingQuantityTypesInPacketThrowsHttpRequestException();
                 _fixture.SetupDispatchingLoadFromLocalStorageAction();
@@ -560,8 +729,6 @@ public class ShoppingListEffectsTests
             private readonly Guid _storeId = Guid.NewGuid();
             private ShoppingListModel? _expectedShoppingList;
             private LoadShoppingListFinishedAction? _expectedLoadFinishedAction;
-
-            public ReloadCurrentShoppingListAction? Action { get; private set; }
 
             public void SetupExpectedShoppingList()
             {
@@ -602,11 +769,6 @@ public class ShoppingListEffectsTests
             public void SetupDispatchingLoadFromLocalStorageAction()
             {
                 SetupDispatchingAction(new LoadShoppingListFromLocalStorageAction(_storeId));
-            }
-
-            public void SetupAction()
-            {
-                Action = new ReloadCurrentShoppingListAction();
             }
         }
     }

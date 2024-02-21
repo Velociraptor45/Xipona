@@ -21,11 +21,15 @@
         OnItemAdded="@OnNewItemCategoryCreatedAsync"
         OnInputChanged="OnInputChanged"
         Placeholder="Item Category"
-        Value="@State.Value.Editor.Item.ItemCategoryId.GetValueOrDefault()"
+        Value="@State.Value.Editor.Item!.ItemCategoryId.GetValueOrDefault()"
         SearchInput="@State.Value.Editor.ItemCategorySelector.Input"
         OnDropdownClosed="OnDropdownClosed"
         CanAddItem="true">
     </SingleSearchSelect>
+    @if(State.Value.Editor.ValidationResult.ItemCategory is not null)
+    {
+        <div class="validation-error-message">@State.Value.Editor.ValidationResult.ItemCategory</div>
+    }
 </div>
 
 @code {

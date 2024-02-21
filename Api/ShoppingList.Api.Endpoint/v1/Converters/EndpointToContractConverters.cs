@@ -1,20 +1,9 @@
 ﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
-using System.Runtime.Serialization;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.v1.Converters;
 
-[Serializable]
 public class EndpointToContractConverters : Dictionary<(Type, Type), IToContractConverter>
 {
-    public EndpointToContractConverters()
-    {
-    }
-
-    protected EndpointToContractConverters(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
     public IEnumerable<TContract> ToContract<TDomain, TContract>(IEnumerable<TDomain> domain)
     {
         var typedConverter = GetConverter<TDomain, TContract>();
