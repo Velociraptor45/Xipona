@@ -7,3 +7,7 @@
 .search-result {
     color: #34495e;
 }
+
+.search-result-separator {
+    border-bottom: 1px solid var(--primary-color-transparent);
+}

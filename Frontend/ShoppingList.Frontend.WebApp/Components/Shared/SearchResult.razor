@@ -6,7 +6,7 @@
 
 @inject IDispatcher Dispatcher
 
-<div class="search-result p-2 container" @onclick="OnItemClicked">
+<div class="search-result p-2 container @(IsLastItem ? string.Empty : "search-result-separator")" @onclick="OnItemClicked">
     @if(ChildContent is null)
     {
         <div>@Model.Name</div>
@@ -24,6 +24,8 @@
     public TAction Action { get; set; }
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public bool IsLastItem { get; set; } = false;
 
     private void OnItemClicked()
     {
