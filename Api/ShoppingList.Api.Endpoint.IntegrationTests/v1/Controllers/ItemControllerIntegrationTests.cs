@@ -11,6 +11,7 @@ using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.ShoppingList.Api.Core.Attributes;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
@@ -24,17 +25,20 @@ using ProjectHermes.ShoppingList.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Items.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Contexts;
+using ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ItemCategories.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Items.Entities;
+using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Manufacturers.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Recipes.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.ShoppingLists.Entities;
 using ProjectHermes.ShoppingList.Api.Repositories.TestKit.Stores.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using ProjectHermes.ShoppingList.Api.TestTools.Extensions;
 using System;
 using System.Text.RegularExpressions;
 using Xunit;
@@ -49,6 +53,154 @@ namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controller
 
 public class ItemControllerIntegrationTests
 {
+    public sealed class SearchItemsAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly SearchItemsAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task SearchItemsAsync_WithItemNameNotMatching_WithItemNameMatching_WithItemNameMatchingAndNoManufacturer_WithItemNameMatchingButDeleted_WithItemNameMatchingButTemporary_ShouldReturnOneItem()
+        {
+            // Arrange
+            _fixture.SetupSearchInput();
+            _fixture.SetupExpectedResult();
+            _fixture.SetupItemWithNameNotMatching();
+            _fixture.SetupItemWithNameMatching();
+            _fixture.SetupItemWithNameMatchingAndNoManufacturer();
+            _fixture.SetupItemWithNameMatchingButDeleted();
+            _fixture.SetupItemWithNameMatchingButTemporary();
+            _fixture.SetupManufacturerNameForItemWithNameMatching();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.SearchItemsAsync(_fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class SearchItemsAsyncFixture : ItemControllerFixture
+        {
+            private readonly List<Item> _items = new(5);
+            private Item? _itemMatching;
+            private readonly List<Manufacturer> _manufacturers = new(1);
+
+            public SearchItemsAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public string? SearchInput { get; private set; }
+            public IReadOnlyCollection<SearchItemResultContract>? ExpectedResult { get; private set; }
+
+            public async Task SetupDatabaseAsync()
+            {
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var manufacturerContext = GetContextInstance<ManufacturerContext>(ArrangeScope);
+
+                await itemContext.AddRangeAsync(_items);
+                await manufacturerContext.AddRangeAsync(_manufacturers);
+
+                await itemContext.SaveChangesAsync();
+                await manufacturerContext.SaveChangesAsync();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                ExpectedResult = new List<SearchItemResultContract>()
+                {
+                    new DomainTestBuilder<SearchItemResultContract>()
+                        .FillConstructorWith(
+                            nameof(SearchItemResultContract.ItemName).LowerFirstChar(),
+                            "abc" + SearchInput + "def")
+                        .Create(),
+                    new DomainTestBuilder<SearchItemResultContract>()
+                        .FillConstructorWith(
+                            nameof(SearchItemResultContract.ItemName).LowerFirstChar(),
+                            "abc" + SearchInput + "def")
+                        .FillConstructorWith(nameof(SearchItemResultContract.ManufacturerName).LowerFirstChar(), (string)null!)
+                        .Create()
+                };
+            }
+
+            public void SetupSearchInput()
+            {
+                SearchInput = new DomainTestBuilder<string>().Create();
+            }
+
+            public void SetupItemWithNameNotMatching()
+            {
+                _items.Add(ItemEntityMother.Initial().Create());
+            }
+
+            public void SetupItemWithNameMatching()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var expected = ExpectedResult.First();
+                _itemMatching = ItemEntityMother
+                    .Initial()
+                    .WithName(expected.ItemName)
+                    .WithId(expected.ItemId)
+                    .Create();
+                _items.Add(_itemMatching);
+            }
+
+            public void SetupItemWithNameMatchingAndNoManufacturer()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var expected = ExpectedResult.Last();
+                var item = ItemEntityMother
+                    .Initial()
+                    .WithName(expected.ItemName)
+                    .WithId(expected.ItemId)
+                    .WithoutManufacturerId()
+                    .Create();
+                _items.Add(item);
+            }
+
+            public void SetupItemWithNameMatchingButDeleted()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                var name = "abc" + SearchInput + "def";
+                _items.Add(ItemEntityMother.Initial().WithName(name).WithDeleted(true).Create());
+            }
+
+            public void SetupItemWithNameMatchingButTemporary()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                var name = "abc" + SearchInput + "def";
+                _items.Add(ItemEntityMother.Initial().WithName(name).WithIsTemporary(true).Create());
+            }
+
+            public void SetupManufacturerNameForItemWithNameMatching()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemMatching);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var manufacturer = new ManufacturerEntityBuilder()
+                    .WithId(_itemMatching.ManufacturerId!.Value)
+                    .WithName(ExpectedResult.First().ManufacturerName)
+                    .Create();
+                _manufacturers.Add(manufacturer);
+            }
+        }
+    }
+
     public sealed class SearchItemsForShoppingListAsync : IAssemblyFixture<DockerFixture>
     {
         private readonly SearchItemsForShoppingListAsyncFixture _fixture;

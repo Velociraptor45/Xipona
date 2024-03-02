@@ -7,6 +7,7 @@ using ProjectHermes.ShoppingList.Api.Domain.Items.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Ports;
@@ -22,6 +23,7 @@ public class ItemSearchService : IItemSearchService
     private const int _maxSearchResults = 20;
 
     private readonly IItemRepository _itemRepository;
+    private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
     private readonly IStoreRepository _storeRepository;
     private readonly IItemTypeReadRepository _itemTypeReadRepository;
@@ -32,6 +34,7 @@ public class ItemSearchService : IItemSearchService
 
     public ItemSearchService(
         IItemRepository itemRepository,
+        IManufacturerRepository manufacturerRepository,
         IShoppingListRepository shoppingListRepository,
         IStoreRepository storeRepository,
         IItemTypeReadRepository itemTypeReadRepository,
@@ -41,6 +44,7 @@ public class ItemSearchService : IItemSearchService
         IItemAvailabilityReadModelConversionService availabilityConverter)
     {
         _itemRepository = itemRepository;
+        _manufacturerRepository = manufacturerRepository;
         _shoppingListRepository = shoppingListRepository;
         _storeRepository = storeRepository;
         _itemTypeReadRepository = itemTypeReadRepository;
@@ -58,7 +62,7 @@ public class ItemSearchService : IItemSearchService
 
         return items
             .Where(model => !model.IsDeleted)
-            .Select(model => new SearchItemResultReadModel(model));
+            .Select(model => new SearchItemResultReadModel(model.Id, model.Name, null));
     }
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput)
@@ -66,8 +70,16 @@ public class ItemSearchService : IItemSearchService
         if (string.IsNullOrWhiteSpace(searchInput))
             return Enumerable.Empty<SearchItemResultReadModel>();
 
-        var items = await _itemRepository.FindActiveByAsync(searchInput);
-        return items.Select(i => new SearchItemResultReadModel(i.Id, i.Name));
+        var items = (await _itemRepository.FindActiveByAsync(searchInput)).ToList();
+
+        var manufacturerIds = items.Where(i => i.ManufacturerId is not null).Select(i => i.ManufacturerId!.Value);
+        var manufacturers = (await _manufacturerRepository.FindByAsync(manufacturerIds)).ToDictionary(m => m.Id);
+
+        return items.Select(i =>
+        {
+            var manufacturerName = i.ManufacturerId is null ? null : manufacturers[i.ManufacturerId!.Value].Name;
+            return new SearchItemResultReadModel(i.Id, i.Name, manufacturerName);
+        });
     }
 
     public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchAsync(ItemCategoryId itemCategoryId)

@@ -84,6 +84,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemSearchService>>(provider =>
         {
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            var manufacturerRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
             var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
             var itemTypeReadRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemTypeReadRepository>>();
@@ -94,9 +95,10 @@ public static class ServiceCollectionExtensions
             var availabilityConverterDelegate = provider.GetRequiredService<
                 Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
 
-            return ct => new ItemSearchService(itemRepositoryDelegate(ct), shoppingListRepositoryDelegate(ct),
-                storeRepositoryDelegate(ct), itemTypeReadRepositoryDelegate(ct), itemCategoryRepositoryDelegate(ct),
-                conversionServiceDelegate(ct), validatorDelegate(ct), availabilityConverterDelegate(ct));
+            return ct => new ItemSearchService(itemRepositoryDelegate(ct), manufacturerRepositoryDelegate(ct),
+                shoppingListRepositoryDelegate(ct), storeRepositoryDelegate(ct), itemTypeReadRepositoryDelegate(ct),
+                itemCategoryRepositoryDelegate(ct), conversionServiceDelegate(ct), validatorDelegate(ct),
+                availabilityConverterDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IItemCreationService>>(provider =>
