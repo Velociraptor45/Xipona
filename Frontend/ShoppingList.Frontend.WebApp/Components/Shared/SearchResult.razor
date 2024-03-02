@@ -1,13 +1,20 @@
 ﻿@using Fluxor
 @using ProjectHermes.ShoppingList.Frontend.Redux.Shared.States
+@using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions;
 
-@typeparam TAction where TAction : ProjectHermes.ShoppingList.Frontend.Redux.Shared.Actions.ISearchResultTriggerAction, new()
+@typeparam TAction where TAction : ISearchResultTriggerAction, new()
 
-@inject NavigationManager _navigationManager
 @inject IDispatcher Dispatcher
 
-<div class="search-result p-2" @onclick="OnItemClicked">
-    <div>@Model.Name</div>
+<div class="search-result p-2 container" @onclick="OnItemClicked">
+    @if(ChildContent is null)
+    {
+        <div>@Model.Name</div>
+    }
+    else
+    {
+        @ChildContent
+    }
 </div>
 
 @code {
@@ -15,6 +22,8 @@
     public ISearchResult Model { get; set; }
     [Parameter]
     public TAction Action { get; set; }
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 
     private void OnItemClicked()
     {

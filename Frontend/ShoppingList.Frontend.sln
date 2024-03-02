@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Infra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.Infrastructure.TestKit", "ShoppingList.Frontend.Infrastructure.TestKit\ShoppingList.Frontend.Infrastructure.TestKit.csproj", "{6BC7C0BD-9315-475E-BFC3-72263C3BC704}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Frontend.WebApp.TestKit", "ShoppingList.Frontend.WebApp.TestKit\ShoppingList.Frontend.WebApp.TestKit.csproj", "{7F5A5C66-5477-4A9A-8D0B-1B54A37C8DD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Frontend.WebApp.TestKit", "ShoppingList.Frontend.WebApp.TestKit\ShoppingList.Frontend.WebApp.TestKit.csproj", "{7F5A5C66-5477-4A9A-8D0B-1B54A37C8DD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
