@@ -1,8 +1,13 @@
 ﻿.search-result:hover {
-  cursor: pointer;
-  background-color: #3498db;
-  color: white;
+    cursor: pointer;
+    background-color: #3498db;
+    color: white;
 }
+
 .search-result {
-  color: #34495e;
+    color: #34495e;
+}
+
+.search-result-separator {
+    border-bottom: 1px solid var(--primary-color-transparent);
 }

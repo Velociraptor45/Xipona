@@ -14,6 +14,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
@@ -393,6 +394,7 @@ public class ItemSearchServiceTests
     private abstract class ItemSearchServiceFixture
     {
         protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ManufacturerRepositoryMock ManufacturerRepositoryMock = new(MockBehavior.Strict);
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
         protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
         protected readonly ItemTypeReadRepositoryMock ItemTypeReadRepositoryMock = new(MockBehavior.Strict);
@@ -406,6 +408,7 @@ public class ItemSearchServiceTests
         {
             return new ItemSearchService(
                 ItemRepositoryMock.Object,
+                ManufacturerRepositoryMock.Object,
                 ShoppingListRepositoryMock.Object,
                 StoreRepositoryMock.Object,
                 ItemTypeReadRepositoryMock.Object,

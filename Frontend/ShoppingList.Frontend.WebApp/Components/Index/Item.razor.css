@@ -1,21 +1,26 @@
 ﻿.item {
-  list-style-type: none;
-  color: #ffffff;
-  cursor: pointer;
+    list-style-type: none;
+    color: #ffffff;
+    cursor: pointer;
 }
+
 .item-editing {
-  list-style-type: none;
-  color: #ffffff;
+    list-style-type: none;
+    color: #ffffff;
 }
+
 .in-basket {
-  background-color: #3498db;
+    background-color: #3498db;
 }
+
 .not-in-basket {
-  background-color: #e74c3c;
+    background-color: #e74c3c;
 }
+
 .price-currency {
-  padding-left: 2px;
+    padding-left: 2px;
 }
+
 .quantity {
-  width: 44px;
+    width: 44px;
 }

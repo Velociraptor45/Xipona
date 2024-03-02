@@ -1,4 +1,11 @@
-﻿.nav-link {
+﻿app {
+    --black: #000000;
+    --white: #ffffff;
+    --primary-color: #3498db;
+    --primary-color-transparent: #3498db33;
+}
+
+.nav-link {
     color: #34495e;
 }
 
@@ -10,7 +17,7 @@
 
         .nav-link:hover,
         .nav-link-ext:hover {
-            color: #ffffff;
+            color: var(--white);
         }
 
     .ant-modal-wrap {

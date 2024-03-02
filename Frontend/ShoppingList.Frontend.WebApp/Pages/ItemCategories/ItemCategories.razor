@@ -40,7 +40,9 @@
         }
         @foreach (var searchResult in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="searchResult" TAction="EditItemCategoryAction"></SearchResult>
+            <SearchResult Model="searchResult" TAction="EditItemCategoryAction"
+                          IsLastItem="State.Value.Search.SearchResults.Last() == searchResult">
+            </SearchResult>
         }
     </div>
 </div>

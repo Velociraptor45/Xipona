@@ -37,7 +37,12 @@
         <!-- result item list -->
         @foreach (var item in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="item" TAction="EditItemAction"></SearchResult>
+            <SearchResult Model="item" TAction="EditItemAction" IsLastItem="State.Value.Search.SearchResults.Last() == item">
+                <div class="d-flex row">
+                    <div class="col-5">@item.Name</div>
+                    <div class="col-7">@item.ManufacturerName</div>
+                </div>
+            </SearchResult>
         }
     </div>
 </div>

@@ -10,7 +10,8 @@ namespace ProjectHermes.ShoppingList.Frontend.Infrastructure.Converters.Items.To
         {
             return new ItemSearchResult(
                 contract.ItemId,
-                contract.ItemName);
+                contract.ItemName,
+                contract.ManufacturerName ?? string.Empty);
         }
     }
 }

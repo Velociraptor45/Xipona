@@ -23,7 +23,9 @@
         <ol class="pl-0">
             @foreach (var searchResult in State.Value.SearchResults)
             {
-                <SearchResult Model="searchResult" TAction="EditStoreAction"></SearchResult>
+                <SearchResult Model="searchResult" TAction="EditStoreAction"
+                              IsLastItem="State.Value.SearchResults.Last() == searchResult">
+                </SearchResult>
             }
         </ol>
     </div>

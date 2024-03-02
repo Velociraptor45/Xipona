@@ -38,7 +38,9 @@
         }
         @foreach (var searchResult in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="searchResult" TAction="EditManufacturerAction"></SearchResult>
+            <SearchResult Model="searchResult" TAction="EditManufacturerAction"
+                          IsLastItem="State.Value.Search.SearchResults.Last() == searchResult">
+            </SearchResult>
         }
     </div>
 </div>
