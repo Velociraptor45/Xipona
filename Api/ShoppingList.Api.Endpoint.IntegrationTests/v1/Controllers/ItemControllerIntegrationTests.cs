@@ -1808,10 +1808,11 @@ public class ItemControllerIntegrationTests
         }
 
         [Fact]
-        public async Task SearchItemsByItemCategoryAsync_WithValidItemCategoryId_ShouldReturnExpectedResult()
+        public async Task SearchItemsByItemCategoryAsync_WithoutTypes_WithMatchingItemCategoryAndManufacturer_WithMatchingItemCategoryAndNoManufacturer_WithNotMatchingItemCategory_ShouldReturnExpectedResult()
         {
             // Arrange
             _fixture.SetupItemCategory();
+            _fixture.SetupManufacturer();
             _fixture.SetupItemsWithAndWithoutItemCategory();
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupExpectedResult();
@@ -1833,10 +1834,12 @@ public class ItemControllerIntegrationTests
         private sealed class SearchItemsByItemCategoryAsyncFixture : ItemControllerFixture
         {
             private readonly CommonFixture _commonFixture = new();
-            private Item? _itemWithItemCategory;
+            private Item? _item;
+            private Item? _itemWithoutManufacturer;
             private Item? _itemWithoutItemCategory;
             private ItemCategory? _itemCategory;
             private Store? _store;
+            private Manufacturer? _manufacturer;
 
             public SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -1847,14 +1850,22 @@ public class ItemControllerIntegrationTests
 
             public void SetupItemCategory()
             {
-                _itemCategory = new TestBuilder<ItemCategory>()
-                    .FillPropertyWith(c => c.Deleted, false)
+                _itemCategory = new ItemCategoryEntityBuilder()
+                    .WithDeleted(false)
+                    .Create();
+            }
+
+            public void SetupManufacturer()
+            {
+                _manufacturer = new ManufacturerEntityBuilder()
                     .Create();
             }
 
             public void SetupItemsWithAndWithoutItemCategory()
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+
                 var sections = new List<Section>()
                 {
                     new SectionEntityBuilder().WithIsDefaultSection(true).WithSortIndex(0).Create(),
@@ -1864,8 +1875,18 @@ public class ItemControllerIntegrationTests
 
                 var defaultSectionId = _commonFixture.ChooseRandom(_store.Sections).Id;
 
-                _itemWithItemCategory =
+                _item =
                     ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
+                        .WithManufacturerId(_manufacturer.Id)
+                        .WithAvailableAt(AvailableAtEntityMother
+                            .InitialForStore(_store.Id)
+                            .WithDefaultSectionId(defaultSectionId)
+                            .CreateMany(1)
+                            .ToList())
+                        .Create();
+                _itemWithoutManufacturer =
+                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
+                        .WithoutManufacturerId()
                         .WithAvailableAt(AvailableAtEntityMother
                             .InitialForStore(_store.Id)
                             .WithDefaultSectionId(defaultSectionId)
@@ -1877,8 +1898,9 @@ public class ItemControllerIntegrationTests
 
             public async Task PrepareDatabaseAsync()
             {
-                TestPropertyNotSetException.ThrowIfNull(_itemWithItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_item);
                 TestPropertyNotSetException.ThrowIfNull(_itemWithoutItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
                 TestPropertyNotSetException.ThrowIfNull(_store);
 
@@ -1886,33 +1908,52 @@ public class ItemControllerIntegrationTests
 
                 var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
                 var itemCategoryContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+                var manufacturerContext = ArrangeScope.ServiceProvider.GetRequiredService<ManufacturerContext>();
                 var storeContext = ArrangeScope.ServiceProvider.GetRequiredService<StoreContext>();
 
-                itemCategoryContext.Add(_itemCategory);
-                storeContext.Add(_store);
-                itemContext.Add(_itemWithItemCategory);
-                itemContext.Add(_itemWithoutItemCategory);
+                await itemCategoryContext.AddAsync(_itemCategory);
+                await storeContext.AddAsync(_store);
+                await itemContext.AddAsync(_item);
+                await itemContext.AddAsync(_itemWithoutManufacturer);
+                await itemContext.AddAsync(_itemWithoutItemCategory);
+                await manufacturerContext.AddAsync(_manufacturer);
 
                 await itemCategoryContext.SaveChangesAsync();
                 await itemContext.SaveChangesAsync();
                 await storeContext.SaveChangesAsync();
+                await manufacturerContext.SaveChangesAsync();
             }
 
             public void SetupExpectedResult()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
-                TestPropertyNotSetException.ThrowIfNull(_itemWithItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
 
-                ExpectedResult = new SearchItemByItemCategoryResultContract(
-                    _itemWithItemCategory.Id,
-                    null,
-                    _itemWithItemCategory.Name,
-                    _itemWithItemCategory.AvailableAt.Select(av =>
-                        new SearchItemByItemCategoryAvailabilityContract(
-                            _store.Id,
-                            _store.Name,
-                            av.Price)))
-                    .ToMonoList();
+                ExpectedResult = new List<SearchItemByItemCategoryResultContract>(2)
+                {
+                    new(
+                        _item.Id,
+                        null,
+                        _item.Name,
+                        _manufacturer.Name,
+                        _item.AvailableAt.Select(av =>
+                            new SearchItemByItemCategoryAvailabilityContract(
+                                _store.Id,
+                                _store.Name,
+                                av.Price))),
+                    new(
+                        _itemWithoutManufacturer.Id,
+                        null,
+                        _itemWithoutManufacturer.Name,
+                        null,
+                        _itemWithoutManufacturer.AvailableAt.Select(av =>
+                            new SearchItemByItemCategoryAvailabilityContract(
+                                _store.Id,
+                                _store.Name,
+                                av.Price)))
+                };
             }
         }
     }
