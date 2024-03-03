@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.ShoppingList.Frontend.Redux.Recipes.States;
 
-public record SearchItemByItemCategoryResult(Guid ItemId, Guid? ItemTypeId, string Name,
+public record SearchItemByItemCategoryResult(Guid ItemId, Guid? ItemTypeId, string Name, string ManufacturerName,
     IReadOnlyCollection<SearchItemByItemCategoryAvailability> Availabilities)
 {
     public string SelectIdentifier

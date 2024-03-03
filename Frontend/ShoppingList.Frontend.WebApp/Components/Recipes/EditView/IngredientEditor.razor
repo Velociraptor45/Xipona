@@ -45,6 +45,14 @@
                         OnSelectedItemChanged="OnItemChanged"
                         AllowClear="true"
                         Value="@($"{Model.DefaultItemId?.ToString() ?? string.Empty}{Model.DefaultItemTypeId?.ToString() ?? string.Empty}")">
+                    <ItemTemplate>
+                        <div>
+                            @context.Name
+                        </div>
+                        <div>
+                            @context.ManufacturerName
+                        </div>
+                    </ItemTemplate>
                 </Select>
             }
             @if (Model.DefaultItemId is not null)
