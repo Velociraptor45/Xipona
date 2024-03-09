@@ -287,7 +287,6 @@ public class ShoppingListReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    EditModeActive = true,
                     ItemsInBasketVisible = false,
                     ShoppingList = new DomainTestBuilder<ShoppingListModel>().Create()
                 };
@@ -297,7 +296,6 @@ public class ShoppingListReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    EditModeActive = false,
                     ItemsInBasketVisible = true
                 };
             }
@@ -305,6 +303,66 @@ public class ShoppingListReducerTests
             public void SetupAction()
             {
                 Action = new LoadShoppingListFinishedAction(ExpectedState.ShoppingList!);
+            }
+        }
+    }
+
+    public class OnResetEditMode
+    {
+        private readonly OnResetEditModeFixture _fixture = new();
+
+        [Fact]
+        public void OnResetEditMode_WithEditModeActive_ShouldExitEditMode()
+        {
+            // Arrange
+            _fixture.SetupInitialStateInEditMode();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ShoppingListReducer.OnResetEditMode(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnResetEditMode_WithEditModeNotActive_ShouldNotChangeAnything()
+        {
+            // Arrange
+            _fixture.SetupInitialStateNotInEditMode();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ShoppingListReducer.OnResetEditMode(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnResetEditModeFixture : ShoppingListReducerFixture
+        {
+            public void SetupInitialStateInEditMode()
+            {
+                InitialState = ExpectedState with
+                {
+                    EditModeActive = true
+                };
+            }
+
+            public void SetupInitialStateNotInEditMode()
+            {
+                InitialState = ExpectedState with
+                {
+                    EditModeActive = false
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    EditModeActive = false
+                };
             }
         }
     }

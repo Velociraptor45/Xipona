@@ -557,6 +557,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupExpectedShoppingList();
                 _fixture.SetupGettingQuantityTypesInPacket();
                 _fixture.SetupDispatchingLoadFinishedAction();
+                _fixture.SetupDispatchingResetEditModeAction();
             });
             var sut = _fixture.CreateSut();
 
@@ -653,6 +654,11 @@ public class ShoppingListEffectsTests
             public void SetupDispatchingLoadFromLocalStorageAction()
             {
                 SetupDispatchingAction(new LoadShoppingListFromLocalStorageAction(_storeId));
+            }
+
+            public void SetupDispatchingResetEditModeAction()
+            {
+                SetupDispatchingAction<ResetEditModeAction>();
             }
 
             public void SetupAction()
@@ -1181,7 +1187,8 @@ public class ShoppingListEffectsTests
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupFinishingList();
                 _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingStoreChangeAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
+                _fixture.SetupDispatchingResetEditModeAction();
                 _fixture.SetupSuccessNotification();
             });
 
@@ -1244,7 +1251,6 @@ public class ShoppingListEffectsTests
         private sealed class HandleFinishShoppingListActionFixture : ShoppingListEffectsFixture
         {
             private FinishListRequest? _expectedFinishRequest;
-            private SelectedStoreChangedAction? _expectedStoreChangeAction;
 
             public void SetupExpectedFinishRequest(DateTimeOffset? expectedFinishDate)
             {
@@ -1278,10 +1284,14 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<FinishShoppingListFinishedAction>();
             }
 
-            public void SetupDispatchingStoreChangeAction()
+            public void SetupDispatchingReloadShoppingListAction()
             {
-                _expectedStoreChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
-                SetupDispatchingAction(_expectedStoreChangeAction);
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
+            }
+
+            public void SetupDispatchingResetEditModeAction()
+            {
+                SetupDispatchingAction<ResetEditModeAction>();
             }
 
             public void SetupFinishingList()

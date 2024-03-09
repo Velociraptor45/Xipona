@@ -56,7 +56,7 @@ public class ShoppingListProcessingEffects
     [EffectMethod(typeof(ReloadAfterErrorAction))]
     public Task HandleReloadAfterErrorAction(IDispatcher dispatcher)
     {
-        dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
         return Task.CompletedTask;
     }
 }

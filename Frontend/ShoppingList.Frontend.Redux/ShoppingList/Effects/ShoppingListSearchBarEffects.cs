@@ -124,7 +124,7 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
             return;
         }
 
-        dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
     }
 
     private CancellationTokenSource CreateNewCancellationTokenSource()
