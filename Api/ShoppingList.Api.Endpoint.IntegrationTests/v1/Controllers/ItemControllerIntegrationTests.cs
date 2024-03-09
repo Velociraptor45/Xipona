@@ -1903,6 +1903,7 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
                 TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
 
                 await ApplyMigrationsAsync(ArrangeScope);
 
