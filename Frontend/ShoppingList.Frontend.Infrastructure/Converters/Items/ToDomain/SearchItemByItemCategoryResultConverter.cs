@@ -14,6 +14,7 @@ public class SearchItemByItemCategoryResultConverter :
             source.ItemId,
             source.ItemTypeId,
             source.Name,
+            source.ManufacturerName,
             source.Availabilities
                 .Select(av => new SearchItemByItemCategoryAvailability(av.StoreId, av.StoreName, av.Price))
                 .ToList());

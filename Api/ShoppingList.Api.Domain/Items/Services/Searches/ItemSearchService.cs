@@ -90,6 +90,9 @@ public class ItemSearchService : IItemSearchService
             .ToList();
         var itemsLookup = items.ToLookup(i => i.HasItemTypes);
 
+        var manufacturerIds = items.Where(i => i.ManufacturerId is not null).Select(i => i.ManufacturerId!.Value);
+        var manufacturers = (await _manufacturerRepository.FindByAsync(manufacturerIds)).ToDictionary(m => m.Id);
+
         var availabilitiesDict = await _availabilityConverter.ConvertAsync(items);
 
         var results = new List<SearchItemByItemCategoryResult>();
@@ -104,7 +107,8 @@ public class ItemSearchService : IItemSearchService
                     item.Id,
                     type.Id,
                     $"{item.Name} {type.Name}",
-                    availabilitiesDict[(item.Id, type.Id)]));
+                    item.ManufacturerId is null ? null : manufacturers[item.ManufacturerId!.Value].Name,
+                    availabilitiesDict[(item.Id, type.Id)].ToList()));
             }
         }
 
@@ -114,7 +118,8 @@ public class ItemSearchService : IItemSearchService
                 item.Id,
                 null,
                 item.Name,
-                availabilitiesDict[(item.Id, null)]));
+                item.ManufacturerId is null ? null : manufacturers[item.ManufacturerId!.Value].Name,
+                availabilitiesDict[(item.Id, null)].ToList()));
         }
 
         return results;

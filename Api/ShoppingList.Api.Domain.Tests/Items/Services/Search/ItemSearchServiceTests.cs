@@ -4,6 +4,7 @@ using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
+using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
@@ -14,6 +15,7 @@ using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Conversion.ItemSearchReadModels;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Items.Services.Validation;
+using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.ShoppingLists.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Stores.Ports;
@@ -100,12 +102,7 @@ public class ItemSearchServiceTests
 
     public sealed class SearchAsync_ItemCategoryId
     {
-        private readonly SearchAsyncFixture _fixture;
-
-        public SearchAsync_ItemCategoryId()
-        {
-            _fixture = new SearchAsyncFixture();
-        }
+        private readonly SearchAsyncFixture _fixture = new();
 
         [Fact]
         public async Task SearchAsync_WithItem_ShouldReturnExpectedResult()
@@ -115,6 +112,8 @@ public class ItemSearchServiceTests
             _fixture.SetupValidatingItemCategoryId();
             _fixture.SetupItemWithoutTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItem();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithoutTypes();
             _fixture.SetupConvertingAvailabilities();
             _fixture.SetupExpectedResultWithoutTypes();
@@ -137,6 +136,8 @@ public class ItemSearchServiceTests
             _fixture.SetupValidatingItemCategoryId();
             _fixture.SetupItemWithoutTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItem();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithoutTypes();
             _fixture.SetupConvertingAvailabilities();
             _fixture.SetupExpectedResultWithoutTypes();
@@ -159,6 +160,8 @@ public class ItemSearchServiceTests
             _fixture.SetupValidatingItemCategoryId();
             _fixture.SetupItemWithTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItemWithTypes();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithTypes();
             _fixture.SetupConvertingAvailabilities();
             _fixture.SetupExpectedResultWithTypes();
@@ -181,6 +184,8 @@ public class ItemSearchServiceTests
             _fixture.SetupValidatingItemCategoryId();
             _fixture.SetupItemWithTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItemWithTypes();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithTypes();
             _fixture.SetupConvertingAvailabilities();
             _fixture.SetupExpectedResultWithTypes();
@@ -203,6 +208,8 @@ public class ItemSearchServiceTests
             _fixture.SetupValidatingItemCategoryId();
             _fixture.SetupItemWithDeletedTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItemWithTypes();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithTypes();
             _fixture.SetupConvertingAvailabilities();
             _fixture.SetupExpectedResultWithDeletedTypes();
@@ -226,6 +233,9 @@ public class ItemSearchServiceTests
             _fixture.SetupItemWithTypes();
             _fixture.SetupItemWithoutTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItem();
+            _fixture.SetupManufacturerForItemWithTypes();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithTypes();
             _fixture.SetupConvertedAvailabilitiesWithoutTypes();
             _fixture.SetupConvertingAvailabilities();
@@ -251,6 +261,9 @@ public class ItemSearchServiceTests
             _fixture.SetupItemWithTypes();
             _fixture.SetupItemWithoutTypes();
             _fixture.SetupFindingItems();
+            _fixture.SetupManufacturerForItem();
+            _fixture.SetupManufacturerForItemWithTypes();
+            _fixture.SetupFindingManufacturers();
             _fixture.SetupConvertedAvailabilitiesWithTypes();
             _fixture.SetupConvertedAvailabilitiesWithoutTypes();
             _fixture.SetupConvertingAvailabilities();
@@ -274,6 +287,8 @@ public class ItemSearchServiceTests
 
             private readonly Dictionary<(ItemId, ItemTypeId?), IEnumerable<ItemAvailabilityReadModel>>
                 _convertedAvailabilities = new();
+
+            private readonly List<Manufacturer> _manufacturers = new();
 
             public List<SearchItemByItemCategoryResult> ExpectedResults { get; } = new();
             public ItemCategoryId? ItemCategoryId { get; private set; }
@@ -328,6 +343,23 @@ public class ItemSearchServiceTests
                 ItemRepositoryMock.SetupFindActiveByAsync(ItemCategoryId.Value, Items);
             }
 
+            public void SetupManufacturerForItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_foundItem);
+                _manufacturers.Add(new ManufacturerBuilder().WithId(_foundItem.ManufacturerId!.Value).Create());
+            }
+
+            public void SetupManufacturerForItemWithTypes()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_foundItemWithTypes);
+                _manufacturers.Add(new ManufacturerBuilder().WithId(_foundItemWithTypes.ManufacturerId!.Value).Create());
+            }
+
+            public void SetupFindingManufacturers()
+            {
+                ManufacturerRepositoryMock.SetupFindByAsync(_manufacturers.Select(m => m.Id), _manufacturers);
+            }
+
             public void SetupExpectedResultWithoutTypes()
             {
                 TestPropertyNotSetException.ThrowIfNull(_foundItem);
@@ -336,7 +368,8 @@ public class ItemSearchServiceTests
                     _foundItem.Id,
                     null,
                     _foundItem.Name,
-                    _convertedAvailabilities[(_foundItem.Id, null)]));
+                    _manufacturers.Single(m => m.Id == _foundItem.ManufacturerId).Name,
+                    _convertedAvailabilities[(_foundItem.Id, null)].ToList()));
             }
 
             public void SetupExpectedResultWithTypes()
@@ -349,7 +382,8 @@ public class ItemSearchServiceTests
                         _foundItemWithTypes.Id,
                         type.Id,
                         $"{_foundItemWithTypes.Name} {type.Name}",
-                        _convertedAvailabilities[(_foundItemWithTypes.Id, type.Id)]));
+                        _manufacturers.Single(m => m.Id == _foundItemWithTypes.ManufacturerId).Name,
+                        _convertedAvailabilities[(_foundItemWithTypes.Id, type.Id)].ToList()));
                 }
             }
 

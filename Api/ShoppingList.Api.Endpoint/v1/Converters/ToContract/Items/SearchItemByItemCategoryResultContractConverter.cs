@@ -1,5 +1,4 @@
-﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+﻿using ProjectHermes.ShoppingList.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Queries;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Searches;
@@ -24,6 +23,7 @@ public class SearchItemByItemCategoryResultContractConverter :
             source.Id,
             source.ItemTypeId,
             source.Name,
+            source.ManufacturerName?.Value,
             source.Availabilities.Select(_availabilityConverter.ToContract));
     }
 }
