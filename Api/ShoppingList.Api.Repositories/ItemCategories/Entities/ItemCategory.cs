@@ -20,7 +20,7 @@ public class ItemCategory
 
     public bool Deleted { get; set; }
 
-    public DateTimeOffset? CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     [Timestamp]
     public byte[] RowVersion { get; set; }
