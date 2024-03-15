@@ -15,12 +15,7 @@ public class ShoppingListSearchBarEffectsTests
 {
     public class HandleItemForShoppingListSearchInputChangedAction
     {
-        private readonly HandleItemForShoppingListSearchInputChangedActionFixture _fixture;
-
-        public HandleItemForShoppingListSearchInputChangedAction()
-        {
-            _fixture = new HandleItemForShoppingListSearchInputChangedActionFixture();
-        }
+        private readonly HandleItemForShoppingListSearchInputChangedActionFixture _fixture = new();
 
         [Theory]
         [InlineData("")]
@@ -120,12 +115,7 @@ public class ShoppingListSearchBarEffectsTests
 
     public class HandleSearchItemForShoppingListAction
     {
-        private readonly HandleSearchItemForShoppingListActionFixture _fixture;
-
-        public HandleSearchItemForShoppingListAction()
-        {
-            _fixture = new HandleSearchItemForShoppingListActionFixture();
-        }
+        private readonly HandleSearchItemForShoppingListActionFixture _fixture = new();
 
         [Theory]
         [InlineData("")]
@@ -233,12 +223,7 @@ public class ShoppingListSearchBarEffectsTests
 
     public class HandleItemForShoppingListSearchResultSelectedAction
     {
-        private readonly HandleItemForShoppingListSearchResultSelectedActionFixture _fixture;
-
-        public HandleItemForShoppingListSearchResultSelectedAction()
-        {
-            _fixture = new HandleItemForShoppingListSearchResultSelectedActionFixture();
-        }
+        private readonly HandleItemForShoppingListSearchResultSelectedActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleItemForShoppingListSearchResultSelectedAction_WithoutType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
@@ -250,7 +235,7 @@ public class ShoppingListSearchBarEffectsTests
                 _fixture.SetupActionWithoutType();
                 _fixture.SetupStateWithoutType();
                 _fixture.SetupAddingItemWithoutType();
-                _fixture.SetupDispatchingChangeAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
             });
 
             _fixture.SetupStateReturningState();
@@ -276,7 +261,7 @@ public class ShoppingListSearchBarEffectsTests
                 _fixture.SetupActionWithType();
                 _fixture.SetupStateWithType();
                 _fixture.SetupAddingItemWithType();
-                _fixture.SetupDispatchingChangeAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
             });
 
             _fixture.SetupStateReturningState();
@@ -297,7 +282,6 @@ public class ShoppingListSearchBarEffectsTests
         {
             private AddItemToShoppingListRequest? _expectedRequestWithoutType;
             private AddItemWithTypeToShoppingListRequest? _expectedRequestWithType;
-            private SelectedStoreChangedAction? _expectedChangeAction;
 
             public ItemForShoppingListSearchResultSelectedAction? Action { get; private set; }
 
@@ -397,10 +381,9 @@ public class ShoppingListSearchBarEffectsTests
                 ApiClientMock.VerifyAddItemWithTypeToShoppingListAsync(_expectedRequestWithType, Times.Once);
             }
 
-            public void SetupDispatchingChangeAction()
+            public void SetupDispatchingReloadShoppingListAction()
             {
-                _expectedChangeAction = new SelectedStoreChangedAction(State.SelectedStoreId);
-                SetupDispatchingAction(_expectedChangeAction);
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
             }
         }
     }

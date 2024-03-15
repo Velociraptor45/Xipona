@@ -125,7 +125,9 @@ public class ShoppingListEffects
     [EffectMethod]
     public async Task HandleSelectedStoreChangedAction(SelectedStoreChangedAction action, IDispatcher dispatcher)
     {
-        await LoadShoppingList(action.StoreId, dispatcher);
+        var success = await LoadShoppingList(action.StoreId, dispatcher);
+        if (success)
+            dispatcher.Dispatch(new ResetEditModeAction());
     }
 
     [EffectMethod(typeof(ReloadCurrentShoppingListAction))]
@@ -246,11 +248,12 @@ public class ShoppingListEffects
         }
 
         dispatcher.Dispatch(new FinishShoppingListFinishedAction());
-        dispatcher.Dispatch(new SelectedStoreChangedAction(_state.Value.SelectedStoreId));
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
+        dispatcher.Dispatch(new ResetEditModeAction());
         _notificationService.NotifySuccess("Finished shopping list");
     }
 
-    private async Task LoadShoppingList(Guid storeId, IDispatcher dispatcher)
+    private async Task<bool> LoadShoppingList(Guid storeId, IDispatcher dispatcher)
     {
         ShoppingListModel shoppingList;
         try
@@ -260,14 +263,15 @@ public class ShoppingListEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading shopping list failed", e));
-            return;
+            return false;
         }
         catch (HttpRequestException)
         {
             dispatcher.Dispatch(new LoadShoppingListFromLocalStorageAction(storeId));
-            return;
+            return false;
         }
 
         dispatcher.Dispatch(new LoadShoppingListFinishedAction(shoppingList));
+        return true;
     }
 }

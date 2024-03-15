@@ -70,9 +70,17 @@ public static class ShoppingListReducer
     {
         return state with
         {
-            EditModeActive = false,
             ItemsInBasketVisible = true,
             ShoppingList = action.ShoppingList
+        };
+    }
+
+    [ReducerMethod(typeof(ResetEditModeAction))]
+    public static ShoppingListState OnResetEditMode(ShoppingListState state)
+    {
+        return state with
+        {
+            EditModeActive = false
         };
     }
 

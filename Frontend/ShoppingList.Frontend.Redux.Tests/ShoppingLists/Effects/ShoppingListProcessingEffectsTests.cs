@@ -143,14 +143,11 @@ public class ShoppingListProcessingEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupSelectedStoreId();
-                _fixture.SetupDispatchingSelectedStoreChangedAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
             });
 
-            var sut = _fixture.CreateSut();
-
             // Act
-            await sut.HandleReloadAfterErrorAction(_fixture.DispatcherMock.Object);
+            await ShoppingListProcessingEffects.HandleReloadAfterErrorAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -158,18 +155,9 @@ public class ShoppingListProcessingEffectsTests
 
         private sealed class HandleReloadAfterErrorActionFixture : ShoppingListProcessingEffectsFixture
         {
-            private Guid? _storeId;
-
-            public void SetupSelectedStoreId()
+            public void SetupDispatchingReloadShoppingListAction()
             {
-                _storeId = Guid.NewGuid();
-                State = State with { SelectedStoreId = _storeId.Value };
-            }
-
-            public void SetupDispatchingSelectedStoreChangedAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_storeId);
-                SetupDispatchingAction(new SelectedStoreChangedAction(_storeId.Value));
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
             }
         }
     }
@@ -181,7 +169,7 @@ public class ShoppingListProcessingEffectsTests
         public ShoppingListProcessingEffects CreateSut()
         {
             SetupStateReturningState();
-            return new(ShoppingListStateMock.Object, NotificationServiceMock.Object);
+            return new(NotificationServiceMock.Object);
         }
     }
 }
