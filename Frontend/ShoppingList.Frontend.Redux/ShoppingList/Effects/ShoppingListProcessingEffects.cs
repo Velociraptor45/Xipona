@@ -3,19 +3,15 @@ using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports;
 using ProjectHermes.ShoppingList.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Actions.Processing;
-using ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.States;
 
 namespace ProjectHermes.ShoppingList.Frontend.Redux.ShoppingList.Effects;
 
 public class ShoppingListProcessingEffects
 {
-    private readonly IState<ShoppingListState> _state;
     private readonly IShoppingListNotificationService _notificationService;
 
-    public ShoppingListProcessingEffects(IState<ShoppingListState> state,
-        IShoppingListNotificationService notificationService)
+    public ShoppingListProcessingEffects(IShoppingListNotificationService notificationService)
     {
-        _state = state;
         _notificationService = notificationService;
     }
 
@@ -54,7 +50,7 @@ public class ShoppingListProcessingEffects
     }
 
     [EffectMethod(typeof(ReloadAfterErrorAction))]
-    public Task HandleReloadAfterErrorAction(IDispatcher dispatcher)
+    public static Task HandleReloadAfterErrorAction(IDispatcher dispatcher)
     {
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
         return Task.CompletedTask;

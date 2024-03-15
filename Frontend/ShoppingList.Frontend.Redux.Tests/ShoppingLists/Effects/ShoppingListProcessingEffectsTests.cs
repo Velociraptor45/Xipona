@@ -146,10 +146,8 @@ public class ShoppingListProcessingEffectsTests
                 _fixture.SetupDispatchingReloadShoppingListAction();
             });
 
-            var sut = _fixture.CreateSut();
-
             // Act
-            await sut.HandleReloadAfterErrorAction(_fixture.DispatcherMock.Object);
+            await ShoppingListProcessingEffects.HandleReloadAfterErrorAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
@@ -171,7 +169,7 @@ public class ShoppingListProcessingEffectsTests
         public ShoppingListProcessingEffects CreateSut()
         {
             SetupStateReturningState();
-            return new(ShoppingListStateMock.Object, NotificationServiceMock.Object);
+            return new(NotificationServiceMock.Object);
         }
     }
 }
