@@ -11,17 +11,10 @@ public class ContextFactoryBase
 {
     protected string GetDbConnectionString()
     {
-        string? env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.User);
-
-        if (env is null)
-            throw new InvalidOperationException("Environment variable 'ASPNETCORE_ENVIRONMENT' not found.");
-
-        if (string.IsNullOrWhiteSpace(env))
-            throw new InvalidOperationException("Environment variable 'ASPNETCORE_ENVIRONMENT' is empty.");
-
         var config = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../ShoppingList.Api.WebApp/"))
-            .AddJsonFile($"appsettings.{env}.json", optional: false, true)
+            .AddJsonFile($"appsettings.Local.json", optional: false, true)
             .Build();
 
         var fileLoadingService = new FileLoadingService();
