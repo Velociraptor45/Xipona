@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Shared;
@@ -60,9 +61,9 @@ public class ShoppingListMock : Mock<IShoppingList>
 
     #region Setup methods
 
-    public void SetupFinish(DateTimeOffset completionDate, IShoppingList returnValue)
+    public void SetupFinish(DateTimeOffset completionDate, IDateTimeService dateTimeService, IShoppingList returnValue)
     {
-        Setup(i => i.Finish(completionDate))
+        Setup(i => i.Finish(completionDate, dateTimeService))
             .Returns(returnValue);
     }
 
@@ -149,9 +150,9 @@ public class ShoppingListMock : Mock<IShoppingList>
             Times.Never);
     }
 
-    public void VerifyFinish(DateTimeOffset completionDate, Func<Times> times)
+    public void VerifyFinish(DateTimeOffset completionDate, IDateTimeService dateTimeService, Func<Times> times)
     {
-        Verify(i => i.Finish(completionDate), times);
+        Verify(i => i.Finish(completionDate, dateTimeService), times);
     }
 
     public void VerifyChangeItemQuantityOnce(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)

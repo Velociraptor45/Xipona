@@ -2045,7 +2045,7 @@ public class ItemControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.ExcludeShoppingListCycleRef());
+                opt => opt.ExcludeShoppingListCycleRef().WithCreatedAtPrecision());
         }
 
         private sealed class DeleteItemAsyncFixture : ItemControllerFixture

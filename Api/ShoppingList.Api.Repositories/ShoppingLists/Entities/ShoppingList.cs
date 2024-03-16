@@ -17,6 +17,7 @@ public class ShoppingList
 
     public DateTimeOffset? CompletionDate { get; set; }
     public Guid StoreId { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     [InverseProperty("ShoppingList")]
     public ICollection<ItemsOnList> ItemsOnList { get; set; }

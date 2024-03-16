@@ -567,7 +567,7 @@ public class StoreControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")));
+                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
         }
 
         [Fact]
@@ -612,7 +612,7 @@ public class StoreControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")));
+                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
         }
 
         private class UpdateStoreAsyncFixture : LocalFixture

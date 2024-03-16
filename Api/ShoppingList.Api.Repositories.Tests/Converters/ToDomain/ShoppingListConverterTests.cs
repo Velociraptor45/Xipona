@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Core.Tests.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models.Factories;
@@ -49,6 +50,7 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
             Id = destination.Id,
             StoreId = destination.StoreId,
             ItemsOnList = itemsOnListMap,
+            CreatedAt = destination.CreatedAt,
             CompletionDate = destination.CompletionDate
         };
     }
@@ -58,5 +60,6 @@ public class ShoppingListConverterTests : ToDomainConverterTestBase<Repositories
         serviceCollection.AddImplementationOfGenericType(typeof(ShoppingListConverter).Assembly, typeof(IToDomainConverter<,>));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListFactory).Assembly, typeof(IShoppingListFactory));
         serviceCollection.AddImplementationOfNonGenericType(typeof(IShoppingListSectionFactory).Assembly, typeof(IShoppingListSectionFactory));
+        serviceCollection.AddTransient<IDateTimeService, DateTimeService>();
     }
 }

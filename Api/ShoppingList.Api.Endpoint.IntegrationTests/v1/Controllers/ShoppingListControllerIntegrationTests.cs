@@ -188,7 +188,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingList = shoppingLists.Single();
             shoppingList.Should().BeEquivalentTo(_fixture.ExpectedShoppingList, opt =>
                 opt.ExcludeShoppingListCycleRef().ExcludeRowVersion()
-                    .Excluding(info => info.Path == "ItemsOnList[0].ItemId" || info.Path == "ItemsOnList[0].Id"));
+                    .Excluding(info => info.Path == "ItemsOnList[0].ItemId" || info.Path == "ItemsOnList[0].Id")
+                    .WithCreatedAtPrecision());
             shoppingList.ItemsOnList.First().ItemId.Should().Be(itemId);
         }
 
@@ -266,6 +267,7 @@ public class ShoppingListControllerIntegrationTests
                     .Empty()
                     .WithId(ExpectedShoppingList.Id)
                     .WithStoreId(ExpectedShoppingList.StoreId)
+                    .WithCreatedAt(ExpectedShoppingList.CreatedAt)
                     .Create();
             }
 

@@ -47,7 +47,8 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
             new ShoppingListId(source.Id),
             new StoreId(source.StoreId),
             source.CompletionDate,
-            sectionModels);
+            sectionModels,
+            source.CreatedAt);
 
         list.EnrichWithRowVersion(source.RowVersion);
         return (list as IShoppingList)!;

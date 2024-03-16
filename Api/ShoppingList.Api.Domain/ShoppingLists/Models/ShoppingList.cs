@@ -1,3 +1,4 @@
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
@@ -13,17 +14,19 @@ public class ShoppingList : AggregateRoot, IShoppingList
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
 
     public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections)
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt)
     {
         Id = id;
         StoreId = storeId;
         CompletionDate = completionDate;
+        CreatedAt = createdAt;
         _sections = sections.ToDictionary(s => s.Id);
     }
 
     public ShoppingListId Id { get; }
     public StoreId StoreId { get; }
     public DateTimeOffset? CompletionDate { get; private set; }
+    public DateTimeOffset CreatedAt { get; }
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
@@ -106,7 +109,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
         _sections.Add(section.Id, section);
     }
 
-    public IShoppingList Finish(DateTimeOffset completionDate)
+    public IShoppingList Finish(DateTimeOffset completionDate, IDateTimeService dateTimeService)
     {
         if (CompletionDate != null)
             throw new DomainException(new ShoppingListAlreadyFinishedReason(Id));
@@ -124,7 +127,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
             _sections[key] = _sections[key].RemoveItemsNotInBasket();
         }
 
-        return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values);
+        return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values, dateTimeService.UtcNow);
     }
 
     public void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId)
