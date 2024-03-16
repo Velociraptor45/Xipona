@@ -30,7 +30,8 @@ public class RecipeTests
             _fixture.SetupIngredientExpectedResultModifyingExisting();
             _fixture.SetupPreparationStepExpectedResultModifyingExisting();
             _fixture.SetupExpectedRecipeTagIds();
-            _fixture.SetupExpectedRecipe();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedRecipe(sut);
 
             _fixture.SetupIngredientModification();
             _fixture.SetupPreparationStepModification();
@@ -38,8 +39,6 @@ public class RecipeTests
 
             _fixture.SetupIngredientValidationSuccess();
             _fixture.SetupRecipeTagIdValidationSuccess();
-
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
@@ -62,7 +61,8 @@ public class RecipeTests
             _fixture.SetupIngredientExpectedResultNew();
             _fixture.SetupPreparationStepExpectedResultNew();
             _fixture.SetupExpectedRecipeTagIds();
-            _fixture.SetupExpectedRecipe();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedRecipe(sut);
 
             _fixture.SetupIngredientModificationNew();
             _fixture.SetupPreparationStepModificationNew();
@@ -70,8 +70,6 @@ public class RecipeTests
 
             _fixture.SetupIngredientValidationSuccess();
             _fixture.SetupRecipeTagIdValidationSuccess();
-
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
@@ -88,11 +86,10 @@ public class RecipeTests
         public async Task ModifyAsync_WithDeleting_ShouldModifyRecipe()
         {
             // Arrange
-            _fixture.SetupExpectedRecipe();
+            var sut = _fixture.CreateSut();
+            _fixture.SetupExpectedRecipe(sut);
 
             _fixture.SetupRecipeModification();
-
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
@@ -106,6 +103,7 @@ public class RecipeTests
 
         private sealed class ModifyAsyncFixture : RecipeFixture
         {
+            private readonly RecipeId _recipeId = RecipeId.New;
             private Ingredient? _existingIngredient;
             private PreparationStep? _existingPreparationStep;
             private IngredientModification? _ingredientModification;
@@ -119,6 +117,7 @@ public class RecipeTests
             public ModifyAsyncFixture()
             {
                 _ingredientFactory = new(ValidatorMock.Object);
+                RecipeBuilder.WithId(_recipeId);
             }
 
             public Recipe? ExpectedRecipe { get; private set; }
@@ -274,19 +273,19 @@ public class RecipeTests
                 };
             }
 
-            public void SetupExpectedRecipe()
+            public void SetupExpectedRecipe(Recipe sut)
             {
                 var ingredients = _expectedIngredient?.ToMonoList() ?? Enumerable.Empty<Ingredient>();
                 var preparationSteps = _expectedPreparationStep?.ToMonoList() ?? Enumerable.Empty<PreparationStep>();
                 var tags = _expectedTagIds ?? Enumerable.Empty<RecipeTagId>();
 
                 ExpectedRecipe = new RecipeBuilder()
+                    .WithId(_recipeId)
                     .WithIngredients(new Ingredients(ingredients, _ingredientFactory))
                     .WithSteps(new PreparationSteps(preparationSteps, _preparationStepFactoryMock))
                     .WithTags(new Domain.Recipes.Models.RecipeTags(tags))
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
-
-                RecipeBuilder.WithId(ExpectedRecipe.Id);
             }
         }
     }

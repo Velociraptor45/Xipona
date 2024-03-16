@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models;
@@ -15,12 +16,7 @@ public class RecipeFactoryTests
 {
     public class Create
     {
-        private readonly CreateFixture _fixture;
-
-        public Create()
-        {
-            _fixture = new CreateFixture();
-        }
+        private readonly CreateFixture _fixture = new();
 
         [Fact]
         public void Create_WithValidData_ShouldReturnExpectedResult()
@@ -38,7 +34,8 @@ public class RecipeFactoryTests
                 _fixture.ExpectedResult.NumberOfServings,
                 _fixture.ExpectedResult.Ingredients,
                 _fixture.ExpectedResult.PreparationSteps,
-                _fixture.ExpectedResult.Tags);
+                _fixture.ExpectedResult.Tags,
+                _fixture.ExpectedResult.CreatedAt);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -57,12 +54,7 @@ public class RecipeFactoryTests
 
     public class CreateNew
     {
-        private readonly CreateNewFixture _fixture;
-
-        public CreateNew()
-        {
-            _fixture = new CreateNewFixture();
-        }
+        private readonly CreateNewFixture _fixture = new();
 
         [Fact]
         public async Task CreateNew_WithValidData_ShouldReturnExpectedResult()
@@ -70,6 +62,7 @@ public class RecipeFactoryTests
             // Arrange
             _fixture.SetupExpectedResult();
             _fixture.SetupCreation();
+            _fixture.SetupUtcNow();
             _fixture.SetupIngredientCreationSuccessful();
             _fixture.SetupPreparationStepCreation();
             _fixture.SetupTagValidationSuccess();
@@ -181,6 +174,12 @@ public class RecipeFactoryTests
                 }
             }
 
+            public void SetupUtcNow()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                DateTimeServiceMock.SetupUtcNow(ExpectedResult.CreatedAt);
+            }
+
             public void VerifyTagValidation()
             {
                 TestPropertyNotSetException.ThrowIfNull(Creation);
@@ -194,11 +193,12 @@ public class RecipeFactoryTests
         protected readonly IngredientFactoryMock IngredientFactoryMock = new(MockBehavior.Strict);
         protected readonly PreparationStepFactoryMock PreparationStepFactoryMock = new(MockBehavior.Strict);
         protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
+        protected readonly DateTimeServiceMock DateTimeServiceMock = new(MockBehavior.Strict);
 
         public RecipeFactory CreateSut()
         {
             return new RecipeFactory(IngredientFactoryMock.Object, ValidatorMock.Object,
-                PreparationStepFactoryMock.Object);
+                PreparationStepFactoryMock.Object, DateTimeServiceMock.Object);
         }
     }
 }

@@ -84,11 +84,13 @@ public class RecipeControllerIntegrationTests
                 .Excluding(info =>
                     info.Path.EndsWith(".Id")
                     || info.Path == "Id"
+                    || info.Path == "CreatedAt"
                     || Regex.IsMatch(info.Path, @"^Tags\[\d+\]\.Recipe")
                     || Regex.IsMatch(info.Path, @"^Ingredients\[\d+\]\.Recipe")
                     || Regex.IsMatch(info.Path, @"^PreparationSteps\[\d+\]\.Recipe"))
                 .ExcludeRowVersion()
             );
+            recipeEntities.First().CreatedAt.Should().BeCloseTo(DateTimeOffset.Now, TimeSpan.FromSeconds(20));
         }
 
         private sealed class CreateRecipeAsyncFixture : RecipeControllerFixture

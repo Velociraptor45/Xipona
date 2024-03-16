@@ -35,7 +35,8 @@ public class RecipeConverter : IToDomainConverter<Entities.Recipe, IRecipe>
             new NumberOfServings(source.NumberOfServings),
             ingredients,
             steps,
-            recipeTagIds);
+            recipeTagIds,
+            source.CreatedAt);
 
         recipe.EnrichWithRowVersion(source.RowVersion);
         return (recipe as IRecipe)!;

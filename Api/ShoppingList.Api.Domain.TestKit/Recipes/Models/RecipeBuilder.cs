@@ -40,4 +40,10 @@ public class RecipeBuilder : DomainTestBuilderBase<Recipe>
         FillConstructorWith(nameof(tags), tags);
         return this;
     }
+
+    public RecipeBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillConstructorWith(nameof(createdAt), createdAt);
+        return this;
+    }
 }

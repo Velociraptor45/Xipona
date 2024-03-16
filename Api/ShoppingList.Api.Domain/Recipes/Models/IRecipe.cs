@@ -15,6 +15,7 @@ public interface IRecipe
     IReadOnlyCollection<IIngredient> Ingredients { get; }
     IReadOnlyCollection<IPreparationStep> PreparationSteps { get; }
     IReadOnlyCollection<RecipeTagId> Tags { get; }
+    DateTimeOffset CreatedAt { get; }
 
     Task ModifyAsync(RecipeModification modification, IValidator validator);
 

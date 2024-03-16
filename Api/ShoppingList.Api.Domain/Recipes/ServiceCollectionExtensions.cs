@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
 using ProjectHermes.ShoppingList.Api.Domain.Recipes.Models.Factories;
@@ -39,7 +40,9 @@ internal static class ServiceCollectionExtensions
             var ingredientFactory = provider.GetRequiredService<Func<CancellationToken, IIngredientFactory>>();
             var validator = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var preparationStepFactory = provider.GetRequiredService<IPreparationStepFactory>();
-            return ct => new RecipeFactory(ingredientFactory(ct), validator(ct), preparationStepFactory);
+            var dateTimeService = provider.GetRequiredService<IDateTimeService>();
+            return ct => new RecipeFactory(ingredientFactory(ct), validator(ct), preparationStepFactory,
+                dateTimeService);
         });
 
         services.AddTransient<Func<CancellationToken, IRecipeCreationService>>(provider =>

@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Recipes.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.RecipeTags.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Shared.Validations;
 
@@ -8,14 +9,16 @@ public class RecipeFactory : IRecipeFactory
 {
     private readonly IIngredientFactory _ingredientFactory;
     private readonly IPreparationStepFactory _preparationStepFactory;
+    private readonly IDateTimeService _dateTimeService;
     private readonly IValidator _validator;
 
     public RecipeFactory(IIngredientFactory ingredientFactory, IValidator validator,
-        IPreparationStepFactory preparationStepFactory)
+        IPreparationStepFactory preparationStepFactory, IDateTimeService dateTimeService)
     {
         _validator = validator;
         _ingredientFactory = ingredientFactory;
         _preparationStepFactory = preparationStepFactory;
+        _dateTimeService = dateTimeService;
     }
 
     public async Task<IRecipe> CreateNewAsync(RecipeCreation creation)
@@ -38,11 +41,12 @@ public class RecipeFactory : IRecipeFactory
             creation.NumberOfServings,
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(preparationSteps, _preparationStepFactory),
-            new RecipeTags(creation.RecipeTagIds));
+            new RecipeTags(creation.RecipeTagIds),
+            _dateTimeService.UtcNow);
     }
 
     public IRecipe Create(RecipeId id, RecipeName name, NumberOfServings numberOfServings, IEnumerable<IIngredient> ingredients,
-        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds)
+        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds, DateTimeOffset createdAt)
     {
         return new Recipe(
             id,
@@ -50,6 +54,7 @@ public class RecipeFactory : IRecipeFactory
             numberOfServings,
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(steps, _preparationStepFactory),
-            new RecipeTags(recipeTagIds));
+            new RecipeTags(recipeTagIds),
+            createdAt);
     }
 }

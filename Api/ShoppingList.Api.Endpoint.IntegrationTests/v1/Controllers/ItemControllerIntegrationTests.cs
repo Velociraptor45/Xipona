@@ -782,7 +782,7 @@ public class ItemControllerIntegrationTests
             recipes.Should().HaveCount(1);
             var recipe = recipes.First();
             recipe.Should().BeEquivalentTo(_fixture.ExpectedRecipe,
-                opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion());
+                opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion().WithCreatedAtPrecision());
         }
 
         private sealed class ModifyItemAsyncFixture : ItemControllerFixture
@@ -936,7 +936,7 @@ public class ItemControllerIntegrationTests
             recipes.Should().HaveCount(1);
             var recipe = recipes.First();
             recipe.Should().BeEquivalentTo(_fixture.ExpectedRecipe,
-                opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion());
+                opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion().WithCreatedAtPrecision());
         }
 
         private sealed class ModifyItemWithTypesAsyncFixture : ItemControllerFixture
@@ -1122,7 +1122,7 @@ public class ItemControllerIntegrationTests
                     .WithCreatedAtPrecision());
             oldItem!.Deleted.Should().BeTrue();
             oldItem.UpdatedOn.Should().NotBeNull();
-            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(2000));
+            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
 
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt.ExcludeItemCycleRef()
@@ -1136,6 +1136,7 @@ public class ItemControllerIntegrationTests
             recipes[0].Should().BeEquivalentTo(_fixture.ExpectedRecipe,
                 opt => opt.ExcludeRowVersion()
                     .ExcludeRecipeCycleRef()
+                    .WithCreatedAtPrecision()
                     .Excluding(info => info.Path == "Ingredients[0].DefaultItemId"
                                        || info.Path == "Ingredients[0].DefaultItemTypeId"));
             recipes[0].Ingredients.First().DefaultItemId.Should().Be(newItem!.Id);
@@ -1203,7 +1204,7 @@ public class ItemControllerIntegrationTests
                     .WithCreatedAtPrecision());
             currentEntity.Deleted.Should().BeTrue();
             currentEntity.UpdatedOn.Should().NotBeNull();
-            (DateTimeOffset.UtcNow - currentEntity.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(20));
+            currentEntity.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
 
             // there should be a new entity with the CurrentItem as predecessor
             newEntity.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -1433,14 +1434,16 @@ public class ItemControllerIntegrationTests
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "UpdatedOn").ExcludeRowVersion().WithCreatedAtPrecision());
             oldItem!.UpdatedOn.Should().NotBeNull();
-            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
+            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeRowVersion().WithCreatedAtPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
             recipes.Should().HaveCount(1);
             recipes[0].Should().BeEquivalentTo(_fixture.ExpectedRecipe,
-                opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef().Excluding(info => info.Path == "Ingredients[0].DefaultItemId"));
+                opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef()
+                    .Excluding(info => info.Path == "Ingredients[0].DefaultItemId")
+                    .WithCreatedAtPrecision());
             recipes[0].Ingredients.First().DefaultItemId.Should().NotBe(_fixture.ExpectedOldItem.Id);
         }
 
@@ -1597,7 +1600,7 @@ public class ItemControllerIntegrationTests
                     .ExcludeRowVersion()
                     .Excluding(info => info.Path == "UpdatedOn")
                     .WithCreatedAtPrecision());
-            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
+            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -1642,7 +1645,7 @@ public class ItemControllerIntegrationTests
                     .ExcludeRowVersion()
                     .Excluding(info => info.Path == "UpdatedOn")
                     .WithCreatedAtPrecision());
-            (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
+            oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
@@ -2036,7 +2039,8 @@ public class ItemControllerIntegrationTests
             recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
                 opt => opt
                 .ExcludeRecipeCycleRef()
-                .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id")));
+                .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id"))
+                .WithCreatedAtPrecision());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);

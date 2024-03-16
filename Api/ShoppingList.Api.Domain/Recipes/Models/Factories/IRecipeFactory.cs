@@ -8,6 +8,6 @@ public interface IRecipeFactory
     Task<IRecipe> CreateNewAsync(RecipeCreation creation);
 
     IRecipe Create(RecipeId id, RecipeName name, NumberOfServings numberOfServings,
-        IEnumerable<IIngredient> ingredients,
-        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds);
+        IEnumerable<IIngredient> ingredients, IEnumerable<IPreparationStep> steps,
+        IEnumerable<RecipeTagId> recipeTagIds, DateTimeOffset createdAt);
 }
