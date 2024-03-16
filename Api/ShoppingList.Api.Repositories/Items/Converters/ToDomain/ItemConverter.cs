@@ -76,7 +76,8 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
                 manufacturerId,
                 predecessorId,
                 itemTypes,
-                source.UpdatedOn);
+                source.UpdatedOn,
+                source.CreatedAt);
         }
         else
         {
@@ -97,7 +98,8 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
                 predecessorId,
                 availabilities,
                 temporaryId,
-                source.UpdatedOn);
+                source.UpdatedOn,
+                source.CreatedAt);
         }
 
         item.EnrichWithRowVersion(source.RowVersion);
