@@ -51,7 +51,7 @@ public class ItemConverter : IToEntityConverter<IItem, Entities.Item>
             Id = itemType.Id,
             ItemId = source.Id,
             Name = itemType.Name,
-            CreatedAt = source.CreatedAt,
+            CreatedAt = itemType.CreatedAt,
             AvailableAt = itemType.Availabilities.Select(av => ToItemTypeAvailableAt(av, itemType)).ToList(),
             PredecessorId = itemType.PredecessorId,
             IsDeleted = itemType.IsDeleted

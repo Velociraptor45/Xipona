@@ -775,7 +775,8 @@ public class ItemControllerIntegrationTests
             item.Should().NotBeNull();
             item.Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
                 .ExcludeItemCycleRef()
-                .ExcludeRowVersion());
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
             recipes.Should().HaveCount(1);
@@ -818,6 +819,7 @@ public class ItemControllerIntegrationTests
                     .Initial()
                     .WithId(ExistingItem.Id)
                     .WithAvailableAt(_expectedAvailability)
+                    .WithCreatedAt(ExistingItem.CreatedAt)
                     .Create();
             }
 
@@ -927,7 +929,8 @@ public class ItemControllerIntegrationTests
             item.Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
                 .Excluding(info => info.Path == "UpdatedOn")
                 .ExcludeItemCycleRef()
-                .ExcludeRowVersion());
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
             recipes.Should().HaveCount(1);
@@ -978,12 +981,14 @@ public class ItemControllerIntegrationTests
                 ExpectedItem = ItemEntityMother
                     .InitialWithTypes()
                     .WithId(ExistingItem.Id)
+                    .WithCreatedAt(ExistingItem.CreatedAt)
                     .WithItemTypes(new List<ItemType>
                     {
                         ItemTypeEntityMother.Initial()
                             .WithId(ExistingItem.ItemTypes.First().Id)
                             .WithItemId(ExistingItem.Id)
                             .WithAvailableAt(_expectedAvailability)
+                            .WithCreatedAt(ExistingItem.ItemTypes.First().CreatedAt)
                             .Create(),
                         ExistingItem.ItemTypes.Last().DeepClone(),
                     })
@@ -1113,13 +1118,18 @@ public class ItemControllerIntegrationTests
             oldItem.Should().BeEquivalentTo(_fixture.CurrentItem,
                 opt => opt.ExcludeItemCycleRef()
                     .Excluding(info => info.Path == "UpdatedOn" || info.Path == "Deleted")
-                    .ExcludeRowVersion());
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
             oldItem!.Deleted.Should().BeTrue();
             oldItem.UpdatedOn.Should().NotBeNull();
             (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(2000));
 
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeItemTypeId().ExcludeRowVersion());
+                opt => opt.ExcludeItemCycleRef()
+                    .Excluding(info => info.Path == "Id")
+                    .ExcludeItemTypeId()
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
             recipes.Should().HaveCount(1);
@@ -1189,7 +1199,8 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .Excluding(info => info.Path == "Deleted" || info.Path == "UpdatedOn"));
+                    .Excluding(info => info.Path == "Deleted" || info.Path == "UpdatedOn")
+                    .WithCreatedAtPrecision());
             currentEntity.Deleted.Should().BeTrue();
             currentEntity.UpdatedOn.Should().NotBeNull();
             (DateTimeOffset.UtcNow - currentEntity.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(20));
@@ -1199,7 +1210,8 @@ public class ItemControllerIntegrationTests
                 opt => opt.ExcludeItemCycleRef()
                     .ExcludeRowVersion()
                     .ExcludeItemTypeId()
-                    .Excluding(info => info.Path == "Id"));
+                    .Excluding(info => info.Path == "Id")
+                    .WithCreatedAtPrecision());
         }
 
         private sealed class UpdateItemWithTypesAsyncFixture : ItemControllerFixture
@@ -1224,18 +1236,19 @@ public class ItemControllerIntegrationTests
 
             public void SetupCurrentItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(FirstLevelPredecessor);
+
                 var builder = ItemEntityMother.InitialWithTypes();
 
-                if (FirstLevelPredecessor is not null)
-                {
-                    var types = FirstLevelPredecessor.ItemTypes
-                        .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
-                        .ToList();
-                    builder.WithItemTypes(types);
-                }
+                var types = FirstLevelPredecessor.ItemTypes
+                    .Select(t =>
+                        ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).WithCreatedAt(t.CreatedAt).Create())
+                    .ToList();
+                builder.WithItemTypes(types);
 
                 CurrentItem = builder
-                    .WithPredecessorId(FirstLevelPredecessor?.Id)
+                    .WithPredecessorId(FirstLevelPredecessor.Id)
+                    .WithCreatedAt(FirstLevelPredecessor.CreatedAt)
                     .Create();
 
                 _itemsToSave.Add(CurrentItem);
@@ -1253,6 +1266,7 @@ public class ItemControllerIntegrationTests
                     .WithDeleted(true)
                     .WithItemTypes(types)
                     .WithPredecessorId(SecondLevelPredecessor.Id)
+                    .WithCreatedAt(SecondLevelPredecessor.CreatedAt)
                     .Create();
 
                 _itemsToSave.Add(FirstLevelPredecessor);
@@ -1270,12 +1284,13 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(CurrentItem);
 
                 var itemTypes = CurrentItem.ItemTypes
-                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
+                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).WithCreatedAt(t.CreatedAt).Create())
                     .ToList();
 
                 ExpectedNewItem = ItemEntityMother.InitialWithTypes()
                     .WithPredecessorId(CurrentItem.Id)
                     .WithItemTypes(itemTypes)
+                    .WithCreatedAt(CurrentItem.CreatedAt)
                     .Create();
             }
 
@@ -1307,7 +1322,7 @@ public class ItemControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(CurrentItem);
 
                 var itemTypes = CurrentItem.ItemTypes
-                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).Create())
+                    .Select(t => ItemTypeEntityMother.Initial().WithPredecessorId(t.Id).WithCreatedAt(t.CreatedAt).Create())
                     .ToList();
 
                 _expectedAvailability = itemTypes.First().AvailableAt.First();
@@ -1315,6 +1330,7 @@ public class ItemControllerIntegrationTests
                 ExpectedNewItem = ItemEntityMother.InitialWithTypes()
                     .WithPredecessorId(CurrentItem.Id)
                     .WithItemTypes(itemTypes)
+                    .WithCreatedAt(CurrentItem.CreatedAt)
                     .Create();
             }
 
@@ -1415,11 +1431,11 @@ public class ItemControllerIntegrationTests
             oldItem.Should().NotBeNull();
             newItem.Should().NotBeNull();
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
-                opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "UpdatedOn").ExcludeRowVersion());
+                opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "UpdatedOn").ExcludeRowVersion().WithCreatedAtPrecision());
             oldItem!.UpdatedOn.Should().NotBeNull();
             (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
-                opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeRowVersion());
+                opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeRowVersion().WithCreatedAtPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
             recipes.Should().HaveCount(1);
@@ -1459,6 +1475,7 @@ public class ItemControllerIntegrationTests
                 ExpectedNewItem = ItemEntityMother.Initial()
                     .WithAvailableAt(_expectedAvailability)
                     .WithPredecessorId(ExpectedOldItem.Id)
+                    .WithCreatedAt(ExpectedOldItem.CreatedAt)
                     .Create();
             }
 
@@ -1578,7 +1595,8 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .Excluding(info => info.Path == "UpdatedOn"));
+                    .Excluding(info => info.Path == "UpdatedOn")
+                    .WithCreatedAtPrecision());
             (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
@@ -1586,7 +1604,8 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .Excluding(info => info.Path == "Id"));
+                    .Excluding(info => info.Path == "Id")
+                    .WithCreatedAtPrecision());
         }
 
         [Fact]
@@ -1621,7 +1640,8 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
-                    .Excluding(info => info.Path == "UpdatedOn"));
+                    .Excluding(info => info.Path == "UpdatedOn")
+                    .WithCreatedAtPrecision());
             (DateTimeOffset.UtcNow - oldItem.UpdatedOn).Should().BeLessThan(TimeSpan.FromSeconds(30));
 
             var newItem = allStoredItems.First(i => i.Id != _fixture.ExpectedOldItem.Id);
@@ -1629,6 +1649,7 @@ public class ItemControllerIntegrationTests
                 opt => opt
                     .ExcludeItemCycleRef()
                     .ExcludeRowVersion()
+                    .WithCreatedAtPrecision()
                     .Excluding(info => info.Path == "Id"
                                        || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
         }
@@ -1720,6 +1741,7 @@ public class ItemControllerIntegrationTests
                     PredecessorId = null,
                     ItemTypes = new List<ItemType>(),
                     UpdatedOn = DateTimeOffset.Now,
+                    CreatedAt = _existingItem.CreatedAt
                 };
 
                 ExpectedNewItem = new Item
@@ -1742,6 +1764,7 @@ public class ItemControllerIntegrationTests
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = _existingItem.Id,
                     ItemTypes = new List<ItemType>(),
+                    CreatedAt = _existingItem.CreatedAt
                 };
             }
 
@@ -1766,7 +1789,8 @@ public class ItemControllerIntegrationTests
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = null,
                     ItemTypes = _existingItem.ItemTypes,
-                    UpdatedOn = DateTimeOffset.Now
+                    UpdatedOn = DateTimeOffset.Now,
+                    CreatedAt = _existingItem.CreatedAt
                 };
 
                 ExpectedNewItem = new Item
@@ -1783,10 +1807,12 @@ public class ItemControllerIntegrationTests
                     QuantityType = _existingItem.QuantityType,
                     QuantityTypeInPacket = _existingItem.QuantityTypeInPacket,
                     PredecessorId = _existingItem.Id,
+                    CreatedAt = _existingItem.CreatedAt,
                     ItemTypes = _existingItem.ItemTypes.Select(t => new ItemType
                     {
                         Name = t.Name,
                         PredecessorId = t.Id,
+                        CreatedAt = t.CreatedAt,
                         AvailableAt = t.AvailableAt.Select(av =>
                             new ItemTypeAvailableAtEntityBuilder(av)
                                 .WithPrice(Contract.Price)

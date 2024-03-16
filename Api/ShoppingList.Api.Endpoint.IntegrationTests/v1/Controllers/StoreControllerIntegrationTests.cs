@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using FluentAssertions.Extensions;
 using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -562,8 +561,8 @@ public class StoreControllerIntegrationTests
             items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Item"))
-                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
-                    .When(info => info.Path == "UpdatedOn"));
+                    .WithUpdatedOnPrecision()
+                    .WithCreatedAtPrecision());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
             shoppingLists.Should().HaveCount(1);
@@ -607,8 +606,8 @@ public class StoreControllerIntegrationTests
             items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Item") || info.Path.EndsWith(".ItemType"))
-                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
-                    .When(info => info.Path == "UpdatedOn"));
+                    .WithUpdatedOnPrecision()
+                    .WithCreatedAtPrecision());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
             shoppingLists.Should().HaveCount(1);

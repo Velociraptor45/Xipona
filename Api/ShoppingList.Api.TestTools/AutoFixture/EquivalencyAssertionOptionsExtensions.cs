@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Equivalency;
+using FluentAssertions.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
@@ -25,6 +26,20 @@ public static partial class EquivalencyAssertionOptionsExtensions
 
     [GeneratedRegex(@"RowVersion$")]
     private static partial Regex RowVersion();
+
+    public static EquivalencyAssertionOptions<T> WithCreatedAtPrecision<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
+            .When(info => info.Path.EndsWith("CreatedAt"));
+    }
+
+    public static EquivalencyAssertionOptions<T> WithUpdatedOnPrecision<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
+            .When(info => info.Path.EndsWith("UpdatedOn"));
+    }
 
     public static EquivalencyAssertionOptions<T> ExcludeRowVersion<T>(this EquivalencyAssertionOptions<T> options)
     {
