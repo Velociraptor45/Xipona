@@ -4,4 +4,5 @@ public interface IRecipeTag
 {
     RecipeTagId Id { get; }
     RecipeTagName Name { get; }
+    DateTimeOffset CreatedAt { get; }
 }

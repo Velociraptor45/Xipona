@@ -17,7 +17,7 @@ public class RecipeTagConverter : IToDomainConverter<RecipeTag, IRecipeTag>
 
     public IRecipeTag ToDomain(RecipeTag source)
     {
-        var recipeTag = (AggregateRoot)_factory.Create(new RecipeTagId(source.Id), source.Name);
+        var recipeTag = (AggregateRoot)_factory.Create(new RecipeTagId(source.Id), source.Name, source.CreatedAt);
         recipeTag.EnrichWithRowVersion(source.RowVersion);
         return (recipeTag as IRecipeTag)!;
     }

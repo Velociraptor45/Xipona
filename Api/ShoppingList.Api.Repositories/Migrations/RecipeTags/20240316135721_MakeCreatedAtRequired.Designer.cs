@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Contexts;
 
@@ -10,9 +11,11 @@ using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.RecipeTags
 {
     [DbContext(typeof(RecipeTagContext))]
-    partial class RecipeTagContextModelSnapshot : ModelSnapshot
+    [Migration("20240316135721_MakeCreatedAtRequired")]
+    partial class MakeCreatedAtRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
