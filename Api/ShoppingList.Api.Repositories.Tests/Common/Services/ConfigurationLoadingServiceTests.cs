@@ -13,20 +13,15 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Tests.Common.Services;
 
 public class ConfigurationLoadingServiceTests
 {
-    private readonly ConfigurationLoadingServiceFixture _fixture;
-
-    public ConfigurationLoadingServiceTests()
-    {
-        _fixture = new ConfigurationLoadingServiceFixture();
-    }
+    private readonly ConfigurationLoadingServiceFixture _fixture = new();
 
     [Fact]
     public async Task LoadAsync_WithEnvironmentVariableSet_ShouldLoadFromFile()
     {
         // Arrange
+        _fixture.SetupEnvironmentVariables();
         _fixture.SetupGettingConfigurationFromAppsettings();
         _fixture.SetupExpectedResult();
-        _fixture.SetupEnvironmentVariables();
         _fixture.SetupLoadingUsernameFromFile();
         _fixture.SetupLoadingPasswordFromFile();
         var sut = _fixture.CreateSut();
@@ -44,8 +39,8 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithEnvironmentVariableSet_WithDatabaseSectionMissing_ShouldThrow()
     {
         // Arrange
-        _fixture.SetupGettingEmptyConfigurationFromAppsettings();
         _fixture.SetupEnvironmentVariables();
+        _fixture.SetupGettingEmptyConfigurationFromAppsettings();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
@@ -61,10 +56,10 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithUsernameEnvironmentVariableNotSet_ShouldLoadFromVault()
     {
         // Arrange
+        _fixture.SetupUsernameEnvironmentVariableEmpty();
         _fixture.SetupGettingConfigurationFromAppsettings();
         _fixture.SetupExpectedResult();
         _fixture.SetupLoadingCredentialsFromVault();
-        _fixture.SetupUsernameEnvironmentVariableEmpty();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
@@ -80,10 +75,10 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithPasswordEnvironmentVariableNotSet_ShouldLoadFromVault()
     {
         // Arrange
+        _fixture.SetupPasswordEnvironmentVariableEmpty();
         _fixture.SetupGettingConfigurationFromAppsettings();
         _fixture.SetupExpectedResult();
         _fixture.SetupLoadingCredentialsFromVault();
-        _fixture.SetupPasswordEnvironmentVariableEmpty();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
@@ -138,6 +133,7 @@ public class ConfigurationLoadingServiceTests
             };
 
             ConfigurationMock = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
                 .AddInMemoryCollection(inMemorySettings!)
                 .Build();
         }
@@ -149,6 +145,7 @@ public class ConfigurationLoadingServiceTests
             var inMemorySettings = new Dictionary<string, string>();
 
             ConfigurationMock = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
                 .AddInMemoryCollection(inMemorySettings!)
                 .Build();
         }

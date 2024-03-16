@@ -598,7 +598,7 @@ public class ItemTests
 
                 var typeModification = Modification.ItemTypes.First();
                 ExpectedModifiedType = new ItemType(_existingTypeId.Value, typeModification.Name,
-                    typeModification.Availabilities, existingType.PredecessorId, false);
+                    typeModification.Availabilities, existingType.PredecessorId, false, existingType.CreatedAt);
             }
 
             public void SetupExpectedEvent(IItem sut)
@@ -1627,7 +1627,8 @@ public class ItemTests
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
                                     : av),
                                 t.Id,
-                                t.IsDeleted);
+                                t.IsDeleted,
+                                t.CreatedAt);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
@@ -1658,7 +1659,8 @@ public class ItemTests
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
                                     : av),
                                 t.Id,
-                                t.IsDeleted);
+                                t.IsDeleted,
+                                t.CreatedAt);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),

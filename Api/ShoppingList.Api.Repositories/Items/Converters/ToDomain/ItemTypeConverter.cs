@@ -25,6 +25,6 @@ public class ItemTypeConverter : IToDomainConverter<Entities.ItemType, IItemType
 
         var typeAvailabilities = _itemTypeAvailabilityConverter.ToDomain(source.AvailableAt);
         return _itemTypeFactory.Create(new ItemTypeId(source.Id), new ItemTypeName(source.Name), typeAvailabilities,
-            predecessorId, source.IsDeleted);
+            predecessorId, source.IsDeleted, source.CreatedAt);
     }
 }

@@ -14,6 +14,8 @@ public interface IItemType
     ItemTypeId? PredecessorId { get; }
     bool IsDeleted { get; }
 
+    DateTimeOffset CreatedAt { get; }
+
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
     bool IsAvailableAt(StoreId storeId);

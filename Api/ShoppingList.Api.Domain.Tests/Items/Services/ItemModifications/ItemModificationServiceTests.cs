@@ -394,7 +394,8 @@ public class ItemModificationServiceTests
                                 t.Name,
                                 t.Availabilities,
                                 null,
-                                Modification.ItemTypes.All(it => it.Id != t.Id))))
+                                Modification.ItemTypes.All(it => it.Id != t.Id),
+                                t.CreatedAt)))
                             .AsReadOnly() :
                         originalItemTypes);
         }

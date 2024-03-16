@@ -31,16 +31,18 @@ public class ItemTypeTests
             _fixture.SetupAvailabilities();
             _fixture.SetupPredecessorId();
             _fixture.SetupIsDeleted();
+            _fixture.SetupCreatedAt();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Id);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Name);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Availabilities);
             TestPropertyNotSetException.ThrowIfNull(_fixture.PredecessorId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.IsDeleted);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.CreatedAt);
 
             // Act
             var result = new ItemType(_fixture.Id.Value, _fixture.Name, _fixture.Availabilities,
-                _fixture.PredecessorId, _fixture.IsDeleted.Value);
+                _fixture.PredecessorId, _fixture.IsDeleted.Value, _fixture.CreatedAt.Value);
 
             // Assert
             result.Id.Should().Be(_fixture.Id.Value);
@@ -59,16 +61,18 @@ public class ItemTypeTests
             _fixture.SetupEmptyAvailabilities();
             _fixture.SetupPredecessorId();
             _fixture.SetupIsDeleted();
+            _fixture.SetupCreatedAt();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Id);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Name);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Availabilities);
             TestPropertyNotSetException.ThrowIfNull(_fixture.PredecessorId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.IsDeleted);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.CreatedAt);
 
             // Act
             var func = () => new ItemType(_fixture.Id.Value, _fixture.Name, _fixture.Availabilities,
-                _fixture.PredecessorId, _fixture.IsDeleted.Value);
+                _fixture.PredecessorId, _fixture.IsDeleted.Value, _fixture.CreatedAt.Value);
 
             // Assert
             func.Should().ThrowDomainException(ErrorReasonCode.CannotCreateItemTypeWithoutAvailabilities);
@@ -79,8 +83,9 @@ public class ItemTypeTests
             public ItemTypeId? Id { get; set; }
             public ItemTypeName? Name { get; private set; }
             public IReadOnlyCollection<ItemAvailability>? Availabilities { get; private set; }
-            public ItemTypeId? PredecessorId { get; set; }
+            public ItemTypeId? PredecessorId { get; private set; }
             public bool? IsDeleted { get; private set; }
+            public DateTimeOffset? CreatedAt { get; private set; }
 
             public void SetupId()
             {
@@ -110,6 +115,11 @@ public class ItemTypeTests
             public void SetupIsDeleted()
             {
                 IsDeleted = new DomainTestBuilder<bool>().Create();
+            }
+
+            public void SetupCreatedAt()
+            {
+                CreatedAt = new DomainTestBuilder<DateTimeOffset>().Create();
             }
         }
     }
@@ -289,6 +299,7 @@ public class ItemTypeTests
                     .WithId(sut.Id)
                     .WithPredecessorId(sut.PredecessorId)
                     .WithIsDeleted(false)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 
@@ -299,6 +310,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.PredecessorId)
                     .WithIsDeleted(false)
                     .WithAvailabilities(sut.Availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 
@@ -443,6 +455,7 @@ public class ItemTypeTests
                     .WithIsDeleted(false)
                     .WithName(TypeUpdate.Name)
                     .WithAvailabilities(TypeUpdate.Availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 
@@ -568,6 +581,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.Id)
                     .WithIsDeleted(false)
                     .WithAvailabilities(availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
         }
@@ -624,6 +638,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.Id)
                     .WithIsDeleted(false)
                     .WithAvailabilities(sut.Availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
         }
@@ -734,6 +749,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.PredecessorId)
                     .WithIsDeleted(false)
                     .WithAvailabilities(availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
         }
@@ -791,6 +807,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.PredecessorId)
                     .WithIsDeleted(true)
                     .WithAvailabilities(sut.Availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 
@@ -916,6 +933,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.PredecessorId)
                     .WithIsDeleted(false)
                     .WithAvailabilities(availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 
@@ -927,6 +945,7 @@ public class ItemTypeTests
                     .WithPredecessorId(sut.PredecessorId)
                     .WithIsDeleted(true)
                     .WithAvailabilities(sut.Availabilities)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 

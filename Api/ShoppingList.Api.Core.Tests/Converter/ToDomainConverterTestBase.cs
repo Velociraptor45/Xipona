@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.ShoppingList.Api.Core.Converter;
 
+// ReSharper disable VirtualMemberCallInConstructor
+
 namespace ProjectHermes.ShoppingList.Api.Core.Tests.Converter;
 
 public abstract class ToDomainConverterTestBase<TSource, TDestination>
