@@ -15,6 +15,7 @@ public class ShoppingListConverter : IToEntityConverter<IShoppingList, Entities.
             CompletionDate = source.CompletionDate,
             StoreId = source.StoreId,
             ItemsOnList = CreateItemsOnListMap(source).ToList(),
+            CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using FluentAssertions.Extensions;
 using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -454,8 +453,9 @@ public class StoreControllerIntegrationTests
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
                 opts => opts
-                    .Excluding(x => x.Path.EndsWith("Id"))
+                    .Excluding(x => x.Path.EndsWith("Id") || x.Path == "CreatedAt")
                     .ExcludeRowVersion());
+            stores.First().CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         private class CreateStoreAsyncFixture : LocalFixture
@@ -555,20 +555,21 @@ public class StoreControllerIntegrationTests
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Store"))
-                    .ExcludeRowVersion());
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
             items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Item"))
-                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
-                    .When(info => info.Path == "UpdatedOn"));
+                    .WithUpdatedOnPrecision()
+                    .WithCreatedAtPrecision());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")));
+                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
         }
 
         [Fact]
@@ -600,20 +601,21 @@ public class StoreControllerIntegrationTests
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Store"))
-                    .ExcludeRowVersion());
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
             items.First().Should().BeEquivalentTo(_fixture.ExpectedItem,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Item") || info.Path.EndsWith(".ItemType"))
-                    .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
-                    .When(info => info.Path == "UpdatedOn"));
+                    .WithUpdatedOnPrecision()
+                    .WithCreatedAtPrecision());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync()).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")));
+                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
         }
 
         private class UpdateStoreAsyncFixture : LocalFixture
@@ -796,6 +798,7 @@ public class StoreControllerIntegrationTests
                     Name = Contract.Name,
                     Deleted = false,
                     Sections = sections,
+                    CreatedAt = ExistingStore.CreatedAt
                 };
             }
         }

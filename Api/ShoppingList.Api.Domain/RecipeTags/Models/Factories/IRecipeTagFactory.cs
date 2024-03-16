@@ -2,6 +2,7 @@
 
 public interface IRecipeTagFactory
 {
-    IRecipeTag Create(RecipeTagId id, string name);
+    IRecipeTag Create(RecipeTagId id, string name, DateTimeOffset createdAt);
+
     IRecipeTag CreateNew(string name);
 }

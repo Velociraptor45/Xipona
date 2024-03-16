@@ -23,7 +23,7 @@ public class Item : AggregateRoot, IItem
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
-        ItemId? predecessorId)
+        ItemId? predecessorId, DateTimeOffset createdAt)
     {
         Id = id;
         Name = name;
@@ -36,6 +36,7 @@ public class Item : AggregateRoot, IItem
         TemporaryId = temporaryId;
         UpdatedOn = updatedOn;
         PredecessorId = predecessorId;
+        CreatedAt = createdAt;
         _itemTypes = null;
         _availabilities = availabilities.ToList();
 
@@ -45,7 +46,7 @@ public class Item : AggregateRoot, IItem
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
         ItemQuantity itemQuantity, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId)
+        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId, DateTimeOffset createdAt)
     {
         Id = id;
         Name = name;
@@ -57,6 +58,7 @@ public class Item : AggregateRoot, IItem
         ManufacturerId = manufacturerId;
         UpdatedOn = updatedOn;
         PredecessorId = predecessorId;
+        CreatedAt = createdAt;
         TemporaryId = null;
         _itemTypes = itemTypes;
         _availabilities = new List<ItemAvailability>();
@@ -76,6 +78,7 @@ public class Item : AggregateRoot, IItem
     public TemporaryItemId? TemporaryId { get; }
     public DateTimeOffset? UpdatedOn { get; private set; }
     public ItemId? PredecessorId { get; }
+    public DateTimeOffset CreatedAt { get; }
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
@@ -257,7 +260,8 @@ public class Item : AggregateRoot, IItem
             update.ManufacturerId,
             types,
             null,
-            Id);
+            Id,
+            CreatedAt);
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(updatedItem));
         Delete();
@@ -303,7 +307,8 @@ public class Item : AggregateRoot, IItem
             update.Availabilities,
             null,
             null,
-            Id);
+            Id,
+            CreatedAt);
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
@@ -322,7 +327,7 @@ public class Item : AggregateRoot, IItem
         {
             var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
             newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
-                itemTypes, null, Id);
+                itemTypes, null, Id, CreatedAt);
         }
         else
         {
@@ -335,7 +340,7 @@ public class Item : AggregateRoot, IItem
                     : av);
 
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
-                ManufacturerId, availabilities, TemporaryId, null, Id);
+                ManufacturerId, availabilities, TemporaryId, null, Id, CreatedAt);
         }
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));

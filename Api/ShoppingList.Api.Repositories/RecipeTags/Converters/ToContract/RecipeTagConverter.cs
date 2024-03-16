@@ -13,6 +13,7 @@ public class RecipeTagConverter : IToContractConverter<IRecipeTag, RecipeTag>
         {
             Id = source.Id.Value,
             Name = source.Name,
+            CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

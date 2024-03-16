@@ -46,7 +46,8 @@ public class ItemConverterTests : ToEntityConverterTestBase<IItem, Item>
                     }).ToList(),
             PredecessorId = source.PredecessorId,
             ItemTypes = new List<ItemType>(),
-            UpdatedOn = source.UpdatedOn
+            UpdatedOn = source.UpdatedOn,
+            CreatedAt = source.CreatedAt
         };
     }
 

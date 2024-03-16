@@ -178,7 +178,9 @@ public class ShoppingListControllerIntegrationTests
             items.Should().HaveCount(1);
             var item = items.Single();
             item.Should().BeEquivalentTo(_fixture.ExpectedItem, opt =>
-                opt.ExcludeItemCycleRef().ExcludeRowVersion().Excluding(info => info.Path == "Id"));
+                opt.ExcludeItemCycleRef().ExcludeRowVersion()
+                    .Excluding(info => info.Path == "Id" || info.Path == "CreatedAt"));
+            item.CreatedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(20));
 
             var itemId = item.Id;
 
@@ -186,7 +188,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingList = shoppingLists.Single();
             shoppingList.Should().BeEquivalentTo(_fixture.ExpectedShoppingList, opt =>
                 opt.ExcludeShoppingListCycleRef().ExcludeRowVersion()
-                    .Excluding(info => info.Path == "ItemsOnList[0].ItemId" || info.Path == "ItemsOnList[0].Id"));
+                    .Excluding(info => info.Path == "ItemsOnList[0].ItemId" || info.Path == "ItemsOnList[0].Id")
+                    .WithCreatedAtPrecision());
             shoppingList.ItemsOnList.First().ItemId.Should().Be(itemId);
         }
 
@@ -232,6 +235,7 @@ public class ShoppingListControllerIntegrationTests
                     .WithoutItemCategoryId()
                     .WithIsTemporary(true)
                     .WithoutUpdatedOn()
+                    .WithCreatedAt(DateTimeOffset.UtcNow)
                     .Create();
             }
 
@@ -263,6 +267,7 @@ public class ShoppingListControllerIntegrationTests
                     .Empty()
                     .WithId(ExpectedShoppingList.Id)
                     .WithStoreId(ExpectedShoppingList.StoreId)
+                    .WithCreatedAt(ExpectedShoppingList.CreatedAt)
                     .Create();
             }
 

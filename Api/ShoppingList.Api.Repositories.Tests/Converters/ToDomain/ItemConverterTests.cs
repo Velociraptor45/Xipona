@@ -51,7 +51,8 @@ public class ItemConverterTests : ToDomainConverterTestBase<Item, IItem>
             AvailableAt = availabilities,
             CreatedFrom = destination.TemporaryId,
             ItemTypes = itemTypes,
-            UpdatedOn = destination.UpdatedOn
+            UpdatedOn = destination.UpdatedOn,
+            CreatedAt = destination.CreatedAt
         };
     }
 

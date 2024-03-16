@@ -13,6 +13,7 @@ public class ItemCategoryConverter : IToEntityConverter<IItemCategory, Entities.
             Id = source.Id,
             Name = source.Name,
             Deleted = source.IsDeleted,
+            CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

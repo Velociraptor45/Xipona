@@ -1,5 +1,7 @@
-﻿using ProjectHermes.ShoppingList.Api.Core.Converter;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.ShoppingList.Api.Core.Converter;
 using ProjectHermes.ShoppingList.Api.Core.Extensions;
+using ProjectHermes.ShoppingList.Api.Core.Services;
 using ProjectHermes.ShoppingList.Api.Core.Tests.Converter;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.TestKit.Manufacturers.Models;
@@ -21,5 +23,6 @@ public class ManufacturerConverterTests : ToEntityConverterTestBase<IManufacture
     protected override void SetupServiceCollection()
     {
         ServiceCollection.AddImplementationOfGenericType(typeof(ManufacturerConverter).Assembly, typeof(IToEntityConverter<,>));
+        ServiceCollection.AddTransient<IDateTimeService, DateTimeService>();
     }
 }

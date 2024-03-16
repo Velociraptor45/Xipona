@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -10,6 +11,7 @@ public interface IShoppingList
     public DateTimeOffset? CompletionDate { get; }
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<ShoppingListItem> Items { get; }
+    DateTimeOffset CreatedAt { get; }
 
     void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
 
@@ -25,7 +27,7 @@ public interface IShoppingList
 
     void ChangeItemQuantity(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity);
 
-    IShoppingList Finish(DateTimeOffset completionDate);
+    IShoppingList Finish(DateTimeOffset completionDate, IDateTimeService dateTimeService);
 
     void AddSection(IShoppingListSection section);
 

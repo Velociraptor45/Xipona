@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Ports;
@@ -22,12 +23,13 @@ public class ShoppingListModificationService : IShoppingListModificationService
     private readonly IStoreRepository _storeRepository;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
     private readonly IItemFactory _itemFactory;
+    private readonly IDateTimeService _dateTimeService;
     private readonly IAddItemToShoppingListService _addItemToShoppingListService;
 
     public ShoppingListModificationService(IAddItemToShoppingListService addItemToShoppingListService,
         IShoppingListRepository shoppingListRepository, IItemRepository itemRepository,
         IStoreRepository storeRepository, IShoppingListSectionFactory shoppingListSectionFactory,
-        IItemFactory itemFactory)
+        IItemFactory itemFactory, IDateTimeService dateTimeService)
     {
         _addItemToShoppingListService = addItemToShoppingListService;
         _shoppingListRepository = shoppingListRepository;
@@ -35,6 +37,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         _storeRepository = storeRepository;
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _itemFactory = itemFactory;
+        _dateTimeService = dateTimeService;
     }
 
     public async Task ChangeItemQuantityAsync(ShoppingListId shoppingListId,
@@ -201,7 +204,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         if (shoppingList == null)
             throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
 
-        IShoppingList nextShoppingList = shoppingList.Finish(completionDate);
+        IShoppingList nextShoppingList = shoppingList.Finish(completionDate, _dateTimeService);
 
         await _shoppingListRepository.StoreAsync(shoppingList);
         await _shoppingListRepository.StoreAsync(nextShoppingList);

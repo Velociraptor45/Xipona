@@ -598,7 +598,7 @@ public class ItemTests
 
                 var typeModification = Modification.ItemTypes.First();
                 ExpectedModifiedType = new ItemType(_existingTypeId.Value, typeModification.Name,
-                    typeModification.Availabilities, existingType.PredecessorId, false);
+                    typeModification.Availabilities, existingType.PredecessorId, false, existingType.CreatedAt);
             }
 
             public void SetupExpectedEvent(IItem sut)
@@ -1050,6 +1050,7 @@ public class ItemTests
                 ExpectedResult = ItemMother.InitialWithTypes()
                     .WithTypes(new ItemTypes(ExpectedItemType.ToMonoList(), _itemTypeFactoryMock.Object))
                     .WithPredecessorId(sut.Id)
+                    .WithCreatedAt(sut.CreatedAt)
                     .Create();
             }
 
@@ -1285,7 +1286,7 @@ public class ItemTests
 
             public void SetupExpectedItem(IItem sut)
             {
-                ExpectedResult = ItemMother.Initial().WithPredecessorId(sut.Id).Create();
+                ExpectedResult = ItemMother.Initial().WithPredecessorId(sut.Id).WithCreatedAt(sut.CreatedAt).Create();
             }
 
             public void SetupItemUpdate()
@@ -1602,7 +1603,8 @@ public class ItemTests
                     item.Availabilities.Select(av => new ItemAvailability(av.StoreId, Price.Value, av.DefaultSectionId)),
                     item.TemporaryId,
                     null,
-                    item.Id);
+                    item.Id,
+                    item.CreatedAt);
             }
 
             public void SetupExpectedResultWithAllTypesUpdated(Item item)
@@ -1627,12 +1629,14 @@ public class ItemTests
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
                                     : av),
                                 t.Id,
-                                t.IsDeleted);
+                                t.IsDeleted,
+                                t.CreatedAt);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
                     null,
-                    item.Id);
+                    item.Id,
+                    item.CreatedAt);
             }
 
             public void SetupExpectedResultWithOneTypeUpdated(Item item)
@@ -1658,12 +1662,14 @@ public class ItemTests
                                     ? new ItemAvailability(StoreId.Value, Price.Value, av.DefaultSectionId)
                                     : av),
                                 t.Id,
-                                t.IsDeleted);
+                                t.IsDeleted,
+                                t.CreatedAt);
                             return type;
                         }),
                         _itemTypeFactoryMock.Object),
                     null,
-                    item.Id);
+                    item.Id,
+                    item.CreatedAt);
             }
         }
     }

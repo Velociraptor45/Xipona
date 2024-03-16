@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
+﻿using ProjectHermes.ShoppingList.Api.Core.Services;
+using ProjectHermes.ShoppingList.Api.Domain.ItemCategories.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Services.Creations;
 using ProjectHermes.ShoppingList.Api.Domain.Manufacturers.Models;
 using ProjectHermes.ShoppingList.Api.Domain.Stores.Models;
@@ -8,16 +9,18 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models.Factories;
 public class ItemFactory : IItemFactory
 {
     private readonly IItemTypeFactory _itemTypeFactory;
+    private readonly IDateTimeService _dateTimeService;
 
-    public ItemFactory(IItemTypeFactory itemTypeFactory)
+    public ItemFactory(IItemTypeFactory itemTypeFactory, IDateTimeService dateTimeService)
     {
         _itemTypeFactory = itemTypeFactory;
+        _dateTimeService = dateTimeService;
     }
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         ItemId? predecessorId, IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId,
-        DateTimeOffset? updatedOn)
+        DateTimeOffset? updatedOn, DateTimeOffset createdAt)
     {
         var item = new Item(
             id,
@@ -31,14 +34,15 @@ public class ItemFactory : IItemFactory
             availabilities,
             temporaryId,
             updatedOn,
-            predecessorId);
+            predecessorId,
+            createdAt);
 
         return item;
     }
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, ItemId? predecessorId,
-        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn)
+        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn, DateTimeOffset createdAt)
     {
         var item = new Item(
             id,
@@ -50,7 +54,8 @@ public class ItemFactory : IItemFactory
             manufacturerId,
             new ItemTypes(itemTypes, _itemTypeFactory),
             updatedOn,
-            predecessorId);
+            predecessorId,
+            createdAt);
 
         return item;
     }
@@ -69,7 +74,8 @@ public class ItemFactory : IItemFactory
             itemCreation.Availabilities,
             null,
             null,
-            null);
+            null,
+            _dateTimeService.UtcNow);
     }
 
     public IItem CreateTemporary(ItemName name, QuantityType quantityType, StoreId storeId, Price price,
@@ -97,7 +103,8 @@ public class ItemFactory : IItemFactory
             },
             temporaryItemId,
             null,
-            null);
+            null,
+            _dateTimeService.UtcNow);
     }
 
     public IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
@@ -114,7 +121,8 @@ public class ItemFactory : IItemFactory
             manufacturerId,
             new ItemTypes(itemTypes, _itemTypeFactory),
             null,
-            predecessorId);
+            predecessorId,
+            _dateTimeService.UtcNow);
 
         return item;
     }

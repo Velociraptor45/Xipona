@@ -25,6 +25,7 @@ public interface IItem
     bool HasItemTypes { get; }
     DateTimeOffset? UpdatedOn { get; }
     ItemId? PredecessorId { get; }
+    DateTimeOffset CreatedAt { get; }
 
     void Delete();
 

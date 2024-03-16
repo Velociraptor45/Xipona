@@ -1,4 +1,5 @@
 ﻿using Force.DeepCloner;
+using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -448,9 +449,10 @@ public class ShoppingListTests
             // Arrange
             var shoppingList = ShoppingListMother.Completed().Create();
             var completionDate = new DomainTestBuilder<DateTimeOffset>().Create();
+            var dateTimeServiceMock = new DateTimeServiceMock(MockBehavior.Strict);
 
             // Act
-            var action = () => shoppingList.Finish(completionDate);
+            var action = () => shoppingList.Finish(completionDate, dateTimeServiceMock.Object);
 
             // Assert
             action.Should().ThrowDomainException(ErrorReasonCode.ShoppingListAlreadyFinished);
@@ -465,16 +467,20 @@ public class ShoppingListTests
             var itemsNotInBasket = shoppingList.Items.Where(i => !i.IsInBasket);
 
             var completionDate = new DomainTestBuilder<DateTimeOffset>().Create();
+            var dateTimeServiceMock = new DateTimeServiceMock(MockBehavior.Strict);
+            var expectedCreatedAt = new DomainTestBuilder<DateTimeOffset>().Create();
+            dateTimeServiceMock.SetupUtcNow(expectedCreatedAt);
 
             // Act
-            IShoppingList result = shoppingList.Finish(completionDate);
+            IShoppingList result = shoppingList.Finish(completionDate, dateTimeServiceMock.Object);
 
             // Assert
             using (new AssertionScope())
             {
                 shoppingList.Sections.First().Items.Should().BeEquivalentTo(itemsInBasket);
-                result.Sections.First().Items.Should().BeEquivalentTo(itemsNotInBasket);
                 shoppingList.CompletionDate.Should().Be(completionDate);
+                result.Sections.First().Items.Should().BeEquivalentTo(itemsNotInBasket);
+                result.CreatedAt.Should().Be(expectedCreatedAt);
             }
         }
     }

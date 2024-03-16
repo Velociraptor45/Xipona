@@ -38,6 +38,7 @@ public class RecipeConverter : IToContractConverter<IRecipe, Entities.Recipe>
             Tags = source.Tags
                 .Select(tag => _tagsForRecipeConverter.ToContract((source.Id, tag)))
                 .ToList(),
+            CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

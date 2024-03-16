@@ -39,7 +39,7 @@ public class ManufacturerTests
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
-            var expected = new Manufacturer(sut.Id, _fixture.Modification.Name, sut.IsDeleted);
+            var expected = new Manufacturer(sut.Id, _fixture.Modification.Name, sut.IsDeleted, sut.CreatedAt);
 
             // Act
             sut.Modify(_fixture.Modification);

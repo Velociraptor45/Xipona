@@ -26,7 +26,8 @@ public class StoreConverter : IToDomainConverter<Entities.Store, IStore>
             new StoreId(source.Id),
             new StoreName(source.Name),
             source.Deleted,
-            sections);
+            sections,
+            source.CreatedAt);
 
         store.EnrichWithRowVersion(source.RowVersion);
         return (store as IStore)!;

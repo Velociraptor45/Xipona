@@ -19,7 +19,8 @@ public class RecipeFactoryMock : Mock<IRecipeFactory>
     }
 
     public void SetupCreate(RecipeId id, RecipeName name, NumberOfServings numberOfServings, IEnumerable<IIngredient> ingredients,
-        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds, IRecipe returnValue)
+        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds, DateTimeOffset createdAt,
+        IRecipe returnValue)
     {
         Setup(m => m.Create(
                 id,
@@ -27,7 +28,8 @@ public class RecipeFactoryMock : Mock<IRecipeFactory>
                 numberOfServings,
                 It.Is<IEnumerable<IIngredient>>(list => list.IsEquivalentTo(ingredients)),
                 It.Is<IEnumerable<IPreparationStep>>(list => list.IsEquivalentTo(steps)),
-                It.Is<IEnumerable<RecipeTagId>>(list => list.IsEquivalentTo(recipeTagIds))))
+                It.Is<IEnumerable<RecipeTagId>>(list => list.IsEquivalentTo(recipeTagIds)),
+                createdAt))
             .Returns(returnValue);
     }
 }

@@ -28,6 +28,12 @@ public class ShoppingListEntityBuilder : TestBuilderBase<Repositories.ShoppingLi
         return this;
     }
 
+    public ShoppingListEntityBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillPropertyWith(p => p.CreatedAt, createdAt);
+        return this;
+    }
+
     public ShoppingListEntityBuilder WithItemsOnList(ICollection<ItemsOnList> itemsOnList)
     {
         FillPropertyWith(p => p.ItemsOnList, itemsOnList);

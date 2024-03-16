@@ -68,12 +68,7 @@ public class ItemCategoryTests
 
     public class Modify
     {
-        private readonly ModifyFixture _fixture;
-
-        public Modify()
-        {
-            _fixture = new ModifyFixture();
-        }
+        private readonly ModifyFixture _fixture = new();
 
         [Fact]
         public void Modify_WithValidData_ShouldChangeName()
@@ -112,8 +107,8 @@ public class ItemCategoryTests
 
         private class ModifyFixture : ItemCategoryFixture
         {
-            public ItemCategoryModification? Modification { get; set; }
-            public ItemCategory? ExpectedResult { get; set; }
+            public ItemCategoryModification? Modification { get; private set; }
+            public ItemCategory? ExpectedResult { get; private set; }
 
             public void SetupModification()
             {
@@ -124,7 +119,7 @@ public class ItemCategoryTests
             {
                 TestPropertyNotSetException.ThrowIfNull(Modification);
 
-                ExpectedResult = new ItemCategory(sut.Id, Modification.Name, sut.IsDeleted);
+                ExpectedResult = new ItemCategory(sut.Id, Modification.Name, sut.IsDeleted, sut.CreatedAt);
             }
         }
     }

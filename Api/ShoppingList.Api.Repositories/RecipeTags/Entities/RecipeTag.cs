@@ -9,6 +9,8 @@ public class RecipeTag
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; set; }
 
+    public DateTimeOffset CreatedAt { get; set; }
+
     [Required]
     public string Name { get; set; } = string.Empty;
 

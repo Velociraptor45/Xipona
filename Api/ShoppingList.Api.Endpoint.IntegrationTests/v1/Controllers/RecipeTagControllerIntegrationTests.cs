@@ -10,6 +10,7 @@ using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Contexts;
 using ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Entities;
 using ProjectHermes.ShoppingList.Api.TestTools.AutoFixture;
 using ProjectHermes.ShoppingList.Api.TestTools.Exceptions;
+using System;
 using Xunit;
 
 namespace ProjectHermes.ShoppingList.Api.Endpoint.IntegrationTests.v1.Controllers;
@@ -61,8 +62,9 @@ public class RecipeTagControllerIntegrationTests
             entity.Should().BeEquivalentTo(_fixture.ExpectedEntity,
                                opt => opt
                                    .ExcludeRowVersion()
-                                   .Excluding(info => info.Path == "Id"));
+                                   .Excluding(info => info.Path == "Id" || info.Path == "CreatedAt"));
             entity.Id.Should().Be(createdContract.Id);
+            entity.CreatedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         private sealed class CreateRecipeTagAsyncFixture : RecipeTagControllerFixture

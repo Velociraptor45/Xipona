@@ -21,6 +21,8 @@ public class Store
 
     public bool Deleted { get; set; }
 
+    public DateTimeOffset CreatedAt { get; set; }
+
     [InverseProperty("Store")]
     public ICollection<Section> Sections { get; set; }
 

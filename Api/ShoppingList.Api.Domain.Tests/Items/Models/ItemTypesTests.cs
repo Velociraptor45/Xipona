@@ -344,6 +344,7 @@ public class ItemTypesTests
                     .WithName(type.Name)
                     .WithIsDeleted(type.IsDeleted)
                     .WithPredecessorId(type.PredecessorId)
+                    .WithCreatedAt(type.CreatedAt)
                     .Create();
             }
 
@@ -489,6 +490,7 @@ public class ItemTypesTests
                     .WithName(type.Name)
                     .WithIsDeleted(true)
                     .WithPredecessorId(type.PredecessorId)
+                    .WithCreatedAt(type.CreatedAt)
                     .Create();
             }
 
@@ -504,6 +506,7 @@ public class ItemTypesTests
                     .WithName(type.Name)
                     .WithIsDeleted(type.IsDeleted)
                     .WithPredecessorId(type.PredecessorId)
+                    .WithCreatedAt(type.CreatedAt)
                     .Create();
             }
         }

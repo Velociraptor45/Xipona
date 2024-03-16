@@ -32,7 +32,7 @@ public class ItemTypeReadRepository : IItemTypeReadRepository
         var query = _dbContext.ItemTypes.AsNoTracking()
             .Include(t => t.Item)
             .Where(type =>
-                !type.Item.Deleted
+                !type.Item!.Deleted
                 && !type.IsDeleted
                 && !excludedRawItemTypeIds.Contains(type.Id)
                 && type.Name.Contains(name)

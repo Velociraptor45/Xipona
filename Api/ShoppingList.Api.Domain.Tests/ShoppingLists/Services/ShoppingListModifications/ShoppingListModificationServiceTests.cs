@@ -1,4 +1,5 @@
-﻿using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.ShoppingList.Api.Core.TestKit.Services;
+using ProjectHermes.ShoppingList.Api.Domain.Common.Exceptions;
 using ProjectHermes.ShoppingList.Api.Domain.Common.Reasons;
 using ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 using ProjectHermes.ShoppingList.Api.Domain.ShoppingLists.Models;
@@ -1186,7 +1187,7 @@ public class ShoppingListModificationServiceTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_createdShoppingListMock);
                 TestPropertyNotSetException.ThrowIfNull(_shoppingListMock);
-                _shoppingListMock.SetupFinish(CompletionDate, _createdShoppingListMock.Object);
+                _shoppingListMock.SetupFinish(CompletionDate, DateTimeServiceMock.Object, _createdShoppingListMock.Object);
             }
 
             public void SetupStoringShoppingListMock()
@@ -1204,7 +1205,7 @@ public class ShoppingListModificationServiceTests
             public void VerifyFinishingShoppingList()
             {
                 TestPropertyNotSetException.ThrowIfNull(_shoppingListMock);
-                _shoppingListMock.VerifyFinish(CompletionDate, Times.Once);
+                _shoppingListMock.VerifyFinish(CompletionDate, DateTimeServiceMock.Object, Times.Once);
             }
 
             public void VerifyStoringShoppingList()
@@ -1313,6 +1314,7 @@ public class ShoppingListModificationServiceTests
         protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
         protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock = new(MockBehavior.Strict);
         protected readonly ItemFactoryMock ItemFactoryMock = new(MockBehavior.Strict);
+        protected readonly DateTimeServiceMock DateTimeServiceMock = new(MockBehavior.Strict);
 
         public ShoppingListModificationService CreateSut()
         {
@@ -1322,7 +1324,8 @@ public class ShoppingListModificationServiceTests
                 ItemRepositoryMock.Object,
                 StoreRepositoryMock.Object,
                 ShoppingListSectionFactoryMock.Object,
-                ItemFactoryMock.Object);
+                ItemFactoryMock.Object,
+                DateTimeServiceMock.Object);
         }
     }
 }

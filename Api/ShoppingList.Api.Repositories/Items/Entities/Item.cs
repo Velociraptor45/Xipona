@@ -32,6 +32,7 @@ public class Item
     public Guid? CreatedFrom { get; set; }
     public DateTimeOffset? UpdatedOn { get; set; }
     public Guid? PredecessorId { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     [Timestamp]
     public byte[] RowVersion { get; set; }

@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.ShoppingLists
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
@@ -58,8 +58,11 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.ShoppingLists
                     b.Property<DateTimeOffset?>("CompletionDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<DateTime>("RowVersion")
-                        .IsRowVersion()
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 

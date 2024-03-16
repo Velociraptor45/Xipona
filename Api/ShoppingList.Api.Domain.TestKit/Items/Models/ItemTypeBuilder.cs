@@ -58,6 +58,12 @@ public class ItemTypeBuilder : DomainTestBuilderBase<ItemType>
         return this;
     }
 
+    public ItemTypeBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillConstructorWith(nameof(createdAt), createdAt);
+        return this;
+    }
+
     // tcg keep
     public ItemTypeBuilder WithAvailability(ItemAvailability availability)
     {

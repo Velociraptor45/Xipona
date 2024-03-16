@@ -18,7 +18,7 @@ public class ManufacturerCreationService : IManufacturerCreationService
 
     public async Task<IManufacturer> CreateAsync(ManufacturerName name)
     {
-        var model = _manufacturerFactory.Create(ManufacturerId.New, name, false);
+        var model = _manufacturerFactory.Create(name);
         return await _manufacturerRepository.StoreAsync(model);
     }
 }

@@ -13,13 +13,14 @@ namespace ProjectHermes.ShoppingList.Api.Domain.Items.Models;
 public class ItemType : IItemType
 {
     public ItemType(ItemTypeId id, ItemTypeName name, IEnumerable<ItemAvailability> availabilities,
-        ItemTypeId? predecessorId, bool isDeleted)
+        ItemTypeId? predecessorId, bool isDeleted, DateTimeOffset createdAt)
     {
         Id = id;
         Name = name;
         PredecessorId = predecessorId;
         Availabilities = availabilities.ToList();
         IsDeleted = isDeleted;
+        CreatedAt = createdAt;
 
         if (!Availabilities.Any())
             throw new DomainException(new CannotCreateItemTypeWithoutAvailabilitiesReason());
@@ -30,6 +31,7 @@ public class ItemType : IItemType
     public IReadOnlyCollection<ItemAvailability> Availabilities { get; }
     public ItemTypeId? PredecessorId { get; }
     public bool IsDeleted { get; }
+    public DateTimeOffset CreatedAt { get; }
 
     public SectionId GetDefaultSectionIdForStore(StoreId storeId)
     {
@@ -67,7 +69,8 @@ public class ItemType : IItemType
             modification.Name,
             modification.Availabilities,
             PredecessorId,
-            IsDeleted);
+            IsDeleted,
+            CreatedAt);
 
         if (modification.Availabilities.Count != Availabilities.Count
             || !modification.Availabilities.All(av => Availabilities.Any(oldAv => oldAv == av)))
@@ -93,7 +96,8 @@ public class ItemType : IItemType
             update.Name,
             update.Availabilities,
             Id,
-            IsDeleted);
+            IsDeleted,
+            CreatedAt);
 
         return type;
     }
@@ -111,7 +115,7 @@ public class ItemType : IItemType
                 ? new ItemAvailability(storeId, price, av.DefaultSectionId)
                 : av);
 
-        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities, Id, IsDeleted);
+        var newItemType = new ItemType(ItemTypeId.New, Name, availabilities, Id, IsDeleted, CreatedAt);
         return newItemType;
     }
 
@@ -125,7 +129,8 @@ public class ItemType : IItemType
             Name,
             Availabilities,
             Id,
-            IsDeleted);
+            IsDeleted,
+            CreatedAt);
 
         return newItemType;
     }
@@ -153,7 +158,8 @@ public class ItemType : IItemType
             Name,
             availabilities,
             PredecessorId,
-            IsDeleted);
+            IsDeleted,
+            CreatedAt);
     }
 
     public IItemType Delete(out IDomainEvent? domainEventToPublish)
@@ -170,7 +176,8 @@ public class ItemType : IItemType
             Name,
             Availabilities,
             PredecessorId,
-            true);
+            true,
+            CreatedAt);
     }
 
     public IItemType RemoveAvailabilitiesFor(StoreId storeId, out IEnumerable<IDomainEvent> domainEventsToPublish)
@@ -191,7 +198,8 @@ public class ItemType : IItemType
                 Name,
                 availabilities,
                 PredecessorId,
-                IsDeleted);
+                IsDeleted,
+                CreatedAt);
         }
 
         var deletedType = Delete(out var deletedDomainEvent);

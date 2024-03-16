@@ -10,6 +10,7 @@ public interface IStore
     StoreName Name { get; }
     bool IsDeleted { get; }
     IReadOnlyCollection<ISection> Sections { get; }
+    DateTimeOffset CreatedAt { get; }
 
     void ChangeName(StoreName name);
 

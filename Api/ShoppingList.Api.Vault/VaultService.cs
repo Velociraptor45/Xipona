@@ -23,8 +23,8 @@ public class VaultService : IVaultService
             configuration.GetSection("KeyVault").Get<KeyVaultConfig>()
                 ?? throw new InvalidOperationException("KeyVault config is missing in appsettings"));
 
-        var usernameFilePath = Environment.GetEnvironmentVariable("PH_SL_VAULT_USERNAME_FILE");
-        var passwordFilePath = Environment.GetEnvironmentVariable("PH_SL_VAULT_PASSWORD_FILE");
+        var usernameFilePath = configuration["PH_SL_VAULT_USERNAME_FILE"];
+        var passwordFilePath = configuration["PH_SL_VAULT_PASSWORD_FILE"];
 
         _username = string.IsNullOrWhiteSpace(usernameFilePath) ?
              string.Empty :

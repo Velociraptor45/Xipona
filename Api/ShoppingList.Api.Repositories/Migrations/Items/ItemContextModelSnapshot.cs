@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Items
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.Items.Entities.AvailableAt", b =>
@@ -48,6 +48,9 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Items
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<Guid?>("CreatedFrom")
                         .HasColumnType("char(36)");
@@ -81,7 +84,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Items
                         .HasColumnType("int");
 
                     b.Property<DateTime>("RowVersion")
-                        .IsRowVersion()
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
@@ -99,6 +102,9 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Items
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");

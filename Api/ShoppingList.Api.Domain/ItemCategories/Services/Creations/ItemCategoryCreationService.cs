@@ -19,7 +19,7 @@ public class ItemCategoryCreationService : IItemCategoryCreationService
 
     public async Task<IItemCategory> CreateAsync(ItemCategoryName name)
     {
-        var model = _itemCategoryFactory.Create(ItemCategoryId.New, name, false);
+        var model = _itemCategoryFactory.CreateNew(name);
         return await _itemCategoryRepository.StoreAsync(model);
     }
 }

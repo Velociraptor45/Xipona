@@ -80,6 +80,12 @@ public class ItemTypeEntityBuilder : TestBuilderBase<ItemType>
         return this;
     }
 
+    public ItemTypeEntityBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillPropertyWith(p => p.CreatedAt, createdAt);
+        return this;
+    }
+
     // TCG keep
     public ItemTypeEntityBuilder WithAvailableAt(ItemTypeAvailableAt availableAt)
     {

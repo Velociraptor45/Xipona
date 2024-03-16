@@ -52,7 +52,8 @@ public class ItemCategoryControllerIntegrationTests
             var itemCategories = (await _fixture.LoadAllItemCategoriesAsync(assertionServiceScope)).ToList();
             itemCategories.Should().HaveCount(1);
             var itemCategory = itemCategories.First();
-            itemCategory.Should().BeEquivalentTo(_fixture.ExpectedItemCategory, opt => opt.ExcludeRowVersion());
+            itemCategory.Should().BeEquivalentTo(_fixture.ExpectedItemCategory,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision());
 
             var recipes = (await _fixture.LoadAllRecipesAsync(assertionServiceScope)).ToList();
             recipes.Should().HaveCount(1);

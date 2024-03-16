@@ -16,7 +16,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.RecipeTags
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("ProjectHermes.ShoppingList.Api.Repositories.RecipeTags.Entities.RecipeTag", b =>
@@ -24,12 +24,15 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.RecipeTags
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("RowVersion")
-                        .IsRowVersion()
+                        .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 

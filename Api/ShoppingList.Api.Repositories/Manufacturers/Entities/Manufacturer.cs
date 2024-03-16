@@ -5,21 +5,17 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Manufacturers.Entities;
 
 public class Manufacturer
 {
-    public Manufacturer()
-    {
-        Name = string.Empty;
-        RowVersion = Array.Empty<byte>();
-    }
-
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Guid Id { get; set; }
 
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     public bool Deleted { get; set; }
 
+    public DateTimeOffset CreatedAt { get; set; }
+
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 }

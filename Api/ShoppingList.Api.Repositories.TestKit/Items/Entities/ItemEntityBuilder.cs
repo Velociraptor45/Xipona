@@ -163,6 +163,12 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithAvailableAt(new List<AvailableAt>());
     }
 
+    public ItemEntityBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillPropertyWith(p => p.CreatedAt, createdAt);
+        return this;
+    }
+
     public ItemEntityBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
     {
         FillPropertyWith(p => p.UpdatedOn, updatedOn);
