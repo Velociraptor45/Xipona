@@ -22,6 +22,7 @@ public class StoreConverter : IToEntityConverter<IStore, Entities.Store>
             Name = source.Name,
             Deleted = source.IsDeleted,
             Sections = source.Sections.Select(s => _sectionConverter.ToEntity((source.Id, s))).ToList(),
+            CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
     }

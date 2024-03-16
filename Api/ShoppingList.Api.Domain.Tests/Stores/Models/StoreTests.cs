@@ -160,7 +160,7 @@ public class StoreTests
             public void SetupExpectedResult(Store sut)
             {
                 var sections = new Sections(sut.Sections, new SectionFactoryMock(MockBehavior.Strict).Object);
-                ExpectedResult = new Store(sut.Id, sut.Name, true, sections);
+                ExpectedResult = new Store(sut.Id, sut.Name, true, sections, sut.CreatedAt);
             }
 
             public void SetupExpectedDomainEvent(Store sut)

@@ -12,17 +12,19 @@ public class Store : AggregateRoot, IStore
 {
     private readonly Sections _sections;
 
-    public Store(StoreId id, StoreName name, bool isDeleted, Sections sections)
+    public Store(StoreId id, StoreName name, bool isDeleted, Sections sections, DateTimeOffset createdAt)
     {
         Id = id;
         Name = name;
         IsDeleted = isDeleted;
+        CreatedAt = createdAt;
         _sections = sections;
     }
 
     public StoreId Id { get; }
     public StoreName Name { get; private set; }
     public bool IsDeleted { get; private set; }
+    public DateTimeOffset CreatedAt { get; }
     public IReadOnlyCollection<ISection> Sections => _sections.AsReadOnly();
 
     public ISection GetDefaultSection()

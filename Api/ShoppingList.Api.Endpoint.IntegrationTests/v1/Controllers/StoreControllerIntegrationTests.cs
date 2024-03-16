@@ -453,8 +453,9 @@ public class StoreControllerIntegrationTests
             stores.Should().HaveCount(1);
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
                 opts => opts
-                    .Excluding(x => x.Path.EndsWith("Id"))
+                    .Excluding(x => x.Path.EndsWith("Id") || x.Path == "CreatedAt")
                     .ExcludeRowVersion());
+            stores.First().CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
         private class CreateStoreAsyncFixture : LocalFixture
@@ -554,7 +555,8 @@ public class StoreControllerIntegrationTests
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Store"))
-                    .ExcludeRowVersion());
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
@@ -599,7 +601,8 @@ public class StoreControllerIntegrationTests
             stores.First().Should().BeEquivalentTo(_fixture.ExpectedPersistedStore,
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Store"))
-                    .ExcludeRowVersion());
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
 
             var items = (await _fixture.LoadAllItemsAsync()).ToArray();
             items.Should().HaveCount(1);
@@ -795,6 +798,7 @@ public class StoreControllerIntegrationTests
                     Name = Contract.Name,
                     Deleted = false,
                     Sections = sections,
+                    CreatedAt = ExistingStore.CreatedAt
                 };
             }
         }

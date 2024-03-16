@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 
@@ -10,9 +11,11 @@ using ProjectHermes.ShoppingList.Api.Repositories.Stores.Contexts;
 namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Stores
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240316163321_AddCreatedAt")]
+    partial class AddCreatedAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace ProjectHermes.ShoppingList.Api.Repositories.Migrations.Stores
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("Deleted")
