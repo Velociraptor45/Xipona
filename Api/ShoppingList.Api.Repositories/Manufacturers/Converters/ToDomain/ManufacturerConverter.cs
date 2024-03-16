@@ -19,7 +19,8 @@ public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, I
         var manufacturer = (AggregateRoot)_manufacturerFactory.Create(
             new ManufacturerId(source.Id),
             new ManufacturerName(source.Name),
-            source.Deleted);
+            source.Deleted,
+            source.CreatedAt);
 
         manufacturer.EnrichWithRowVersion(source.RowVersion);
         return (manufacturer as IManufacturer)!;
