@@ -2,5 +2,7 @@
 
 public interface IItemCategoryFactory
 {
-    IItemCategory Create(ItemCategoryId id, ItemCategoryName name, bool isDeleted);
+    IItemCategory Create(ItemCategoryId id, ItemCategoryName name, bool isDeleted, DateTimeOffset createdAt);
+
+    IItemCategory CreateNew(ItemCategoryName name);
 }

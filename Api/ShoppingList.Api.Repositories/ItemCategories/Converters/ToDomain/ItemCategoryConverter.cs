@@ -19,7 +19,8 @@ public class ItemCategoryConverter : IToDomainConverter<Entities.ItemCategory, I
         var itemCategory = (AggregateRoot)_itemCategoryFactory.Create(
             new ItemCategoryId(source.Id),
             new ItemCategoryName(source.Name),
-            source.Deleted);
+            source.Deleted,
+            source.CreatedAt);
 
         itemCategory.EnrichWithRowVersion(source.RowVersion);
         return (itemCategory as IItemCategory)!;
