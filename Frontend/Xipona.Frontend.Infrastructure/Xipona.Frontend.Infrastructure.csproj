@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>ProjectHermes.Xipona.Frontend.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="ProjectHermes.Xipona.Api.Client" Version="0.12.0-alpha.2" />
+    <PackageReference Include="RestEase" Version="1.6.4" />
+    <PackageReference Include="WebAssembly.Bindings" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xipona.Frontend.Redux\Xipona.Frontend.Redux.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Xipona.Api.Client">
+      <HintPath>..\Xipona.Frontend.WebApp\Xipona.Api.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Xipona.Api.Contracts">
+      <HintPath>..\Xipona.Frontend.WebApp\Xipona.Api.Contracts.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+  </ItemGroup>
+
+</Project>

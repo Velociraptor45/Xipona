@@ -1,0 +1,45 @@
+﻿@using Fluxor
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Logging
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions
+
+@inherits LayoutComponentBase
+
+@inject ILogger<MainLayout> Logger
+@inject IDispatcher Dispatcher
+
+<NavMenu />
+
+<div class="main">
+    <ErrorBoundary @ref="_errorBoundary">
+        <ChildContent>
+            <div class="content">
+                @Body
+            </div>
+        </ChildContent>
+        <ErrorContent Context="ex">
+            @{
+                OnError(ex);
+            }
+            <div class="content">
+                @Body
+            </div>
+        </ErrorContent>
+    </ErrorBoundary>
+</div>
+
+@code {
+    private ErrorBoundary _errorBoundary;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _errorBoundary?.Recover();
+    }
+
+    private void OnError(Exception ex)
+    {
+        Logger.LogError(ex, "An unhandled exception occurred");
+        Dispatcher.Dispatch(new DisplayUnhandledErrorAction(ex.Message));
+    }
+}
