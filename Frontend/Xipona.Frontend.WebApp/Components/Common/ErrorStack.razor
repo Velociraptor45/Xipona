@@ -1,0 +1,13 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
+
+@inject IState<ShoppingListState> State
+
+<div>
+    @foreach (var msg in State.Value.Errors.Stack)
+    {
+        <div>@msg</div><br/>
+    }
+</div>

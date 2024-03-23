@@ -1,0 +1,39 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:54701",
+      "sslPort": 44354
+    }
+  },
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:5050",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "PH_XIPONA_DB_USERNAME_FILE": "E:\\dev-ph-xipona-db-username.txt",
+        "PH_XIPONA_DB_PASSWORD_FILE": "E:\\dev-ph-xipona-db-password.txt"
+        //"PH_XIPONA_VAULT_PASSWORD_FILE": "E:\\dev-ph-xipona-vault-api-password.txt",
+        //"PH_XIPONA_VAULT_USERNAME_FILE": "E:\\dev-ph-xipona-vault-api-username.txt"
+      }
+    },
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "PH_XIPONA_DB_USERNAME_FILE": "E:\\dev-ph-xipona-db-username.txt",
+        "PH_XIPONA_DB_PASSWORD_FILE": "E:\\dev-ph-xipona-db-password.txt"
+        //"PH_XIPONA_VAULT_PASSWORD_FILE": "E:\\dev-ph-xipona-vault-api-password.txt",
+        //"PH_XIPONA_VAULT_USERNAME_FILE": "E:\\dev-ph-xipona-vault-api-username.txt"
+      }
+    }
+  }
+}

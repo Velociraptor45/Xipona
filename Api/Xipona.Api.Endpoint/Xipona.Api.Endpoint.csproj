@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>ProjectHermes.Xipona.Api.Endpoint</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xipona.Api.ApplicationServices\Xipona.Api.ApplicationServices.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>
