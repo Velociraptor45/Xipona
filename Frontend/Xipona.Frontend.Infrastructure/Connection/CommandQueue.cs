@@ -9,7 +9,6 @@ using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
 using RestEase;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ using System.Timers;
 
 namespace ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
 
-public class CommandQueue : ICommandQueue, IDisposable
+public sealed class CommandQueue : ICommandQueue, IDisposable
 {
     private readonly IApiClient _commandClient;
     private readonly IRequestSenderStrategy _senderStrategy;
@@ -134,7 +133,7 @@ public class CommandQueue : ICommandQueue, IDisposable
                 if (_queue.Count == 0)
                     break;
 
-                request = _queue.First();
+                request = _queue[0];
             }
 
             try
@@ -199,6 +198,6 @@ public class CommandQueue : ICommandQueue, IDisposable
 
     public void Dispose()
     {
-        _timer.Dispose();
+        _timer?.Dispose();
     }
 }
