@@ -86,7 +86,7 @@ public class ItemCategoryController : ControllerBase
         var query = new ItemCategorySearchQuery(searchInput, includeDeleted);
         var itemCategoryReadModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!itemCategoryReadModels.Any())
+        if (itemCategoryReadModels.Count == 0)
             return NoContent();
 
         var itemCategoryContracts =
@@ -105,7 +105,7 @@ public class ItemCategoryController : ControllerBase
         var query = new AllActiveItemCategoriesQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(readModels);

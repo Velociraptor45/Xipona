@@ -57,7 +57,7 @@ public class ItemConverter : IToDomainConverter<Entities.Item, IItem>
         }
 
         AggregateRoot item;
-        if (source.ItemTypes.Any())
+        if (source.ItemTypes.Count != 0)
         {
             var itemTypes = _itemTypeConverter.ToDomain(source.ItemTypes);
 

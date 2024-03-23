@@ -18,7 +18,7 @@ public class RecipeTagValidationService : IRecipeTagValidationService
     {
         var recipeTagIds = recipeTags.ToList();
         var nonExistingTagIds = (await _recipeTagRepository.FindNonExistingInAsync(recipeTagIds)).ToList();
-        if (nonExistingTagIds.Any())
+        if (nonExistingTagIds.Count != 0)
         {
             throw new DomainException(new InvalidRecipeTagIdsReason(nonExistingTagIds));
         }

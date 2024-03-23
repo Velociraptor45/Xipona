@@ -16,22 +16,32 @@ public class ItemTypesTests
     {
         private readonly UpdateFixture _fixture = new();
 
-        public static IEnumerable<object?[]> GetUpdatePriceItemTypeIdCombinations()
+        public static IEnumerable<object?[]> UpdatePriceItemTypeIdCombinations
         {
-            yield return new object?[] { null, ItemTypeId.New };
+            get
+            {
+                var data = new TheoryData<ItemTypeId?, ItemTypeId> { { null, ItemTypeId.New } };
 
-            var itemTypeId = ItemTypeId.New;
-            yield return new object?[] { itemTypeId, itemTypeId };
+                var itemTypeId = ItemTypeId.New;
+                data.Add(itemTypeId, itemTypeId);
+                return data;
+            }
         }
 
-        public static IEnumerable<object?[]> GetUpdatePriceItemTypeIdForTypeNotAvailable()
+        public static TheoryData<ItemTypeId?> UpdatePriceItemTypeIdForTypeNotAvailable
         {
-            yield return new object?[] { null };
-            yield return new object?[] { ItemTypeId.New };
+            get
+            {
+                return new TheoryData<ItemTypeId?>()
+                {
+                    null,
+                    ItemTypeId.New
+                };
+            }
         }
 
         [Theory]
-        [MemberData(nameof(GetUpdatePriceItemTypeIdForTypeNotAvailable))]
+        [MemberData(nameof(UpdatePriceItemTypeIdForTypeNotAvailable))]
         public void Update_WithItemTypeNotAvailableAtStore_ShouldCallCorrectMethod(ItemTypeId? itemTypeIdArg)
         {
             // Arrange
@@ -53,7 +63,7 @@ public class ItemTypesTests
         }
 
         [Theory]
-        [MemberData(nameof(GetUpdatePriceItemTypeIdForTypeNotAvailable))]
+        [MemberData(nameof(UpdatePriceItemTypeIdForTypeNotAvailable))]
         public void Update_WithItemTypeNotAvailableAtStore_ShouldReturnExpectedResult(ItemTypeId? itemTypeIdArg)
         {
             // Arrange
@@ -117,7 +127,7 @@ public class ItemTypesTests
         }
 
         [Theory]
-        [MemberData(nameof(GetUpdatePriceItemTypeIdCombinations))]
+        [MemberData(nameof(UpdatePriceItemTypeIdCombinations))]
         public void Update_WithItemTypeAvailableAtStore_ShouldCallCorrectMethod(ItemTypeId? itemTypeIdArg,
             ItemTypeId itemTypeId)
         {
@@ -140,7 +150,7 @@ public class ItemTypesTests
         }
 
         [Theory]
-        [MemberData(nameof(GetUpdatePriceItemTypeIdCombinations))]
+        [MemberData(nameof(UpdatePriceItemTypeIdCombinations))]
         public void Update_WithItemTypeAvailableAtStore_ShouldReturnExpectedResult(ItemTypeId? itemTypeIdArg,
             ItemTypeId itemTypeId)
         {
@@ -514,7 +524,7 @@ public class ItemTypesTests
 
     private abstract class ItemTypesFixture
     {
-        protected IList<ItemType> ItemTypes { get; } = new List<ItemType>();
+        protected List<ItemType> ItemTypes { get; } = new();
         protected ItemTypeFactoryMock ItemTypeFactoryMock { get; } = new(MockBehavior.Strict);
 
         public ItemTypes CreateSut()

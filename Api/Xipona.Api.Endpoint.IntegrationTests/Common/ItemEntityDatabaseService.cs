@@ -76,9 +76,9 @@ internal class ItemEntityDatabaseService
 
         foreach (var item in items)
         {
-            if (!item.AvailableAt.Any())
+            if (item.AvailableAt.Count == 0)
             {
-                if (!item.ItemTypes.Any())
+                if (item.ItemTypes.Count == 0)
                     continue;
 
                 foreach (var type in item.ItemTypes)

@@ -22,7 +22,7 @@ public class ItemType : IItemType
         IsDeleted = isDeleted;
         CreatedAt = createdAt;
 
-        if (!Availabilities.Any())
+        if (Availabilities.Count == 0)
             throw new DomainException(new CannotCreateItemTypeWithoutAvailabilitiesReason());
     }
 
@@ -57,7 +57,7 @@ public class ItemType : IItemType
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
-        if (!modification.Availabilities.Any())
+        if (modification.Availabilities.Count == 0)
             throw new DomainException(new CannotModifyItemTypeWithoutAvailabilitiesReason());
 
         var domainEvents = new List<IDomainEvent>();
@@ -86,7 +86,7 @@ public class ItemType : IItemType
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedItemTypeReason(Id));
-        if (!update.Availabilities.Any())
+        if (update.Availabilities.Count == 0)
             throw new DomainException(new CannotUpdateItemTypeWithoutAvailabilitiesReason());
 
         await validator.ValidateAsync(update.Availabilities);
@@ -189,7 +189,7 @@ public class ItemType : IItemType
             return this;
         }
 
-        if (availabilities.Any())
+        if (availabilities.Count != 0)
         {
             var availabilitiesToRemove = Availabilities.Where(av => av.StoreId == storeId);
             domainEventsToPublish = availabilitiesToRemove.Select(av => new ItemTypeAvailabilityDeletedDomainEvent(Id, av));

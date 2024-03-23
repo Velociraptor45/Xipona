@@ -35,7 +35,7 @@ public static class StoreEntityMother
 
         var sections = new List<Section>();
 
-        if (!sectionIdArray.Any())
+        if (sectionIdArray.Length == 0)
             return new StoreEntityBuilder().WithDeleted(false).WithSections(sections);
 
         sections.Add(new SectionEntityBuilder()

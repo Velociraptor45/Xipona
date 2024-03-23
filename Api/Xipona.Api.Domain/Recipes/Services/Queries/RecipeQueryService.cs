@@ -61,7 +61,7 @@ public class RecipeQueryService : IRecipeQueryService
     {
         var tagIdsList = tagIds.ToList();
 
-        if (!tagIdsList.Any())
+        if (tagIdsList.Count == 0)
             return Enumerable.Empty<RecipeSearchResult>();
 
         var results = (await _recipeRepository.FindByContainingAllAsync(tagIdsList)).ToList();

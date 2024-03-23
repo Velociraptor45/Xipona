@@ -42,7 +42,7 @@ public class RecipeTagController : ControllerBase
         var query = new GetAllQuery();
         var recipeTags = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!recipeTags.Any())
+        if (recipeTags.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<IRecipeTag, RecipeTagContract>(recipeTags);

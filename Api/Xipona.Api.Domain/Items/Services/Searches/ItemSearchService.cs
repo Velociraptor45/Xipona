@@ -188,7 +188,7 @@ public class ItemSearchService : IItemSearchService
                     .Where(t => !t.IsDeleted)
                     .Select(t => t.Id)
                     .ToList();
-                if (!itemTypeIds.Any())
+                if (itemTypeIds.Count == 0)
                     continue;
 
                 yield return new ItemWithMatchingItemTypeIds(item, itemTypeIds);
@@ -202,7 +202,7 @@ public class ItemSearchService : IItemSearchService
                 .Except(typeIdsOnList)
                 .ToList();
 
-            if (!typeIdsNotOnList.Any())
+            if (typeIdsNotOnList.Count == 0)
                 continue;
 
             yield return new ItemWithMatchingItemTypeIds(item, typeIdsNotOnList);
@@ -217,7 +217,7 @@ public class ItemSearchService : IItemSearchService
             (await _itemTypeReadRepository.FindActiveByAsync(name, storeId, itemsWithTypesAlreadyFound,
                 itemTypeIdsOnShoppingList, limit))
             .ToList();
-        if (!itemTypeIdMappings.Any())
+        if (itemTypeIdMappings.Count == 0)
             return Enumerable.Empty<ItemWithMatchingItemTypeIds>();
 
         var itemTypeIdGroups = itemTypeIdMappings
@@ -250,7 +250,7 @@ public class ItemSearchService : IItemSearchService
             .Select(c => c.Id)
             .ToList();
 
-        return categoryIds.Any()
+        return categoryIds.Count != 0
             ? (await _itemRepository.FindActiveByAsync(categoryIds, storeId, excludedItemIds)).ToList()
             : new List<IItem>();
     }

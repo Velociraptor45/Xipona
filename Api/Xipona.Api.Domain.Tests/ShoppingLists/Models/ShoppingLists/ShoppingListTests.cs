@@ -94,7 +94,7 @@ public class ShoppingListTests
                 Item = new ShoppingListItemBuilder().Create();
             }
 
-            public void SetupItemAlreadyOnShoppingList(Domain.ShoppingLists.Models.ShoppingList sut)
+            public void SetupItemAlreadyOnShoppingList(ShoppingList sut)
             {
                 Item = _commonFixture.ChooseRandom(sut.Items);
             }
@@ -111,7 +111,7 @@ public class ShoppingListTests
                 SectionId = Domain.Stores.Models.SectionId.New;
             }
 
-            public void VerifySectionContainsItem(Domain.ShoppingLists.Models.ShoppingList result)
+            public void VerifySectionContainsItem(ShoppingList result)
             {
                 TestPropertyNotSetException.ThrowIfNull(SectionId);
                 result.Sections.First(s => s.Id == SectionId.Value).Items.Should().Contain(x => x == Item);
@@ -472,7 +472,7 @@ public class ShoppingListTests
             dateTimeServiceMock.SetupUtcNow(expectedCreatedAt);
 
             // Act
-            IShoppingList result = shoppingList.Finish(completionDate, dateTimeServiceMock.Object);
+            var result = shoppingList.Finish(completionDate, dateTimeServiceMock.Object);
 
             // Assert
             using (new AssertionScope())
@@ -492,8 +492,8 @@ public class ShoppingListTests
         [Fact]
         public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()
         {
-            IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-            IShoppingListSection section = _commonFixture.ChooseRandom(shoppingList.Sections);
+            var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+            var section = _commonFixture.ChooseRandom(shoppingList.Sections);
 
             // Act
             var action = () => shoppingList.AddSection(section);
@@ -505,8 +505,8 @@ public class ShoppingListTests
         [Fact]
         public void AddSection_WithNewSection_ShouldThrowDomainException()
         {
-            IShoppingList shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-            IShoppingListSection section = new ShoppingListSectionBuilder().Create();
+            var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
+            var section = new ShoppingListSectionBuilder().Create();
 
             // Act
             shoppingList.AddSection(section);
@@ -620,7 +620,7 @@ public class ShoppingListTests
             public ItemId? ItemId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
 
-            public Domain.ShoppingLists.Models.ShoppingList CreateSut()
+            public ShoppingList CreateSut()
             {
                 return _builder.Create();
             }
@@ -692,7 +692,7 @@ public class ShoppingListTests
             Builder.WithoutCompletionDate();
         }
 
-        public Domain.ShoppingLists.Models.ShoppingList CreateSut()
+        public ShoppingList CreateSut()
         {
             return Builder.Create();
         }

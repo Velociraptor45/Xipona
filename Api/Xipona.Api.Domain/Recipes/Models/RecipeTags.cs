@@ -22,7 +22,7 @@ public class RecipeTags : IEnumerable<RecipeTagId>
     {
         var tags = recipeTagIds.Distinct().ToList();
 
-        if (tags.Any())
+        if (tags.Count != 0)
             await validator.ValidateAsync(tags);
 
         _tags = new HashSet<RecipeTagId>(tags);

@@ -16,6 +16,6 @@ public static class GenericExtensions
         if (excludedProperties != null)
             diff.RemoveAll(d => excludedProperties.Contains(d.MemberPath));
 
-        return !diff.Any();
+        return diff.Count == 0;
     }
 }

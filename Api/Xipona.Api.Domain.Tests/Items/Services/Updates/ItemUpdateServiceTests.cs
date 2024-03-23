@@ -16,17 +16,11 @@ public class ItemUpdateServiceTests
 {
     public class UpdateAsyncPrice
     {
-        private readonly UpdateAsyncPriceFixture _fixture;
+        private readonly UpdateAsyncPriceFixture _fixture = new();
 
-        public UpdateAsyncPrice()
+        public static TheoryData<ItemTypeId?> GetItemTypeIds()
         {
-            _fixture = new UpdateAsyncPriceFixture();
-        }
-
-        public static IEnumerable<object?[]> GetItemTypeIds()
-        {
-            yield return new object?[] { null };
-            yield return new object?[] { ItemTypeId.New };
+            return new TheoryData<ItemTypeId?> { null, ItemTypeId.New };
         }
 
         [Theory]
@@ -196,12 +190,7 @@ public class ItemUpdateServiceTests
 
     public class UpdateAsyncWithTypes
     {
-        private readonly UpdateAsyncWithTypesFixture _fixture;
-
-        public UpdateAsyncWithTypes()
-        {
-            _fixture = new UpdateAsyncWithTypesFixture();
-        }
+        private readonly UpdateAsyncWithTypesFixture _fixture = new();
 
         [Fact]
         public async Task UpdateAsync_WithInvalidItemId_ShouldThrowDomainException()
@@ -314,12 +303,7 @@ public class ItemUpdateServiceTests
 
     public class UpdateAsyncWithoutTypes
     {
-        private readonly UpdateAsyncWithoutTypesFixture _fixture;
-
-        public UpdateAsyncWithoutTypes()
-        {
-            _fixture = new UpdateAsyncWithoutTypesFixture();
-        }
+        private readonly UpdateAsyncWithoutTypesFixture _fixture = new();
 
         [Fact]
         public async Task UpdateAsync_WithInvalidItemId_ShouldThrowDomainException()

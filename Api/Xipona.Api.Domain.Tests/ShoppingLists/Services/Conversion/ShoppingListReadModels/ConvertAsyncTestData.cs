@@ -218,7 +218,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             listItemReadModels.Add(listItem);
         }
 
-        var sectionReadModels = list.Sections.Any()
+        var sectionReadModels = list.Sections.Count != 0
             ? new ShoppingListSectionReadModel(
                 list.Sections.First().Id,
                 store.Sections.First().Name,

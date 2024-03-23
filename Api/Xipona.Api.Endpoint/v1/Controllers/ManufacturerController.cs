@@ -88,7 +88,7 @@ public class ManufacturerController : ControllerBase
         var query = new ManufacturerSearchQuery(searchInput, includeDeleted);
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<ManufacturerSearchResultReadModel, ManufacturerSearchResultContract>(readModels);
@@ -105,7 +105,7 @@ public class ManufacturerController : ControllerBase
         var query = new AllActiveManufacturersQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<ManufacturerReadModel, ManufacturerContract>(readModels);

@@ -46,7 +46,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
     public void RemoveItemAndItsTypes(ItemId itemId)
     {
         var sections = _sections.Values.Where(s => s.ContainsItemOrItsTypes(itemId)).ToArray();
-        if (!sections.Any())
+        if (sections.Length == 0)
             return;
 
         foreach (var section in sections)

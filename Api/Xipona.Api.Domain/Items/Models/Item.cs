@@ -40,7 +40,7 @@ public class Item : AggregateRoot, IItem
         _itemTypes = null;
         _availabilities = availabilities.ToList();
 
-        if (!_availabilities.Any())
+        if (_availabilities.Count == 0)
             throw new DomainException(new CannotCreateItemWithoutAvailabilitiesReason());
     }
 
@@ -141,7 +141,7 @@ public class Item : AggregateRoot, IItem
         var oldAvailabilities = _availabilities;
         _availabilities = availabilities.ToList();
 
-        if (!_availabilities.Any())
+        if (_availabilities.Count == 0)
             throw new DomainException(new CannotModifyItemWithoutAvailabilitiesReason());
 
         if (_availabilities.Count != oldAvailabilities.Count
@@ -159,7 +159,7 @@ public class Item : AggregateRoot, IItem
         if (!HasItemTypes)
             throw new DomainException(new CannotModifyItemAsItemWithTypesReason(Id));
 
-        if (!modification.ItemTypes.Any())
+        if (modification.ItemTypes.Count == 0)
             throw new DomainException(new CannotRemoveAllTypesFromItemWithTypesReason(Id));
 
         Name = modification.Name;
@@ -279,7 +279,7 @@ public class Item : AggregateRoot, IItem
             throw new DomainException(new TemporaryItemNotUpdateableReason(update.OldId));
         if (HasItemTypes)
             throw new DomainException(new CannotUpdateItemWithTypesAsItemReason(update.OldId));
-        if (!update.Availabilities.Any())
+        if (update.Availabilities.Count == 0)
             throw new DomainException(new CannotUpdateItemWithoutAvailabilitiesReason());
 
         var itemCategoryId = update.ItemCategoryId;
@@ -391,7 +391,7 @@ public class Item : AggregateRoot, IItem
         if (availabilities.Count == _availabilities.Count)
             return;
 
-        if (availabilities.Any())
+        if (availabilities.Count != 0)
         {
             var availabilitiesToRemove = _availabilities.Where(av => av.StoreId == storeId);
             _availabilities = availabilities;

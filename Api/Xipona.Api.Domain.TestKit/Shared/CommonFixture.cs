@@ -42,7 +42,7 @@ public class CommonFixture
             lists.Add(new List<T>());
         }
 
-        while (list.Any())
+        while (list.Count != 0)
         {
             var item = list[0];
             list.RemoveAt(0);

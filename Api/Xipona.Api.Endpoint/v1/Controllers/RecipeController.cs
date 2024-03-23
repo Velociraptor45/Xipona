@@ -91,7 +91,7 @@ public class RecipeController : ControllerBase
             var query = new SearchRecipesByNameQuery(searchInput);
             var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-            if (!results.Any())
+            if (results.Count == 0)
                 return NoContent();
 
             var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results);
@@ -115,7 +115,7 @@ public class RecipeController : ControllerBase
         var query = new SearchRecipesByTagsQuery(tagIds.Select(t => new RecipeTagId(t)));
 
         var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
-        if (!results.Any())
+        if (results.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results);
@@ -131,7 +131,7 @@ public class RecipeController : ControllerBase
         var query = new AllIngredientQuantityTypesQuery();
         var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!results.Any())
+        if (results.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>(results);

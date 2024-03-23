@@ -103,7 +103,7 @@ public class ItemController : ControllerBase
 
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
@@ -126,7 +126,7 @@ public class ItemController : ControllerBase
 
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
@@ -159,7 +159,7 @@ public class ItemController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters
@@ -194,7 +194,7 @@ public class ItemController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts =
@@ -212,7 +212,7 @@ public class ItemController : ControllerBase
         var query = new AllQuantityTypesQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<QuantityTypeReadModel, QuantityTypeContract>(readModels);
@@ -229,7 +229,7 @@ public class ItemController : ControllerBase
         var query = new AllQuantityTypesInPacketQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!readModels.Any())
+        if (readModels.Count == 0)
             return NoContent();
 
         var contracts = _converters.ToContract<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract>(readModels);

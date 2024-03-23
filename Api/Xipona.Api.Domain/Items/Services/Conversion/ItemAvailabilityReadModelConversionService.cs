@@ -50,7 +50,7 @@ public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadM
         var stores = (await _storeRepository.FindActiveByAsync(storeIds)).ToDictionary(s => s.Id);
 
         var missingStoreIds = storeIds.Except(stores.Select(s => s.Value.Id)).ToList();
-        if (missingStoreIds.Any())
+        if (missingStoreIds.Count != 0)
         {
             throw new DomainException(new StoresNotFoundReason(missingStoreIds));
         }

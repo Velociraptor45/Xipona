@@ -19,7 +19,7 @@ public class DomainEventDispatcher : IDomainEventDispatcher
         var serviceType = typeof(IDomainEventHandler<>).MakeGenericType(domainEvent.GetType());
         var services = _serviceProvider.GetServices(serviceType).ToArray();
 
-        if (!services.Any())
+        if (services.Length == 0)
             throw new InvalidOperationException($"No domain event handler for type {serviceType.Name} found");
 
         var method = serviceType.GetMethod("HandleAsync");

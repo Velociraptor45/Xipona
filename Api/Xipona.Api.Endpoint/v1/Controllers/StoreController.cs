@@ -80,7 +80,7 @@ public class StoreController : ControllerBase
         var query = new GetActiveStoresForShoppingQuery();
         var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!models.Any())
+        if (models.Count == 0)
             return NoContent();
 
         var contract = _converters.ToContract<IStore, StoreForShoppingContract>(models);
@@ -96,7 +96,7 @@ public class StoreController : ControllerBase
         var query = new GetActiveStoresForItemQuery();
         var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!models.Any())
+        if (models.Count == 0)
             return NoContent();
 
         var contract = _converters.ToContract<IStore, StoreForItemContract>(models);
@@ -112,7 +112,7 @@ public class StoreController : ControllerBase
         var query = new GetActiveStoresOverviewQuery();
         var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        if (!models.Any())
+        if (models.Count == 0)
             return NoContent();
 
         var contract = _converters.ToContract<IStore, StoreSearchResultContract>(models);

@@ -66,13 +66,13 @@ public class ItemRepository : IItemRepository
                 !item.IsTemporary
                 && !item.Deleted
                 && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
-                && ((!item.ManufacturerId.HasValue && !manufacturerIdLists.Any())
+                && ((!item.ManufacturerId.HasValue && manufacturerIdLists.Count == 0)
                     || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
             .ToListAsync(_cancellationToken);
 
         // filtering by store
         var filteredResultByStore = result
-            .Where(item => (!item.AvailableAt.Any() && !storeIdLists.Any())
+            .Where(item => (item.AvailableAt.Count == 0 && storeIdLists.Count == 0)
                            || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any())
             .ToList();
 
@@ -175,7 +175,7 @@ public class ItemRepository : IItemRepository
                            && !item.Deleted);
 
         if (itemTypeId is null)
-            query = query.Where(i => !i.ItemTypes.Any());
+            query = query.Where(i => i.ItemTypes.Count == 0);
         else
             query = query.Where(i => i.ItemTypes.Any(t => t.Id == itemTypeId.Value));
 
