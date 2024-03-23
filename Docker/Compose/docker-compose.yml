@@ -19,8 +19,8 @@ services:
     image: velocir4ptor/ph-shoppinglist-api:0.11.0
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      PH_SL_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
-      PH_SL_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+      PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
+      PH_XIPONA_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
     ports:
       - "12489:80"
     depends_on:

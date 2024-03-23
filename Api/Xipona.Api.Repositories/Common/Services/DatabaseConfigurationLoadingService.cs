@@ -21,8 +21,8 @@ public class DatabaseConfigurationLoadingService
         var dbConfig = config.GetSection("Database").Get<DatabaseConfig>()
             ?? throw new InvalidOperationException("Database configuration is missing in appsettings");
 
-        var usernameFile = config["PH_SL_DB_USERNAME_FILE"];
-        var passwordFile = config["PH_SL_DB_PASSWORD_FILE"];
+        var usernameFile = config["PH_XIPONA_DB_USERNAME_FILE"];
+        var passwordFile = config["PH_XIPONA_DB_PASSWORD_FILE"];
 
         string username;
         string password;

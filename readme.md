@@ -1,4 +1,4 @@
-# Project Hermes - Shopping List
+# Xipona
 
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-xipona-api?color=blue&label=docker%20image%20api&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-xipona-api)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-xipona-frontend?color=blue&label=docker%20image%20frontend&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-xipona-frontend)
@@ -159,13 +159,13 @@ Set the `Auth` section in the respective appsettings file (*Api/Xipona.Api.WebAp
 ### Key Vault
 Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
 
-- Remove the api's two DB environment variables (PH_SL_DB_USERNAME_FILE & PH_SL_DB_PASSWORD_FILE) and both username/password docker secrets from the docker compose file
+- Remove the api's two DB environment variables (PH_XIPONA_DB_USERNAME_FILE & PH_XIPONA_DB_PASSWORD_FILE) and both username/password docker secrets from the docker compose file
 - Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
   - ph-xipona-vault-api-username 
   - ph-xipona-vault-api-password
 - Import both secrets in the docker compose file and replace the api's two DB environment variables with
-  - PH_SL_VAULT_USERNAME_FILE: /run/secrets/ph-xipona-vault-api-username
-  - PH_SL_VAULT_PASSWORD_FILE: /run/secrets/ph-xipona-vault-api-password
+  - PH_XIPONA_VAULT_USERNAME_FILE: /run/secrets/ph-xipona-vault-api-username
+  - PH_XIPONA_VAULT_PASSWORD_FILE: /run/secrets/ph-xipona-vault-api-password
 - Set the vault's URI in the api's appsettings files (*Api/Xipona.Api.WebApp/appsettings.\*.json*)
 - The default mount point (ph-xipona) & secret name (database) are defined in the same appsettings file and can be changed at will. But the key names inside the secret must be "username" and "password" (all lowercase) and can not be changed. Define the username and password of the user with which you want to authenticate against the database.
 
@@ -175,6 +175,6 @@ To get everything running at your dev machine, at least a running dev DB is nece
 ### API
 
 #### Database connection
-To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: PH_SL_DB_USERNAME_FILE & PH_SL_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create PH_SL_VAULT_USERNAME_FILE & PH_SL_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
+To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: PH_XIPONA_DB_USERNAME_FILE & PH_XIPONA_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create PH_XIPONA_VAULT_USERNAME_FILE & PH_XIPONA_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
 
 Also, set the DB's address and port in your *Api/Xipona.Api.WebApp/appsettings.Local.json*.

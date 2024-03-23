@@ -154,22 +154,22 @@ public class ConfigurationLoadingServiceTests
         {
             _usernamePath = new TestBuilder<string>().Create();
             _passwordPath = new TestBuilder<string>().Create();
-            Environment.SetEnvironmentVariable("PH_SL_DB_USERNAME_FILE", _usernamePath);
-            Environment.SetEnvironmentVariable("PH_SL_DB_PASSWORD_FILE", _passwordPath);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_USERNAME_FILE", _usernamePath);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", _passwordPath);
         }
 
         public void SetupUsernameEnvironmentVariableEmpty()
         {
-            Environment.SetEnvironmentVariable("PH_SL_DB_USERNAME_FILE", string.Empty);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_USERNAME_FILE", string.Empty);
             _passwordPath = new TestBuilder<string>().Create();
-            Environment.SetEnvironmentVariable("PH_SL_DB_PASSWORD_FILE", _passwordPath);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", _passwordPath);
         }
 
         public void SetupPasswordEnvironmentVariableEmpty()
         {
-            Environment.SetEnvironmentVariable("PH_SL_DB_PASSWORD_FILE", string.Empty);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", string.Empty);
             _usernamePath = new TestBuilder<string>().Create();
-            Environment.SetEnvironmentVariable("PH_SL_DB_USERNAME_FILE", _usernamePath);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_USERNAME_FILE", _usernamePath);
         }
 
         public void SetupLoadingUsernameFromFile()
