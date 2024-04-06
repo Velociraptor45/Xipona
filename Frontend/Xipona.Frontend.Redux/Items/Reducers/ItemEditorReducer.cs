@@ -289,7 +289,7 @@ public static class ItemEditorReducer
         var occupiedStoreIds = availabilities.Select(av => av.StoreId).ToHashSet();
         var availableStores = state.Stores.Stores.Where(s => !occupiedStoreIds.Contains(s.Id)).ToArray();
 
-        if (!availableStores.Any())
+        if (availableStores.Length == 0)
             return state;
 
         var store = availableStores.First();
@@ -326,7 +326,7 @@ public static class ItemEditorReducer
         var occupiedStoreIds = availabilities.Select(av => av.StoreId).ToHashSet();
         var availableStores = state.Stores.Stores.Where(s => !occupiedStoreIds.Contains(s.Id)).ToArray();
 
-        if (!availableStores.Any())
+        if (availableStores.Length == 0)
             return state;
 
         var store = availableStores.First();

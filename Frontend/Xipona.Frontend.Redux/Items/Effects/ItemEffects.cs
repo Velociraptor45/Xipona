@@ -76,7 +76,7 @@ public class ItemEffects
     [EffectMethod(typeof(LoadQuantityTypesAction))]
     public async Task HandleLoadQuantityTypesAction(IDispatcher dispatcher)
     {
-        if (_state.Value.QuantityTypes.Any())
+        if (_state.Value.QuantityTypes.Count != 0)
             return;
 
         IEnumerable<QuantityType> quantityTypes;
@@ -101,7 +101,7 @@ public class ItemEffects
     [EffectMethod(typeof(LoadQuantityTypesInPacketAction))]
     public async Task HandleLoadQuantityTypesInPacketAction(IDispatcher dispatcher)
     {
-        if (_state.Value.QuantityTypesInPacket.Any())
+        if (_state.Value.QuantityTypesInPacket.Count != 0)
             return;
 
         IEnumerable<QuantityTypeInPacket> quantityTypes;
@@ -125,7 +125,7 @@ public class ItemEffects
     [EffectMethod(typeof(LoadActiveStoresAction))]
     public async Task HandleLoadActiveStoresAction(IDispatcher dispatcher)
     {
-        if (_state.Value.Stores.Stores.Any())
+        if (_state.Value.Stores.Stores.Count != 0)
             return;
 
         IEnumerable<ItemStore> stores;

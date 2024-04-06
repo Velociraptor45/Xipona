@@ -39,6 +39,8 @@ public sealed class ItemEditorEffects
         return Task.CompletedTask;
     }
 
+#pragma warning disable S4144 // Methods should not have identical implementations
+
     [EffectMethod(typeof(LoadQuantityTypesFinishedAction))]
     public Task HandleLoadQuantityTypesFinishedAction(IDispatcher dispatcher)
     {
@@ -59,6 +61,8 @@ public sealed class ItemEditorEffects
         InitItemIfLoadingFinished(dispatcher);
         return Task.CompletedTask;
     }
+
+#pragma warning restore S4144 // Methods should not have identical implementations
 
     private void InitItemIfLoadingFinished(IDispatcher dispatcher)
     {
