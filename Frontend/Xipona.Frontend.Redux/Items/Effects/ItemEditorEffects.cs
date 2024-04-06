@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
 using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
 using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
@@ -29,6 +30,55 @@ public sealed class ItemEditorEffects
         _state = state;
         _navigationManager = navigationManager;
         _notificationService = notificationService;
+    }
+
+    [EffectMethod(typeof(SetEditorItemIdAction))]
+    public Task HandleSetEditorItemIdAction(IDispatcher dispatcher)
+    {
+        InitItemIfLoadingFinished(dispatcher);
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(LoadQuantityTypesFinishedAction))]
+    public Task HandleLoadQuantityTypesFinishedAction(IDispatcher dispatcher)
+    {
+        InitItemIfLoadingFinished(dispatcher);
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(LoadQuantityTypesInPacketFinishedAction))]
+    public Task HandleLoadQuantityTypesInPacketFinishedAction(IDispatcher dispatcher)
+    {
+        InitItemIfLoadingFinished(dispatcher);
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(LoadActiveStoresFinishedAction))]
+    public Task HandleLoadActiveStoresFinishedAction(IDispatcher dispatcher)
+    {
+        InitItemIfLoadingFinished(dispatcher);
+        return Task.CompletedTask;
+    }
+
+    private void InitItemIfLoadingFinished(IDispatcher dispatcher)
+    {
+        var initializationFinished = _state.Value.Initialization is
+        {
+            QuantityTypesLoaded: true, QuantityTypesInPacketLoaded: true, StoresLoaded: true
+        };
+
+        if (!initializationFinished)
+            return;
+
+        var itemId = _state.Value.Editor.ItemId;
+
+        if (itemId is null)
+            return;
+
+        if (itemId.Value == Guid.Empty)
+            dispatcher.Dispatch(new SetNewItemAction());
+        else
+            dispatcher.Dispatch(new LoadItemForEditingAction(itemId.Value));
     }
 
     [EffectMethod]
@@ -119,7 +169,7 @@ public sealed class ItemEditorEffects
 
         _navigationManager.NavigateTo(PageRoutes.Items);
 
-        if(action.TriggeredBySave)
+        if (action.TriggeredBySave)
             dispatcher.Dispatch(new SearchItemsAction());
 
         return Task.CompletedTask;

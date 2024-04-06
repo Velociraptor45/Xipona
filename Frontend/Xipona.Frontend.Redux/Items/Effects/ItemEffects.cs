@@ -25,6 +25,13 @@ public class ItemEffects
         _state = state;
     }
 
+    [EffectMethod]
+    public Task HandleEditItemAction(EditItemAction action, IDispatcher dispatcher)
+    {
+        _navigationManager.NavigateTo($"{PageRoutes.Items}/{action.Id}");
+        return Task.CompletedTask;
+    }
+
     [EffectMethod(typeof(EnterItemSearchPageAction))]
     public static Task HandleEnterItemSearchPageAction(IDispatcher dispatcher)
     {
@@ -64,13 +71,6 @@ public class ItemEffects
 
         var finishAction = new SearchItemsFinishedAction(result.ToList());
         dispatcher.Dispatch(finishAction);
-    }
-
-    [EffectMethod]
-    public Task HandleEditItemAction(EditItemAction action, IDispatcher dispatcher)
-    {
-        _navigationManager.NavigateTo($"{PageRoutes.Items}/{action.Id}");
-        return Task.CompletedTask;
     }
 
     [EffectMethod(typeof(LoadQuantityTypesAction))]

@@ -91,14 +91,10 @@
     {
         base.OnInitialized();
 
+        Dispatcher.Dispatch(new SetEditorItemIdAction(ItemId));
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         Dispatcher.Dispatch(new LoadActiveStoresAction());
-
-        if(ItemId == Guid.Empty)
-            Dispatcher.Dispatch(new SetNewItemAction());
-        else
-            Dispatcher.Dispatch(new LoadItemForEditingAction(ItemId));
     }
 
     private void OnCreateButtonClicked()

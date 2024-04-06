@@ -49,20 +49,41 @@ public static class ItemReducer
     [ReducerMethod]
     public static ItemState OnLoadQuantityTypesFinished(ItemState state, LoadQuantityTypesFinishedAction action)
     {
-        return state with { QuantityTypes = action.QuantityTypes };
+        return state with
+        {
+            QuantityTypes = action.QuantityTypes,
+            Initialization = state.Initialization with
+            {
+                QuantityTypesLoaded = true
+            }
+        };
     }
 
     [ReducerMethod]
     public static ItemState OnLoadQuantityTypesInPacketFinished(ItemState state,
         LoadQuantityTypesInPacketFinishedAction action)
     {
-        return state with { QuantityTypesInPacket = action.QuantityTypesInPacket };
+        return state with
+        {
+            QuantityTypesInPacket = action.QuantityTypesInPacket,
+            Initialization = state.Initialization with
+            {
+                QuantityTypesInPacketLoaded = true
+            }
+        };
     }
 
     [ReducerMethod]
     public static ItemState OnLoadActiveStoresFinished(ItemState state, LoadActiveStoresFinishedAction action)
     {
-        return state with { Stores = action.Stores };
+        return state with
+        {
+            Stores = action.Stores,
+            Initialization = state.Initialization with
+            {
+                StoresLoaded = true
+            }
+        };
     }
 
     [ReducerMethod(typeof(SaveStoreFinishedAction))]

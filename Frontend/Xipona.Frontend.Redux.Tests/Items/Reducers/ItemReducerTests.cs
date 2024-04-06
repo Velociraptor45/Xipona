@@ -227,6 +227,7 @@ public class ItemReducerTests
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -246,7 +247,22 @@ public class ItemReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    QuantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList()
+                    QuantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList(),
+                    Initialization = ExpectedState.Initialization with
+                    {
+                        QuantityTypesLoaded = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Initialization = ExpectedState.Initialization with
+                    {
+                        QuantityTypesLoaded = true
+                    }
                 };
             }
 
@@ -266,6 +282,7 @@ public class ItemReducerTests
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -285,7 +302,22 @@ public class ItemReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    QuantityTypesInPacket = new DomainTestBuilder<QuantityTypeInPacket>().CreateMany(2).ToList()
+                    QuantityTypesInPacket = new DomainTestBuilder<QuantityTypeInPacket>().CreateMany(2).ToList(),
+                    Initialization = ExpectedState.Initialization with
+                    {
+                        QuantityTypesInPacketLoaded = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Initialization = ExpectedState.Initialization with
+                    {
+                        QuantityTypesInPacketLoaded = true
+                    }
                 };
             }
 
@@ -305,6 +337,7 @@ public class ItemReducerTests
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -324,7 +357,22 @@ public class ItemReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    Stores = new DomainTestBuilder<ActiveStores>().Create()
+                    Stores = new DomainTestBuilder<ActiveStores>().Create(),
+                    Initialization = ExpectedState.Initialization with
+                    {
+                        StoresLoaded = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Initialization = ExpectedState.Initialization with
+                    {
+                        StoresLoaded = true
+                    }
                 };
             }
 

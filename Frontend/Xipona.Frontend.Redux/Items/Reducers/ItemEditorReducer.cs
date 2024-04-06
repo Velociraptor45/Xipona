@@ -22,6 +22,18 @@ public static class ItemEditorReducer
     private static readonly TypeStoresValidator _typeStoresValidator = new();
     private static readonly DuplicatedStoresValidator _duplicatedStoresValidator = new();
 
+    [ReducerMethod]
+    public static ItemState OnSetEditorItemId(ItemState state, SetEditorItemIdAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ItemId = action.ItemId
+            }
+        };
+    }
+
     [ReducerMethod(typeof(ModifyItemAction))]
     public static ItemState OnModifyItem(ItemState state)
     {
