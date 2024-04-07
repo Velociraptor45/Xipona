@@ -1,12 +1,56 @@
 ﻿using FluentAssertions;
+using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
 using ProjectHermes.Xipona.Frontend.Redux.Items.States;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Reducers;
 
 public partial class ItemEditorReducerTests
 {
+    public class OnSetEditorItemId
+    {
+        private readonly OnSetEditorItemIdFixture _fixture = new();
+
+        [Fact]
+        public void OnSetEditorItemId_WithValidData_ShouldSetItemId()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemEditorReducer.OnSetEditorItemId(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSetEditorItemIdFixture : ItemEditorReducerFixture
+        {
+            public SetEditorItemIdAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ItemId = null
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new SetEditorItemIdAction(ExpectedState.Editor.ItemId!.Value);
+            }
+        }
+    }
+
     public class OnModifyItem
     {
         private readonly OnModifyItemFixture _fixture = new();
