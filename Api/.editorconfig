@@ -278,6 +278,12 @@ dotnet_diagnostic.CS4014.severity = error
 # S4457: Parameter validation in "async"/"await" methods should be wrapped
 dotnet_diagnostic.S4457.severity = none
 
+# S6602: "Find" method should be used instead of the "FirstOrDefault" extension
+dotnet_diagnostic.S6602.severity = none
+
+# S6608: Prefer indexing instead of "Enumerable" methods on types implementing "IList"
+dotnet_diagnostic.S6608.severity = none
+
 # CS8601: Possible null reference assignment.
 dotnet_diagnostic.CS8601.severity = error
 
