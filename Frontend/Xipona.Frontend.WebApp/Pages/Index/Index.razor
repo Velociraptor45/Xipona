@@ -5,7 +5,6 @@
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
-@using ProjectHermes.Xipona.Frontend.WebApp.Components.Common;
 @using ProjectHermes.Xipona.Frontend.WebApp.Components.Index;
 
 @inject IState<ShoppingListState> State
@@ -18,7 +17,6 @@
     <div class="shopping-content">
         <div class="top-header">
             <div class="mb-1 d-flex justify-content-end align-items-center">
-                <DebugSwitch></DebugSwitch>
                 <StoreSelect></StoreSelect>
                 <ItemVisiblityButton></ItemVisiblityButton>
                 <ItemEditModeButton></ItemEditModeButton>
@@ -47,7 +45,6 @@
             }
         }
         <Summary></Summary>
-        <ErrorStack></ErrorStack>
     </div>
     <PriceUpdateDialog></PriceUpdateDialog>
 }
