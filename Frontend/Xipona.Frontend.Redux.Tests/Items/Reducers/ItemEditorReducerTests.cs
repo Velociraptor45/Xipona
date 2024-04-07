@@ -458,11 +458,13 @@ public partial class ItemEditorReducerTests
                             ItemMode.NotDefined),
                         ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
                         {
-                            ItemCategories = new List<ItemCategorySearchResult>(0)
+                            ItemCategories = new List<ItemCategorySearchResult>(0),
+                            Input = string.Empty
                         },
                         ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
                         {
-                            Manufacturers = new List<ManufacturerSearchResult>(0)
+                            Manufacturers = new List<ManufacturerSearchResult>(0),
+                            Input = string.Empty
                         },
                         ValidationResult = new()
                     }
@@ -543,9 +545,9 @@ public partial class ItemEditorReducerTests
         public void OnLoadItemForEditingFinished_ShouldItemAndIsLoadingEditedItem()
         {
             // Arrange
+            _fixture.SetupInitialState();
             _fixture.SetupExpectedState();
             _fixture.SetupAction();
-            _fixture.SetupInitialState();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -575,7 +577,15 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsLoadingEditedItem = false,
-                        ValidationResult = new()
+                        ValidationResult = new(),
+                        ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
+                        {
+                            Input = string.Empty
+                        },
+                        ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
+                        {
+                            Input = string.Empty
+                        }
                     }
                 };
             }
