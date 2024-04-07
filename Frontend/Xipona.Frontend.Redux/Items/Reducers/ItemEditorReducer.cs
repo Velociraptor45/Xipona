@@ -245,11 +245,13 @@ public static class ItemEditorReducer
                     ItemMode.NotDefined),
                 ItemCategorySelector = state.Editor.ItemCategorySelector with
                 {
-                    ItemCategories = new List<ItemCategorySearchResult>(0)
+                    ItemCategories = new List<ItemCategorySearchResult>(0),
+                    Input = string.Empty
                 },
                 ManufacturerSelector = state.Editor.ManufacturerSelector with
                 {
-                    Manufacturers = new List<ManufacturerSearchResult>(0)
+                    Manufacturers = new List<ManufacturerSearchResult>(0),
+                    Input = string.Empty
                 },
                 ValidationResult = new()
             }
@@ -277,7 +279,15 @@ public static class ItemEditorReducer
             {
                 IsLoadingEditedItem = false,
                 Item = action.Item,
-                ValidationResult = new()
+                ValidationResult = new(),
+                ItemCategorySelector = state.Editor.ItemCategorySelector with
+                {
+                    Input = string.Empty
+                },
+                ManufacturerSelector = state.Editor.ManufacturerSelector with
+                {
+                    Input = string.Empty
+                }
             }
         };
     }

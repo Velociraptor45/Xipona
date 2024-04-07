@@ -37,7 +37,8 @@ public static class ItemCategorySelectorReducer
                 },
                 ItemCategorySelector = state.Editor.ItemCategorySelector with
                 {
-                    ItemCategories = new List<ItemCategorySearchResult> { action.ItemCategory }
+                    ItemCategories = new List<ItemCategorySearchResult> { action.ItemCategory },
+                    Input = string.Empty
                 }
             }
         };

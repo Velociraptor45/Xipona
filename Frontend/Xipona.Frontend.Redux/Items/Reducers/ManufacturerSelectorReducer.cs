@@ -37,7 +37,8 @@ public static class ManufacturerSelectorReducer
                 },
                 ManufacturerSelector = state.Editor.ManufacturerSelector with
                 {
-                    Manufacturers = new List<ManufacturerSearchResult> { action.Manufacturer }
+                    Manufacturers = new List<ManufacturerSearchResult> { action.Manufacturer },
+                    Input = string.Empty
                 }
             }
         };
