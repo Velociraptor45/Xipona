@@ -16,6 +16,716 @@ namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Effects;
 
 public class ItemEditorEffectsTests
 {
+    public class HandleSetEditorItemIdAction
+    {
+        private readonly HandleSetEditorItemIdActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleSetEditorItemIdAction_WithStoresNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithStoresNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSetEditorItemIdAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSetEditorItemIdAction_WithQuantityTypesInPacketNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithQuantityTypesInPacketNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSetEditorItemIdAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSetEditorItemIdAction_WithQuantityTypesNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithQuantityTypesNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSetEditorItemIdAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSetEditorItemIdAction_WithAllLoaded_WithIdSet_ShouldDispatchLoadItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingLoadItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSetEditorItemIdAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleSetEditorItemIdAction_WithAllLoaded_WithIdSetEmpty_ShouldDispatchNewItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSetEmpty();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingSettingNewItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleSetEditorItemIdAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleSetEditorItemIdActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemIdSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.NewGuid()
+                    }
+                };
+            }
+
+            public void SetupItemIdSetEmpty()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.Empty
+                    }
+                };
+            }
+
+            public void SetupStateWithStoresNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = false
+                    }
+                };
+            }
+
+            public void SetupStateWithQuantityTypesNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = false,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupStateWithQuantityTypesInPacketNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = false,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupStateWithAllLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupDispatchingSettingNewItemAction()
+            {
+                SetupDispatchingAction<SetNewItemAction>();
+            }
+
+            public void SetupDispatchingLoadItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+            }
+        }
+    }
+
+    public class HandleLoadQuantityTypesFinishedAction
+    {
+        private readonly HandleLoadQuantityTypesFinishedActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesFinishedAction_WithStoresNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithStoresNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesFinishedAction_WithQuantityTypesInPacketNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithQuantityTypesInPacketNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesFinishedAction_WithAllLoaded_WithIdNotSet_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            _fixture.SetupItemIdNotSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesFinishedAction_WithAllLoaded_WithIdSet_ShouldDispatchLoadItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingLoadItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesFinishedAction_WithAllLoaded_WithIdSetEmpty_ShouldDispatchNewItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSetEmpty();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingSettingNewItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleLoadQuantityTypesFinishedActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemIdSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.NewGuid()
+                    }
+                };
+            }
+
+            public void SetupItemIdSetEmpty()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.Empty
+                    }
+                };
+            }
+
+            public void SetupItemIdNotSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = null
+                    }
+                };
+            }
+
+            public void SetupStateWithStoresNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = false
+                    }
+                };
+            }
+
+            public void SetupStateWithQuantityTypesInPacketNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = false,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupStateWithAllLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupDispatchingSettingNewItemAction()
+            {
+                SetupDispatchingAction<SetNewItemAction>();
+            }
+
+            public void SetupDispatchingLoadItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+            }
+        }
+    }
+
+    public class HandleLoadQuantityTypesInPacketFinishedAction
+    {
+        private readonly HandleLoadQuantityTypesInPacketFinishedActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketFinishedAction_WithStoresNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithStoresNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketFinishedAction_WithQuantityTypesNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithQuantityTypesNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketFinishedAction_WithAllLoaded_WithIdNotSet_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            _fixture.SetupItemIdNotSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketFinishedAction_WithAllLoaded_WithIdSet_ShouldDispatchLoadItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingLoadItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadQuantityTypesInPacketFinishedAction_WithAllLoaded_WithIdSetEmpty_ShouldDispatchNewItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSetEmpty();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingSettingNewItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadQuantityTypesInPacketFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleLoadQuantityTypesInPacketFinishedActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemIdSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.NewGuid()
+                    }
+                };
+            }
+
+            public void SetupItemIdSetEmpty()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.Empty
+                    }
+                };
+            }
+
+            public void SetupItemIdNotSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = null
+                    }
+                };
+            }
+
+            public void SetupStateWithStoresNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = false
+                    }
+                };
+            }
+
+            public void SetupStateWithQuantityTypesNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = false,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupStateWithAllLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupDispatchingSettingNewItemAction()
+            {
+                SetupDispatchingAction<SetNewItemAction>();
+            }
+
+            public void SetupDispatchingLoadItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+            }
+        }
+    }
+
+    public class HandleLoadActiveStoresFinishedAction
+    {
+        private readonly HandleLoadActiveStoresFinishedActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleLoadActiveStoresFinishedAction_WithQuantityTypesNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithQuantityTypesNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadActiveStoresFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadActiveStoresFinishedAction_WithQuantityTypesInPacketNotLoaded_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ => { });
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithQuantityTypesInPacketNotLoaded();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadActiveStoresFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadActiveStoresFinishedAction_WithAllLoaded_WithIdNotSet_ShouldNotDispatchAnything()
+        {
+            // Arrange
+            _fixture.SetupItemIdNotSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ => { });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadActiveStoresFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadActiveStoresFinishedAction_WithAllLoaded_WithIdSet_ShouldDispatchLoadItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSet();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingLoadItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadActiveStoresFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleLoadActiveStoresFinishedAction_WithAllLoaded_WithIdSetEmpty_ShouldDispatchNewItemAction()
+        {
+            // Arrange
+            _fixture.SetupItemIdSetEmpty();
+            _fixture.SetupStateWithAllLoaded();
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupDispatchingSettingNewItemAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleLoadActiveStoresFinishedAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleLoadActiveStoresFinishedActionFixture : ItemEditorEffectsFixture
+        {
+            public void SetupItemIdSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.NewGuid()
+                    }
+                };
+            }
+
+            public void SetupItemIdSetEmpty()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = Guid.Empty
+                    }
+                };
+            }
+
+            public void SetupItemIdNotSet()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        ItemId = null
+                    }
+                };
+            }
+
+            public void SetupStateWithQuantityTypesNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = false,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupStateWithQuantityTypesInPacketNotLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = false,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupStateWithAllLoaded()
+            {
+                State = State with
+                {
+                    Initialization = State.Initialization with
+                    {
+                        QuantityTypesLoaded = true,
+                        QuantityTypesInPacketLoaded = true,
+                        StoresLoaded = true
+                    }
+                };
+            }
+
+            public void SetupDispatchingSettingNewItemAction()
+            {
+                SetupDispatchingAction<SetNewItemAction>();
+            }
+
+            public void SetupDispatchingLoadItemAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+            }
+        }
+    }
+
     public class HandleLoadItemForEditingAction
     {
         private readonly HandleLoadItemForEditingActionFixture _fixture;

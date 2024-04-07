@@ -22,6 +22,18 @@ public static class ItemEditorReducer
     private static readonly TypeStoresValidator _typeStoresValidator = new();
     private static readonly DuplicatedStoresValidator _duplicatedStoresValidator = new();
 
+    [ReducerMethod]
+    public static ItemState OnSetEditorItemId(ItemState state, SetEditorItemIdAction action)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ItemId = action.ItemId
+            }
+        };
+    }
+
     [ReducerMethod(typeof(ModifyItemAction))]
     public static ItemState OnModifyItem(ItemState state)
     {
@@ -277,7 +289,7 @@ public static class ItemEditorReducer
         var occupiedStoreIds = availabilities.Select(av => av.StoreId).ToHashSet();
         var availableStores = state.Stores.Stores.Where(s => !occupiedStoreIds.Contains(s.Id)).ToArray();
 
-        if (!availableStores.Any())
+        if (availableStores.Length == 0)
             return state;
 
         var store = availableStores.First();
@@ -314,7 +326,7 @@ public static class ItemEditorReducer
         var occupiedStoreIds = availabilities.Select(av => av.StoreId).ToHashSet();
         var availableStores = state.Stores.Stores.Where(s => !occupiedStoreIds.Contains(s.Id)).ToArray();
 
-        if (!availableStores.Any())
+        if (availableStores.Length == 0)
             return state;
 
         var store = availableStores.First();
