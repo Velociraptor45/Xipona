@@ -12,12 +12,7 @@ public class ManufacturerSelectorReducerTests
 {
     public class OnLoadInitialManufacturerFinished
     {
-        private readonly OnLoadInitialManufacturerFinishedFixture _fixture;
-
-        public OnLoadInitialManufacturerFinished()
-        {
-            _fixture = new OnLoadInitialManufacturerFinishedFixture();
-        }
+        private readonly OnLoadInitialManufacturerFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadInitialManufacturerFinished_WithValidData_ShouldSetManufacturer()
@@ -79,12 +74,7 @@ public class ManufacturerSelectorReducerTests
 
     public class OnCreateNewManufacturerFinished
     {
-        private readonly OnCreateNewManufacturerFinishedFixture _fixture;
-
-        public OnCreateNewManufacturerFinished()
-        {
-            _fixture = new OnCreateNewManufacturerFinishedFixture();
-        }
+        private readonly OnCreateNewManufacturerFinishedFixture _fixture = new();
 
         [Fact]
         public void OnCreateNewManufacturerFinished_WithValidData_ShouldSetManufacturerAndManufacturerId()
@@ -140,7 +130,8 @@ public class ManufacturerSelectorReducerTests
                         },
                         ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
                         {
-                            Manufacturers = manufacturers
+                            Manufacturers = manufacturers,
+                            Input = string.Empty
                         }
                     }
                 };
@@ -156,12 +147,7 @@ public class ManufacturerSelectorReducerTests
 
     public class OnManufacturerInputChanged
     {
-        private readonly OnManufacturerInputChangedFixture _fixture;
-
-        public OnManufacturerInputChanged()
-        {
-            _fixture = new OnManufacturerInputChangedFixture();
-        }
+        private readonly OnManufacturerInputChangedFixture _fixture = new();
 
         [Fact]
         public void OnManufacturerInputChanged_WithValidInput_ShouldSetInput()
@@ -207,12 +193,7 @@ public class ManufacturerSelectorReducerTests
 
     public class OnSearchManufacturerFinished
     {
-        private readonly OnSearchManufacturerFinishedFixture _fixture;
-
-        public OnSearchManufacturerFinished()
-        {
-            _fixture = new OnSearchManufacturerFinishedFixture();
-        }
+        private readonly OnSearchManufacturerFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSearchManufacturerFinished_WithManufacturerSelected_ShouldSetManufacturersAndKeepSelected()
@@ -349,12 +330,7 @@ public class ManufacturerSelectorReducerTests
 
     public class OnSelectedManufacturerChanged
     {
-        private readonly OnSelectedManufacturerChangedFixture _fixture;
-
-        public OnSelectedManufacturerChanged()
-        {
-            _fixture = new OnSelectedManufacturerChangedFixture();
-        }
+        private readonly OnSelectedManufacturerChangedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedManufacturerChanged_WithValidData_ShouldSetManufacturerId()
@@ -400,12 +376,7 @@ public class ManufacturerSelectorReducerTests
 
     public class OnClearManufacturer
     {
-        private readonly OnClearManufacturerFixture _fixture;
-
-        public OnClearManufacturer()
-        {
-            _fixture = new OnClearManufacturerFixture();
-        }
+        private readonly OnClearManufacturerFixture _fixture = new();
 
         [Fact]
         public void OnClearManufacturer_WithValidData_ShouldSetManufacturerId()
