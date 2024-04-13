@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Moq;
 using Moq.Contrib.InOrder;
 using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
 using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
@@ -10,7 +9,6 @@ using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
-using Xunit.Abstractions;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Effects;
 
@@ -728,14 +726,7 @@ public class ItemEditorEffectsTests
 
     public class HandleLoadItemForEditingAction
     {
-        private readonly HandleLoadItemForEditingActionFixture _fixture;
-        private readonly ILogger<CallQueue> _logger;
-
-        public HandleLoadItemForEditingAction(ITestOutputHelper output)
-        {
-            _fixture = new HandleLoadItemForEditingActionFixture();
-            _logger = output.BuildLoggerFor<CallQueue>();
-        }
+        private readonly HandleLoadItemForEditingActionFixture _fixture = new();
 
         [Fact]
         public async Task HandleLoadItemForEditingAction_WithSuccessfulCall_ShouldDispatchActionsInCorrectOrder()
@@ -748,7 +739,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupGettingItem();
                 _fixture.SetupDispatchingFinishAction();
-            }, _logger);
+            });
 
             var sut = _fixture.CreateSut();
 
@@ -771,7 +762,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupGettingItemFailedWithErrorInApi();
                 _fixture.SetupDispatchingExceptionNotificationAction();
-            }, _logger);
+            });
 
             var sut = _fixture.CreateSut();
 
@@ -794,7 +785,7 @@ public class ItemEditorEffectsTests
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupGettingItemFailedWithErrorWhileTransmittingRequest();
                 _fixture.SetupDispatchingErrorNotificationAction();
-            }, _logger);
+            });
 
             var sut = _fixture.CreateSut();
 
