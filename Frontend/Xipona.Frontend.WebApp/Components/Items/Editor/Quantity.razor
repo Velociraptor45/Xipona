@@ -30,11 +30,13 @@
                 <div class="font-weight-bold">In&nbsp;Packet</div>
                 <div class="d-flex mt-1 in-packet">
                     <div class="in-packet-input">
-                        <Input TValue="float"
-                               Value="@State.Value.Editor.Item.QuantityInPacket!.Value"
-                               OnChange="OnQuantityInPacketChanged"/>
+                        <AntDesign.InputNumber
+                            TValue="float"
+                            Value="@State.Value.Editor.Item.QuantityInPacket!.Value"
+                            Min="0.01f"
+                            OnChange="OnQuantityInPacketChanged"/>
                     </div>
-                    <Select Class="ml-1"
+                    <Select Class="ml-3"
                             TItem="QuantityTypeInPacket"
                             TItemValue="int"
                             ValueName="@nameof(QuantityTypeInPacket.Id)"

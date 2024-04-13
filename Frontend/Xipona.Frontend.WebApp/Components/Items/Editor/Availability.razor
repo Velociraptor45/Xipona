@@ -25,6 +25,7 @@
                 <AntDesign.InputNumber TValue="float" Value="@Model.PricePerQuantity" 
                                        Formatter="FormatPriceInput"
                                        Parser="ParsePriceInput"
+                                       Min="0.01f"
                                        ValueChanged="OnPriceChanged"/>
             </div>
             <Select DataSource="State.Value.Stores.GetSections(Model.StoreId)"
