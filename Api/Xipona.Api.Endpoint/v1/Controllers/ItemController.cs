@@ -320,11 +320,10 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command =
-            _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
-
         try
         {
+            var command =
+                _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -355,10 +354,9 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
-
         try
         {
+            var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -389,10 +387,9 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
-
         try
         {
+            var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -415,10 +412,9 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> UpdateItemPriceAsync([FromRoute] Guid id, [FromBody] UpdateItemPriceContract contract,
         CancellationToken cancellationToken = default)
     {
-        var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
-
         try
         {
+            var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -449,11 +445,10 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command =
-            _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
-
         try
         {
+            var command =
+                _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -484,11 +479,11 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command =
-            _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
-                contract));
         try
         {
+            var command =
+                _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
+                    contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -510,9 +505,9 @@ public class ItemController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        var command = new DeleteItemCommand(new ItemId(id));
         try
         {
+            var command = new DeleteItemCommand(new ItemId(id));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)

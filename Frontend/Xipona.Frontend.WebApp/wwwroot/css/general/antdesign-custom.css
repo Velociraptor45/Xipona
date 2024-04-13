@@ -53,6 +53,6 @@
 }
 
 /* item */
-.item-editor .in-packet .ant-select {
-    width: auto !important;
+.item-editor .in-packet .ant-input-number {
+    width: 70px !important;
 }
