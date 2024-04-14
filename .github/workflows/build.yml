@@ -11,7 +11,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     outputs:
-      Semver: ${{ steps.gitversion.outputs.semver }}
+      Semver: ${{ steps.gitversionoutput.outputs.semver }}
     steps:
       - name: Set up .net 8
         uses: actions/setup-dotnet@v3
@@ -32,16 +32,17 @@ jobs:
 
       - name: Determine Git Version
         uses: gittools/actions/gitversion/execute@v0
+        id: gitversion
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
-      - name: Output Git Version
-        id: gitversion
-        run: echo "semver=${{ env.GITVERSION_SEMVER }}" >> "$GITHUB_OUTPUT"
+      - name: Output Git Version      
+        id: gitversionoutput
+        run: echo "semver=${{ steps.gitversion.outputs.GitVersion_SemVer }}" >> "$GITHUB_OUTPUT"
       - name: Add Git Tag
         if: github.ref == 'refs/heads/main'
         run: |
-          git tag v${{ env.GITVERSION_SEMVER }}
+          git tag v${{ steps.gitversion.outputs.GitVersion_SemVer }}
           git push --tags
 
       - name: Cache SonarCloud packages
