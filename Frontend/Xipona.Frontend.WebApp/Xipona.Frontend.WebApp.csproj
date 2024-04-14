@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <RootNamespace>ProjectHermes.Xipona.Frontend.WebApp</RootNamespace>
-    <Version>0.11.0</Version>
+    <Version>0.12.0</Version>
     <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
 
