@@ -1,0 +1,28 @@
+﻿namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+
+public readonly record struct RecipeTagId
+{
+    public RecipeTagId()
+    {
+        throw new NotSupportedException("Use 'New' property to create initial value.");
+    }
+
+    public RecipeTagId(Guid value)
+    {
+        Value = value;
+    }
+
+    public static RecipeTagId New => new(Guid.NewGuid());
+
+    public Guid Value { get; }
+
+    public static implicit operator Guid(RecipeTagId itemId)
+    {
+        return itemId.Value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("D");
+    }
+}

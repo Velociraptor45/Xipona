@@ -1,0 +1,40 @@
+﻿@page "/navigation/other"
+﻿
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants
+
+@inject NavigationManager Navigation
+
+<ul class="other-nav-menu">
+    <li class="other-nav-item">
+        <NavLink class="other-nav-link d-flex" href="@PageRoutes.Manufacturers">
+            <i class="bi bi-briefcase align-self-center"></i>
+            <div class="align-self-center">Manufacturers</div>
+        </NavLink>
+    </li>
+    <li class="other-nav-item">
+        <NavLink class="other-nav-link d-flex" href="@PageRoutes.ItemCategories">
+            <i class="bi bi-tag align-self-center"></i>
+            <div class="align-self-center">Categories</div>
+        </NavLink>
+    </li>
+    <AuthorizeView>
+        <Authorized>
+            <li class="other-nav-item logout">
+                <div class="other-nav-link d-flex" @onclick="LogOut">
+                    <i class="bi bi-power align-self-center"></i>
+                    <div class="align-self-center">Logout</div>
+                </div>
+            </li>
+        </Authorized>
+    </AuthorizeView>
+</ul>
+
+@code
+{
+    private void LogOut()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
+    }
+}

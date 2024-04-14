@@ -1,0 +1,11 @@
+﻿div.stores :last-child {
+    padding-bottom: 0;
+}
+
+.store {
+    padding-bottom: 16px;
+}
+
+.validation-error-message {
+    margin-left: 0;
+}

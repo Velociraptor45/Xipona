@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ProjectHermes.Xipona.Api.Contracts</RootNamespace>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Title>ProjectHermes Xipona Api Contracts</Title>
+    <Version>0.12.0</Version>
+    <Authors>Velociraptor45</Authors>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Velociraptor45/Xipona</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageId>ProjectHermes.Xipona.Api.Contracts</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="Stores\Queries\GetActiveStoresForShopping\StoreForShoppingContract.cs" />
+  </ItemGroup>
+
+</Project>

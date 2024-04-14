@@ -1,13 +1,13 @@
 ################## BUILD ##################
-FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "ShoppingList.Frontend.WebApp/ShoppingList.Frontend.WebApp.csproj"
-RUN dotnet build "ShoppingList.Frontend.WebApp/ShoppingList.Frontend.WebApp.csproj" -c Release -o /app/build
+RUN dotnet restore "Xipona.Frontend.WebApp/Xipona.Frontend.WebApp.csproj"
+RUN dotnet build "Xipona.Frontend.WebApp/Xipona.Frontend.WebApp.csproj" -c Release -o /app/build
 
 ################# PUBLISH #################
 FROM build AS publish
-RUN dotnet publish "ShoppingList.Frontend.WebApp/ShoppingList.Frontend.WebApp.csproj" -c Release -o /app/publish
+RUN dotnet publish "Xipona.Frontend.WebApp/Xipona.Frontend.WebApp.csproj" -c Release -o /app/publish
 
 ################## FINAL ##################
 FROM nginxinc/nginx-unprivileged:1.25 AS final
