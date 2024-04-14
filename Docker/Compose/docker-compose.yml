@@ -16,7 +16,7 @@ services:
       - ph-xipona-db-root-pwd
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.11.0
+    image: velocir4ptor/ph-xipona-api:latest
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
@@ -46,7 +46,7 @@ services:
   #     - ph-xipona
 
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.11.0
+    image: velocir4ptor/ph-xipona-frontend:latest
     ports: 
       - "14000:80"
     depends_on:
