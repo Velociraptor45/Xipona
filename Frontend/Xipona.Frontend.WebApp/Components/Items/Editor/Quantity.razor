@@ -1,0 +1,70 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor
+@using ProjectHermes.Xipona.Frontend.Redux.Items.States
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+<div class="d-flex flex-row py-2">
+    <div>
+        <div class="font-weight-bold">Quantity&nbsp;Type</div>
+        <Select
+            Class="max-w-100 mt-1"
+            TItem="QuantityType"
+            TItemValue="int"
+            ValueName="@nameof(QuantityType.Id)"
+            LabelName="@nameof(QuantityType.Name)"
+            Placeholder="QuantityType"
+            Value="@State.Value.Editor.Item!.QuantityType.Id"
+            DataSource="@State.Value.QuantityTypes.ToList()"
+            OnSelectedItemChanged="@OnQuantityTypeChanged">
+        </Select>
+    </div>
+    @if (State.Value.Editor.Item.QuantityType.Id == 0)
+    {
+        <div class="ml-4 d-flex">
+            <div>
+                <div class="font-weight-bold">In&nbsp;Packet</div>
+                <div class="d-flex mt-1 in-packet">
+                    <div class="in-packet-input">
+                        <AntDesign.InputNumber
+                            TValue="float"
+                            Value="@State.Value.Editor.Item.QuantityInPacket!.Value"
+                            Min="0.01f"
+                            OnChange="OnQuantityInPacketChanged"/>
+                    </div>
+                    <Select Class="ml-3"
+                            TItem="QuantityTypeInPacket"
+                            TItemValue="int"
+                            ValueName="@nameof(QuantityTypeInPacket.Id)"
+                            LabelName="@nameof(QuantityTypeInPacket.QuantityLabel)"
+                            Placeholder="QuantityInPacketType"
+                            Value="@State.Value.Editor.Item.QuantityInPacketType!.Id"
+                            DataSource="@State.Value.QuantityTypesInPacket.ToList()"
+                            OnSelectedItemChanged="@OnQuantityInPacketTypeChanged">
+                    </Select>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private void OnQuantityTypeChanged(QuantityType quantityType)
+    {
+        Dispatcher.Dispatch(new QuantityTypeChangedAction(quantityType));
+    }
+
+    private void OnQuantityInPacketTypeChanged(QuantityTypeInPacket quantityTypeInPacket)
+    {
+        Dispatcher.Dispatch(new QuantityTypeInPacketChangedAction(quantityTypeInPacket));
+    }
+
+    private void OnQuantityInPacketChanged(float quantity)
+    {
+        Dispatcher.Dispatch(new ItemQuantityInPacketChangedAction(quantity));
+    }
+}

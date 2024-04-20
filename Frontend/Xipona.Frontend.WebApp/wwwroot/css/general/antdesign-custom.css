@@ -1,0 +1,58 @@
+﻿.ant-select-multiple span.ant-select-selection-item {
+    background-color: #3498db;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+/* button */
+
+.ant-btn span .anticon {
+    margin-bottom: 8px;
+}
+
+.ant-btn.oi-button {
+    padding-left: 9.75px;
+    padding-right: 9.75px;
+}
+
+/* input */
+
+/* modal */
+
+.ant-modal-content .ant-modal-header {
+    border-bottom: 0;
+}
+
+.ant-modal-content .ant-modal-body {
+    padding-top: 0;
+}
+
+.ant-modal-content .ant-modal-footer {
+    margin: 0 16px 0 24px;
+    padding: 10px 0;
+}
+
+.ant-modal-close {
+    margin-top: -8px;
+}
+
+/* ingredient checkbox */
+
+.add-to-sl-wrapper .ant-checkbox-wrapper {
+    margin-top: 5px;
+}
+
+.recipe-editor-top-row-number-of-servings .ant-input-number {
+    width: 55px;
+}
+
+/* add to shopping list modal */
+
+.add-to-sl-modal-number-of-servings .ant-input-number {
+    width: 55px
+}
+
+/* item */
+.item-editor .in-packet .ant-input-number {
+    width: 70px !important;
+}

@@ -1,0 +1,93 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal
+@using ProjectHermes.Xipona.Frontend.Redux.Recipes.States
+
+@inject IState<RecipeState> State
+@inject IDispatcher Dispatcher
+
+@namespace ProjectHermes.Xipona.Frontend.WebApp.Components.Recipes.ReadView
+
+<Modal Title="Add To Shopping Lists"
+       Visible="@State.Value.Editor.IsAddToShoppingListOpen"
+       OkText="@("Add to Shopping List")"
+       CancelText="@("Cancel")"
+       OnOk="OnOkClicked"
+       OkButtonProps="CreateOkButtonProps()"
+       ConfirmLoading="@(State.Value.Editor.AddToShoppingList?.IsSaving ?? false)"
+       OnCancel="OnCancelClicked">
+    <div>
+        @if (State.Value.Editor.AddToShoppingList is not null)
+        {
+            <div class="add-to-sl-modal-number-of-servings">
+                <AntDesign.InputNumber TValue="int" Min="1" Max="100"
+                                       Value="@State.Value.Editor.AddToShoppingList.NumberOfServings"
+                                       OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+                <span class="pl-2">People</span>
+            </div>
+            <div class="container">
+                @foreach (var item in State.Value.Editor.AddToShoppingList.Items)
+                {
+                    <div class="align-items-center pt-3 row @(item.AddToShoppingList ? "" : "add-to-sl-modal-item-hidden")">
+                        <Checkbox Class="col" Checked="item.AddToShoppingList"
+                                  OnChange="isChecked => OnAddItemToShoppingListChanged(isChecked, item)"></Checkbox>
+                        <div class="col-2 pr-0">
+                            <span>@item.Quantity</span>
+                            <span>@item.QuantityLabel</span>
+                        </div>
+                        <div class="col pl-0 add-to-sl-modal-item-name" @onclick="() => OnAddItemToShoppingListChanged(!item.AddToShoppingList, item)">@item.ItemName</div>
+                        @if (item.AddToShoppingList)
+                        {
+                            <SingleSelect
+                                Class="ml-auto col-4"
+                                TItem="AddToShoppingListAvailability"
+                                TValue="Guid"
+                                DataSource="item.Availabilities.ToList()"
+                                Value="item.SelectedStoreId"
+                                ValueName="@nameof(AddToShoppingListAvailability.StoreId)"
+                                LabelName="@nameof(AddToShoppingListAvailability.StoreName)"
+                                OnItemChanged="av => OnItemStoreChanged(item, av.StoreId)"></SingleSelect>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</Modal>
+
+@code {
+    private ButtonProps CreateOkButtonProps()
+    {
+        var props = new ButtonProps
+        {
+            Disabled = State.Value.Editor.AddToShoppingList?.Items.All(i => !i.AddToShoppingList) ?? false
+        };
+        return props;
+    }
+
+    private void OnNumberOfServingsChanged(int numberOfServings)
+    {
+        Dispatcher.Dispatch(new AddToShoppingListNumberOfServingsChangedAction(numberOfServings));
+    }
+
+    private void OnAddItemToShoppingListChanged(bool addToShoppingList, AddToShoppingListItem item)
+    {
+        Dispatcher.Dispatch(new AddItemToShoppingListChangedAction(item.Key, addToShoppingList));
+    }
+
+    private void OnOkClicked()
+    {
+        Dispatcher.Dispatch(new AddItemsToShoppingListAction());
+    }
+
+    private void OnCancelClicked()
+    {
+        Dispatcher.Dispatch(new AddToShoppingListModalClosedAction());
+    }
+
+    private void OnItemStoreChanged(AddToShoppingListItem item, Guid storeId)
+    {
+        Dispatcher.Dispatch(new AddToShoppingListItemStoreChangedAction(item.Key, storeId));
+    }
+}
