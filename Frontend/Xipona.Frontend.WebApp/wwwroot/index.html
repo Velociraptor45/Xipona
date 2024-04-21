@@ -23,7 +23,15 @@
 </head>
 
 <body>
-    <app>Loading...</app>
+    <app>
+        <div class="loader-container">
+            <div class="loader-bracket">
+                <div class="loader"></div>
+                <div id="status-rotation"></div>
+            </div>
+        </div>
+    </app>
+    <script src="js/status-rotation.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
