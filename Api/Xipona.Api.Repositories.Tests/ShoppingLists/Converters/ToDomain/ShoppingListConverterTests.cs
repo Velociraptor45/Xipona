@@ -28,14 +28,15 @@ public class ShoppingListConverterTests
 
     protected override void AddMapping(IMappingExpression<Repositories.ShoppingLists.Entities.ShoppingList, IShoppingList> mapping)
     {
-        mapping.As<Domain.ShoppingLists.Models.ShoppingList>();
+        mapping.As<ShoppingList>();
     }
 
     protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
     {
-        cfg.CreateMap<Repositories.ShoppingLists.Entities.ShoppingList, Domain.ShoppingLists.Models.ShoppingList>()
+        cfg.CreateMap<Repositories.ShoppingLists.Entities.ShoppingList, ShoppingList>()
             .ForCtorParam(nameof(IShoppingList.Id).LowerFirstChar(), opt => opt.MapFrom(src => new ShoppingListId(src.Id)))
             .ForCtorParam(nameof(IShoppingList.StoreId).LowerFirstChar(), opt => opt.MapFrom(src => new StoreId(src.StoreId)))
+            .ForCtorParam(nameof(IShoppingList.CreatedAt).LowerFirstChar(), opt => opt.MapFrom(src => src.CreatedAt))
             .ForCtorParam(nameof(IShoppingList.CompletionDate).LowerFirstChar(), opt => opt.MapFrom(src => src.CompletionDate))
             .ForCtorParam(nameof(IShoppingList.Sections).LowerFirstChar(),
                 opt => opt.MapFrom((src, ctx) => src.ItemsOnList.GroupBy(

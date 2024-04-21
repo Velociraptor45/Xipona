@@ -29,6 +29,7 @@ public class ItemCategoryConverterTests : ToDomainConverterTestBase<ItemCategory
             .ForCtorParam(nameof(IItemCategory.Id).LowerFirstChar(), opt => opt.MapFrom(src => new ItemCategoryId(src.Id)))
             .ForCtorParam(nameof(IItemCategory.Name).LowerFirstChar(), opt => opt.MapFrom(src => new ItemCategoryName(src.Name)))
             .ForCtorParam(nameof(IItemCategory.IsDeleted).LowerFirstChar(), opt => opt.MapFrom(src => src.Deleted))
+            .ForCtorParam(nameof(IItemCategory.CreatedAt).LowerFirstChar(), opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
     }

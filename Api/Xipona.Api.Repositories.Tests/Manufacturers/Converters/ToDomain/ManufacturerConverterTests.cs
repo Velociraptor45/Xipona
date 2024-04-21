@@ -29,6 +29,7 @@ public class ManufacturerConverterTests : ToDomainConverterTestBase<Manufacturer
             .ForCtorParam(nameof(IManufacturer.Id).LowerFirstChar(), opt => opt.MapFrom(src => new ManufacturerId(src.Id)))
             .ForCtorParam(nameof(IManufacturer.Name).LowerFirstChar(), opt => opt.MapFrom(src => new ManufacturerName(src.Name)))
             .ForCtorParam(nameof(IManufacturer.IsDeleted).LowerFirstChar(), opt => opt.MapFrom(src => src.Deleted))
+            .ForCtorParam(nameof(IManufacturer.CreatedAt).LowerFirstChar(), opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
     }

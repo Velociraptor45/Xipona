@@ -20,6 +20,7 @@ public class StoreConverterTests : ToContractConverterTestBase<IStore, Store, St
         mapping
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.Deleted, opt => opt.MapFrom(src => src.IsDeleted))
             .ForMember(dest => dest.Sections, opt => opt.MapFrom((src, _, _, ctx) =>
                 src.Sections.Select(s => ctx.Mapper.Map<Section>((src.Id, s)))))

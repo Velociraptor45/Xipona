@@ -20,6 +20,7 @@ public class ItemCategoryConverterTests : ToContractConverterTestBase<IItemCateg
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Value))
             .ForMember(dest => dest.Deleted, opt => opt.MapFrom(src => src.IsDeleted))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => ((AggregateRoot)src).RowVersion));
     }
 }

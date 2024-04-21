@@ -23,6 +23,7 @@ public class RecipeConverterTests : ToContractConverterTestBase<IRecipe, Recipe,
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.NumberOfServings, opt => opt.MapFrom(src => src.NumberOfServings.Value))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.Ingredients, opt => opt.MapFrom((src, _, _, ctx) =>
                 src.Ingredients.Select(i => ctx.Mapper.Map<Ingredient>((src.Id, i)))))
             .ForMember(dest => dest.PreparationSteps, opt => opt.MapFrom((src, _, _, ctx) =>

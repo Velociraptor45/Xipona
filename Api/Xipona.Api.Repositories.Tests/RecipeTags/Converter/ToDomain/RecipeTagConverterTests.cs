@@ -28,6 +28,7 @@ public class RecipeTagConverterTests : ToDomainConverterTestBase<RecipeTag, IRec
         cfg.CreateMap<RecipeTag, Domain.RecipeTags.Models.RecipeTag>()
             .ForCtorParam(nameof(IRecipeTag.Id).LowerFirstChar(), opt => opt.MapFrom(src => new RecipeTagId(src.Id)))
             .ForCtorParam(nameof(IRecipeTag.Name).LowerFirstChar(), opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
     }

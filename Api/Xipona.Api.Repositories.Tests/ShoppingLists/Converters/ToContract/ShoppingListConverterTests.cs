@@ -22,6 +22,7 @@ public class ShoppingListConverterTests
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
             .ForMember(dest => dest.CompletionDate, opt => opt.MapFrom(src => src.CompletionDate))
             .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId.Value))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion,
                 opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.ItemsOnList, opt => opt.MapFrom(src => Convert(src)));

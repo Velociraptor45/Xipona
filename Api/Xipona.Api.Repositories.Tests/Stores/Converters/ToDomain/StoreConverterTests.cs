@@ -38,6 +38,7 @@ public class StoreConverterTests : ToDomainConverterTestBase<Store, IStore, Stor
             .ForCtorParam(nameof(IStore.Sections).LowerFirstChar(), opt => opt.MapFrom((src, ctx) =>
                 new Sections(src.Sections.Select(s => ctx.Mapper.Map<ISection>(s)), new SectionFactory())))
             .ForCtorParam(nameof(IStore.IsDeleted).LowerFirstChar(), opt => opt.MapFrom(src => src.Deleted))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 

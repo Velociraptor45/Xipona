@@ -158,7 +158,8 @@ public class CreateItemWithTypesConverterTests
         {
             opt
                 .Excluding(x => x.Id)
-                .Excluding(info => new Regex(@"^ItemTypes\[\d+\]\.Id$").IsMatch(info.Path));
+                .Excluding(info => new Regex(@"^ItemTypes\[\d+\]\.Id$").IsMatch(info.Path))
+                .Excluding(info => new Regex(@"^ItemTypes\[\d+\]\.CreatedAt$").IsMatch(info.Path));
         }
 
         protected override void Setup(CreateItemWithTypesContract source)

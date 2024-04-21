@@ -33,6 +33,7 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
             .ForMember(dest => dest.AvailableAt, opt => opt.MapFrom(src => CreateItemAvailabilityTuple(src)))
             .ForMember(dest => dest.ItemTypes, opt => opt.MapFrom(src => CreateItemTypeTuple(src)))
             .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => src.UpdatedOn))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.PredecessorId, opt => opt.MapFrom(src => src.PredecessorId!.Value))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.Predecessor, opt => opt.Ignore());
@@ -52,6 +53,7 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
             .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Item1.Id.Value))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item2.Name.Value))
             .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Item2.IsDeleted))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Item2.CreatedAt))
             .ForMember(dest => dest.PredecessorId, opt => opt.MapFrom(src => src.Item2.PredecessorId!.Value))
             .ForMember(dest => dest.AvailableAt, opt => opt.MapFrom(src => CreateItemTypeAvailabilityTuple(src.Item2)))
             .ForMember(dest => dest.Predecessor, opt => opt.Ignore())

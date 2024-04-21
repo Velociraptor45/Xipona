@@ -46,13 +46,14 @@ public class RecipeConverterTests : ToDomainConverterTestBase<Recipe, IRecipe, R
             .ForCtorParam(nameof(IRecipe.Id).LowerFirstChar(), opt => opt.MapFrom(src => new RecipeId(src.Id)))
             .ForCtorParam(nameof(IRecipe.Name).LowerFirstChar(), opt => opt.MapFrom(src => src.Name))
             .ForCtorParam(nameof(IRecipe.NumberOfServings).LowerFirstChar(), opt => opt.MapFrom(src => new NumberOfServings(src.NumberOfServings)))
+            .ForCtorParam(nameof(IRecipe.CreatedAt).LowerFirstChar(), opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForCtorParam(nameof(IRecipe.Ingredients).LowerFirstChar(),
                 opt => opt.MapFrom((src, ctx) =>
                     new Ingredients(
                         src.Ingredients.Select(i => ctx.Mapper.Map<Ingredient>(i)),
                         new IngredientFactoryMock(MockBehavior.Strict).Object)))
-            .ForCtorParam(nameof(IRecipe.PreparationSteps).LowerFirstChar(),
+            .ForCtorParam("steps",
                 opt => opt.MapFrom((src, ctx) =>
                     new PreparationSteps(
                         src.PreparationSteps.Select(p => ctx.Mapper.Map<PreparationStep>(p)),
@@ -61,6 +62,7 @@ public class RecipeConverterTests : ToDomainConverterTestBase<Recipe, IRecipe, R
                 opt => opt.MapFrom(src =>
                     new Domain.Recipes.Models.RecipeTags(
                         src.Tags.Select(r => new RecipeTagId(r.RecipeTagId)))))
+            .ForMember(dest => dest.PreparationSteps, opt => opt.Ignore())
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
         new IngredientConverterTests().AddMapping(cfg);
