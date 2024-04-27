@@ -1,5 +1,5 @@
 ﻿.ant-select-multiple span.ant-select-selection-item {
-    background-color: #3498db;
+    background-color: var(--primary-color);
     color: #ffffff;
     border-radius: 5px;
 }

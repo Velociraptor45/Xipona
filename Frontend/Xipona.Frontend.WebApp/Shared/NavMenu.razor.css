@@ -29,7 +29,7 @@
         position: sticky;
         left: 0;
         top: 0;
-        background-color: #3498db;
+        background-color: var(--primary-color);
         height: 100vh;
     }
 
@@ -62,7 +62,7 @@
     .nav-menu {
         position: fixed;
         bottom: 0;
-        background-color: #3498db;
+        background-color: var(--primary-color);
         width: 100%;
     }
 

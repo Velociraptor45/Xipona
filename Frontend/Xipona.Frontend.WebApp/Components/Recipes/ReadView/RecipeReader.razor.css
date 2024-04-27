@@ -55,11 +55,11 @@
   font-size: 21px;
 }
 .view-tag {
-  margin-right: 4px;
-  background-color: #3498db;
-  color: #ffffff;
-  border-radius: 5px;
-  padding: 1px 3px;
+    margin-right: 4px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-radius: 5px;
+    padding: 1px 3px;
 }
 .preparation-step-number {
   font-size: 1.5em;

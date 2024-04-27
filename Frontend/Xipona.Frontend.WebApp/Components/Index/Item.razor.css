@@ -10,7 +10,7 @@
 }
 
 .in-basket {
-    background-color: #3498db;
+    background-color: var(--primary-color);
 }
 
 .not-in-basket {

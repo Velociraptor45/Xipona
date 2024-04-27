@@ -5,8 +5,8 @@
   font-size: 1.1rem;
 }
 .all-in-basket {
-  background-color: #3498db;
-  color: white;
+    background-color: var(--primary-color);
+    color: white;
 }
 .some-in-basket {
   background-color: #F7D80F;
