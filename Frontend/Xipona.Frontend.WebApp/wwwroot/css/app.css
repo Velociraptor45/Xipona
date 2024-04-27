@@ -4,16 +4,6 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
-    color: #0366d6;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
 app {
     position: relative;
     display: flex;
@@ -58,9 +48,9 @@ app {
 }
 
 .loader {
-    border: 5px solid #f3f3f3;
+    border: 5px solid var(--white);
     border-radius: 50%;
-    border-top: 5px solid #3498db;
+    border-top: 5px solid var(--primary-color);
     width: 60px;
     height: 60px;
     -webkit-animation: spin 0.6s linear infinite; /* Safari */
