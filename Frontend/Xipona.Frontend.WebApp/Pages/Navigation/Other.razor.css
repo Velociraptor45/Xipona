@@ -19,7 +19,7 @@ li {
 
 .other-nav-link div,
 .other-nav-link i {
-    color: #3498db;
+    color: var(--primary-color);
 }
 
 .other-nav-link i {

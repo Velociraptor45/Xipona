@@ -72,6 +72,6 @@
 
 hr {
     margin: 10px 0 10px 0;
-    background-color: #3498db;
+    background-color: var(--primary-color);
     opacity: 0.5;
 }

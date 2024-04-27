@@ -116,7 +116,7 @@
 
 .view-tag {
     margin-right: 4px;
-    background-color: #3498db;
+    background-color: var(--primary-color);
     color: #ffffff;
     border-radius: 5px;
     padding: 1px 3px;
