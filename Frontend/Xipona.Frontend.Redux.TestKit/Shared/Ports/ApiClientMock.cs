@@ -359,12 +359,14 @@ public class ApiClientMock : Mock<IApiClient>
 
     public void SetupCreateStoreAsync(EditedStore store)
     {
-        this.SetupInOrder(m => m.CreateStoreAsync(store)).Returns(Task.CompletedTask);
+        this.SetupInOrder(m => m.CreateStoreAsync(It.Is<EditedStore>(s => s.IsEquivalentTo(store))))
+            .Returns(Task.CompletedTask);
     }
 
     public void SetupCreateStoreAsyncThrowing(EditedStore store, Exception ex)
     {
-        this.SetupInOrder(m => m.CreateStoreAsync(store)).ThrowsAsync(ex);
+        this.SetupInOrder(m => m.CreateStoreAsync(It.Is<EditedStore>(s => s.IsEquivalentTo(store))))
+            .ThrowsAsync(ex);
     }
 
     public void SetupModifyStoreAsync(EditedStore store)

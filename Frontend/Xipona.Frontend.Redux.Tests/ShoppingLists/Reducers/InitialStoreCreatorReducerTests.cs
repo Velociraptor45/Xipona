@@ -95,6 +95,98 @@ public class InitialStoreCreatorReducerTests
         }
     }
 
+    public class OnCreateInitialStoreFinished
+    {
+        private readonly OnCreateInitialStoreFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnCreateInitialStoreFinished_WithDialogOpen_ShouldCloseDialogAndClearName()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = InitialStoreCreatorReducer.OnCreateInitialStoreFinished(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCreateInitialStoreFinishedFixture : InitialStoreCreatorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    InitialStoreCreator = ExpectedState.InitialStoreCreator with
+                    {
+                        IsOpen = true,
+                        IsSaving = true,
+                        Name = new DomainTestBuilder<string>().Create()
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    InitialStoreCreator = ExpectedState.InitialStoreCreator with
+                    {
+                        IsOpen = false,
+                        IsSaving = false,
+                        Name = string.Empty
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnCreateInitialStoreStarted
+    {
+        private readonly OnCreateInitialStoreStartedFixture _fixture = new();
+
+        [Fact]
+        public void OnCreateInitialStoreStarted_WithSavingNotSet_ShouldSetSaving()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = InitialStoreCreatorReducer.OnCreateInitialStoreStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCreateInitialStoreStartedFixture : InitialStoreCreatorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    InitialStoreCreator = ExpectedState.InitialStoreCreator with
+                    {
+                        IsSaving = false
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    InitialStoreCreator = ExpectedState.InitialStoreCreator with
+                    {
+                        IsSaving = true
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class InitialStoreCreatorReducerFixture
     {
         public ShoppingListState ExpectedState { get; protected set; } = new DomainTestBuilder<ShoppingListState>().Create();

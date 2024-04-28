@@ -31,4 +31,30 @@ public static class InitialStoreCreatorReducer
             }
         };
     }
+
+    [ReducerMethod(typeof(CreateInitialStoreStartedAction))]
+    public static ShoppingListState OnCreateInitialStoreStarted(ShoppingListState state)
+    {
+        return state with
+        {
+            InitialStoreCreator = state.InitialStoreCreator with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CreateInitialStoreFinishedAction))]
+    public static ShoppingListState OnCreateInitialStoreFinished(ShoppingListState state)
+    {
+        return state with
+        {
+            InitialStoreCreator = state.InitialStoreCreator with
+            {
+                IsOpen = false,
+                IsSaving = false,
+                Name = string.Empty
+            }
+        };
+    }
 }
