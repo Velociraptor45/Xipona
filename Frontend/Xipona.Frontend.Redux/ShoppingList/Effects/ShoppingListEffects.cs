@@ -102,7 +102,10 @@ public class ShoppingListEffects
             return;
         }
 
-        var finishAction = new LoadAllActiveStoresFinishedAction(stores.ToList());
+        if (stores.Count == 0)
+            dispatcher.Dispatch(new NoStoresFoundAction());
+
+        var finishAction = new LoadAllActiveStoresFinishedAction(stores);
         dispatcher.Dispatch(finishAction);
 
         if (stores.Any())

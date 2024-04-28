@@ -296,7 +296,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldDispatchFinishedAction()
+        public async Task HandleLoadAllActiveStoresAction_WithoutFindingStores_ShouldDispatchNoStoresFoundAction()
         {
             // Arrange
             _fixture.SetupStateContainingNoStores();
@@ -304,26 +304,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupExpectedStoresEmpty();
                 _fixture.SetupFindingStoresForShoppingList();
-                _fixture.SetupDispatchingLoadFinishedAction();
-            });
-            var sut = _fixture.CreateSut();
-
-            // Act
-            await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
-
-            // Assert
-            queue.VerifyOrder();
-        }
-
-        [Fact]
-        public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldNotDispatchChangeAction()
-        {
-            // Arrange
-            _fixture.SetupStateContainingNoStores();
-            var queue = CallQueue.Create(_ =>
-            {
-                _fixture.SetupExpectedStoresEmpty();
-                _fixture.SetupFindingStoresForShoppingList();
+                _fixture.SetupDispatchingNoStoresFoundAction();
                 _fixture.SetupDispatchingLoadFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -405,7 +386,7 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedStoresEmpty()
             {
-                _expectedStoresForShoppingList = new List<ShoppingListStore>();
+                _expectedStoresForShoppingList = [];
             }
 
             public void SetupExpectedStores()
@@ -449,6 +430,11 @@ public class ShoppingListEffectsTests
 
                 _expectedLoadFinishedAction = new LoadAllActiveStoresFinishedAction(_expectedStoresForShoppingList);
                 SetupDispatchingAction(_expectedLoadFinishedAction);
+            }
+
+            public void SetupDispatchingNoStoresFoundAction()
+            {
+                SetupDispatchingAction<NoStoresFoundAction>();
             }
 
             public void SetupStateContainingNoStores()
