@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.States;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 
@@ -14,7 +15,8 @@ public record ShoppingListState(
     SearchBar SearchBar,
     TemporaryItemCreator TemporaryItemCreator,
     PriceUpdate PriceUpdate,
-    Summary Summary)
+    Summary Summary,
+    InitialStoreCreator InitialStoreCreator)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
@@ -51,6 +53,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
             new TemporaryItemCreator(string.Empty, null, 1f, 0, false, false, false),
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
-            new Summary(false, false, DateTime.MinValue, false));
+            new Summary(false, false, DateTime.MinValue, false),
+            new InitialStoreCreator(false, string.Empty, false));
     }
 }

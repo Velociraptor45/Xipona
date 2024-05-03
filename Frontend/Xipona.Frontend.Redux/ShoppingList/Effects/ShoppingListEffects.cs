@@ -5,11 +5,14 @@ using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Summary;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
 using RestEase;
 using ShoppingListItem = ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 
@@ -102,7 +105,10 @@ public class ShoppingListEffects
             return;
         }
 
-        var finishAction = new LoadAllActiveStoresFinishedAction(stores.ToList());
+        if (stores.Count == 0)
+            dispatcher.Dispatch(new NoStoresFoundAction());
+
+        var finishAction = new LoadAllActiveStoresFinishedAction(stores);
         dispatcher.Dispatch(finishAction);
 
         if (stores.Any())
@@ -273,5 +279,39 @@ public class ShoppingListEffects
 
         dispatcher.Dispatch(new LoadShoppingListFinishedAction(shoppingList));
         return true;
+    }
+
+    [EffectMethod(typeof(CreateInitialStoreAction))]
+    public async Task HandleCreateInitialStoreAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new CreateInitialStoreStartedAction());
+
+        var store = new EditedStore(
+            Guid.Empty,
+            _state.Value.InitialStoreCreator.Name,
+            new SortedSet<EditedSection>(new SortingIndexComparer())
+            {
+                new(Guid.Empty, Guid.Empty, "Default", true, 0)
+            });
+
+        try
+        {
+            await _client.CreateStoreAsync(store);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Creating initial store failed", e));
+            dispatcher.Dispatch(new CreateInitialStoreFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Creating initial store failed", e.Message));
+            dispatcher.Dispatch(new CreateInitialStoreFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new CreateInitialStoreFinishedAction());
+        dispatcher.Dispatch(new LoadAllActiveStoresAction());
     }
 }
