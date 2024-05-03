@@ -7,15 +7,18 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Modal Title="Welcome"
-       Visible="State.Value.InitialStoreCreator.IsOpen"
+<Modal Visible="State.Value.InitialStoreCreator.IsOpen"
        Closable="false"
        MaskClosable="false"
        DestroyOnClose="true"
        Footer="GetFooter()">
     <div class="">
-        Welcome to Xipona, your grocery and recipe assistant!
-        <Input TValue="string" Placeholder="Store name" OnInput="OnNameInputChanged"></Input>
+        <div class="welcome">Welcome to Xipona, your grocery and recipe assistant!</div>
+        <div>In order to begin, let's create a store. After that, you can start adding items to it!</div>
+        <div class="max-w-150 mt-2">
+            <Input TValue="string" Placeholder="Store name" OnInput="OnNameInputChanged" OnkeyDown="OnInputKeyDown">
+            </Input>
+        </div>
     </div>
 </Modal>
 
@@ -25,6 +28,14 @@
     private void OnNameInputChanged(ChangeEventArgs args)
     {
         Dispatcher.Dispatch(new InitialStoreNameChangedAction(args.Value?.ToString() ?? string.Empty));
+    }
+
+    private void OnInputKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            OnCreateButtonClicked();
+        }
     }
 
     private void OnCreateButtonClicked()
