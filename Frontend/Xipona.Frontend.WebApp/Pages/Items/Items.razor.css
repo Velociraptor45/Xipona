@@ -3,7 +3,7 @@
     margin: 0 auto;
 }
 
-.no-items-found-notice {
+.no-items-found-notice, .initial-search-notice {
     text-align: center;
     color: #bdc3c7;
 }
