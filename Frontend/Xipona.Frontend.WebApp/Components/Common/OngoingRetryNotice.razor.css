@@ -1,0 +1,19 @@
+﻿.ongoing-retry-notice {
+    background-color: red;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+}
+
+@media (min-width: 769px) {
+    .ongoing-retry-notice {
+        left: var(--nav-desktop-width);
+        width: calc(100% + 2rem)
+    }
+}
+
+@media (max-width: 768px) {
+    .ongoing-retry-notice {
+        bottom: var(--nav-mobile-height)
+    }
+}

@@ -1,0 +1,11 @@
+﻿@using Fluxor
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.States
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<SharedState> SharedState
+
+@if (SharedState.Value.IsRetryOngoing)
+{
+    <div class="ongoing-retry-notice">Ongoing retry</div>
+}

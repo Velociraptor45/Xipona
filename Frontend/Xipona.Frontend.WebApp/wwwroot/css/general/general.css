@@ -3,6 +3,9 @@
     --white: #ffffff;
     --primary-color: #3498db;
     --primary-color-transparent: #3498db33;
+    --nav-mobile-height: 71.15px;
+    --nav-desktop-width: 181.467px;
+    --ongoing-retry-notice-height: 25px;
 }
 
 .nav-link {
