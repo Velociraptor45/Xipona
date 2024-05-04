@@ -25,12 +25,18 @@ using Serilog;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 builder.Logging.AddConsole();
 builder.Logging.AddSerilog();
+
+if (builder.Environment.IsEnvironment("Local"))
+{
+    builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
+}
 
 AddAppsettingsSourceTo(builder.Configuration.Sources);
 
