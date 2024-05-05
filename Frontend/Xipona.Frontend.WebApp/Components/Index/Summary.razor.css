@@ -47,7 +47,11 @@
     .summary {
         margin-right: 4px;
         padding-bottom: 4px;
-        margin-bottom: 71.15px;
+        margin-bottom: var(--nav-mobile-height);
+    }
+
+    .summary-retry {
+        margin-bottom: calc(var(--nav-mobile-height) + var(--ongoing-retry-notice-height));
     }
 
     .price-sum {

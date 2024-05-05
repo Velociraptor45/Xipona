@@ -5,6 +5,7 @@
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
+@using ProjectHermes.Xipona.Frontend.WebApp.Components.Common;
 @using ProjectHermes.Xipona.Frontend.WebApp.Components.Index;
 
 @inject IState<ShoppingListState> State
@@ -46,6 +47,7 @@
         }
         <Summary></Summary>
     </div>
+    <OngoingRetryNotice></OngoingRetryNotice>
     <PriceUpdateDialog></PriceUpdateDialog>
     <InitialStoreCreatorDialog></InitialStoreCreatorDialog>
 }
