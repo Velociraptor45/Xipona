@@ -48,7 +48,7 @@ app {
 }
 
 .loader {
-    border: 5px solid var(--white);
+    border: 5px solid var(--secondary-color);
     border-radius: 50%;
     border-top: 5px solid var(--primary-color);
     width: 60px;

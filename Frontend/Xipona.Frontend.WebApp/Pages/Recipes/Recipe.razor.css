@@ -117,12 +117,12 @@
 .view-tag {
     margin-right: 4px;
     background-color: var(--primary-color);
-    color: #ffffff;
+    color: var(--secondary-color);
     border-radius: 5px;
     padding: 1px 3px;
 }
 
 .preparation-step-number {
     font-size: 1.5em;
-    border-right: 1px solid #ecf0f1;
+    border-right: 1px solid var(--button-border-color);
 }

@@ -1,15 +1,22 @@
 ﻿app {
-    --black: #000000;
-    --white: #ffffff;
-    --primary-color: #3498db;
-    --primary-color-transparent: #3498db33;
     --nav-mobile-height: 71.15px;
     --nav-desktop-width: 181.467px;
     --ongoing-retry-notice-height: 25px;
+    /* Colors */
+    --primary-color: #3498db;
+    --primary-color-transparent: #3498db33;
+    --secondary-color: #ffffff;
+    --color-red: #e74c3c;
+    --color-yellow: #f7d80f;
+    --contrast-color: #3d5770;
+    --secondary-contrast-color: #34495e;
+    --button-border-color: #ecf0f1;
+    --discreet-hint-color: #bdc3c7;
+    --approve-color: #27ae60;
 }
 
 .nav-link {
-    color: #34495e;
+    color: var(--contrast-color);
 }
 
 @media (min-width: 769px) {
@@ -20,7 +27,7 @@
 
         .nav-link:hover,
         .nav-link-ext:hover {
-            color: var(--white);
+            color: var(--secondary-color);
         }
 
     .ant-modal-wrap {
@@ -43,7 +50,7 @@
 }
 
 .item-editing .remove-item {
-    border-color: #ecf0f1;
+    border-color: var(--button-border-color);
 }
 
 .item-editing .quantity-input {
@@ -56,7 +63,7 @@
 }
 
 .shopping-list-summary-finish-time-editing {
-    color: #27ae60;
+    color: var(--approve-color);
 }
 
 /* item editor */

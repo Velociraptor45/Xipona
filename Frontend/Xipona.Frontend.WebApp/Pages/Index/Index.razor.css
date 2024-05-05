@@ -3,7 +3,7 @@
     padding-bottom: 3px;
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--secondary-color);
     z-index: 1000;
 }
 
@@ -14,7 +14,7 @@
 .no-items-on-list-notice,
 .all-items-in-basket-hidden-notice {
     text-align: center;
-    color: #bdc3c7;
+    color: var(--discreet-hint-color);
 }
 
 @media (min-width: 769px) {
