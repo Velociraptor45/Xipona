@@ -154,6 +154,8 @@ public class ItemRepository : IItemRepository
                 && item.Name.Contains(searchInput))
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .OrderBy(item => item.Name)
+            .ThenBy(item => item.Id)
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
