@@ -3,7 +3,7 @@ using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
 
 namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 
-public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, IEnumerable<SearchItemResultReadModel>>
+public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, SearchItemResultsReadModel>
 {
     private readonly Func<CancellationToken, IItemSearchService> _itemQueryServiceDelegate;
 
@@ -12,10 +12,10 @@ public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, IEnumerable
         _itemQueryServiceDelegate = itemSearchServiceDelegate;
     }
 
-    public async Task<IEnumerable<SearchItemResultReadModel>> HandleAsync(SearchItemQuery query,
+    public async Task<SearchItemResultsReadModel> HandleAsync(SearchItemQuery query,
         CancellationToken cancellationToken)
     {
         var itemSearchService = _itemQueryServiceDelegate(cancellationToken);
-        return await itemSearchService.SearchAsync(query.SearchInput);
+        return await itemSearchService.SearchAsync(query.SearchInput, query.Page, query.PageSize);
     }
 }

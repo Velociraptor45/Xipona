@@ -93,22 +93,22 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(SearchItemResultsContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("search")]
-    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput, [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        var query = new SearchItemQuery(searchInput);
+        if (pageSize > 100)
+            return BadRequest("Page size cannot be greater than 100");
 
-        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var query = new SearchItemQuery(searchInput, page, pageSize);
 
-        if (readModels.Count == 0)
-            return NoContent();
+        var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
 
-        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
+        var contract = _converters.ToContract<SearchItemResultsReadModel, SearchItemResultsContract>(result);
 
-        return Ok(contracts);
+        return Ok(contract);
     }
 
     [HttpGet]

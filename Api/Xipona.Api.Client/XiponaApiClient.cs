@@ -197,10 +197,10 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.SearchItemsByItemCategoryAsync(itemCategoryId, cancellationToken);
         }
 
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput,
-            CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput, int page = 1,
+            int pageSize = 20, CancellationToken cancellationToken = default)
         {
-            return await _apiClient.SearchItemsAsync(searchInput, cancellationToken);
+            return await _apiClient.SearchItemsAsync(searchInput, page, pageSize, cancellationToken);
         }
 
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,

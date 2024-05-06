@@ -65,21 +65,26 @@ public class ItemSearchService : IItemSearchService
             .Select(model => new SearchItemResultReadModel(model.Id, model.Name, null));
     }
 
-    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput)
+    public async Task<SearchItemResultsReadModel> SearchAsync(string searchInput, int page, int pageSize)
     {
         if (string.IsNullOrWhiteSpace(searchInput))
-            return Enumerable.Empty<SearchItemResultReadModel>();
+            return new SearchItemResultsReadModel([], 0);
 
-        var items = (await _itemRepository.FindActiveByAsync(searchInput)).ToList();
+        var items = (await _itemRepository.FindActiveByAsync(searchInput, page, pageSize)).ToList();
+        var totalResultCount = await _itemRepository.GetTotalCountByAsync(searchInput);
 
         var manufacturerIds = items.Where(i => i.ManufacturerId is not null).Select(i => i.ManufacturerId!.Value);
         var manufacturers = (await _manufacturerRepository.FindByAsync(manufacturerIds)).ToDictionary(m => m.Id);
 
-        return items.Select(i =>
-        {
-            var manufacturerName = i.ManufacturerId is null ? null : manufacturers[i.ManufacturerId!.Value].Name;
-            return new SearchItemResultReadModel(i.Id, i.Name, manufacturerName);
-        });
+        var searchResults = items
+            .Select(i =>
+            {
+                var manufacturerName = i.ManufacturerId is null ? null : manufacturers[i.ManufacturerId!.Value].Name;
+                return new SearchItemResultReadModel(i.Id, i.Name, manufacturerName);
+            })
+            .ToList();
+
+        return new SearchItemResultsReadModel(searchResults, totalResultCount);
     }
 
     public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchAsync(ItemCategoryId itemCategoryId)

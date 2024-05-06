@@ -118,8 +118,8 @@ namespace ProjectHermes.Xipona.Api.Client
             [Path] Guid itemCategoryId, CancellationToken cancellationToken = default);
 
         [Get("items/search")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput,
-            CancellationToken cancellationToken = default);
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput, [Query] int page = 1,
+            [Query] int pageSize = 30, CancellationToken cancellationToken = default);
 
         [Get("items/filter")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
