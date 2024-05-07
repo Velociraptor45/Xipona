@@ -12,14 +12,14 @@ using System.Reflection;
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
 public class SearchItemsAsyncTests :
-    ControllerQueryTestsBase<ItemController, SearchItemQuery, SearchItemResultsReadModel, SearchItemResultsContract,
+    ControllerEnumerableQueryTestsBase<ItemController, SearchItemQuery, SearchItemResultReadModel, SearchItemResultContract,
     SearchItemsAsyncTests.SearchItemsAsyncFixture>
 {
     public SearchItemsAsyncTests() : base(new SearchItemsAsyncFixture())
     {
     }
 
-    public sealed class SearchItemsAsyncFixture : ControllerQueryFixtureBase
+    public sealed class SearchItemsAsyncFixture : ControllerEnumerableQueryFixtureBase
     {
         private string? _searchString;
         private readonly int _page = 1;
@@ -28,6 +28,7 @@ public class SearchItemsAsyncTests :
         public SearchItemsAsyncFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new BadRequestStatusResult());
         }
 

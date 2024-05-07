@@ -19,6 +19,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
@@ -93,7 +94,20 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(SearchItemResultsContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [Route("search-result-count")]
+    public async Task<IActionResult> GetTotalSearchResultCount([FromQuery] string searchInput,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new TotalSearchResultCountQuery(searchInput);
+
+        var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("search")]
     public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput, [FromQuery] int page = 1,
@@ -104,9 +118,12 @@ public class ItemController : ControllerBase
 
         var query = new SearchItemQuery(searchInput, page, pageSize);
 
-        var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        var result = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-        var contract = _converters.ToContract<SearchItemResultsReadModel, SearchItemResultsContract>(result);
+        if (result.Count == 0)
+            return NoContent();
+
+        var contract = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(result);
 
         return Ok(contract);
     }

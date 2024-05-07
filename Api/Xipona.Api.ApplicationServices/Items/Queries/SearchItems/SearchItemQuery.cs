@@ -3,7 +3,7 @@ using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
 
 namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 
-public class SearchItemQuery : IQuery<SearchItemResultsReadModel>
+public class SearchItemQuery : IQuery<IEnumerable<SearchItemResultReadModel>>
 {
     public SearchItemQuery(string searchInput, int page, int pageSize)
     {

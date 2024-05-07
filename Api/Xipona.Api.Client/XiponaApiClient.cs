@@ -197,6 +197,12 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.SearchItemsByItemCategoryAsync(itemCategoryId, cancellationToken);
         }
 
+        public async Task<int> GetTotalSearchResultCountAsync(string searchInput,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetTotalSearchResultCountAsync(searchInput, cancellationToken);
+        }
+
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput, int page = 1,
             int pageSize = 20, CancellationToken cancellationToken = default)
         {
