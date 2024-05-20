@@ -5,6 +5,7 @@
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.Items.Actions
 @using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor
+@using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search
 @using ProjectHermes.Xipona.Frontend.Redux.Items.States
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.States
 @using ProjectHermes.Xipona.Frontend.WebApp.Components.Items.Filter;
@@ -55,9 +56,12 @@
         }
         @if(State.Value.Search.SearchResults.Count > 0)
         {
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center pt-4 pb-4">
                 <Pagination Current="@State.Value.Search.Page" ShowSizeChanger="true"
-                            PageSize="@State.Value.Search.PageSize" PageSizeOptions="[10, 25, 50, 100]">
+                            PageSize="@State.Value.Search.PageSize" PageSizeOptions="[10, 25, 50, 100]"
+                            Total="@State.Value.Search.TotalResultCount"
+                            OnChange="OnPageChanged"
+                            OnShowSizeChange="OnPageSizeChanged">
                 </Pagination>
             </div>
         }
@@ -77,5 +81,15 @@
         {
             Id = Guid.Empty
         });
+    }
+
+    private void OnPageChanged(PaginationEventArgs args)
+    {
+        Dispatcher.Dispatch(new SearchPageChangedAction(args.Page));
+    }
+
+    private void OnPageSizeChanged(PaginationEventArgs args)
+    {
+        Dispatcher.Dispatch(new SearchPageSizeChangedAction(args.PageSize));
     }
 }

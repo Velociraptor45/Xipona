@@ -48,6 +48,7 @@ public class ItemEffects
         if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
             dispatcher.Dispatch(new RetrieveSearchResultCountFinishedAction(0));
+            dispatcher.Dispatch(new SearchPageChangedAction(1));
             return;
         }
 
@@ -70,13 +71,22 @@ public class ItemEffects
         }
 
         dispatcher.Dispatch(new RetrieveSearchResultCountFinishedAction(count));
+        dispatcher.Dispatch(new SearchPageChangedAction(1));
+    }
 
-        if (count > 0)
-            dispatcher.Dispatch(new SearchPageChangedAction(1));
+    [EffectMethod(typeof(SearchPageSizeChangedAction))]
+    public async Task HandleSearchPageSizeChangedAction(IDispatcher dispatcher)
+    {
+        await ExecuteSearchAsync(dispatcher);
     }
 
     [EffectMethod(typeof(SearchPageChangedAction))]
     public async Task HandleSearchPageChangedAction(IDispatcher dispatcher)
+    {
+        await ExecuteSearchAsync(dispatcher);
+    }
+
+    private async Task ExecuteSearchAsync(IDispatcher dispatcher)
     {
         if (_state.Value.Search.TotalResultCount == 0)
         {

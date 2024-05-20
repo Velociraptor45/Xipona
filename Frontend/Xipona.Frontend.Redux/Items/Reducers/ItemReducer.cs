@@ -32,6 +32,30 @@ public static class ItemReducer
         };
     }
 
+    [ReducerMethod]
+    public static ItemState OnSearchPageChanged(ItemState state, SearchPageChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Page = action.Page
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ItemState OnSearchPageSizeChanged(ItemState state, SearchPageSizeChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                PageSize = action.PageSize
+            }
+        };
+    }
+
     [ReducerMethod(typeof(RetrieveSearchResultCountStartedAction))]
     public static ItemState OnRetrieveSearchResultCountStarted(ItemState state)
     {
