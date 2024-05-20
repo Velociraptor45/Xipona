@@ -152,10 +152,10 @@ public class ItemRepository : IItemRepository
                 !item.Deleted
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput))
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .OrderBy(item => item.Name)
             .ThenBy(item => item.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
