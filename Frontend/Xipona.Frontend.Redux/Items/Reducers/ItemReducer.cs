@@ -32,6 +32,32 @@ public static class ItemReducer
         };
     }
 
+    [ReducerMethod(typeof(RetrieveSearchResultCountStartedAction))]
+    public static ItemState OnRetrieveSearchResultCountStarted(ItemState state)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                IsLoadingSearchResults = true
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ItemState OnRetrieveSearchResultCountFinished(ItemState state,
+        RetrieveSearchResultCountFinishedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                TotalResultCount = action.Count,
+                IsLoadingSearchResults = false
+            }
+        };
+    }
+
     [ReducerMethod]
     public static ItemState OnSearchItemFinished(ItemState state, SearchItemsFinishedAction action)
     {

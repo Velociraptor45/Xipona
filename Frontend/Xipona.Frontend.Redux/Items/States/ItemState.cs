@@ -28,9 +28,12 @@ public class ItemFeatureState : Feature<ItemState>
             new ActiveStores(new List<ItemStore>()),
             new ItemSearch(
                 string.Empty,
+                1,
+                25,
                 false,
                 false,
-                new List<ItemSearchResult>()),
+                new List<ItemSearchResult>(),
+                0),
             new ItemEditor(
                 null,
                 null,

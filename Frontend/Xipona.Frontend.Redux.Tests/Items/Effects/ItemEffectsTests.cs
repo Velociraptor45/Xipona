@@ -53,12 +53,12 @@ public class ItemEffectsTests
         }
     }
 
-    public class HandleSearchItemsAction
+    public class HandleSearchPageChangedAction
     {
-        private readonly HandleSearchItemsActionFixture _fixture = new();
+        private readonly HandleSearchPageChangedActionFixture _fixture = new();
 
         [Fact]
-        public async Task HandleSearchItemsAction_WithSearchInputEmpty_ShouldDispatchFinishedActionWithEmptyResult()
+        public async Task HandleSearchPageChangedAction_WithSearchInputEmpty_ShouldDispatchFinishedActionWithEmptyResult()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -70,20 +70,21 @@ public class ItemEffectsTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.HandleSearchItemsAction(_fixture.DispatcherMock.Object);
+            await sut.HandleSearchPageChangedAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
         [Fact]
-        public async Task HandleSearchItemsAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
+        public async Task HandleSearchPageChangedAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchResult();
+                _fixture.SetupPageAndSize();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchSucceeded();
                 _fixture.SetupDispatchingFinishedAction();
@@ -91,19 +92,20 @@ public class ItemEffectsTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.HandleSearchItemsAction(_fixture.DispatcherMock.Object);
+            await sut.HandleSearchPageChangedAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
         [Fact]
-        public async Task HandleSearchItemsAction_WithWithApiException_ShouldDispatchExceptionNotification()
+        public async Task HandleSearchPageChangedAction_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
+                _fixture.SetupPageAndSize();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchFailedWithErrorInApi();
                 _fixture.SetupDispatchingExceptionNotificationAction();
@@ -111,19 +113,20 @@ public class ItemEffectsTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.HandleSearchItemsAction(_fixture.DispatcherMock.Object);
+            await sut.HandleSearchPageChangedAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
         [Fact]
-        public async Task HandleSearchItemsAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
+        public async Task HandleSearchPageChangedAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
                 _fixture.SetupSearchInput();
+                _fixture.SetupPageAndSize();
                 _fixture.SetupDispatchingStartedAction();
                 _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest();
                 _fixture.SetupDispatchingErrorNotificationAction();
@@ -131,16 +134,18 @@ public class ItemEffectsTests
             var sut = _fixture.CreateSut();
 
             // Act
-            await sut.HandleSearchItemsAction(_fixture.DispatcherMock.Object);
+            await sut.HandleSearchPageChangedAction(_fixture.DispatcherMock.Object);
 
             // Assert
             queue.VerifyOrder();
         }
 
-        private sealed class HandleSearchItemsActionFixture : ItemEffectsFixture
+        private sealed class HandleSearchPageChangedActionFixture : ItemEffectsFixture
         {
             private string? _searchInput;
             private IReadOnlyCollection<ItemSearchResult>? _searchResult;
+            private int? _page;
+            private int? _pageSize;
 
             public void SetupSearchInput()
             {
@@ -166,6 +171,21 @@ public class ItemEffectsTests
                 };
             }
 
+            public void SetupPageAndSize()
+            {
+                _page = new DomainTestBuilder<int>().Create();
+                _pageSize = new DomainTestBuilder<int>().Create();
+
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Page = _page.Value,
+                        PageSize = _pageSize.Value
+                    }
+                };
+            }
+
             public void SetupSearchResult()
             {
                 _searchResult = new DomainTestBuilder<ItemSearchResult>().CreateMany(2).ToList();
@@ -180,23 +200,29 @@ public class ItemEffectsTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
+                TestPropertyNotSetException.ThrowIfNull(_page);
+                TestPropertyNotSetException.ThrowIfNull(_pageSize);
 
-                ApiClientMock.SetupSearchItemsAsync(_searchInput, _searchResult);
+                ApiClientMock.SetupSearchItemsAsync(_searchInput, _page.Value, _pageSize.Value, _searchResult);
             }
 
             public void SetupSearchFailedWithErrorInApi()
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
+                TestPropertyNotSetException.ThrowIfNull(_page);
+                TestPropertyNotSetException.ThrowIfNull(_pageSize);
 
-                ApiClientMock.SetupSearchItemsAsyncThrowing(_searchInput,
+                ApiClientMock.SetupSearchItemsAsyncThrowing(_searchInput, _page.Value, _pageSize.Value,
                     new DomainTestBuilder<ApiException>().Create());
             }
 
             public void SetupSearchFailedWithErrorWhileTransmittingRequest()
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
+                TestPropertyNotSetException.ThrowIfNull(_page);
+                TestPropertyNotSetException.ThrowIfNull(_pageSize);
 
-                ApiClientMock.SetupSearchItemsAsyncThrowing(_searchInput,
+                ApiClientMock.SetupSearchItemsAsyncThrowing(_searchInput, _page.Value, _pageSize.Value,
                     new DomainTestBuilder<HttpRequestException>().Create());
             }
 

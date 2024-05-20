@@ -53,6 +53,14 @@
                 </div>
             </SearchResult>
         }
+        @if(State.Value.Search.SearchResults.Count > 0)
+        {
+            <div class="d-flex justify-content-center">
+                <Pagination Current="@State.Value.Search.Page" ShowSizeChanger="true"
+                            PageSize="@State.Value.Search.PageSize" PageSizeOptions="[10, 25, 50, 100]">
+                </Pagination>
+            </div>
+        }
     </div>
 </div>
 
