@@ -57,8 +57,11 @@
         @if(State.Value.Search.SearchResults.Count > 0)
         {
             <div class="d-flex justify-content-center pt-4 pb-4">
-                <Pagination Current="@State.Value.Search.Page" ShowSizeChanger="true"
-                            PageSize="@State.Value.Search.PageSize" PageSizeOptions="[10, 25, 50, 100]"
+                <Pagination Current="@State.Value.Search.Page"
+                            ShowSizeChanger="true"
+                            HideOnSinglePage="true"
+                            PageSize="@State.Value.Search.PageSize"
+                            PageSizeOptions="[10, 25, 50, 100]"
                             Total="@State.Value.Search.TotalResultCount"
                             OnChange="OnPageChanged"
                             OnShowSizeChange="OnPageSizeChanged">
@@ -85,6 +88,7 @@
 
     private void OnPageChanged(PaginationEventArgs args)
     {
+        Console.WriteLine(args.Page);
         Dispatcher.Dispatch(new SearchPageChangedAction(args.Page));
     }
 

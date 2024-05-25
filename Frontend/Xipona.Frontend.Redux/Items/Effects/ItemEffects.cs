@@ -74,19 +74,8 @@ public class ItemEffects
         dispatcher.Dispatch(new SearchPageChangedAction(1));
     }
 
-    [EffectMethod(typeof(SearchPageSizeChangedAction))]
-    public async Task HandleSearchPageSizeChangedAction(IDispatcher dispatcher)
-    {
-        await ExecuteSearchAsync(dispatcher);
-    }
-
     [EffectMethod(typeof(SearchPageChangedAction))]
     public async Task HandleSearchPageChangedAction(IDispatcher dispatcher)
-    {
-        await ExecuteSearchAsync(dispatcher);
-    }
-
-    private async Task ExecuteSearchAsync(IDispatcher dispatcher)
     {
         if (_state.Value.Search.TotalResultCount == 0)
         {

@@ -53,6 +53,164 @@ public class ItemEffectsTests
         }
     }
 
+    public class HandleRetrieveSearchResultCountAction
+    {
+        private readonly HandleRetrieveSearchResultCountActionFixture _fixture = new();
+
+        [Fact]
+        public async Task
+            HandleRetrieveSearchResultCountAction_WithSearchInputEmpty_ShouldDispatchDefaultFinishedAndPageChangeAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSearchInputEmpty();
+                _fixture.SetupDispatchingFinishActionWithZeroResults();
+                _fixture.SetupDispatchingPageChangeActionWithPageOne();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleRetrieveSearchResultCountAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleRetrieveSearchResultCountAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSearchInput();
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupGettingTotalSearchResultCount();
+                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingPageChangeActionWithPageOne();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleRetrieveSearchResultCountAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleRetrieveSearchResultCountAction_WithApiException_ShouldDispatchExceptionNotification()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSearchInput();
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupGettingTotalSearchResultCountFailedWithErrorInApi();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleRetrieveSearchResultCountAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleRetrieveSearchResultCountAction_WithHttpRequestException_ShouldDispatchErrorNotification()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupSearchInput();
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupGettingTotalSearchResultCountFailedWithErrorWhileTransmittingRequest();
+                _fixture.SetupDispatchingErrorNotificationAction();
+            });
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleRetrieveSearchResultCountAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleRetrieveSearchResultCountActionFixture : ItemEffectsFixture
+        {
+            private string? _searchInput;
+            private int? _totalSearchResultCount;
+
+            public void SetupSearchInput()
+            {
+                _searchInput = new DomainTestBuilder<string>().Create();
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
+            }
+
+            public void SetupSearchInputEmpty()
+            {
+                _searchInput = string.Empty;
+                State = State with
+                {
+                    Search = State.Search with
+                    {
+                        Input = _searchInput
+                    }
+                };
+            }
+
+            public void SetupGettingTotalSearchResultCount()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_searchInput);
+                _totalSearchResultCount = new DomainTestBuilder<int>().Create();
+                ApiClientMock.SetupGetTotalSearchResultCountAsync(_searchInput, _totalSearchResultCount.Value);
+            }
+
+            public void SetupGettingTotalSearchResultCountFailedWithErrorInApi()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_searchInput);
+                ApiClientMock.SetupGetTotalSearchResultCountAsyncThrowing(_searchInput,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupGettingTotalSearchResultCountFailedWithErrorWhileTransmittingRequest()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_searchInput);
+                ApiClientMock.SetupGetTotalSearchResultCountAsyncThrowing(_searchInput,
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingStartAction()
+            {
+                SetupDispatchingAction<RetrieveSearchResultCountStartedAction>();
+            }
+
+            public void SetupDispatchingFinishAction()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_totalSearchResultCount);
+                SetupDispatchingAction(new RetrieveSearchResultCountFinishedAction(_totalSearchResultCount.Value));
+            }
+
+            public void SetupDispatchingFinishActionWithZeroResults()
+            {
+                SetupDispatchingAction(new RetrieveSearchResultCountFinishedAction(0));
+            }
+
+            public void SetupDispatchingPageChangeActionWithPageOne()
+            {
+                SetupDispatchingAction(new SearchPageChangedAction(1));
+            }
+        }
+    }
+
     public class HandleSearchPageChangedAction
     {
         private readonly HandleSearchPageChangedActionFixture _fixture = new();

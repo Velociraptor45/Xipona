@@ -535,4 +535,15 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.GetAllActiveStoresForItemAsync()).ThrowsAsync(ex);
     }
+
+    public void SetupGetTotalSearchResultCountAsync(string searchInput, int returnValue)
+    {
+        this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetTotalSearchResultCountAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput)).ThrowsAsync(ex);
+    }
 }
