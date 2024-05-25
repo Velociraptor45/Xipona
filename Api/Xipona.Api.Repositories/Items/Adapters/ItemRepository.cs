@@ -133,18 +133,6 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(itemEntity);
     }
 
-    public async Task<int> GetTotalCountByAsync(string searchInput)
-    {
-        var count = await GetItemQuery()
-            .CountAsync(item =>
-                !item.Deleted
-                && !item.IsTemporary
-                && item.Name.Contains(searchInput),
-            _cancellationToken);
-
-        return count;
-    }
-
     public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, int page, int pageSize)
     {
         var entities = await GetItemQuery()
@@ -243,6 +231,18 @@ public class ItemRepository : IItemRepository
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(items);
+    }
+
+    public async Task<int> GetTotalCountByAsync(string searchInput)
+    {
+        var count = await GetItemQuery()
+            .CountAsync(item =>
+                    !item.Deleted
+                    && !item.IsTemporary
+                    && item.Name.Contains(searchInput),
+                _cancellationToken);
+
+        return count;
     }
 
     public async Task<IItem> StoreAsync(IItem item)

@@ -36,6 +36,7 @@ public interface IItemRepository
     Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
         IEnumerable<ItemId> excludedItemIds, int? limit);
 
-    Task<IItem> StoreAsync(IItem item);
     Task<int> GetTotalCountByAsync(string searchInput);
+
+    Task<IItem> StoreAsync(IItem item);
 }
