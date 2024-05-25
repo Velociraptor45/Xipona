@@ -221,7 +221,7 @@ public class ItemEffectsTests
             // Arrange
             var queue = CallQueue.Create(_ =>
             {
-                _fixture.SetupSearchInputEmpty();
+                _fixture.SetupTotalResultCountZero();
                 _fixture.SetupSearchResultEmpty();
                 _fixture.SetupDispatchingFinishedAction();
             });
@@ -317,14 +317,13 @@ public class ItemEffectsTests
                 };
             }
 
-            public void SetupSearchInputEmpty()
+            public void SetupTotalResultCountZero()
             {
-                _searchInput = string.Empty;
                 State = State with
                 {
                     Search = State.Search with
                     {
-                        Input = _searchInput
+                        TotalResultCount = 0
                     }
                 };
             }
@@ -351,7 +350,7 @@ public class ItemEffectsTests
 
             public void SetupSearchResultEmpty()
             {
-                _searchResult = new List<ItemSearchResult>();
+                _searchResult = [];
             }
 
             public void SetupSearchSucceeded()
