@@ -513,15 +513,16 @@ public class ApiClientMock : Mock<IApiClient>
         this.SetupInOrder(m => m.DeleteItemCategoryAsync(manufacturerId)).ThrowsAsync(ex);
     }
 
-    public void SetupSearchItemsAsync(string searchInput, IEnumerable<ItemSearchResult> returnValue)
+    public void SetupSearchItemsAsync(string searchInput, int page, int pageSize,
+        IEnumerable<ItemSearchResult> returnValue)
     {
-        this.SetupInOrder(m => m.SearchItemsAsync(searchInput))
+        this.SetupInOrder(m => m.SearchItemsAsync(searchInput, page, pageSize))
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupSearchItemsAsyncThrowing(string searchInput, Exception ex)
+    public void SetupSearchItemsAsyncThrowing(string searchInput, int page, int pageSize, Exception ex)
     {
-        this.SetupInOrder(m => m.SearchItemsAsync(searchInput)).ThrowsAsync(ex);
+        this.SetupInOrder(m => m.SearchItemsAsync(searchInput, page, pageSize)).ThrowsAsync(ex);
     }
 
     public void SetupGetAllActiveStoresForItemAsync(IEnumerable<ItemStore> returnValue)
@@ -533,5 +534,16 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetAllActiveStoresForItemAsyncThrowing(Exception ex)
     {
         this.SetupInOrder(m => m.GetAllActiveStoresForItemAsync()).ThrowsAsync(ex);
+    }
+
+    public void SetupGetTotalSearchResultCountAsync(string searchInput, int returnValue)
+    {
+        this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetTotalSearchResultCountAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput)).ThrowsAsync(ex);
     }
 }

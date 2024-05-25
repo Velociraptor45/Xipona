@@ -1,2 +1,2 @@
 ﻿namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
-public record SearchItemsAction();
+public record SearchPageSizeChangedAction(int PageSize);

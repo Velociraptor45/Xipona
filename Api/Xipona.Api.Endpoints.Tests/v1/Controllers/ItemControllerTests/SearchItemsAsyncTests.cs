@@ -22,11 +22,14 @@ public class SearchItemsAsyncTests :
     public sealed class SearchItemsAsyncFixture : ControllerEnumerableQueryFixtureBase
     {
         private string? _searchString;
+        private readonly int _page = 1;
+        private int _pageSize = 30;
 
         public SearchItemsAsyncFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NoContentStatusResult());
+            PossibleResultsList.Add(new BadRequestStatusResult());
         }
 
         public override MethodInfo Method =>
@@ -43,7 +46,7 @@ public class SearchItemsAsyncTests :
         public override async Task<IActionResult> ExecuteTestMethod(ItemController sut)
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
-            return await sut.SearchItemsAsync(_searchString);
+            return await sut.SearchItemsAsync(_searchString, _page, _pageSize);
         }
 
         public override void SetupParameters()
@@ -55,7 +58,18 @@ public class SearchItemsAsyncTests :
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
 
-            Query = new SearchItemQuery(_searchString);
+            Query = new SearchItemQuery(_searchString, _page, _pageSize);
+        }
+
+        public override void SetupParametersForBadRequest()
+        {
+            _searchString = new TestBuilder<string>().Create();
+            _pageSize = 101;
+        }
+
+        public override void SetupExpectedBadRequestMessage()
+        {
+            ExpectedBadRequestMessage = "Page size cannot be greater than 100";
         }
     }
 }

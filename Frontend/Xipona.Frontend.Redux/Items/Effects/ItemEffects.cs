@@ -42,12 +42,44 @@ public class ItemEffects
         return Task.CompletedTask;
     }
 
-    [EffectMethod(typeof(SearchItemsAction))]
-    public async Task HandleSearchItemsAction(IDispatcher dispatcher)
+    [EffectMethod(typeof(RetrieveSearchResultCountAction))]
+    public async Task HandleRetrieveSearchResultCountAction(IDispatcher dispatcher)
     {
         if (string.IsNullOrWhiteSpace(_state.Value.Search.Input))
         {
-            dispatcher.Dispatch(new SearchItemsFinishedAction(new List<ItemSearchResult>()));
+            dispatcher.Dispatch(new RetrieveSearchResultCountFinishedAction(0));
+            dispatcher.Dispatch(new SearchPageChangedAction(1));
+            return;
+        }
+
+        dispatcher.Dispatch(new RetrieveSearchResultCountStartedAction());
+
+        int count;
+        try
+        {
+            count = await _client.GetTotalSearchResultCountAsync(_state.Value.Search.Input);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Retrieving search result count failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Retrieving search result count failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new RetrieveSearchResultCountFinishedAction(count));
+        dispatcher.Dispatch(new SearchPageChangedAction(1));
+    }
+
+    [EffectMethod(typeof(SearchPageChangedAction))]
+    public async Task HandleSearchPageChangedAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Search.TotalResultCount == 0)
+        {
+            dispatcher.Dispatch(new SearchItemsFinishedAction([]));
             return;
         }
 
@@ -56,7 +88,8 @@ public class ItemEffects
         IEnumerable<ItemSearchResult> result;
         try
         {
-            result = await _client.SearchItemsAsync(_state.Value.Search.Input);
+            result = await _client.SearchItemsAsync(_state.Value.Search.Input, _state.Value.Search.Page,
+                _state.Value.Search.PageSize);
         }
         catch (ApiException e)
         {
