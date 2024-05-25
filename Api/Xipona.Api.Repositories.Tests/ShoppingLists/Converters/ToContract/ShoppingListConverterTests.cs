@@ -41,10 +41,10 @@ public class ShoppingListConverterTests
             .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 
-    private static IEnumerable<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> Convert(
+    private static List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> Convert(
         Domain.ShoppingLists.Models.ShoppingList src)
     {
-        List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> list = new();
+        List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> list = [];
         foreach (var section in src.Sections)
         {
             foreach (var item in section.Items)
