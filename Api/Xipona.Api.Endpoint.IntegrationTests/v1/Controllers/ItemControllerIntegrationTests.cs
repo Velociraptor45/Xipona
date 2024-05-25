@@ -53,6 +53,113 @@ namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
 
 public class ItemControllerIntegrationTests
 {
+    public sealed class GetTotalSearchResultCount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly GetTotalSearchResultCountFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task GetTotalSearchResultCount_WithNoItems_ShouldReturnZero()
+        {
+            // Arrange
+            _fixture.SetupSearchInput();
+            _fixture.SetupNoSearchResults();
+            _fixture.SetupExpectedResultZero();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetTotalSearchResultCount(_fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task GetTotalSearchResultCount_WithSearchResults_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupSearchInput();
+            _fixture.SetupSearchResults();
+            _fixture.SetupExpectedResult();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetTotalSearchResultCount(_fixture.SearchInput);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetTotalSearchResultCountFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        {
+            private Item[]? _items;
+            public string? SearchInput { get; private set; }
+            public int? ExpectedResult { get; private set; }
+
+            public void SetupSearchInput()
+            {
+                SearchInput = new DomainTestBuilder<string>().Create();
+            }
+
+            public void SetupNoSearchResults()
+            {
+                _items = [];
+            }
+
+            public void SetupSearchResults()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                _items =
+                [
+                    ItemEntityMother.Initial().Create(),
+                    ItemEntityMother.Initial().WithName(SearchInput).Create(),
+                    ItemEntityMother.Initial().WithName(SearchInput).Create(),
+                    ItemEntityMother.Initial().WithName(SearchInput).Create(),
+                    ItemEntityMother.Initial().Create()
+                ];
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = 3;
+            }
+
+            public void SetupExpectedResultZero()
+            {
+                ExpectedResult = 0;
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_items);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                itemContext.AddRange(_items);
+                await itemContext.SaveChangesAsync();
+            }
+        }
+    }
+
     public sealed class SearchItemsAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
         private readonly SearchItemsAsyncFixture _fixture = new(dockerFixture);
@@ -87,18 +194,39 @@ public class ItemControllerIntegrationTests
             okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class SearchItemsAsyncFixture : ItemControllerFixture
+        [Fact]
+        public async Task SearchItemsAsync_WithPagination_ShouldReturnExpectedResults()
         {
-            private readonly List<Item> _items = new(5);
+            // Arrange
+            _fixture.SetupSearchInput();
+            _fixture.SetupTenMatchingItems();
+            _fixture.SetupExpectedResultForTenMatchingItems();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.SearchItemsAsync(_fixture.SearchInput, 2, 3);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class SearchItemsAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        {
+            private readonly List<Item> _items = new();
             private Item? _itemMatching;
             private readonly List<Manufacturer> _manufacturers = new(1);
 
-            public SearchItemsAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
-
             public string? SearchInput { get; private set; }
-            public IReadOnlyCollection<SearchItemResultContract>? ExpectedResult { get; private set; }
+            public List<SearchItemResultContract>? ExpectedResult { get; private set; }
 
             public async Task SetupDatabaseAsync()
             {
@@ -118,25 +246,50 @@ public class ItemControllerIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(SearchInput);
 
-                ExpectedResult = new List<SearchItemResultContract>()
-                {
-                    new DomainTestBuilder<SearchItemResultContract>()
-                        .FillConstructorWith(
-                            nameof(SearchItemResultContract.ItemName).LowerFirstChar(),
-                            "abc" + SearchInput + "def")
-                        .Create(),
-                    new DomainTestBuilder<SearchItemResultContract>()
-                        .FillConstructorWith(
-                            nameof(SearchItemResultContract.ItemName).LowerFirstChar(),
-                            "abc" + SearchInput + "def")
-                        .FillConstructorWith(nameof(SearchItemResultContract.ManufacturerName).LowerFirstChar(), (string)null!)
-                        .Create()
-                };
+                ExpectedResult =
+                    new List<SearchItemResultContract>
+                    {
+                        new DomainTestBuilder<SearchItemResultContract>()
+                            .FillConstructorWith(
+                                nameof(SearchItemResultContract.ItemName).LowerFirstChar(),
+                                "abc" + SearchInput + "def")
+                            .Create(),
+                        new DomainTestBuilder<SearchItemResultContract>()
+                            .FillConstructorWith(
+                                nameof(SearchItemResultContract.ItemName).LowerFirstChar(),
+                                "abc" + SearchInput + "def")
+                            .FillConstructorWith(nameof(SearchItemResultContract.ManufacturerName).LowerFirstChar(),
+                                (string)null!)
+                            .Create()
+                    };
             }
 
             public void SetupSearchInput()
             {
                 SearchInput = new DomainTestBuilder<string>().Create();
+            }
+
+            public void SetupTenMatchingItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}A").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367122")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}B").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367123")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}C").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367124")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}D").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367125")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}E").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367126")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}F").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367127")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}F").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367128")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}G").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367129")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}H").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367130")).WithoutManufacturerId().Create());
+                _items.Add(ItemEntityMother.Initial().WithName($"{SearchInput}I").WithId(Guid.Parse("4915e93b-3b0b-4c43-9299-4d64d8367131")).WithoutManufacturerId().Create());
+            }
+
+            public void SetupExpectedResultForTenMatchingItems()
+            {
+                ExpectedResult = new[] { _items[3], _items[4], _items[5] }
+                    .Select(item => new SearchItemResultContract(item.Id, item.Name, null))
+                    .ToList();
             }
 
             public void SetupItemWithNameNotMatching()

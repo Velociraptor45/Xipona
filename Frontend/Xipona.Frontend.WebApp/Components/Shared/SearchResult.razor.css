@@ -1,11 +1,11 @@
 ﻿.search-result:hover {
     cursor: pointer;
-    background-color: #3498db;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
 }
 
 .search-result {
-    color: #34495e;
+    color: var(--secondary-contrast-color);
 }
 
 .search-result-separator {

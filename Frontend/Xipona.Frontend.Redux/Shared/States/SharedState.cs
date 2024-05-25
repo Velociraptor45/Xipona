@@ -1,7 +1,8 @@
 ﻿using Fluxor;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-public record SharedState(bool IsMobile, bool IsOnline);
+
+public record SharedState(bool IsMobile, bool IsOnline, bool IsRetryOngoing);
 
 public class SharedFeatureState : Feature<SharedState>
 {
@@ -12,6 +13,6 @@ public class SharedFeatureState : Feature<SharedState>
 
     protected override SharedState GetInitialState()
     {
-        return new SharedState(false, true);
+        return new SharedState(false, true, false);
     }
 }

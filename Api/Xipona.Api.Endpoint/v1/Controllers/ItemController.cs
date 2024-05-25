@@ -19,6 +19,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
@@ -93,22 +94,38 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("search")]
-    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput,
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [Route("search-result-count")]
+    public async Task<IActionResult> GetTotalSearchResultCount([FromQuery] string searchInput,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchItemQuery(searchInput);
+        var query = new TotalSearchResultCountQuery(searchInput);
 
-        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        return Ok(result);
+    }
 
-        if (readModels.Count == 0)
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [Route("search")]
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput, [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
+    {
+        if (pageSize > 100)
+            return BadRequest("Page size cannot be greater than 100");
+
+        var query = new SearchItemQuery(searchInput, page, pageSize);
+
+        var result = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+
+        if (result.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
+        var contract = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(result);
 
-        return Ok(contracts);
+        return Ok(contract);
     }
 
     [HttpGet]
