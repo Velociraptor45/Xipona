@@ -6,10 +6,9 @@ public class CommonFixture
 
     public T ChooseRandom<T>(IEnumerable<T> enumerable)
     {
-        if (!enumerable.Any())
-            throw new ArgumentException($"{nameof(enumerable)} must at least contain one element.");
-
         List<T> list = enumerable.ToList();
+        if (list.Count == 0)
+            throw new ArgumentException($"{nameof(enumerable)} must at least contain one element.");
 
         int index = NextInt(0, list.Count - 1);
         return list[index];
@@ -39,7 +38,7 @@ public class CommonFixture
 
         for (int i = 0; i < targetListCount; i++)
         {
-            lists.Add(new List<T>());
+            lists.Add([]);
         }
 
         while (list.Count != 0)

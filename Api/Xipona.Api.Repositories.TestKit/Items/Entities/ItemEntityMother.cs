@@ -48,6 +48,11 @@ public static class ItemEntityMother
             .WithItemTypes(types);
     }
 
+    public static ItemEntityBuilder InitialWithTypesForStore(Guid storeId)
+    {
+        return InitialWithTypesForStore(storeId, Guid.NewGuid());
+    }
+
     public static ItemEntityBuilder InitialWithTypesForStore(Guid storeId, Guid sectionId)
     {
         var types = Enumerable.Range(0, 3)
@@ -71,5 +76,11 @@ public static class ItemEntityMother
                 .CreateMany(1)
                 .ToList();
         }
+    }
+
+    public static ItemEntityBuilder Temporary(Guid storeId)
+    {
+        return InitialForStore(storeId)
+            .WithIsTemporary(true);
     }
 }
