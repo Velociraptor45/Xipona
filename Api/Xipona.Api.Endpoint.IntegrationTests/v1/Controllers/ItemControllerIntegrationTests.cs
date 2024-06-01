@@ -2015,7 +2015,6 @@ public class ItemControllerIntegrationTests
 
         private sealed class SearchItemsByItemCategoryAsyncFixture : ItemControllerFixture
         {
-            private readonly CommonFixture _commonFixture = new();
             private Item? _item;
             private Item? _itemWithoutManufacturer;
             private Item? _itemWithoutItemCategory;
@@ -2055,7 +2054,7 @@ public class ItemControllerIntegrationTests
                 };
                 _store = StoreEntityMother.Initial().WithSections(sections).Create();
 
-                var defaultSectionId = _commonFixture.ChooseRandom(_store.Sections).Id;
+                var defaultSectionId = CommonFixture.ChooseRandom(_store.Sections).Id;
 
                 _item =
                     ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)

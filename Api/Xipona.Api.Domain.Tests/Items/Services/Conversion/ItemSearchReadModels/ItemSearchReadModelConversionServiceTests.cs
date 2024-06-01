@@ -147,7 +147,6 @@ public class ItemSearchReadModelConversionServiceTests
 
     private class LocalFixture
     {
-        private readonly CommonFixture _commonFixture = new CommonFixture();
         private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock = new(MockBehavior.Strict);
         private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock = new(MockBehavior.Strict);
         private readonly Dictionary<ItemCategoryId, IItemCategory> _itemCategories = new();
@@ -214,7 +213,7 @@ public class ItemSearchReadModelConversionServiceTests
 
             return ItemAvailabilityMother.Initial()
                 .WithStoreId(Store.Id)
-                .WithDefaultSectionId(_commonFixture.ChooseRandom(Store.Sections).Id)
+                .WithDefaultSectionId(CommonFixture.ChooseRandom(Store.Sections).Id)
                 .Create();
         }
 

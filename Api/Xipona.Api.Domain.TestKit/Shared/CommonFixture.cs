@@ -1,10 +1,10 @@
 ﻿namespace ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
 
-public class CommonFixture
+public static class CommonFixture
 {
     private static readonly Random _random = new();
 
-    public T ChooseRandom<T>(IEnumerable<T> enumerable)
+    public static T ChooseRandom<T>(IEnumerable<T> enumerable)
     {
         List<T> list = enumerable.ToList();
         if (list.Count == 0)
@@ -14,12 +14,12 @@ public class CommonFixture
         return list[index];
     }
 
-    public int NextInt(int minValue, int maxValue)
+    public static int NextInt(int minValue, int maxValue)
     {
         return _random.Next(minValue, maxValue);
     }
 
-    public IEnumerable<T> RemoveRandom<T>(IEnumerable<T> enumerable, int count)
+    public static IEnumerable<T> RemoveRandom<T>(IEnumerable<T> enumerable, int count)
     {
         var list = enumerable.ToList();
         for (int i = 0; i < count; i++)
@@ -31,7 +31,7 @@ public class CommonFixture
         return list;
     }
 
-    public IEnumerable<IEnumerable<T>> SplitRandom<T>(IEnumerable<T> enumerable, int targetListCount)
+    public static IEnumerable<IEnumerable<T>> SplitRandom<T>(IEnumerable<T> enumerable, int targetListCount)
     {
         var list = enumerable.ToList();
         var lists = new List<List<T>>();

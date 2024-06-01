@@ -155,7 +155,6 @@ public class ShoppingListControllerIntegrationTests
         private sealed class RemoveItemFromShoppingListAsyncFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
-            private readonly CommonFixture _commonFixture = new();
             private ShoppingList? _shoppingList;
             private Item? _item;
             private ItemIdContract? _itemId;
@@ -207,7 +206,7 @@ public class ShoppingListControllerIntegrationTests
 
                 var itemOnList = new ItemsOnListEntityBuilder()
                     .WithItemId(_item.Id)
-                    .WithItemTypeId(_commonFixture.ChooseRandom(_item.ItemTypes).Id)
+                    .WithItemTypeId(CommonFixture.ChooseRandom(_item.ItemTypes).Id)
                     .Create();
                 _itemId = new(itemOnList.ItemId, null);
                 _itemTypeId = itemOnList.ItemTypeId;

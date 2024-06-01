@@ -78,7 +78,6 @@ public class ShoppingListTests
 
         private sealed class AddItemFixture : ShoppingListFixture
         {
-            private readonly CommonFixture _commonFixture = new();
             private List<ShoppingListSection>? _sections;
             public ShoppingListItem? Item { get; private set; }
             public SectionId? SectionId { get; private set; }
@@ -96,14 +95,14 @@ public class ShoppingListTests
 
             public void SetupItemAlreadyOnShoppingList(ShoppingList sut)
             {
-                Item = _commonFixture.ChooseRandom(sut.Items);
+                Item = CommonFixture.ChooseRandom(sut.Items);
             }
 
             public void SetupValidSectionId()
             {
                 TestPropertyNotSetException.ThrowIfNull(_sections);
 
-                SectionId = _commonFixture.ChooseRandom(_sections).Id;
+                SectionId = CommonFixture.ChooseRandom(_sections).Id;
             }
 
             public void SetupInvalidSectionId()
@@ -219,7 +218,6 @@ public class ShoppingListTests
 
     public class RemoveItem
     {
-        private readonly CommonFixture _commonFixture = new();
         private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
         [Fact]
@@ -256,8 +254,8 @@ public class ShoppingListTests
                 .WithSections(sectionMocks.Select(s => s.Object))
                 .Create();
 
-            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+            ShoppingListSectionMock chosenSectionMock = CommonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = CommonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
             foreach (var sectionMock in sectionMocks)
                 sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -282,7 +280,6 @@ public class ShoppingListTests
 
     public class PutItemInBasket
     {
-        private readonly CommonFixture _commonFixture = new();
         private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
         [Fact]
@@ -308,8 +305,8 @@ public class ShoppingListTests
                 .WithSections(sectionMocks.Select(s => s.Object))
                 .Create();
 
-            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+            ShoppingListSectionMock chosenSectionMock = CommonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = CommonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
             foreach (var sectionMock in sectionMocks)
                 sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -334,7 +331,6 @@ public class ShoppingListTests
 
     public class RemoveFromBasket
     {
-        private readonly CommonFixture _commonFixture = new();
         private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
         [Fact]
@@ -360,8 +356,8 @@ public class ShoppingListTests
                 .WithSections(sectionMocks.Select(s => s.Object))
                 .Create();
 
-            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+            ShoppingListSectionMock chosenSectionMock = CommonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = CommonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
             foreach (var sectionMock in sectionMocks)
                 sectionMock.SetupContainsItem(chosenItem.Id, chosenItem.TypeId,
@@ -386,7 +382,6 @@ public class ShoppingListTests
 
     public class ChangeItemQuantity
     {
-        private readonly CommonFixture _commonFixture = new();
         private readonly ShoppingListSectionMockFixture _shoppingListSectionMockFixture = new();
 
         [Fact]
@@ -413,8 +408,8 @@ public class ShoppingListTests
                 .WithSections(sectionMocks.Select(s => s.Object))
                 .Create();
 
-            ShoppingListSectionMock chosenSectionMock = _commonFixture.ChooseRandom(sectionMocks);
-            ShoppingListItem chosenItem = _commonFixture.ChooseRandom(chosenSectionMock.Object.Items);
+            ShoppingListSectionMock chosenSectionMock = CommonFixture.ChooseRandom(sectionMocks);
+            ShoppingListItem chosenItem = CommonFixture.ChooseRandom(chosenSectionMock.Object.Items);
 
             foreach (var sectionMock in sectionMocks)
             {
@@ -487,13 +482,11 @@ public class ShoppingListTests
 
     public class AddSection
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void AddSection_WithSectionAlreadyInShoppingList_ShouldThrowDomainException()
         {
             var shoppingList = ShoppingListMother.OneSectionWithOneItemInBasket().Create();
-            var section = _commonFixture.ChooseRandom(shoppingList.Sections);
+            var section = CommonFixture.ChooseRandom(shoppingList.Sections);
 
             // Act
             var action = () => shoppingList.AddSection(section);
