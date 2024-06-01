@@ -68,6 +68,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
         return options.Excluding(info => ItemsOnListShoppingListCycle().IsMatch(info.Path));
     }
 
+    [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]
+    private static partial Regex ItemsOnListId();
+
+    public static EquivalencyAssertionOptions<T> ExcludeItemsOnListId<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => ItemsOnListId().IsMatch(info.Path));
+    }
+
     [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]
     private static partial Regex PreparationStepsRecipeCycle();
 

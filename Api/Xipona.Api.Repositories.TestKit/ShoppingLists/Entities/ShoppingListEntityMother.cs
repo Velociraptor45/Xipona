@@ -5,7 +5,7 @@ public static class ShoppingListEntityMother
     public static ShoppingListEntityBuilder InitialWithOneItem(Guid itemId, Guid? itemTypeId, Guid sectionId)
     {
         var shoppingListId = Guid.NewGuid();
-        var items = GetItem(shoppingListId)
+        var items = ItemsOnListEntityMother.WithItemTypeId(shoppingListId)
             .WithItemId(itemId)
             .WithItemTypeId(itemTypeId)
             .WithSectionId(sectionId)
@@ -21,12 +21,12 @@ public static class ShoppingListEntityMother
     public static ShoppingListEntityBuilder InitialWithTwoItems(Guid itemId, Guid? itemTypeId, Guid sectionId)
     {
         var shoppingListId = Guid.NewGuid();
-        var item1 = GetItem(shoppingListId)
+        var item1 = ItemsOnListEntityMother.WithItemTypeId(shoppingListId)
             .WithItemId(itemId)
             .WithItemTypeId(itemTypeId)
             .WithSectionId(sectionId)
             .Create();
-        var item2 = GetItem(shoppingListId).Create();
+        var item2 = ItemsOnListEntityMother.WithItemTypeId(shoppingListId).Create();
 
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
@@ -44,7 +44,7 @@ public static class ShoppingListEntityMother
     public static ShoppingListEntityBuilder Active()
     {
         var shoppingListId = Guid.NewGuid();
-        var items = Enumerable.Range(0, 3).Select(_ => GetItem(shoppingListId).Create()).ToList();
+        var items = ItemsOnListEntityMother.WithItemTypeId(shoppingListId).CreateMany(3).ToList();
 
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
@@ -52,9 +52,14 @@ public static class ShoppingListEntityMother
             .WithItemsOnList(items);
     }
 
-    private static ItemsOnListEntityBuilder GetItem(Guid shoppingListId)
+    public static ShoppingListEntityBuilder ActiveWithItemsWithoutType()
     {
-        return new ItemsOnListEntityBuilder()
-            .WithShoppingListId(shoppingListId);
+        var shoppingListId = Guid.NewGuid();
+        var items = ItemsOnListEntityMother.WithoutItemTypeId(shoppingListId).CreateMany(3).ToList();
+
+        return new ShoppingListEntityBuilder()
+            .WithId(shoppingListId)
+            .WithoutCompletionDate()
+            .WithItemsOnList(items);
     }
 }

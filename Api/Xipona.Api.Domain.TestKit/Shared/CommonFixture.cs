@@ -6,11 +6,16 @@ public static class CommonFixture
 
     public static T ChooseRandom<T>(IEnumerable<T> enumerable)
     {
+        return ChooseRandom(enumerable, out var _);
+    }
+
+    public static T ChooseRandom<T>(IEnumerable<T> enumerable, out int index)
+    {
         List<T> list = enumerable.ToList();
         if (list.Count == 0)
             throw new ArgumentException($"{nameof(enumerable)} must at least contain one element.");
 
-        int index = NextInt(0, list.Count - 1);
+        index = NextInt(0, list.Count - 1);
         return list[index];
     }
 
