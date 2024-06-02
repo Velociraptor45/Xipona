@@ -81,6 +81,7 @@ public static class ItemEntityMother
     public static ItemEntityBuilder Temporary(Guid storeId)
     {
         return InitialForStore(storeId)
+            .WithCreatedFrom(Guid.NewGuid())
             .WithIsTemporary(true);
     }
 }

@@ -7,12 +7,16 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
+using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
@@ -251,112 +255,6 @@ public class ShoppingListControllerIntegrationTests
                 await itemContext.AddAsync(_item);
 
                 await shoppingListContext.SaveChangesAsync();
-                await itemContext.SaveChangesAsync();
-            }
-        }
-    }
-
-    public sealed class FinishListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
-    {
-        private readonly FinishListAsyncFixture _fixture = new(dockerFixture);
-
-        [Fact]
-        public async Task FinishListAsync_WithUndefinedFinishedAt_ShouldSetCorrectFinishedAtDate()
-        {
-            // Arrange
-            _fixture.SetupShoppingListId();
-            _fixture.SetupExistingShoppingList();
-            await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
-
-            // Act
-            var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, null);
-
-            // Assert
-            result.Should().BeOfType<NoContentResult>();
-            var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
-            allShoppingLists.Should().HaveCount(2);
-            allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
-
-            var finishedShoppingList = allShoppingLists.Single(sl => sl.Id == _fixture.ShoppingListId.Value);
-            finishedShoppingList.CompletionDate.Should().NotBeNull();
-            finishedShoppingList.CompletionDate.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(10));
-        }
-
-        [Fact]
-        public async Task FinishListAsync_WithDefinedFinishedAt_ShouldSetCorrectFinishedAtDate()
-        {
-            // Arrange
-            _fixture.SetupShoppingListId();
-            _fixture.SetupFinishedAt();
-            _fixture.SetupExistingShoppingList();
-            await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.FinishedAt);
-
-            // Act
-            var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, _fixture.FinishedAt);
-
-            // Assert
-            result.Should().BeOfType<NoContentResult>();
-            var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
-            allShoppingLists.Should().HaveCount(2);
-            allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
-
-            var finishedShoppingList = allShoppingLists.Single(sl => sl.Id == _fixture.ShoppingListId.Value);
-            finishedShoppingList.CompletionDate.Should().NotBeNull();
-            finishedShoppingList.CompletionDate.Should().BeCloseTo(_fixture.FinishedAt.Value, TimeSpan.FromMilliseconds(10));
-        }
-
-        private sealed class FinishListAsyncFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
-        {
-            private ShoppingList? _existingShoppingList;
-
-            public Guid? ShoppingListId { get; private set; }
-            public DateTimeOffset? FinishedAt { get; private set; }
-
-            public void SetupShoppingListId()
-            {
-                ShoppingListId = Guid.NewGuid();
-            }
-
-            public void SetupFinishedAt()
-            {
-                FinishedAt = new TestBuilder<DateTimeOffset>().Create();
-            }
-
-            public void SetupExistingShoppingList()
-            {
-                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
-
-                var items = new ItemsOnListEntityBuilder()
-                    .WithShoppingList(null!)
-                    .WithShoppingListId(ShoppingListId.Value)
-                    .CreateMany(3)
-                    .ToList();
-
-                _existingShoppingList = new ShoppingListEntityBuilder()
-                    .WithoutCompletionDate()
-                    .WithId(ShoppingListId.Value)
-                    .WithItemsOnList(items)
-                    .Create();
-            }
-
-            public async Task SetupDatabaseAsync()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_existingShoppingList);
-
-                await ApplyMigrationsAsync(ArrangeScope);
-
-                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ShoppingListContext>();
-
-                await itemContext.AddAsync(_existingShoppingList);
-
                 await itemContext.SaveChangesAsync();
             }
         }
@@ -910,6 +808,735 @@ public class ShoppingListControllerIntegrationTests
 
                 Contract = new AddItemWithTypeToShoppingListContract(_addedShoppingListItem.SectionId,
                     _addedShoppingListItem.Quantity);
+            }
+        }
+    }
+
+    public sealed class PutItemInBasketAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly PutItemInBasketAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task PutItemInBasketAsync_WithActualItemId_ShouldPutItemInBasket()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItem();
+            _fixture.SetupItemIdWithTypeId();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.PutItemInBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task PutItemInBasketAsync_WithOfflineItemId_ShouldPutItemInBasket()
+        {
+            // Arrange
+            _fixture.SetupExpectedResultForOfflineUse();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItemForOfflineUse();
+            _fixture.SetupItemIdForOfflineUse();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.PutItemInBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task PutItemInBasketAsync_WithItemNotOnShoppingList_ShouldReturnError()
+        {
+            // Arrange
+            _fixture.SetupExpectedResultForItemNotOnShoppingList();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItemNotOnShoppingList();
+            _fixture.SetupItemIdWithoutTypeId();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.PutItemInBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
+            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
+            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemNotOnShoppingList.ToInt());
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        private sealed class PutItemInBasketAsyncFixture(DockerFixture dockerFixture)
+            : ShoppingListControllerFixture(dockerFixture)
+        {
+            private ShoppingList? _shoppingList;
+            private Item? _item;
+            private ItemIdContract? _itemId;
+            private Guid? _itemTypeId;
+            public Guid? ShoppingListId { get; private set; }
+            public PutItemInBasketContract? Contract { get; private set; }
+            public ShoppingList? ExpectedResult { get; private set; }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().InBasket = true;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupExpectedResultForItemNotOnShoppingList()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().InBasket = false;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupExpectedResultForOfflineUse()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().ItemTypeId = null;
+                ExpectedResult.ItemsOnList.First().InBasket = true;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _shoppingList = ExpectedResult.DeepClone();
+                _shoppingList.ItemsOnList.First().InBasket = false;
+            }
+
+            public void SetupItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                var shoppingListItem = _shoppingList.ItemsOnList.First();
+                _item = ItemEntityMother.InitialWithTypesForStore(_shoppingList.StoreId)
+                    .WithId(shoppingListItem.ItemId)
+                    .Create();
+                _item.ItemTypes.First().Id = shoppingListItem.ItemTypeId!.Value;
+            }
+
+            public void SetupItemForOfflineUse()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                _item = ItemEntityMother.Temporary(_shoppingList.StoreId)
+                    .WithId(_shoppingList.ItemsOnList.First().ItemId)
+                    .Create();
+            }
+
+            public void SetupItemNotOnShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                _item = ItemEntityMother.InitialForStore(_shoppingList.StoreId).Create();
+            }
+
+            public void SetupItemIdWithTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(_item.Id, null);
+                _itemTypeId = _item.ItemTypes.First().Id;
+            }
+
+            public void SetupItemIdWithoutTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(_item.Id, null);
+                _itemTypeId = null;
+            }
+
+            public void SetupItemIdForOfflineUse()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(null, _item.CreatedFrom);
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var shoppingListContext = ArrangeScope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
+
+                await shoppingListContext.AddAsync(_shoppingList);
+                await itemContext.AddAsync(_item);
+
+                await shoppingListContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                Contract = new PutItemInBasketContract(_itemId, _itemTypeId);
+            }
+        }
+    }
+
+    public sealed class RemoveItemFromBasketAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly RemoveItemFromBasketAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task RemoveItemFromBasketAsync_WithActualItemId_ShouldRemoveItemFromBasket()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItem();
+            _fixture.SetupItemIdWithTypeId();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task RemoveItemFromBasketAsync_WithOfflineItemId_ShouldRemoveItemFromBasket()
+        {
+            // Arrange
+            _fixture.SetupExpectedResultForOfflineUse();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItemForOfflineUse();
+            _fixture.SetupItemIdForOfflineUse();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task RemoveItemFromBasketAsync_WithItemNotOnShoppingList_ShouldReturnError()
+        {
+            // Arrange
+            _fixture.SetupExpectedResultForItemNotOnShoppingList();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItemNotOnShoppingList();
+            _fixture.SetupItemIdWithoutTypeId();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
+            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
+            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemNotOnShoppingList.ToInt());
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        private sealed class RemoveItemFromBasketAsyncFixture(DockerFixture dockerFixture)
+            : ShoppingListControllerFixture(dockerFixture)
+        {
+            private ShoppingList? _shoppingList;
+            private Item? _item;
+            private ItemIdContract? _itemId;
+            private Guid? _itemTypeId;
+            public Guid? ShoppingListId { get; private set; }
+            public RemoveItemFromBasketContract? Contract { get; private set; }
+            public ShoppingList? ExpectedResult { get; private set; }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().InBasket = false;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupExpectedResultForItemNotOnShoppingList()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().InBasket = true;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupExpectedResultForOfflineUse()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().ItemTypeId = null;
+                ExpectedResult.ItemsOnList.First().InBasket = false;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _shoppingList = ExpectedResult.DeepClone();
+                _shoppingList.ItemsOnList.First().InBasket = true;
+            }
+
+            public void SetupItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                var shoppingListItem = _shoppingList.ItemsOnList.First();
+                _item = ItemEntityMother.InitialWithTypesForStore(_shoppingList.StoreId)
+                    .WithId(shoppingListItem.ItemId)
+                    .Create();
+                _item.ItemTypes.First().Id = shoppingListItem.ItemTypeId!.Value;
+            }
+
+            public void SetupItemForOfflineUse()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                _item = ItemEntityMother.Temporary(_shoppingList.StoreId)
+                    .WithId(_shoppingList.ItemsOnList.First().ItemId)
+                    .Create();
+            }
+
+            public void SetupItemNotOnShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                _item = ItemEntityMother.InitialForStore(_shoppingList.StoreId).Create();
+            }
+
+            public void SetupItemIdWithTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(_item.Id, null);
+                _itemTypeId = _item.ItemTypes.First().Id;
+            }
+
+            public void SetupItemIdWithoutTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(_item.Id, null);
+                _itemTypeId = null;
+            }
+
+            public void SetupItemIdForOfflineUse()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(null, _item.CreatedFrom);
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var shoppingListContext = ArrangeScope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
+
+                await shoppingListContext.AddAsync(_shoppingList);
+                await itemContext.AddAsync(_item);
+
+                await shoppingListContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                Contract = new RemoveItemFromBasketContract(_itemId, _itemTypeId);
+            }
+        }
+    }
+
+    public sealed class ChangeItemQuantityOnShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly ChangeItemQuantityOnShoppingListAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task ChangeItemQuantityOnShoppingListAsync_WithActualItemId_ShouldChangeItemQuantityOnShoppingList()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItem();
+            _fixture.SetupItemIdWithTypeId();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.ChangeItemQuantityOnShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task ChangeItemQuantityOnShoppingListAsync_WithOfflineItemId_ShouldChangeItemQuantityOnShoppingList()
+        {
+            // Arrange
+            _fixture.SetupExpectedResultForOfflineUse();
+            _fixture.SetupShoppingList();
+            _fixture.SetupItemForOfflineUse();
+            _fixture.SetupItemIdForOfflineUse();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.ChangeItemQuantityOnShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task ChangeItemQuantityOnShoppingListAsync_WithItemNotOnShoppingList_ShouldReturnError()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupShoppingListForItemNotOnShoppingList();
+            _fixture.SetupItemNotOnShoppingList();
+            _fixture.SetupItemIdWithoutTypeId();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.ChangeItemQuantityOnShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
+            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
+            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemNotOnShoppingList.ToInt());
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+        }
+
+        private sealed class ChangeItemQuantityOnShoppingListAsyncFixture(DockerFixture dockerFixture)
+            : ShoppingListControllerFixture(dockerFixture)
+        {
+            private ShoppingList? _shoppingList;
+            private Item? _item;
+            private ItemIdContract? _itemId;
+            private Guid? _itemTypeId;
+            public Guid? ShoppingListId { get; private set; }
+            public ChangeItemQuantityOnShoppingListContract? Contract { get; private set; }
+            public ShoppingList? ExpectedResult { get; private set; }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupExpectedResultForOfflineUse()
+            {
+                ExpectedResult = ShoppingListEntityMother.InitialWithOneItem().Create();
+                ExpectedResult.ItemsOnList.First().ItemTypeId = null;
+                ShoppingListId = ExpectedResult.Id;
+            }
+
+            public void SetupShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _shoppingList = ExpectedResult.DeepClone();
+                _shoppingList.ItemsOnList.First().Quantity = new DomainTestBuilder<float>().Create();
+            }
+
+            public void SetupShoppingListForItemNotOnShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _shoppingList = ExpectedResult.DeepClone();
+            }
+
+            public void SetupItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                var shoppingListItem = _shoppingList.ItemsOnList.First();
+                _item = ItemEntityMother.InitialWithTypesForStore(_shoppingList.StoreId)
+                    .WithId(shoppingListItem.ItemId)
+                    .Create();
+                _item.ItemTypes.First().Id = shoppingListItem.ItemTypeId!.Value;
+            }
+
+            public void SetupItemForOfflineUse()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                _item = ItemEntityMother.Temporary(_shoppingList.StoreId)
+                    .WithId(_shoppingList.ItemsOnList.First().ItemId)
+                    .Create();
+            }
+
+            public void SetupItemNotOnShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                _item = ItemEntityMother.InitialForStore(_shoppingList.StoreId).Create();
+            }
+
+            public void SetupItemIdWithTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(_item.Id, null);
+                _itemTypeId = _item.ItemTypes.First().Id;
+            }
+
+            public void SetupItemIdWithoutTypeId()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(_item.Id, null);
+                _itemTypeId = null;
+            }
+
+            public void SetupItemIdForOfflineUse()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemId = new ItemIdContract(null, _item.CreatedFrom);
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var shoppingListContext = ArrangeScope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
+
+                await shoppingListContext.AddAsync(_shoppingList);
+                await itemContext.AddAsync(_item);
+
+                await shoppingListContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                Contract = new ChangeItemQuantityOnShoppingListContract(_itemId, _itemTypeId,
+                    ExpectedResult.ItemsOnList.First().Quantity);
+            }
+        }
+    }
+
+    public sealed class FinishListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly FinishListAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task FinishListAsync_WithUndefinedFinishedAt_ShouldSetCorrectFinishedAtDate()
+        {
+            // Arrange
+            _fixture.SetupShoppingListId();
+            _fixture.SetupExistingShoppingList();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+
+            // Act
+            var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, null);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+            var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
+            allShoppingLists.Should().HaveCount(2);
+            allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
+
+            var finishedShoppingList = allShoppingLists.Single(sl => sl.Id == _fixture.ShoppingListId.Value);
+            finishedShoppingList.CompletionDate.Should().NotBeNull();
+            finishedShoppingList.CompletionDate.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(10));
+        }
+
+        [Fact]
+        public async Task FinishListAsync_WithDefinedFinishedAt_ShouldSetCorrectFinishedAtDate()
+        {
+            // Arrange
+            _fixture.SetupShoppingListId();
+            _fixture.SetupFinishedAt();
+            _fixture.SetupExistingShoppingList();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.FinishedAt);
+
+            // Act
+            var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, _fixture.FinishedAt);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+            var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
+            allShoppingLists.Should().HaveCount(2);
+            allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
+
+            var finishedShoppingList = allShoppingLists.Single(sl => sl.Id == _fixture.ShoppingListId.Value);
+            finishedShoppingList.CompletionDate.Should().NotBeNull();
+            finishedShoppingList.CompletionDate.Should().BeCloseTo(_fixture.FinishedAt.Value, TimeSpan.FromMilliseconds(10));
+        }
+
+        private sealed class FinishListAsyncFixture(DockerFixture dockerFixture)
+            : ShoppingListControllerFixture(dockerFixture)
+        {
+            private ShoppingList? _existingShoppingList;
+
+            public Guid? ShoppingListId { get; private set; }
+            public DateTimeOffset? FinishedAt { get; private set; }
+
+            public void SetupShoppingListId()
+            {
+                ShoppingListId = Guid.NewGuid();
+            }
+
+            public void SetupFinishedAt()
+            {
+                FinishedAt = new TestBuilder<DateTimeOffset>().Create();
+            }
+
+            public void SetupExistingShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+
+                var items = new ItemsOnListEntityBuilder()
+                    .WithShoppingList(null!)
+                    .WithShoppingListId(ShoppingListId.Value)
+                    .CreateMany(3)
+                    .ToList();
+
+                _existingShoppingList = new ShoppingListEntityBuilder()
+                    .WithoutCompletionDate()
+                    .WithId(ShoppingListId.Value)
+                    .WithItemsOnList(items)
+                    .Create();
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingShoppingList);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+
+                await itemContext.AddAsync(_existingShoppingList);
+
+                await itemContext.SaveChangesAsync();
             }
         }
     }

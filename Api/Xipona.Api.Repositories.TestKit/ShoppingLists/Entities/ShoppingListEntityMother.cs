@@ -2,6 +2,11 @@
 
 public static class ShoppingListEntityMother
 {
+    public static ShoppingListEntityBuilder InitialWithOneItem()
+    {
+        return InitialWithOneItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+    }
+
     public static ShoppingListEntityBuilder InitialWithOneItem(Guid itemId, Guid? itemTypeId, Guid sectionId)
     {
         var shoppingListId = Guid.NewGuid();
