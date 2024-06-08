@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
     <ProjectReference Include="..\Xipona.Api.Core.TestKit\Xipona.Api.Core.TestKit.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Domain.TestKit\Xipona.Api.Domain.TestKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -24,13 +24,16 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"AvailableAt\[\d+\].Item")]
     private static partial Regex AvailableAtItemCycle();
 
-    [GeneratedRegex(@"RowVersion$")]
+    [GeneratedRegex("RowVersion$")]
     private static partial Regex RowVersion();
 
-    public static EquivalencyAssertionOptions<T> WithCreatedAtPrecision<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyAssertionOptions<T> WithCreatedAtPrecision<T>(this EquivalencyAssertionOptions<T> options,
+        TimeSpan? precision = null)
     {
+        precision ??= 1.Milliseconds();
+
         return options
-            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, precision.Value))
             .When(info => info.Path.EndsWith("CreatedAt"));
     }
 
