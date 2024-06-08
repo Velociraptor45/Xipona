@@ -4,6 +4,12 @@ namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class StoreEntityMother
 {
+    public static StoreEntityBuilder Active()
+    {
+        return new StoreEntityBuilder()
+            .WithDeleted(false);
+    }
+
     public static StoreEntityBuilder Initial()
     {
         var sections = new List<Section>()

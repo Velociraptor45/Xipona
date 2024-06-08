@@ -8,4 +8,11 @@ public static class SectionEntityMother
             .WithIsDefaultSection(true)
             .WithIsDeleted(false);
     }
+
+    public static SectionEntityBuilder NotDefault()
+    {
+        return new SectionEntityBuilder()
+            .WithIsDefaultSection(false)
+            .WithIsDeleted(false);
+    }
 }
