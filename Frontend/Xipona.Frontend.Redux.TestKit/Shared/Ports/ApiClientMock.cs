@@ -468,15 +468,15 @@ public class ApiClientMock : Mock<IApiClient>
         this.SetupInOrder(m => m.GetItemCategorySearchResultsAsync(searchInput)).ThrowsAsync(ex);
     }
 
-    public void SetupGetItemCategoryByIdAsync(Guid manufacturerId, EditedItemCategory returnValue)
+    public void SetupGetItemCategoryByIdAsync(Guid itemCategoryId, EditedItemCategory returnValue)
     {
-        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(manufacturerId))
+        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(itemCategoryId))
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupGetItemCategoryByIdAsyncThrowing(Guid manufacturerId, Exception ex)
+    public void SetupGetItemCategoryByIdAsyncThrowing(Guid itemCategoryId, Exception ex)
     {
-        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(manufacturerId)).ThrowsAsync(ex);
+        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(itemCategoryId)).ThrowsAsync(ex);
     }
 
     public void SetupCreateItemCategoryAsync(string name, EditedItemCategory returnValue)
@@ -545,5 +545,16 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetTotalSearchResultCountAsyncThrowing(string searchInput, Exception ex)
     {
         this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput)).ThrowsAsync(ex);
+    }
+
+    public void SetupSearchItemByItemCategoryAsync(Guid itemCategoryId, IEnumerable<SearchItemByItemCategoryResult> returnValue)
+    {
+        this.SetupInOrder(m => m.SearchItemByItemCategoryAsync(itemCategoryId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupSearchItemByItemCategoryAsyncThrowing(Guid itemCategoryId, Exception ex)
+    {
+        this.SetupInOrder(m => m.SearchItemByItemCategoryAsync(itemCategoryId)).ThrowsAsync(ex);
     }
 }

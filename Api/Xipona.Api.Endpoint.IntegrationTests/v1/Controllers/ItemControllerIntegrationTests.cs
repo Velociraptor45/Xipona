@@ -1,18 +1,24 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Execution;
+using FluentAssertions.Extensions;
 using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
+using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
+using ProjectHermes.Xipona.Api.Contracts.TestKit.Common.Queries;
+using ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 using ProjectHermes.Xipona.Api.Core.Attributes;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
@@ -46,6 +52,7 @@ using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
 using ItemAvailabilityContract = ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
 using ItemCategory = ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities.ItemCategory;
 using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
+using ItemTypeAvailableAt = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemTypeAvailableAt;
 using Section = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section;
 using Store = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store;
 
@@ -354,14 +361,9 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class SearchItemsForShoppingListAsync : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsForShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly SearchItemsForShoppingListAsyncFixture _fixture;
-
-        public SearchItemsForShoppingListAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new SearchItemsForShoppingListAsyncFixture(dockerFixture);
-        }
+        private readonly SearchItemsForShoppingListAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task SearchItemsForShoppingListAsync_WithDeletedItemMatchingCategory_ShouldReturnEmptyList()
@@ -575,16 +577,13 @@ public class ItemControllerIntegrationTests
             contract.Should().OnlyContain(c => c.TypeId == null);
         }
 
-        private sealed class SearchItemsForShoppingListAsyncFixture : ItemControllerFixture
+        private sealed class SearchItemsForShoppingListAsyncFixture(DockerFixture dockerFixture)
+            : ItemControllerFixture(dockerFixture)
         {
             private readonly List<Item> _items = new();
             private readonly List<ItemCategory> _itemCategories = new();
             private Store? _store;
             private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
-
-            public SearchItemsForShoppingListAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
 
             public string SearchInput { get; } = new DomainTestBuilder<string>().Create();
             public Guid StoreId { get; } = Guid.NewGuid();
@@ -889,14 +888,594 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class ModifyItemAsync : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsByItemCategoryAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly ModifyItemAsyncFixture _fixture;
+        private readonly SearchItemsByItemCategoryAsyncFixture _fixture = new(dockerFixture);
 
-        public ModifyItemAsync(DockerFixture dockerFixture)
+        [Fact]
+        public async Task SearchItemsByItemCategoryAsync_WithoutTypes_WithMatchingItemCategoryAndManufacturer_WithMatchingItemCategoryAndNoManufacturer_WithNotMatchingItemCategory_ShouldReturnExpectedResult()
         {
-            _fixture = new ModifyItemAsyncFixture(dockerFixture);
+            // Arrange
+            _fixture.SetupItemCategory();
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemsWithAndWithoutItemCategory();
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupExpectedResult();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategoryId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.SearchItemsByItemCategoryAsync(_fixture.ItemCategoryId.Value);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var resultValue = (result as OkObjectResult)!.Value;
+            resultValue.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
+
+        private sealed class SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture)
+            : ItemControllerFixture(dockerFixture)
+        {
+            private Item? _item;
+            private Item? _itemWithoutManufacturer;
+            private Item? _itemWithoutItemCategory;
+            private ItemCategory? _itemCategory;
+            private Store? _store;
+            private Manufacturer? _manufacturer;
+
+            public Guid? ItemCategoryId => _itemCategory?.Id;
+            public IReadOnlyCollection<SearchItemByItemCategoryResultContract>? ExpectedResult { get; private set; }
+
+            public void SetupItemCategory()
+            {
+                _itemCategory = new ItemCategoryEntityBuilder()
+                    .WithDeleted(false)
+                    .Create();
+            }
+
+            public void SetupManufacturer()
+            {
+                _manufacturer = new ManufacturerEntityBuilder()
+                    .Create();
+            }
+
+            public void SetupItemsWithAndWithoutItemCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+
+                var sections = new List<Section>()
+                {
+                    new SectionEntityBuilder().WithIsDefaultSection(true).WithSortIndex(0).Create(),
+                    new SectionEntityBuilder().WithIsDefaultSection(false).WithSortIndex(1).Create()
+                };
+                _store = StoreEntityMother.Initial().WithSections(sections).Create();
+
+                var defaultSectionId = CommonFixture.ChooseRandom(_store.Sections).Id;
+
+                _item =
+                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
+                        .WithManufacturerId(_manufacturer.Id)
+                        .WithAvailableAt(AvailableAtEntityMother
+                            .InitialForStore(_store.Id)
+                            .WithDefaultSectionId(defaultSectionId)
+                            .CreateMany(1)
+                            .ToList())
+                        .Create();
+                _itemWithoutManufacturer =
+                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
+                        .WithoutManufacturerId()
+                        .WithAvailableAt(AvailableAtEntityMother
+                            .InitialForStore(_store.Id)
+                            .WithDefaultSectionId(defaultSectionId)
+                            .CreateMany(1)
+                            .ToList())
+                        .Create();
+                _itemWithoutItemCategory = ItemEntityMother.Initial().Create();
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithoutItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
+                var itemCategoryContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+                var manufacturerContext = ArrangeScope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+                var storeContext = ArrangeScope.ServiceProvider.GetRequiredService<StoreContext>();
+
+                await itemCategoryContext.AddAsync(_itemCategory);
+                await storeContext.AddAsync(_store);
+                await itemContext.AddAsync(_item);
+                await itemContext.AddAsync(_itemWithoutManufacturer);
+                await itemContext.AddAsync(_itemWithoutItemCategory);
+                await manufacturerContext.AddAsync(_manufacturer);
+
+                await itemCategoryContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+                await manufacturerContext.SaveChangesAsync();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+
+                ExpectedResult = new List<SearchItemByItemCategoryResultContract>(2)
+                {
+                    new(
+                        _item.Id,
+                        null,
+                        _item.Name,
+                        _manufacturer.Name,
+                        _item.AvailableAt.Select(av =>
+                            new SearchItemByItemCategoryAvailabilityContract(
+                                _store.Id,
+                                _store.Name,
+                                av.Price))),
+                    new(
+                        _itemWithoutManufacturer.Id,
+                        null,
+                        _itemWithoutManufacturer.Name,
+                        null,
+                        _itemWithoutManufacturer.AvailableAt.Select(av =>
+                            new SearchItemByItemCategoryAvailabilityContract(
+                                _store.Id,
+                                _store.Name,
+                                av.Price)))
+                };
+            }
+        }
+    }
+
+    public sealed class CreateItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly CreateItemAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task CreateItemAsync_WithValidData_ShouldCreateItem()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupExpectedDbResult();
+            _fixture.SetupContract();
+            _fixture.SetupStores();
+            _fixture.SetupItemCategory();
+            _fixture.SetupManufacturer();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedDbResult);
+
+            // Act
+            var result = await sut.CreateItemAsync(_fixture.Contract);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<CreatedAtActionResult>();
+            var createdResult = (CreatedAtActionResult)result;
+            createdResult.Value.Should().BeOfType<ItemContract>();
+            var itemContract = (ItemContract)createdResult.Value!;
+
+            itemContract.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt
+                .Excluding(info => info.Path == "Id"));
+
+            using var assertionScope = _fixture.CreateServiceScope();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
+            items.Should().HaveCount(1);
+            var item = items.Single();
+            item.Should().BeEquivalentTo(_fixture.ExpectedDbResult, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision(1.Minutes())
+                .Excluding(info => info.Path == "Id"));
+            item.Id.Should().Be(itemContract.Id);
+        }
+
+        private sealed class CreateItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        {
+            private IReadOnlyCollection<Store>? _stores;
+            private ItemCategory? _itemCategory;
+            private Manufacturer? _manufacturer;
+            public CreateItemContract? Contract { get; private set; }
+            public ItemContract? ExpectedResult { get; private set; }
+            public Item? ExpectedDbResult { get; private set; }
+
+            public void SetupExpectedResult()
+            {
+                var manufacturer = new ManufacturerContractBuilder()
+                    .WithIsDeleted(false)
+                    .Create();
+
+                var itemCategory = new ItemCategoryContractBuilder()
+                    .WithIsDeleted(false)
+                    .Create();
+
+                Contracts.Items.Queries.Get.ItemAvailabilityContract[] availabilities =
+                [
+                    ItemAvailabilityContractMother.Valid().Create(),
+                    ItemAvailabilityContractMother.Valid().Create()
+                ];
+
+                ExpectedResult = ItemContractMother.Valid()
+                    .WithIsDeleted(false)
+                    .WithIsTemporary(false)
+                    .WithManufacturer(manufacturer)
+                    .WithItemCategory(itemCategory)
+                    .WithAvailabilities(availabilities)
+                    .WithEmptyItemTypes()
+                    .Create();
+            }
+
+            public void SetupExpectedDbResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                ExpectedDbResult = new Item()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = ExpectedResult.Name,
+                    Deleted = false,
+                    Comment = ExpectedResult.Comment,
+                    IsTemporary = false,
+                    QuantityType = ExpectedResult.QuantityType.Id,
+                    QuantityInPacket = ExpectedResult.QuantityInPacket,
+                    QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
+                    ItemCategoryId = ExpectedResult.ItemCategory.Id,
+                    ManufacturerId = ExpectedResult.Manufacturer.Id,
+                    CreatedFrom = null,
+                    UpdatedOn = null,
+                    PredecessorId = null,
+                    CreatedAt = DateTime.UtcNow,
+                    Predecessor = null,
+                    ItemTypes = [],
+                    AvailableAt = ExpectedResult.Availabilities
+                        .Select(av => new AvailableAt()
+                        {
+                            ItemId = Guid.NewGuid(),
+                            StoreId = av.Store.Id,
+                            DefaultSectionId = av.DefaultSection.Id,
+                            Price = av.Price
+                        })
+                        .ToList()
+                };
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                Contract = new CreateItemContract
+                {
+                    Name = ExpectedResult.Name,
+                    Comment = ExpectedResult.Comment,
+                    QuantityType = ExpectedResult.QuantityType.Id,
+                    QuantityInPacket = ExpectedResult.QuantityInPacket,
+                    QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
+                    ItemCategoryId = ExpectedResult.ItemCategory.Id,
+                    ManufacturerId = ExpectedResult.Manufacturer.Id,
+                    Availabilities = ExpectedResult.Availabilities
+                        .Select(av => new ItemAvailabilityContract
+                        {
+                            DefaultSectionId = av.DefaultSection.Id,
+                            StoreId = av.Store.Id,
+                            Price = av.Price
+                        })
+                        .ToList()
+                };
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var storeContext = ArrangeScope.ServiceProvider.GetRequiredService<StoreContext>();
+                var itemCategoryContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+                var manufacturerContext = ArrangeScope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+
+                await storeContext.AddRangeAsync(_stores);
+                await itemCategoryContext.AddAsync(_itemCategory);
+                await manufacturerContext.AddAsync(_manufacturer);
+
+                await storeContext.SaveChangesAsync();
+                await itemCategoryContext.SaveChangesAsync();
+                await manufacturerContext.SaveChangesAsync();
+            }
+
+            public void SetupStores()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _stores = ExpectedResult.Availabilities
+                    .Select(av =>
+                    {
+                        var sections = new Section[av.Store.Sections.Count];
+                        for (int i = 0; i < av.Store.Sections.Count; i++)
+                        {
+                            var section = av.Store.Sections.ElementAt(i);
+                            var builder = i == 0 ? SectionEntityMother.Default() : SectionEntityMother.NotDefault();
+
+                            sections[i] = builder.WithName(section.Name).WithSortIndex(section.SortingIndex)
+                                .WithId(section.Id).Create();
+                        }
+
+                        return StoreEntityMother.Active().WithId(av.Store.Id).WithName(av.Store.Name).WithSections(sections)
+                            .Create();
+                    })
+                    .ToList();
+            }
+
+            public void SetupItemCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _itemCategory = ItemCategoryEntityMother.Active()
+                    .WithId(ExpectedResult.ItemCategory.Id)
+                    .WithName(ExpectedResult.ItemCategory.Name)
+                    .Create();
+            }
+
+            public void SetupManufacturer()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _manufacturer = ManufacturerEntityMother.Active()
+                    .WithId(ExpectedResult.Manufacturer.Id)
+                    .WithName(ExpectedResult.Manufacturer.Name)
+                    .Create();
+            }
+        }
+    }
+
+    public sealed class CreateItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly CreateItemWithTypesAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task CreateItemWithTypesAsync_WithValidData_ShouldCreateItemWithTypes()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupExpectedDbResult();
+            _fixture.SetupContract();
+            _fixture.SetupStores();
+            _fixture.SetupItemCategory();
+            _fixture.SetupManufacturer();
+            await _fixture.PrepareDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedDbResult);
+
+            // Act
+            var result = await sut.CreateItemWithTypesAsync(_fixture.Contract);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<CreatedAtActionResult>();
+            var createdResult = (CreatedAtActionResult)result;
+            createdResult.Value.Should().BeOfType<ItemContract>();
+            var itemContract = (ItemContract)createdResult.Value!;
+
+            itemContract.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt
+                .ExcludeItemTypeId()
+                .Excluding(info => info.Path == "Id"));
+
+            using var assertionScope = _fixture.CreateServiceScope();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
+            items.Should().HaveCount(1);
+            var item = items.Single();
+            item.Should().BeEquivalentTo(_fixture.ExpectedDbResult, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision(1.Minutes())
+                .ExcludeItemTypeId()
+                .Excluding(info => info.Path == "Id"));
+            item.Id.Should().Be(itemContract.Id);
+        }
+
+        private sealed class CreateItemWithTypesAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        {
+            private IReadOnlyCollection<Store>? _stores;
+            private ItemCategory? _itemCategory;
+            private Manufacturer? _manufacturer;
+            public CreateItemWithTypesContract? Contract { get; private set; }
+            public ItemContract? ExpectedResult { get; private set; }
+            public Item? ExpectedDbResult { get; private set; }
+
+            public void SetupExpectedResult()
+            {
+                var manufacturer = new ManufacturerContractBuilder()
+                    .WithIsDeleted(false)
+                    .Create();
+
+                var itemCategory = new ItemCategoryContractBuilder()
+                    .WithIsDeleted(false)
+                    .Create();
+
+                ItemTypeContract[] itemTypes =
+                [
+                    ItemTypeContractMother.Valid().Create(),
+                    ItemTypeContractMother.Valid().Create()
+                ];
+
+                ExpectedResult = ItemContractMother.Valid()
+                    .WithIsDeleted(false)
+                    .WithIsTemporary(false)
+                    .WithManufacturer(manufacturer)
+                    .WithItemCategory(itemCategory)
+                    .WithEmptyAvailabilities()
+                    .WithItemTypes(itemTypes)
+                    .Create();
+            }
+
+            public void SetupExpectedDbResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                ExpectedDbResult = new Item
+                {
+                    Id = Guid.NewGuid(),
+                    Name = ExpectedResult.Name,
+                    Deleted = false,
+                    Comment = ExpectedResult.Comment,
+                    IsTemporary = false,
+                    QuantityType = ExpectedResult.QuantityType.Id,
+                    QuantityInPacket = ExpectedResult.QuantityInPacket,
+                    QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
+                    ItemCategoryId = ExpectedResult.ItemCategory.Id,
+                    ManufacturerId = ExpectedResult.Manufacturer.Id,
+                    CreatedFrom = null,
+                    UpdatedOn = null,
+                    PredecessorId = null,
+                    CreatedAt = DateTime.UtcNow,
+                    Predecessor = null,
+                    ItemTypes = ExpectedResult.ItemTypes
+                        .Select(t => new ItemType
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = t.Name,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            ItemId = ExpectedResult.Id,
+                            PredecessorId = null,
+                            Predecessor = null,
+                            AvailableAt = t.Availabilities
+                                .Select(av => new ItemTypeAvailableAt
+                                {
+                                    ItemTypeId = Guid.NewGuid(),
+                                    StoreId = av.Store.Id,
+                                    DefaultSectionId = av.DefaultSection.Id,
+                                    Price = av.Price
+                                })
+                                .ToList()
+                        })
+                        .ToList(),
+                    AvailableAt = []
+                };
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                Contract = new CreateItemWithTypesContract
+                {
+                    Name = ExpectedResult.Name,
+                    Comment = ExpectedResult.Comment,
+                    QuantityType = ExpectedResult.QuantityType.Id,
+                    QuantityInPacket = ExpectedResult.QuantityInPacket,
+                    QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
+                    ItemCategoryId = ExpectedResult.ItemCategory.Id,
+                    ManufacturerId = ExpectedResult.Manufacturer.Id,
+                    ItemTypes = ExpectedResult.ItemTypes
+                        .Select(t => new CreateItemTypeContract
+                        {
+                            Name = t.Name,
+                            Availabilities = t.Availabilities
+                                .Select(av => new ItemAvailabilityContract
+                                {
+                                    DefaultSectionId = av.DefaultSection.Id,
+                                    Price = av.Price,
+                                    StoreId = av.Store.Id
+                                })
+                        })
+                        .ToList(),
+                    //Availabilities = ExpectedResult.Availabilities
+                    //    .Select(av => new ItemWithTypesAvailabilityContract
+                    //    {
+                    //        DefaultSectionId = av.DefaultSection.Id,
+                    //        StoreId = av.Store.Id,
+                    //        Price = av.Price
+                    //    })
+                    //    .ToList()
+                };
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_stores);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var storeContext = ArrangeScope.ServiceProvider.GetRequiredService<StoreContext>();
+                var itemCategoryContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+                var manufacturerContext = ArrangeScope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+
+                await storeContext.AddRangeAsync(_stores);
+                await itemCategoryContext.AddAsync(_itemCategory);
+                await manufacturerContext.AddAsync(_manufacturer);
+
+                await storeContext.SaveChangesAsync();
+                await itemCategoryContext.SaveChangesAsync();
+                await manufacturerContext.SaveChangesAsync();
+            }
+
+            public void SetupStores()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _stores = ExpectedResult.ItemTypes.SelectMany(t => t.Availabilities)
+                    .Select(av =>
+                    {
+                        var sections = new Section[av.Store.Sections.Count];
+                        for (int i = 0; i < av.Store.Sections.Count; i++)
+                        {
+                            var section = av.Store.Sections.ElementAt(i);
+                            var builder = i == 0 ? SectionEntityMother.Default() : SectionEntityMother.NotDefault();
+
+                            sections[i] = builder.WithName(section.Name).WithSortIndex(section.SortingIndex)
+                                .WithId(section.Id).Create();
+                        }
+
+                        return StoreEntityMother.Active().WithId(av.Store.Id).WithName(av.Store.Name).WithSections(sections)
+                            .Create();
+                    })
+                    .ToList();
+            }
+
+            public void SetupItemCategory()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _itemCategory = ItemCategoryEntityMother.Active()
+                    .WithId(ExpectedResult.ItemCategory.Id)
+                    .WithName(ExpectedResult.ItemCategory.Name)
+                    .Create();
+            }
+
+            public void SetupManufacturer()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                _manufacturer = ManufacturerEntityMother.Active()
+                    .WithId(ExpectedResult.Manufacturer.Id)
+                    .WithName(ExpectedResult.Manufacturer.Name)
+                    .Create();
+            }
+        }
+    }
+
+    public sealed class ModifyItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly ModifyItemAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task ModifyItemAsync_WithValidData_ShouldModifyItemAndChangeRecipe()
@@ -938,15 +1517,11 @@ public class ItemControllerIntegrationTests
                 opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion().WithCreatedAtPrecision());
         }
 
-        private sealed class ModifyItemAsyncFixture : ItemControllerFixture
+        private sealed class ModifyItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
         {
             private AvailableAt? _existingAvailability;
             private AvailableAt? _expectedAvailability;
             private Recipe? _existingRecipe;
-
-            public ModifyItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
 
             public Item? ExistingItem { get; private set; }
             public Item? ExpectedItem { get; private set; }
@@ -1042,14 +1617,9 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class ModifyItemWithTypesAsync : IAssemblyFixture<DockerFixture>
+    public sealed class ModifyItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly ModifyItemWithTypesAsyncFixture _fixture;
-
-        public ModifyItemWithTypesAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new ModifyItemWithTypesAsyncFixture(dockerFixture);
-        }
+        private readonly ModifyItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task ModifyItemWithTypesAsync_WithRemovingType_ShouldMarkTypeAsDeleted()
@@ -1092,15 +1662,12 @@ public class ItemControllerIntegrationTests
                 opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion().WithCreatedAtPrecision());
         }
 
-        private sealed class ModifyItemWithTypesAsyncFixture : ItemControllerFixture
+        private sealed class ModifyItemWithTypesAsyncFixture(DockerFixture dockerFixture)
+            : ItemControllerFixture(dockerFixture)
         {
             private ItemTypeAvailableAt? _existingAvailability;
             private ItemTypeAvailableAt? _expectedAvailability;
             private Recipe? _existingRecipe;
-
-            public ModifyItemWithTypesAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
 
             public Item? ExistingItem { get; private set; }
             public Item? ExpectedItem { get; private set; }
@@ -1227,14 +1794,9 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class UpdateItemWithTypesAsync : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly UpdateItemWithTypesAsyncFixture _fixture;
-
-        public UpdateItemWithTypesAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new UpdateItemWithTypesAsyncFixture(dockerFixture);
-        }
+        private readonly UpdateItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task UpdateItemWithTypesAsync_WithReferencedOnRecipe_ShouldUpdateRecipe()
@@ -1543,14 +2105,9 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class UpdateItemAsync : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly UpdateItemAsyncFixture _fixture;
-
-        public UpdateItemAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new UpdateItemAsyncFixture(dockerFixture);
-        }
+        private readonly UpdateItemAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task UpdateItemAsync_WithExistingItem_WithAvailableStoreChanged_ShouldUpdateItemAndRecipe()
@@ -1600,16 +2157,12 @@ public class ItemControllerIntegrationTests
             recipes[0].Ingredients.First().DefaultItemId.Should().NotBe(_fixture.ExpectedOldItem.Id);
         }
 
-        private sealed class UpdateItemAsyncFixture : ItemControllerFixture
+        private sealed class UpdateItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
         {
             private AvailableAt? _expectedAvailability;
             private AvailableAt? _existingAvailability;
             private Item? _existingItem;
             private Recipe? _existingRecipe;
-
-            public UpdateItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
 
             public Guid ItemId { get; } = Guid.NewGuid();
             public Item? ExpectedOldItem { get; private set; }
@@ -1710,14 +2263,9 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class UpdateItemPriceAsync : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemPriceAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly UpdateItemPriceAsyncFixture _fixture;
-
-        public UpdateItemPriceAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new UpdateItemPriceAsyncFixture(dockerFixture);
-        }
+        private readonly UpdateItemPriceAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task UpdateItemPriceAsync_WithoutTypes_ShouldUpdateItem()
@@ -1810,13 +2358,10 @@ public class ItemControllerIntegrationTests
                                        || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
         }
 
-        private sealed class UpdateItemPriceAsyncFixture : ItemControllerFixture
+        private sealed class UpdateItemPriceAsyncFixture(DockerFixture dockerFixture)
+            : ItemControllerFixture(dockerFixture)
         {
             private Item? _existingItem;
-
-            public UpdateItemPriceAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
 
             public ItemId? ItemId { get; private set; }
             public UpdateItemPriceContract? Contract { get; private set; }
@@ -1980,175 +2525,9 @@ public class ItemControllerIntegrationTests
         }
     }
 
-    public sealed class SearchItemsByItemCategoryAsync : IAssemblyFixture<DockerFixture>
+    public sealed class DeleteItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly SearchItemsByItemCategoryAsyncFixture _fixture;
-
-        public SearchItemsByItemCategoryAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new SearchItemsByItemCategoryAsyncFixture(dockerFixture);
-        }
-
-        [Fact]
-        public async Task SearchItemsByItemCategoryAsync_WithoutTypes_WithMatchingItemCategoryAndManufacturer_WithMatchingItemCategoryAndNoManufacturer_WithNotMatchingItemCategory_ShouldReturnExpectedResult()
-        {
-            // Arrange
-            _fixture.SetupItemCategory();
-            _fixture.SetupManufacturer();
-            _fixture.SetupItemsWithAndWithoutItemCategory();
-            await _fixture.PrepareDatabaseAsync();
-            _fixture.SetupExpectedResult();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategoryId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-
-            // Act
-            var result = await sut.SearchItemsByItemCategoryAsync(_fixture.ItemCategoryId.Value);
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var resultValue = (result as OkObjectResult)!.Value;
-            resultValue.Should().BeEquivalentTo(_fixture.ExpectedResult);
-        }
-
-        private sealed class SearchItemsByItemCategoryAsyncFixture : ItemControllerFixture
-        {
-            private readonly CommonFixture _commonFixture = new();
-            private Item? _item;
-            private Item? _itemWithoutManufacturer;
-            private Item? _itemWithoutItemCategory;
-            private ItemCategory? _itemCategory;
-            private Store? _store;
-            private Manufacturer? _manufacturer;
-
-            public SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
-
-            public Guid? ItemCategoryId => _itemCategory?.Id;
-            public IReadOnlyCollection<SearchItemByItemCategoryResultContract>? ExpectedResult { get; private set; }
-
-            public void SetupItemCategory()
-            {
-                _itemCategory = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
-                    .Create();
-            }
-
-            public void SetupManufacturer()
-            {
-                _manufacturer = new ManufacturerEntityBuilder()
-                    .Create();
-            }
-
-            public void SetupItemsWithAndWithoutItemCategory()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
-                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
-
-                var sections = new List<Section>()
-                {
-                    new SectionEntityBuilder().WithIsDefaultSection(true).WithSortIndex(0).Create(),
-                    new SectionEntityBuilder().WithIsDefaultSection(false).WithSortIndex(1).Create()
-                };
-                _store = StoreEntityMother.Initial().WithSections(sections).Create();
-
-                var defaultSectionId = _commonFixture.ChooseRandom(_store.Sections).Id;
-
-                _item =
-                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
-                        .WithManufacturerId(_manufacturer.Id)
-                        .WithAvailableAt(AvailableAtEntityMother
-                            .InitialForStore(_store.Id)
-                            .WithDefaultSectionId(defaultSectionId)
-                            .CreateMany(1)
-                            .ToList())
-                        .Create();
-                _itemWithoutManufacturer =
-                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
-                        .WithoutManufacturerId()
-                        .WithAvailableAt(AvailableAtEntityMother
-                            .InitialForStore(_store.Id)
-                            .WithDefaultSectionId(defaultSectionId)
-                            .CreateMany(1)
-                            .ToList())
-                        .Create();
-                _itemWithoutItemCategory = ItemEntityMother.Initial().Create();
-            }
-
-            public async Task PrepareDatabaseAsync()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                TestPropertyNotSetException.ThrowIfNull(_itemWithoutItemCategory);
-                TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
-                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
-                TestPropertyNotSetException.ThrowIfNull(_store);
-                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
-
-                await ApplyMigrationsAsync(ArrangeScope);
-
-                var itemContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemContext>();
-                var itemCategoryContext = ArrangeScope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
-                var manufacturerContext = ArrangeScope.ServiceProvider.GetRequiredService<ManufacturerContext>();
-                var storeContext = ArrangeScope.ServiceProvider.GetRequiredService<StoreContext>();
-
-                await itemCategoryContext.AddAsync(_itemCategory);
-                await storeContext.AddAsync(_store);
-                await itemContext.AddAsync(_item);
-                await itemContext.AddAsync(_itemWithoutManufacturer);
-                await itemContext.AddAsync(_itemWithoutItemCategory);
-                await manufacturerContext.AddAsync(_manufacturer);
-
-                await itemCategoryContext.SaveChangesAsync();
-                await itemContext.SaveChangesAsync();
-                await storeContext.SaveChangesAsync();
-                await manufacturerContext.SaveChangesAsync();
-            }
-
-            public void SetupExpectedResult()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-                TestPropertyNotSetException.ThrowIfNull(_item);
-                TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
-                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
-
-                ExpectedResult = new List<SearchItemByItemCategoryResultContract>(2)
-                {
-                    new(
-                        _item.Id,
-                        null,
-                        _item.Name,
-                        _manufacturer.Name,
-                        _item.AvailableAt.Select(av =>
-                            new SearchItemByItemCategoryAvailabilityContract(
-                                _store.Id,
-                                _store.Name,
-                                av.Price))),
-                    new(
-                        _itemWithoutManufacturer.Id,
-                        null,
-                        _itemWithoutManufacturer.Name,
-                        null,
-                        _itemWithoutManufacturer.AvailableAt.Select(av =>
-                            new SearchItemByItemCategoryAvailabilityContract(
-                                _store.Id,
-                                _store.Name,
-                                av.Price)))
-                };
-            }
-        }
-    }
-
-    public sealed class DeleteItemAsync : IAssemblyFixture<DockerFixture>
-    {
-        private readonly DeleteItemAsyncFixture _fixture;
-
-        public DeleteItemAsync(DockerFixture dockerFixture)
-        {
-            _fixture = new DeleteItemAsyncFixture(dockerFixture);
-        }
+        private readonly DeleteItemAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task DeleteItemAsync_WithValidData_ShouldDeleteItemAndRemoveItFromListAndRecipe()
@@ -2201,15 +2580,11 @@ public class ItemControllerIntegrationTests
                 opt => opt.ExcludeShoppingListCycleRef().WithCreatedAtPrecision());
         }
 
-        private sealed class DeleteItemAsyncFixture : ItemControllerFixture
+        private sealed class DeleteItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
         {
             private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
             private Store? _store;
             private Recipe? _recipe;
-
-            public DeleteItemAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
-            {
-            }
 
             public Item? Item { get; private set; }
             public Item? ExpectedItem { get; private set; }

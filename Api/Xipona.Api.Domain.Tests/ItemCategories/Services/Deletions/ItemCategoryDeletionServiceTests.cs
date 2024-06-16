@@ -546,7 +546,6 @@ public class ItemCategoryDeletionServiceTests
         protected readonly ItemCategoryRepositoryMock ItemCategoryRepositoryMock = new(MockBehavior.Strict);
         protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
         protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
-        protected readonly CommonFixture CommonFixture = new();
 
         public ItemCategoryDeletionService CreateSut()
         {

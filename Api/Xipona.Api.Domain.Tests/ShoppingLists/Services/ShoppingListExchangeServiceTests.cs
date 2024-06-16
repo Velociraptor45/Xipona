@@ -8,7 +8,6 @@ using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services;
@@ -965,13 +964,13 @@ public class ShoppingListExchangeServiceTests
         public void SetupOldItemFromShoppingListNotInBasket()
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
-            OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => !i.IsInBasket);
+            OldShoppingListItem = ShoppingListMock.GetRandomItem(i => !i.IsInBasket);
         }
 
         public void SetupOldItemFromShoppingListInBasket()
         {
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
-            OldShoppingListItem = ShoppingListMock.GetRandomItem(CommonFixture, i => i.IsInBasket);
+            OldShoppingListItem = ShoppingListMock.GetRandomItem(i => i.IsInBasket);
         }
 
         #region Mock Setup
@@ -1031,7 +1030,6 @@ public class ShoppingListExchangeServiceTests
 
     public abstract class ShoppingListExchangeServiceFixture
     {
-        protected CommonFixture CommonFixture = new();
         protected ShoppingListRepositoryMock ShoppingListRepositoryMock;
         protected AddItemToShoppingListServiceMock AddItemToShoppingListServiceMock;
         private readonly ILogger<ShoppingListExchangeService> _logger;

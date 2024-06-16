@@ -8,7 +8,7 @@ public class ShoppingList
     public ShoppingList()
     {
         ItemsOnList ??= new List<ItemsOnList>();
-        RowVersion ??= Array.Empty<byte>();
+        RowVersion ??= [];
     }
 
     [Key]
