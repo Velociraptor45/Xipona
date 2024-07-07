@@ -115,19 +115,6 @@ public class ShoppingListEffects
             dispatcher.Dispatch(new SelectedStoreChangedAction(stores.OrderBy(s => s.Name).First().Id));
     }
 
-    [EffectMethod(typeof(ShoppingListEnteredAction))]
-    public Task HandleShoppingListEnteredAction(IDispatcher dispatcher)
-    {
-        if (!_state.Value.Stores.Stores.Any())
-            return Task.CompletedTask;
-
-        var store = _state.Value.Stores.Stores.First();
-
-        dispatcher.Dispatch(new SelectedStoreChangedAction(store.Id));
-
-        return Task.CompletedTask;
-    }
-
     [EffectMethod]
     public async Task HandleSelectedStoreChangedAction(SelectedStoreChangedAction action, IDispatcher dispatcher)
     {
