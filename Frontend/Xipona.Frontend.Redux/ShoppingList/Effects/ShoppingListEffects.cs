@@ -112,7 +112,7 @@ public class ShoppingListEffects
         dispatcher.Dispatch(finishAction);
 
         if (stores.Any())
-            dispatcher.Dispatch(new SelectedStoreChangedAction(stores.First().Id));
+            dispatcher.Dispatch(new SelectedStoreChangedAction(stores.OrderBy(s => s.Name).First().Id));
     }
 
     [EffectMethod(typeof(ShoppingListEnteredAction))]

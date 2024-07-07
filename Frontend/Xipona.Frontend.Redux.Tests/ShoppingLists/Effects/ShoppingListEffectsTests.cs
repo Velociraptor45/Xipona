@@ -394,7 +394,17 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedStores()
             {
-                _expectedStoresForShoppingList = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList();
+                _expectedStoresForShoppingList =
+                [
+                    new DomainTestBuilder<ShoppingListStore>().Create() with
+                    {
+                        Name = "Bstore" + new DomainTestBuilder<string>().Create()
+                    },
+                    new DomainTestBuilder<ShoppingListStore>().Create() with
+                    {
+                        Name = "Astore" + new DomainTestBuilder<string>().Create()
+                    }
+                ];
             }
 
             public void SetupFindingStoresForShoppingList()
@@ -418,7 +428,7 @@ public class ShoppingListEffectsTests
             public void SetupDispatchingChangeAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedStoresForShoppingList);
-                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.First().Id);
+                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.Last().Id);
                 SetupDispatchingAction(_expectedStoreChangeAction);
             }
 
