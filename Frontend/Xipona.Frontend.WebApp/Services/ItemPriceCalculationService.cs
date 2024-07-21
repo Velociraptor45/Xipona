@@ -14,20 +14,20 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         _shoppingListState = shoppingListState;
     }
 
-    public float CalculatePrice(int quantityTypeId, float pricePerQuantity, float quantity)
+    public float CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity)
     {
         var type = _shoppingListState.Value.QuantityTypes.FirstOrDefault(type => type.Id == quantityTypeId);
         if (type == null)
             throw new InvalidOperationException($"Quantity type {quantityTypeId} not recognized.");
 
-        var price = quantity / type.QuantityNormalizer * pricePerQuantity;
+        var price = (decimal)quantity / type.QuantityNormalizer * pricePerQuantity;
 
         return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }
 
     private static float CalculatePrice(ShoppingListItem item)
     {
-        var price = item.Quantity / item.QuantityType.QuantityNormalizer * item.PricePerQuantity;
+        var price = (decimal)item.Quantity / item.QuantityType.QuantityNormalizer * item.PricePerQuantity;
 
         return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }

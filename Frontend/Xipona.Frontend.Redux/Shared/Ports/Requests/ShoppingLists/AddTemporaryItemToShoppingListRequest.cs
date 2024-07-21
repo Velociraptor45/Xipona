@@ -3,7 +3,7 @@
 public class AddTemporaryItemToShoppingListRequest : IApiRequest
 {
     public AddTemporaryItemToShoppingListRequest(Guid requestId, Guid shoppingListId, string itemName, int quantityType,
-        float quantity, float price, Guid sectionId, Guid temporaryId)
+        float quantity, decimal price, Guid sectionId, Guid temporaryId)
     {
         RequestId = requestId;
         ShoppingListId = shoppingListId;
@@ -20,7 +20,7 @@ public class AddTemporaryItemToShoppingListRequest : IApiRequest
     public string ItemName { get; }
     public int QuantityType { get; }
     public float Quantity { get; }
-    public float Price { get; }
+    public decimal Price { get; }
     public Guid SectionId { get; }
     public Guid TemporaryId { get; }
 }

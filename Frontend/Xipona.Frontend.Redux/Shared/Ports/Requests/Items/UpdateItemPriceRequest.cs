@@ -2,7 +2,7 @@
 
 public class UpdateItemPriceRequest
 {
-    public UpdateItemPriceRequest(Guid itemId, Guid? itemTypeId, Guid storeId, float price)
+    public UpdateItemPriceRequest(Guid itemId, Guid? itemTypeId, Guid storeId, decimal price)
     {
         RequestId = Guid.NewGuid();
         ItemId = itemId;
@@ -14,6 +14,6 @@ public class UpdateItemPriceRequest
     public Guid ItemId { get; }
     public Guid? ItemTypeId { get; }
     public Guid StoreId { get; }
-    public float Price { get; }
+    public decimal Price { get; }
     public Guid RequestId { get; }
 }

@@ -102,7 +102,7 @@ public class TemporaryItemCreatorReducerTests
                 {
                     TemporaryItemCreator = ExpectedState.TemporaryItemCreator with
                     {
-                        Price = new DomainTestBuilder<float>().Create()
+                        Price = new DomainTestBuilder<decimal>().Create()
                     }
                 };
             }
@@ -289,7 +289,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = new DomainTestBuilder<string>().Create(),
                         IsOpen = false,
                         IsSaving = true,
-                        Price = new DomainTestBuilder<float>().Create(),
+                        Price = new DomainTestBuilder<decimal>().Create(),
                         Section = new DomainTestBuilder<ShoppingListStoreSection>().Create(),
                         SelectedQuantityTypeId = new DomainTestBuilder<int>().Create()
                     }
@@ -322,7 +322,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = ExpectedState.SearchBar.Input,
                         IsOpen = true,
                         IsSaving = false,
-                        Price = 1f,
+                        Price = 1m,
                         Section = sections.Last(),
                         SelectedQuantityTypeId = quantityTypes.First().Id
                     }
@@ -354,7 +354,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = ExpectedState.SearchBar.Input,
                         IsOpen = true,
                         IsSaving = false,
-                        Price = 1f,
+                        Price = 1m,
                         Section = sections.Last(),
                         SelectedQuantityTypeId = 0
                     }
@@ -387,7 +387,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = ExpectedState.SearchBar.Input,
                         IsOpen = true,
                         IsSaving = false,
-                        Price = 1f,
+                        Price = 1m,
                         Section = sections.First(),
                         SelectedQuantityTypeId = quantityTypes.First().Id
                     }
