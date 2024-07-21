@@ -35,7 +35,7 @@ public class PriceCustomization : ICustomization
 
         private Price CreateInstance(ISpecimenContext context)
         {
-            var value = (float)_numberGenerator.Create(typeof(float), context);
+            var value = (decimal)_numberGenerator.Create(typeof(decimal), context);
             return new Price(value);
         }
     }

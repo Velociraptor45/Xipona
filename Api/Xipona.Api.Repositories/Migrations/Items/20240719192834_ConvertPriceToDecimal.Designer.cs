@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
 
@@ -10,9 +11,11 @@ using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
 namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
 {
     [DbContext(typeof(ItemContext))]
-    partial class ItemContextModelSnapshot : ModelSnapshot
+    [Migration("20240719192834_ConvertPriceToDecimal")]
+    partial class ConvertPriceToDecimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
