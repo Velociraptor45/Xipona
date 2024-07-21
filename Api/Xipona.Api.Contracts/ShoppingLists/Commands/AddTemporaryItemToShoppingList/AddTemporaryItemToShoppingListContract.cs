@@ -5,7 +5,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporary
     public class AddTemporaryItemToShoppingListContract
     {
         public AddTemporaryItemToShoppingListContract(string itemName, int quantityType,
-            float quantity, float price, Guid sectionId, Guid temporaryItemId)
+            float quantity, decimal price, Guid sectionId, Guid temporaryItemId)
         {
             ItemName = itemName;
             QuantityType = quantityType;
@@ -18,7 +18,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporary
         public string ItemName { get; set; }
         public int QuantityType { get; set; }
         public float Quantity { get; set; }
-        public float Price { get; set; }
+        public decimal Price { get; set; }
         public Guid SectionId { get; set; }
         public Guid TemporaryItemId { get; set; }
     }

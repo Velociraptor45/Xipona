@@ -2,4 +2,4 @@
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
 
-public record PriceOfItemChangedAction(EditedItemAvailability Availability, float Price);
+public record PriceOfItemChangedAction(EditedItemAvailability Availability, decimal Price);

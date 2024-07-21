@@ -11,7 +11,7 @@ public class SearchItemForShoppingListResultBuilder : DomainTestBuilderBase<Sear
         return this;
     }
 
-    public SearchItemForShoppingListResultBuilder WithPrice(float price)
+    public SearchItemForShoppingListResultBuilder WithPrice(decimal price)
     {
         FillConstructorWith(nameof(price), price);
         return this;

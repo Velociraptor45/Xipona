@@ -52,7 +52,7 @@ public class PriceUpdaterReducerTests
                 {
                     PriceUpdate = ExpectedState.PriceUpdate with
                     {
-                        Price = new DomainTestBuilder<float>().Create()
+                        Price = new DomainTestBuilder<decimal>().Create()
                     }
                 };
             }
@@ -152,7 +152,7 @@ public class PriceUpdaterReducerTests
                     PriceUpdate = ExpectedState.PriceUpdate with
                     {
                         Item = null,
-                        Price = new DomainTestBuilder<float>().Create(),
+                        Price = new DomainTestBuilder<decimal>().Create(),
                         UpdatePriceForAllTypes = false,
                         IsOpen = false,
                         IsSaving = true
@@ -293,7 +293,7 @@ public class PriceUpdaterReducerTests
         {
             private Guid? _itemId;
             private Guid? _itemTypeId;
-            private float? _price;
+            private decimal? _price;
 
             public SavePriceUpdateFinishedAction? Action { get; private set; }
             public ShoppingListState? InitialState { get; private set; }
@@ -301,7 +301,7 @@ public class PriceUpdaterReducerTests
             public void SetupItemIdAndPrice()
             {
                 _itemId = Guid.NewGuid();
-                _price = new DomainTestBuilder<float>().Create();
+                _price = new DomainTestBuilder<decimal>().Create();
             }
 
             public void SetupTypeId()
@@ -342,7 +342,7 @@ public class PriceUpdaterReducerTests
                         {
                             PricePerQuantity =
                                 item.Id.ActualId == _itemId.Value
-                                    ? new DomainTestBuilder<float>().Create()
+                                    ? new DomainTestBuilder<decimal>().Create()
                                     : item.PricePerQuantity
                         };
                     }
@@ -383,7 +383,7 @@ public class PriceUpdaterReducerTests
                         {
                             PricePerQuantity =
                                 item.Id.ActualId == _itemId.Value && item.TypeId == _itemTypeId.Value
-                                    ? new DomainTestBuilder<float>().Create()
+                                    ? new DomainTestBuilder<decimal>().Create()
                                     : item.PricePerQuantity
                         };
                     }

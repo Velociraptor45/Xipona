@@ -7,7 +7,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
     public class ShoppingListItemContract
     {
         public ShoppingListItemContract(Guid id, Guid? typeId, string name, bool isDeleted, string comment, bool isTemporary,
-            float pricePerQuantity, QuantityTypeContract quantityType, float? quantityInPacket,
+            decimal pricePerQuantity, QuantityTypeContract quantityType, float? quantityInPacket,
             QuantityTypeInPacketContract quantityTypeInPacket,
             ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
         {
@@ -33,7 +33,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         public bool IsDeleted { get; }
         public string Comment { get; }
         public bool IsTemporary { get; }
-        public float PricePerQuantity { get; }
+        public decimal PricePerQuantity { get; }
         public QuantityTypeContract QuantityType { get; }
         public float? QuantityInPacket { get; }
         public QuantityTypeInPacketContract QuantityTypeInPacket { get; }

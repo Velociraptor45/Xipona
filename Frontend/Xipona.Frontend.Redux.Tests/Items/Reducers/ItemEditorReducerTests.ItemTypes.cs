@@ -79,7 +79,7 @@ public partial class ItemEditorReducerTests
                 var availabilities = itemTypes.First().Availabilities.ToList();
                 availabilities[0] = availabilities.First() with
                 {
-                    PricePerQuantity = new DomainTestBuilder<float>().Create()
+                    PricePerQuantity = new DomainTestBuilder<decimal>().Create()
                 };
 
                 itemTypes[0] = itemTypes.First() with { Availabilities = availabilities };
@@ -302,7 +302,7 @@ public partial class ItemEditorReducerTests
                                         new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
-                                            4.67f)
+                                            4.67m)
                                     }
                                 }
                             }
@@ -333,7 +333,7 @@ public partial class ItemEditorReducerTests
                                         new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
-                                            4.67f)
+                                            4.67m)
                                     }
                                 }
                             }
@@ -365,11 +365,11 @@ public partial class ItemEditorReducerTests
                                         new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
-                                            4.67f),
+                                            4.67m),
                                         new(
                                             _stores.First().Id,
                                             _stores.First().DefaultSectionId,
-                                            1f),
+                                            1m),
                                     }
                                 }
                             }
@@ -405,11 +405,11 @@ public partial class ItemEditorReducerTests
                                         new(
                                             _stores.Last().Id,
                                             _stores.Last().DefaultSectionId,
-                                            4.67f),
+                                            4.67m),
                                         new(
                                             _stores.First().Id,
                                             _stores.First().DefaultSectionId,
-                                            13.98f),
+                                            13.98m),
                                     }
                                 }
                             }

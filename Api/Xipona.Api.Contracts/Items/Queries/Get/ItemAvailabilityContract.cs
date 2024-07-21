@@ -2,7 +2,7 @@
 {
     public class ItemAvailabilityContract
     {
-        public ItemAvailabilityContract(ItemStoreContract store, float price,
+        public ItemAvailabilityContract(ItemStoreContract store, decimal price,
             ItemSectionContract defaultSection)
         {
             Store = store;
@@ -11,7 +11,7 @@
         }
 
         public ItemStoreContract Store { get; }
-        public float Price { get; }
+        public decimal Price { get; }
         public ItemSectionContract DefaultSection { get; }
     }
 }
