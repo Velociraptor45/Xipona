@@ -113,10 +113,12 @@ public class ApiClient : IApiClient
         await _client.RemoveItemFromShoppingListAsync(request.ShoppingListId, contract);
     }
 
-    public async Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
+    public async Task<TemporaryShoppingListItem> AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
     {
         var contract = _converters.ToContract<AddTemporaryItemToShoppingListRequest, AddTemporaryItemToShoppingListContract>(request);
-        await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
+        var tempItem = await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
+
+        return _converters.ToDomain<TemporaryShoppingListItemContract, TemporaryShoppingListItem>(tempItem);
     }
 
     public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)

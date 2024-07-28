@@ -724,6 +724,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupQuantityTypeUnitInTemporaryItemCreator();
                 _fixture.SetupItemForQuantityTypeUnit();
                 _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupDispatchingAddItemAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
@@ -747,6 +748,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupQuantityTypeWeightInTemporaryItemCreator();
                 _fixture.SetupItemForQuantityTypeWeight();
                 _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupDispatchingAddItemAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
@@ -762,7 +764,7 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleSaveTemporaryItemActionFixture : ShoppingListEffectsFixture
         {
-            private SaveTemporaryItemFinishedAction? _expectedFinishedAction;
+            private AddTemporaryItemAction? _expectedFinishedAction;
             private ShoppingListItem? _item;
             private QuantityType? _quantityType;
 
@@ -864,13 +866,18 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<SaveTemporaryItemStartedAction>();
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingAddItemAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
-                _expectedFinishedAction = new SaveTemporaryItemFinishedAction(_item, State.TemporaryItemCreator.Section!);
-                SetupDispatchingAction<SaveTemporaryItemFinishedAction>(
+                _expectedFinishedAction = new AddTemporaryItemAction(_item, State.TemporaryItemCreator.Section!);
+                SetupDispatchingAction<AddTemporaryItemAction>(
                     action => action.IsEquivalentTo(_expectedFinishedAction, new List<string> { "Item.Id.OfflineId.Value" }));
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<SaveTemporaryItemFinishedAction>();
             }
 
             public void SetupDispatchingCloseAction()
