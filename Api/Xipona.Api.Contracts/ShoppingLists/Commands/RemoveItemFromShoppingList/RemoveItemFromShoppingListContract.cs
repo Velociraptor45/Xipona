@@ -4,7 +4,7 @@ using System;
 namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList
 {
     /// <summary>
-    /// Represents a contract to remove an item from a shopping list.
+    /// Represents a request to remove an item from a shopping list.
     /// </summary>
     public class RemoveItemFromShoppingListContract
     {

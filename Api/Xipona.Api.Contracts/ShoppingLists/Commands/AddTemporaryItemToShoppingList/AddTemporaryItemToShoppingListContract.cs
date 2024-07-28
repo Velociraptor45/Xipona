@@ -3,7 +3,7 @@
 namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList
 {
     /// <summary>
-    /// Represents a contract to add a temporary item to a shopping list.
+    /// Represents a request to add a temporary item to a shopping list.
     /// </summary>
     public class AddTemporaryItemToShoppingListContract
     {

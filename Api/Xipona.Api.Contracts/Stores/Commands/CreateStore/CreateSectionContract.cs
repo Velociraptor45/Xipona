@@ -1,7 +1,7 @@
 ﻿namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore
 {
     /// <summary>
-    /// Represents a contract for creating a store's section.
+    /// Represents a request for creating a store's section.
     /// </summary>
     public class CreateSectionContract
     {

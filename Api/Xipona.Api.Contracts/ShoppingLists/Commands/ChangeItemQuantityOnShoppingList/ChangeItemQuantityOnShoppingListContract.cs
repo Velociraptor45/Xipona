@@ -4,7 +4,7 @@ using System;
 namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList
 {
     /// <summary>
-    /// Represents a contract to change the quantity of an item on a shopping list.
+    /// Represents a request to change the quantity of an item on a shopping list.
     /// </summary>
     public class ChangeItemQuantityOnShoppingListContract
     {

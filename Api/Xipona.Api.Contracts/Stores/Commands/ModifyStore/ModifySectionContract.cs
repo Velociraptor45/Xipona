@@ -3,7 +3,7 @@
 namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore
 {
     /// <summary>
-    /// Represents a contract for modifying a store's section.
+    /// Represents a request for modifying a store's section.
     /// </summary>
     public class ModifySectionContract
     {

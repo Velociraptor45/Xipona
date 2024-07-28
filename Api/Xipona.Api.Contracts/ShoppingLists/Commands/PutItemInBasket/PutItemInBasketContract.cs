@@ -4,7 +4,7 @@ using System;
 namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket
 {
     /// <summary>
-    /// Represents a contract to put an item in the basket.
+    /// Represents a request to put an item in the basket.
     /// </summary>
     public class PutItemInBasketContract
     {

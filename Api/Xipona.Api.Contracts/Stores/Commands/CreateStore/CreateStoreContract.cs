@@ -3,7 +3,7 @@
 namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore
 {
     /// <summary>
-    /// Represents a contract for creating a store.
+    /// Represents a request for creating a store.
     /// </summary>
     public class CreateStoreContract
     {

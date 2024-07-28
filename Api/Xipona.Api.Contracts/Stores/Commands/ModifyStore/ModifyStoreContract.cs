@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore
 {
     /// <summary>
-    /// Represents a contract for modifying a store.
+    /// Represents a request for modifying a store.
     /// </summary>
     public class ModifyStoreContract
     {

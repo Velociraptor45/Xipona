@@ -3,7 +3,7 @@
 namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists
 {
     /// <summary>
-    /// Represents a contract to add multiple items to multiple shopping lists.
+    /// Represents a request to add multiple items to multiple shopping lists.
     /// </summary>
     public class AddItemsToShoppingListsContract
     {
