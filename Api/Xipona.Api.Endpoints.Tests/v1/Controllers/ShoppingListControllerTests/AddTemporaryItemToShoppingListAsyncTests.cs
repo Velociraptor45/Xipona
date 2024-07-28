@@ -2,6 +2,7 @@
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
@@ -11,8 +12,9 @@ using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ShoppingListControllerTests;
 
-public class AddTemporaryItemToShoppingListAsyncTests : ControllerCommandTestsBase<ShoppingListController,
-AddTemporaryItemToShoppingListCommand, bool, AddTemporaryItemToShoppingListAsyncTests.AddTemporaryItemToShoppingListAsyncFixture>
+public class AddTemporaryItemToShoppingListAsyncTests : ControllerCommandWithReturnTypeTestsBase<ShoppingListController,
+    AddTemporaryItemToShoppingListCommand, TemporaryShoppingListItemReadModel, TemporaryShoppingListItemContract,
+    AddTemporaryItemToShoppingListAsyncTests.AddTemporaryItemToShoppingListAsyncFixture>
 {
     public AddTemporaryItemToShoppingListAsyncTests() : base(new AddTemporaryItemToShoppingListAsyncFixture())
     {
@@ -41,14 +43,14 @@ AddTemporaryItemToShoppingListCommand, bool, AddTemporaryItemToShoppingListAsync
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class AddTemporaryItemToShoppingListAsyncFixture : ControllerCommandFixtureBase
+    public sealed class AddTemporaryItemToShoppingListAsyncFixture : ControllerCommandWithReturnTypeFixtureBase
     {
         private AddTemporaryItemToShoppingListContract? _contract;
         private readonly Guid _shoppingListId = Guid.NewGuid();
 
         public AddTemporaryItemToShoppingListAsyncFixture()
         {
-            PossibleResultsList.Add(new NoContentStatusResult());
+            PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new BadRequestStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.ShoppingListNotFound));
             PossibleResultsList.Add(new NotFoundStatusResult());

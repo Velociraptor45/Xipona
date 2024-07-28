@@ -108,10 +108,10 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         await AddItemAsync(shoppingList, item, sectionId, quantity);
     }
 
-    public async Task AddItemAsync(IShoppingList shoppingList, IItem item, SectionId? sectionId,
+    public async Task<ShoppingListItem> AddItemAsync(IShoppingList shoppingList, IItem item, SectionId? sectionId,
         QuantityInBasket quantity)
     {
-        await AddItemAsync(shoppingList, item, null, sectionId, quantity);
+        return await AddItemAsync(shoppingList, item, null, sectionId, quantity);
     }
 
     private ShoppingListItem CreateShoppingListItem(ItemId itemId, ItemTypeId? itemTypeId, QuantityInBasket quantity)
@@ -150,7 +150,7 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
         await AddItemAsync(shoppingList, shoppingListItem, store, sectionId.Value, throwIfItemAlreadyOnShoppingList);
     }
 
-    internal async Task AddItemAsync(IShoppingList shoppingList, IItem item, IStore? store,
+    internal async Task<ShoppingListItem> AddItemAsync(IShoppingList shoppingList, IItem item, IStore? store,
         SectionId? sectionId, QuantityInBasket quantity, bool throwIfItemAlreadyOnShoppingList = true)
     {
         if (item.HasItemTypes)
@@ -160,8 +160,9 @@ public class AddItemToShoppingListService : IAddItemToShoppingListService
 
         sectionId ??= availability.DefaultSectionId;
 
-        ShoppingListItem shoppingListItem = CreateShoppingListItem(item.Id, null, quantity);
+        var shoppingListItem = CreateShoppingListItem(item.Id, null, quantity);
         await AddItemAsync(shoppingList, shoppingListItem, store, sectionId.Value, throwIfItemAlreadyOnShoppingList);
+        return shoppingListItem;
     }
 
     internal async Task AddItemAsync(IShoppingList shoppingList, ShoppingListItem item, IStore? store,
