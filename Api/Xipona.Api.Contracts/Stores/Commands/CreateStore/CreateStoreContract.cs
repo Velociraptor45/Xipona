@@ -17,7 +17,14 @@ namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore
             Sections = sections;
         }
 
+        /// <summary>
+        /// The name of the store.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// The sections of the store.
+        /// </summary>
         public IEnumerable<CreateSectionContract> Sections { get; set; }
     }
 }
