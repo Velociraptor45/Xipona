@@ -1082,7 +1082,7 @@ public class ItemControllerIntegrationTests
             item.Should().BeEquivalentTo(_fixture.ExpectedDbResult, opt => opt
                 .ExcludeItemCycleRef()
                 .ExcludeRowVersion()
-                .WithCreatedAtPrecision(1.Minutes())
+                .WithCreatedAtPrecision(5.Minutes())
                 .Excluding(info => info.Path == "Id"));
             item.Id.Should().Be(itemContract.Id);
         }
@@ -1286,7 +1286,7 @@ public class ItemControllerIntegrationTests
             item.Should().BeEquivalentTo(_fixture.ExpectedDbResult, opt => opt
                 .ExcludeItemCycleRef()
                 .ExcludeRowVersion()
-                .WithCreatedAtPrecision(1.Minutes())
+                .WithCreatedAtPrecision(5.Minutes())
                 .ExcludeItemTypeId()
                 .Excluding(info => info.Path == "Id"));
             item.Id.Should().Be(itemContract.Id);

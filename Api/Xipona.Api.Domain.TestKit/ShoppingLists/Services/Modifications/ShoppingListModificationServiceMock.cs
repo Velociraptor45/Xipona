@@ -18,11 +18,12 @@ public class ShoppingListModificationServiceMock : Mock<IShoppingListModificatio
     }
 
     public void SetupAddTemporaryItemAsync(ShoppingListId shoppingListId, ItemName itemName, QuantityType quantityType,
-        QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId)
+        QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId,
+        TemporaryShoppingListItemReadModel returnValue)
     {
         Setup(m =>
                 m.AddTemporaryItemAsync(shoppingListId, itemName, quantityType, quantity, price, sectionId, temporaryItemId))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync(returnValue);
     }
 
     public void VerifyAddTemporaryItemAsync(ShoppingListId shoppingListId, ItemName itemName, QuantityType quantityType,

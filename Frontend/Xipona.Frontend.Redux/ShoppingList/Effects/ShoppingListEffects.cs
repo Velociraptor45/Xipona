@@ -167,9 +167,11 @@ public class ShoppingListEffects
             _state.Value.TemporaryItemCreator.Section!.Id,
             item.Id.OfflineId!.Value);
 
+        dispatcher.Dispatch(new AddTemporaryItemAction(item, _state.Value.TemporaryItemCreator.Section));
+
         await _commandQueue.Enqueue(addRequest);
 
-        dispatcher.Dispatch(new SaveTemporaryItemFinishedAction(item, _state.Value.TemporaryItemCreator.Section));
+        dispatcher.Dispatch(new SaveTemporaryItemFinishedAction());
         dispatcher.Dispatch(new CloseTemporaryItemCreatorAction());
     }
 

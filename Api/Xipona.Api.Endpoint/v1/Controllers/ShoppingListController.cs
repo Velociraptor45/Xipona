@@ -27,6 +27,7 @@ using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
@@ -129,7 +130,7 @@ public class ShoppingListController : ControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(TemporaryShoppingListItemContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -147,7 +148,9 @@ public class ShoppingListController : ControllerBase
 
         try
         {
-            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            var shoppingListItem = await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            var itemContract = _converters.ToContract<TemporaryShoppingListItemReadModel, TemporaryShoppingListItemContract>(shoppingListItem);
+            return Ok(itemContract);
         }
         catch (DomainException e)
         {
@@ -157,8 +160,6 @@ public class ShoppingListController : ControllerBase
 
             return UnprocessableEntity(errorContract);
         }
-
-        return NoContent();
     }
 
     [HttpPut]

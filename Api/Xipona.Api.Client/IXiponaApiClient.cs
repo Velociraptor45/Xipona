@@ -59,8 +59,8 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default);
 
         [Put("shopping-lists/{id}/items/temporary")]
-        Task AddTemporaryItemToShoppingListAsync([Path] Guid id, [Body] AddTemporaryItemToShoppingListContract contract,
-            CancellationToken cancellationToken = default);
+        Task<TemporaryShoppingListItemContract> AddTemporaryItemToShoppingListAsync([Path] Guid id,
+            [Body] AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default);
 
         [Put("shopping-lists/{id}/items")]
         Task AddItemToShoppingListAsync([Path] Guid id, [Body] AddItemToShoppingListContract contract,

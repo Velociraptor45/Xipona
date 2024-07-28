@@ -274,6 +274,7 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupStore();
             _fixture.SetupExistingShoppingList();
             _fixture.SetupContract();
+            _fixture.SetupExpectedResult();
             await _fixture.SetupDatabaseAsync();
             var sut = _fixture.CreateSut();
 
@@ -281,12 +282,18 @@ public class ShoppingListControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
 
             // Act
             var result = await sut.AddTemporaryItemToShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result as OkObjectResult;
+            okResult.Should().NotBeNull();
+            var contract = okResult!.Value as TemporaryShoppingListItemContract;
+            contract!.Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.Excluding(info => info.Path == "ItemId"));
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -309,6 +316,7 @@ public class ShoppingListControllerIntegrationTests
                     .Excluding(info => info.Path == "ItemsOnList[0].ItemId" || info.Path == "ItemsOnList[0].Id")
                     .WithCreatedAtPrecision());
             shoppingList.ItemsOnList.First().ItemId.Should().Be(itemId);
+            contract!.ItemId.Should().Be(itemId);
         }
 
         private sealed class AddTemporaryItemToShoppingListAsyncFixture(DockerFixture dockerFixture)
@@ -321,6 +329,7 @@ public class ShoppingListControllerIntegrationTests
             public Item? ExpectedItem { get; private set; }
             public ShoppingList? ExpectedShoppingList { get; private set; }
             public AddTemporaryItemToShoppingListContract? Contract { get; private set; }
+            public TemporaryShoppingListItemContract? ExpectedResult { get; private set; }
 
             public void SetupContract()
             {
@@ -372,6 +381,13 @@ public class ShoppingListControllerIntegrationTests
                     .WithStoreId(ExpectedItem.AvailableAt.First().StoreId)
                     .WithItemsOnList(items)
                     .Create();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                ExpectedResult = new TemporaryShoppingListItemContract(ExpectedItem.Id, false, Contract.Quantity);
             }
 
             public void SetupExistingShoppingList()

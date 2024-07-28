@@ -1,11 +1,12 @@
 ﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 
-public class AddTemporaryItemToShoppingListCommand : ICommand<bool>
+public class AddTemporaryItemToShoppingListCommand : ICommand<TemporaryShoppingListItemReadModel>
 {
     public AddTemporaryItemToShoppingListCommand(ShoppingListId shoppingListId, ItemName itemName,
         QuantityType quantityType, QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId)

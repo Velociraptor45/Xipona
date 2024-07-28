@@ -87,10 +87,10 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.RemoveItemFromShoppingListAsync(id, contract, cancellationToken);
         }
 
-        public async Task AddTemporaryItemToShoppingListAsync(Guid id, AddTemporaryItemToShoppingListContract contract,
-            CancellationToken cancellationToken = default)
+        public async Task<TemporaryShoppingListItemContract> AddTemporaryItemToShoppingListAsync(Guid id,
+            AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default)
         {
-            await _apiClient.AddTemporaryItemToShoppingListAsync(id, contract, cancellationToken);
+            return await _apiClient.AddTemporaryItemToShoppingListAsync(id, contract, cancellationToken);
         }
 
         public async Task AddItemToShoppingListAsync(Guid id, AddItemToShoppingListContract contract,
