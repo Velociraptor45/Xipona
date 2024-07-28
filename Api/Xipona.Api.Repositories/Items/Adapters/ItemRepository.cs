@@ -21,21 +21,21 @@ public class ItemRepository : IItemRepository
 {
     private readonly ItemContext _dbContext;
     private readonly IToDomainConverter<Item, IItem> _toModelConverter;
-    private readonly IToEntityConverter<IItem, Item> _toEntityConverter;
+    private readonly IToContractConverter<IItem, Item> _toContractConverter;
     private readonly IDomainEventDispatcher _domainEventDispatcher;
     private readonly ILogger<ItemRepository> _logger;
     private readonly CancellationToken _cancellationToken;
 
     public ItemRepository(ItemContext dbContext,
         IToDomainConverter<Item, IItem> toModelConverter,
-        IToEntityConverter<IItem, Item> toEntityConverter,
+        IToContractConverter<IItem, Item> toContractConverter,
         IDomainEventDispatcher domainEventDispatcher,
         ILogger<ItemRepository> logger,
         CancellationToken cancellationToken)
     {
         _dbContext = dbContext;
         _toModelConverter = toModelConverter;
-        _toEntityConverter = toEntityConverter;
+        _toContractConverter = toContractConverter;
         _domainEventDispatcher = domainEventDispatcher;
         _logger = logger;
         _cancellationToken = cancellationToken;
@@ -133,13 +133,17 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(itemEntity);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput)
+    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, int page, int pageSize)
     {
         var entities = await GetItemQuery()
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
                 && item.Name.Contains(searchInput))
+            .OrderBy(item => item.Name)
+            .ThenBy(item => item.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
@@ -229,6 +233,18 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(items);
     }
 
+    public async Task<int> GetTotalCountByAsync(string searchInput)
+    {
+        var count = await GetItemQuery()
+            .CountAsync(item =>
+                    !item.Deleted
+                    && !item.IsTemporary
+                    && item.Name.Contains(searchInput),
+                _cancellationToken);
+
+        return count;
+    }
+
     public async Task<IItem> StoreAsync(IItem item)
     {
         var existingEntity = await FindTrackedEntityBy(item.Id);
@@ -236,7 +252,7 @@ public class ItemRepository : IItemRepository
         Guid entityIdToLoad;
         if (existingEntity == null)
         {
-            var newEntity = _toEntityConverter.ToEntity(item);
+            var newEntity = _toContractConverter.ToContract(item);
             _dbContext.Add(newEntity);
 
             await _dbContext.SaveChangesAsync(_cancellationToken);
@@ -244,7 +260,7 @@ public class ItemRepository : IItemRepository
         }
         else
         {
-            var updatedEntity = _toEntityConverter.ToEntity(item);
+            var updatedEntity = _toContractConverter.ToContract(item);
             updatedEntity.Id = existingEntity.Id;
 
             var existingRowVersion = existingEntity.RowVersion;

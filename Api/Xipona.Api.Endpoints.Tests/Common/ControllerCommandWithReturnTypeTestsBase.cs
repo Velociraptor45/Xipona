@@ -19,6 +19,33 @@ public abstract class ControllerCommandWithReturnTypeTestsBase<TController, TCom
     }
 
     [SkippableFact]
+    public override async Task EndpointCall_WithValidData_ShouldReturnOk()
+    {
+        var statusResult =
+            Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.OK);
+
+        Skip.If(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.Method.Name}");
+
+        // Arrange
+        Fixture.SetupParameters();
+        Fixture.SetupCommand();
+        Fixture.SetupCommandConverter();
+        Fixture.SetupCommandResult(HttpStatusCode.OK);
+        Fixture.SetupDispatcherSuccess();
+        Fixture.SetupExpectedResult();
+        Fixture.SetupResultConverter();
+        var sut = Fixture.CreateSut();
+
+        // Act
+        var result = await Fixture.ExecuteTestMethod(sut);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = result as OkObjectResult;
+        okResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedResult);
+    }
+
+    [SkippableFact]
     public async Task EndpointCall_WithValidData_ShouldReturnCreated()
     {
         var statusResult =
@@ -69,6 +96,7 @@ public abstract class ControllerCommandWithReturnTypeTestsBase<TController, TCom
         : ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TFixture>.ControllerCommandFixtureBase
     {
         public TReturnType? ExpectedResult { get; protected set; }
+        public override Type OkResultReturnType => typeof(TReturnType);
 
         public void SetupExpectedResult()
         {

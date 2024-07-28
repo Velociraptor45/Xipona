@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Xipona.Api.Repositories\Xipona.Api.Repositories.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+
 </Project>

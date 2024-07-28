@@ -12,7 +12,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice
         /// <param name="itemTypeId"></param>
         /// <param name="storeId"></param>
         /// <param name="price"></param>
-        public UpdateItemPriceContract(Guid? itemTypeId, Guid storeId, float price)
+        public UpdateItemPriceContract(Guid? itemTypeId, Guid storeId, decimal price)
         {
             ItemTypeId = itemTypeId;
             StoreId = storeId;
@@ -32,6 +32,6 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice
         /// <summary>
         /// The new price of the item or item type.
         /// </summary>
-        public float Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

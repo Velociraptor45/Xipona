@@ -9,7 +9,7 @@ public readonly record struct Price
         throw new NotSupportedException("Empty constructor is for price not supported.");
     }
 
-    public Price(float value)
+    public Price(decimal value)
     {
         Value = value;
 
@@ -17,9 +17,9 @@ public readonly record struct Price
             throw new DomainException(new PriceNotValidReason());
     }
 
-    public float Value { get; }
+    public decimal Value { get; }
 
-    public static implicit operator float(Price price)
+    public static implicit operator decimal(Price price)
     {
         return price.Value;
     }

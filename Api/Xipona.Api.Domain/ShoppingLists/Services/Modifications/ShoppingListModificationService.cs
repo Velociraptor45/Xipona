@@ -83,8 +83,9 @@ public class ShoppingListModificationService : IShoppingListModificationService
         }
     }
 
-    public async Task AddTemporaryItemAsync(ShoppingListId shoppingListId, ItemName itemName, QuantityType quantityType,
-        QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId)
+    public async Task<TemporaryShoppingListItemReadModel> AddTemporaryItemAsync(ShoppingListId shoppingListId,
+        ItemName itemName, QuantityType quantityType, QuantityInBasket quantity, Price price, SectionId sectionId,
+        TemporaryItemId temporaryItemId)
     {
         var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId);
         if (shoppingList is null)
@@ -94,8 +95,11 @@ public class ShoppingListModificationService : IShoppingListModificationService
             temporaryItemId);
         await _itemRepository.StoreAsync(item);
 
-        await _addItemToShoppingListService.AddItemAsync(shoppingList, item, sectionId, quantity);
+        var shoppingListItem = await _addItemToShoppingListService.AddItemAsync(shoppingList, item, sectionId, quantity);
         await _shoppingListRepository.StoreAsync(shoppingList);
+
+        return new TemporaryShoppingListItemReadModel(shoppingListItem.Id, shoppingListItem.IsInBasket,
+            shoppingListItem.Quantity);
     }
 
     public async Task RemoveItemAsync(ShoppingListId shoppingListId, OfflineTolerantItemId offlineTolerantItemId,

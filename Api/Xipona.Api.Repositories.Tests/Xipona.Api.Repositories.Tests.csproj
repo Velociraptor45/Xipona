@@ -31,6 +31,8 @@
     <ProjectReference Include="..\Xipona.Api.Core.TestKit\Xipona.Api.Core.TestKit.csproj" />
     <ProjectReference Include="..\Xipona.Api.Core.Tests\Xipona.Api.Core.Tests.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain.TestKit\Xipona.Api.Domain.TestKit.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Repositories.TestKit\Xipona.Api.Repositories.TestKit.csproj" />
     <ProjectReference Include="..\Xipona.Api.Repositories\Xipona.Api.Repositories.csproj" />
     <ProjectReference Include="..\Xipona.Api.Vault.TestKit\Xipona.Api.Vault.TestKit.csproj" />
   </ItemGroup>

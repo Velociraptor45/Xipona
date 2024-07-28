@@ -10,7 +10,7 @@
         /// <param name="store"></param>
         /// <param name="price"></param>
         /// <param name="defaultSection"></param>
-        public ItemAvailabilityContract(ItemStoreContract store, float price,
+        public ItemAvailabilityContract(ItemStoreContract store, decimal price,
             ItemSectionContract defaultSection)
         {
             Store = store;
@@ -26,7 +26,7 @@
         /// <summary>
         /// The item's price in the store.
         /// </summary>
-        public float Price { get; }
+        public decimal Price { get; }
 
         /// <summary>
         /// The section where the item is normally located in the store.

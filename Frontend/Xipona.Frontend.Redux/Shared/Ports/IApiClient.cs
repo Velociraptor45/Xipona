@@ -39,7 +39,10 @@ public interface IApiClient
 
     Task<EditedItem> GetItemByIdAsync(Guid itemId);
 
-    Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput);
+    Task<int> GetTotalSearchResultCountAsync(string searchInput);
+
+    Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput,
+        int page, int pageSize);
 
     Task<IEnumerable<SearchItemForShoppingListResult>> SearchItemsForShoppingListAsync(string searchInput,
         Guid storeId, CancellationToken cancellationToken);
@@ -118,7 +121,7 @@ public interface IApiClient
 
     Task AddItemsToShoppingListsAsync(IEnumerable<AddToShoppingListItem> items);
 
-    Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request);
+    Task<TemporaryShoppingListItem> AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request);
 
     Task DeleteStoreAsync(Guid storeId);
 }

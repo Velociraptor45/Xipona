@@ -6,7 +6,7 @@
     <RootNamespace>ProjectHermes.Xipona.Api.Contracts</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>ProjectHermes Xipona Api Contracts</Title>
-    <Version>0.12.0</Version>
+    <Version>0.13.0-alpha.5</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/Xipona</RepositoryUrl>

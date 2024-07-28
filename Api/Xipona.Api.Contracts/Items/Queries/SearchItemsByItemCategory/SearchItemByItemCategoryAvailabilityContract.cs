@@ -12,7 +12,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCate
         /// <param name="storeId"></param>
         /// <param name="storeName"></param>
         /// <param name="price"></param>
-        public SearchItemByItemCategoryAvailabilityContract(Guid storeId, string storeName, float price)
+        public SearchItemByItemCategoryAvailabilityContract(Guid storeId, string storeName, decimal price)
         {
             StoreId = storeId;
             StoreName = storeName;
@@ -32,6 +32,6 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCate
         /// <summary>
         /// The item's price in the store.
         /// </summary>
-        public float Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

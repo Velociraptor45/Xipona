@@ -21,7 +21,7 @@ public record ShoppingListState(
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
         if (ShoppingList is null)
-            return Enumerable.Empty<ShoppingListSection>();
+            return [];
 
         return ShoppingList.Sections.AsEnumerable()
             .Where(s => s.Items.Any() && (!s.AllItemsHidden || ItemsInBasketVisible));
@@ -33,7 +33,7 @@ public record ShoppingListState(
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
 {
-    public const float InitialTemporaryItemPrice = 1f;
+    public const decimal InitialTemporaryItemPrice = 1m;
 
     public override string GetName()
     {
@@ -51,7 +51,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             false,
             null,
             new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
-            new TemporaryItemCreator(string.Empty, null, 1f, 0, false, false, false),
+            new TemporaryItemCreator(string.Empty, null, 1m, 0, false, false, false),
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
             new Summary(false, false, DateTime.MinValue, false),
             new InitialStoreCreator(false, string.Empty, false));

@@ -4,7 +4,7 @@ namespace ProjectHermes.Xipona.Frontend.WebApp.Services
 {
     public interface IItemPriceCalculationService
     {
-        float CalculatePrice(int quantityTypeId, float pricePerQuantity, float quantity);
+        float CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity);
 
         float GetInBasketPrice(ShoppingListModel shoppingList);
 

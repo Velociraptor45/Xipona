@@ -15,10 +15,10 @@
     <AntDesign.InputNumber Formatter="FormatUpdatePrice"
                            Parser="ParseUpdatePrice"
                            Class="price-update-input"
-                           TValue="float"
+                           TValue="decimal"
                            Value="State.Value.PriceUpdate.Price"
                            ValueChanged="OnPriceChanged"
-                           Min="0.01f"></AntDesign.InputNumber>
+                           Min="0.01m"></AntDesign.InputNumber>
     @if (State.Value.PriceUpdate.Item?.TypeId is not null)
     {
         <div class="pt-3">
@@ -36,7 +36,7 @@
         Dispatcher.Dispatch(new ClosePriceUpdaterAction());
     }
 
-    private void OnPriceChanged(float price)
+    private void OnPriceChanged(decimal price)
     {
         Dispatcher.Dispatch(new PriceOnPriceUpdaterChangedAction(price));
     }
@@ -51,7 +51,7 @@
         Dispatcher.Dispatch(new SavePriceUpdateAction());
     }
 
-    private string FormatUpdatePrice(float value)
+    private string FormatUpdatePrice(decimal value)
     {
         return $"{value:n2} {State.Value.PriceUpdate.Item?.QuantityType.PriceLabel}";
     }

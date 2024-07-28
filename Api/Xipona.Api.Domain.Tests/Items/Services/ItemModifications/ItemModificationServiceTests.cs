@@ -345,8 +345,6 @@ public class ItemModificationServiceTests
 
     private class LocalFixture : ItemModificationServiceFixture
     {
-        private readonly CommonFixture _commonFixture = new();
-
         private Dictionary<ItemTypeId, List<ShoppingListMock>>? _shoppingListDict;
         private List<IItemType>? _notExistingItemTypes;
         private Tuple<ItemTypeId, StoreId>? _removedStoreByTypeId;
@@ -427,7 +425,7 @@ public class ItemModificationServiceTests
         private void SetupModifiedItemTypesNotContainingAllExisting()
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
-            var choseItem = _commonFixture.ChooseRandom(_itemMock.Object.ItemTypes);
+            var choseItem = CommonFixture.ChooseRandom(_itemMock.Object.ItemTypes);
             _modifiedItemTypes = new ItemTypeModification(choseItem.Id, choseItem.Name, choseItem.Availabilities)
                 .ToMonoList();
             _notExistingItemTypes = _itemMock.Object.ItemTypes.Except(choseItem.ToMonoList()).ToList();
@@ -443,7 +441,7 @@ public class ItemModificationServiceTests
                     if (removedOne)
                         return new ItemTypeModification(t.Id, t.Name, t.Availabilities);
 
-                    var av = _commonFixture.RemoveRandom(t.Availabilities, 1).ToList();
+                    var av = CommonFixture.RemoveRandom(t.Availabilities, 1).ToList();
                     var removedAvailability = t.Availabilities.Except(av).Single();
                     _removedStoreByTypeId = new Tuple<ItemTypeId, StoreId>(t.Id, removedAvailability.StoreId);
                     removedOne = true;
@@ -458,7 +456,7 @@ public class ItemModificationServiceTests
             var dict = new Dictionary<ItemTypeId, List<ShoppingListMock>>();
             foreach (var type in _itemMock.Object.ItemTypes)
             {
-                var storeId = _commonFixture.ChooseRandom(type.Availabilities).StoreId;
+                var storeId = CommonFixture.ChooseRandom(type.Availabilities).StoreId;
                 var shoppingLists = new ShoppingListBuilder()
                     .WithStoreId(storeId)
                     .CreateMany(1)
@@ -481,7 +479,7 @@ public class ItemModificationServiceTests
                 var storeId =
                     type.Id == _removedStoreByTypeId.Item1
                         ? StoreId.New
-                        : _commonFixture.ChooseRandom(type.Availabilities).StoreId;
+                        : CommonFixture.ChooseRandom(type.Availabilities).StoreId;
                 var shoppingListMocks = new ShoppingListBuilder()
                     .WithStoreId(storeId)
                     .CreateMany(1)

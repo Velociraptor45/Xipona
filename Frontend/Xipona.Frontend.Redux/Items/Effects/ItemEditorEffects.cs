@@ -174,7 +174,7 @@ public sealed class ItemEditorEffects
         _navigationManager.NavigateTo(PageRoutes.Items);
 
         if (action.TriggeredBySave)
-            dispatcher.Dispatch(new SearchItemsAction());
+            dispatcher.Dispatch(new RetrieveSearchResultCountAction());
 
         return Task.CompletedTask;
     }

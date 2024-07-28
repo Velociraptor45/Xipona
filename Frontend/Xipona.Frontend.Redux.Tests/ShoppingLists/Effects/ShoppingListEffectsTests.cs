@@ -394,7 +394,17 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedStores()
             {
-                _expectedStoresForShoppingList = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList();
+                _expectedStoresForShoppingList =
+                [
+                    new DomainTestBuilder<ShoppingListStore>().Create() with
+                    {
+                        Name = "Bstore" + new DomainTestBuilder<string>().Create()
+                    },
+                    new DomainTestBuilder<ShoppingListStore>().Create() with
+                    {
+                        Name = "Astore" + new DomainTestBuilder<string>().Create()
+                    }
+                ];
             }
 
             public void SetupFindingStoresForShoppingList()
@@ -418,7 +428,7 @@ public class ShoppingListEffectsTests
             public void SetupDispatchingChangeAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedStoresForShoppingList);
-                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.First().Id);
+                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.Last().Id);
                 SetupDispatchingAction(_expectedStoreChangeAction);
             }
 
@@ -460,74 +470,6 @@ public class ShoppingListEffectsTests
                         Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
                     }
                 };
-            }
-        }
-    }
-
-    public class HandleShoppingListEnteredAction
-    {
-        private readonly HandleShoppingListEnteredActionFixture _fixture = new();
-
-        [Fact]
-        public async Task HandleShoppingListEnteredAction_WithStateContainingNoStores_ShouldNotDoAnything()
-        {
-            // Arrange
-            _fixture.SetupStateContainingNoStores();
-            var queue = CallQueue.Create(_ => { });
-            var sut = _fixture.CreateSut();
-
-            // Act
-            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
-
-            // Assert
-            queue.VerifyOrder();
-        }
-
-        [Fact]
-        public async Task HandleShoppingListEnteredAction_WithStateContainingStores_ShouldDispatchStoreChangedAction()
-        {
-            // Arrange
-            _fixture.SetupStateContainingStores();
-            var queue = CallQueue.Create(_ =>
-            {
-                _fixture.SetupDispatchingStoreChangedAction();
-            });
-            var sut = _fixture.CreateSut();
-
-            // Act
-            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
-
-            // Assert
-            queue.VerifyOrder();
-        }
-
-        private sealed class HandleShoppingListEnteredActionFixture : ShoppingListEffectsFixture
-        {
-            public void SetupStateContainingNoStores()
-            {
-                State = State with
-                {
-                    Stores = State.Stores with
-                    {
-                        Stores = new List<ShoppingListStore>()
-                    }
-                };
-            }
-
-            public void SetupStateContainingStores()
-            {
-                State = State with
-                {
-                    Stores = State.Stores with
-                    {
-                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
-                    }
-                };
-            }
-
-            public void SetupDispatchingStoreChangedAction()
-            {
-                SetupDispatchingAction(new SelectedStoreChangedAction(State.Stores.Stores.First().Id));
             }
         }
     }
@@ -782,6 +724,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupQuantityTypeUnitInTemporaryItemCreator();
                 _fixture.SetupItemForQuantityTypeUnit();
                 _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupDispatchingAddItemAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
@@ -805,6 +748,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupQuantityTypeWeightInTemporaryItemCreator();
                 _fixture.SetupItemForQuantityTypeWeight();
                 _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupDispatchingAddItemAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
@@ -820,7 +764,7 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleSaveTemporaryItemActionFixture : ShoppingListEffectsFixture
         {
-            private SaveTemporaryItemFinishedAction? _expectedFinishedAction;
+            private AddTemporaryItemAction? _expectedFinishedAction;
             private ShoppingListItem? _item;
             private QuantityType? _quantityType;
 
@@ -922,13 +866,18 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<SaveTemporaryItemStartedAction>();
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingAddItemAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
-                _expectedFinishedAction = new SaveTemporaryItemFinishedAction(_item, State.TemporaryItemCreator.Section!);
-                SetupDispatchingAction<SaveTemporaryItemFinishedAction>(
+                _expectedFinishedAction = new AddTemporaryItemAction(_item, State.TemporaryItemCreator.Section!);
+                SetupDispatchingAction<AddTemporaryItemAction>(
                     action => action.IsEquivalentTo(_expectedFinishedAction, new List<string> { "Item.Id.OfflineId.Value" }));
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<SaveTemporaryItemFinishedAction>();
             }
 
             public void SetupDispatchingCloseAction()

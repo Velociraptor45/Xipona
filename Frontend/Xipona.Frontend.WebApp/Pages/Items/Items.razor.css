@@ -5,7 +5,7 @@
 
 .no-items-found-notice, .initial-search-notice {
     text-align: center;
-    color: #bdc3c7;
+    color: var(--discreet-hint-color);
 }
 
 @media (min-width: 769px) {

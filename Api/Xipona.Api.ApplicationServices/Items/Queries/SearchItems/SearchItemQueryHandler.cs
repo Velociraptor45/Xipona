@@ -16,6 +16,6 @@ public class SearchItemQueryHandler : IQueryHandler<SearchItemQuery, IEnumerable
         CancellationToken cancellationToken)
     {
         var itemSearchService = _itemQueryServiceDelegate(cancellationToken);
-        return await itemSearchService.SearchAsync(query.SearchInput);
+        return await itemSearchService.SearchAsync(query.SearchInput, query.Page, query.PageSize);
     }
 }

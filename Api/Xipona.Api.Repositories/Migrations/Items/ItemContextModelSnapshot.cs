@@ -32,8 +32,8 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.Property<Guid>("DefaultSectionId")
                         .HasColumnType("char(36)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("ItemId", "StoreId");
 
@@ -141,8 +141,8 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.Property<Guid>("DefaultSectionId")
                         .HasColumnType("char(36)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("ItemTypeId", "StoreId");
 

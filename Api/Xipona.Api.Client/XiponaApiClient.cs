@@ -87,10 +87,10 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.RemoveItemFromShoppingListAsync(id, contract, cancellationToken);
         }
 
-        public async Task AddTemporaryItemToShoppingListAsync(Guid id, AddTemporaryItemToShoppingListContract contract,
-            CancellationToken cancellationToken = default)
+        public async Task<TemporaryShoppingListItemContract> AddTemporaryItemToShoppingListAsync(Guid id,
+            AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default)
         {
-            await _apiClient.AddTemporaryItemToShoppingListAsync(id, contract, cancellationToken);
+            return await _apiClient.AddTemporaryItemToShoppingListAsync(id, contract, cancellationToken);
         }
 
         public async Task AddItemToShoppingListAsync(Guid id, AddItemToShoppingListContract contract,
@@ -197,10 +197,16 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.SearchItemsByItemCategoryAsync(itemCategoryId, cancellationToken);
         }
 
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput,
+        public async Task<int> GetTotalSearchResultCountAsync(string searchInput,
             CancellationToken cancellationToken = default)
         {
-            return await _apiClient.SearchItemsAsync(searchInput, cancellationToken);
+            return await _apiClient.GetTotalSearchResultCountAsync(searchInput, cancellationToken);
+        }
+
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync(string searchInput, int page = 1,
+            int pageSize = 20, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.SearchItemsAsync(searchInput, page, pageSize, cancellationToken);
         }
 
         public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,

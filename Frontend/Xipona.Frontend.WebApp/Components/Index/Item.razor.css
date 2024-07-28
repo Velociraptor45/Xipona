@@ -1,12 +1,12 @@
 ﻿.item {
     list-style-type: none;
-    color: #ffffff;
+    color: var(--secondary-color);
     cursor: pointer;
 }
 
 .item-editing {
     list-style-type: none;
-    color: #ffffff;
+    color: var(--secondary-color);
 }
 
 .in-basket {
@@ -14,7 +14,7 @@
 }
 
 .not-in-basket {
-    background-color: #e74c3c;
+    background-color: var(--color-red);
 }
 
 .price-currency {

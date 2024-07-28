@@ -17,16 +17,11 @@ public class ShoppingListMock : Mock<IShoppingList>
         SetupSections(shoppingList.Sections);
     }
 
-    public ShoppingListItem GetRandomItem(CommonFixture commonFixture)
-    {
-        return commonFixture.ChooseRandom(Object.Items);
-    }
-
-    public ShoppingListItem GetRandomItem(CommonFixture commonFixture, Func<ShoppingListItem, bool> condition)
+    public ShoppingListItem GetRandomItem(Func<ShoppingListItem, bool> condition)
     {
         var filteredItems = Object.Items.Where(condition);
 
-        return commonFixture.ChooseRandom(filteredItems);
+        return CommonFixture.ChooseRandom(filteredItems);
     }
 
     #region Setup properties

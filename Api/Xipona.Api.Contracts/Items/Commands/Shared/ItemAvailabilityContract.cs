@@ -15,7 +15,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared
         /// <summary>
         /// The price of the item in the store.
         /// </summary>
-        public float Price { get; set; }
+        public decimal Price { get; set; }
 
         /// <summary>
         /// The ID of the section where the item is located in the store.

@@ -20,7 +20,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppin
         /// <param name="manufacturerName"></param>
         /// <param name="defaultSection"></param>
         public SearchItemForShoppingListResultContract(Guid id, Guid? typeId, string name, int defaultQuantity,
-            float price, string priceLabel, string itemCategoryName, string manufacturerName,
+            decimal price, string priceLabel, string itemCategoryName, string manufacturerName,
             SectionContract defaultSection)
         {
             Id = id;
@@ -57,7 +57,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppin
         /// <summary>
         /// The price of the item or item type.
         /// </summary>
-        public float Price { get; }
+        public decimal Price { get; }
 
         /// <summary>
         /// The price label of the item or item type.

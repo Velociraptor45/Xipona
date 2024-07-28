@@ -16,7 +16,7 @@
 
 @if (State.Value.ShoppingList != null)
 {
-    <div class="d-flex flex-column mt-2 summary">
+    <div class="d-flex flex-column mt-2 summary @(SharedState.Value.IsOnline ? "" : "summary-retry")">
         <div class="pb-1 d-flex align-items-end flex-column">
             <div class="d-flex border-top pt-1 price-sum">
                 <div class="d-flex">

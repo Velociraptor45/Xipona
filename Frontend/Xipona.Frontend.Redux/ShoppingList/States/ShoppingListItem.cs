@@ -7,7 +7,7 @@ public record ShoppingListItem(
     Guid? TypeId,
     string Name,
     bool IsTemporary,
-    float PricePerQuantity,
+    decimal PricePerQuantity,
     QuantityType QuantityType,
     float? QuantityInPacket,
     QuantityTypeInPacket? QuantityInPacketType,

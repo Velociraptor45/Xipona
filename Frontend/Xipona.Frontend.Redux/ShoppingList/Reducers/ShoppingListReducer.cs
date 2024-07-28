@@ -13,7 +13,6 @@ public static class ShoppingListReducer
     {
         return state with
         {
-            SelectedStoreId = Guid.Empty,
             ItemsInBasketVisible = true,
             EditModeActive = false,
             ShoppingList = null,

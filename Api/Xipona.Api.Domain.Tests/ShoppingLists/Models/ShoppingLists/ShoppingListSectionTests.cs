@@ -233,7 +233,7 @@ public class ShoppingListSectionTests
                 _fixture.SetupItemWithoutTypes();
                 var sut = _fixture.CreateSut();
 
-                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId, null);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
 
                 // Act
                 var result = sut.ContainsItem(_fixture.ItemId.Value);
@@ -297,22 +297,20 @@ public class ShoppingListSectionTests
 
         private sealed class ContainsItemFixture : ShoppingListSectionFixture
         {
-            private readonly CommonFixture _commonFixture = new();
-
             public ItemId? ItemId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
 
             public void SetupItemWithoutTypes()
             {
                 var items = new ShoppingListItemBuilder().WithoutTypeId().CreateMany(3).ToList();
-                ItemId = _commonFixture.ChooseRandom(items).Id;
+                ItemId = CommonFixture.ChooseRandom(items).Id;
                 SetupItems(items);
             }
 
             public void SetupItemWithTypes()
             {
                 var items = new ShoppingListItemBuilder().CreateMany(3).ToList();
-                var item = _commonFixture.ChooseRandom(items);
+                var item = CommonFixture.ChooseRandom(items);
                 ItemId = item.Id;
                 ItemTypeId = item.TypeId;
                 SetupItems(items);

@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.ApplicationServices.TestKit\Xipona.Api.ApplicationServices.TestKit.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Core.Tests\Xipona.Api.Core.Tests.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain.TestKit\Xipona.Api.Domain.TestKit.csproj" />
     <ProjectReference Include="..\Xipona.Api.Endpoints.TestKit\Xipona.Api.Endpoints.TestKit.csproj" />
     <ProjectReference Include="..\Xipona.Api.Endpoint\Xipona.Api.Endpoint.csproj" />

@@ -4,7 +4,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOn
 {
     public class ItemAmountForOneServingAvailabilityContract
     {
-        public ItemAmountForOneServingAvailabilityContract(Guid storeId, string storeName, float price)
+        public ItemAmountForOneServingAvailabilityContract(Guid storeId, string storeName, decimal price)
         {
             StoreId = storeId;
             StoreName = storeName;
@@ -13,6 +13,6 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOn
 
         public Guid StoreId { get; }
         public string StoreName { get; }
-        public float Price { get; }
+        public decimal Price { get; }
     }
 }

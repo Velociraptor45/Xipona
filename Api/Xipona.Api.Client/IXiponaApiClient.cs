@@ -59,8 +59,8 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default);
 
         [Put("shopping-lists/{id}/items/temporary")]
-        Task AddTemporaryItemToShoppingListAsync([Path] Guid id, [Body] AddTemporaryItemToShoppingListContract contract,
-            CancellationToken cancellationToken = default);
+        Task<TemporaryShoppingListItemContract> AddTemporaryItemToShoppingListAsync([Path] Guid id,
+            [Body] AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default);
 
         [Put("shopping-lists/{id}/items")]
         Task AddItemToShoppingListAsync([Path] Guid id, [Body] AddItemToShoppingListContract contract,
@@ -117,9 +117,13 @@ namespace ProjectHermes.Xipona.Api.Client
         Task<IEnumerable<SearchItemByItemCategoryResultContract>> SearchItemsByItemCategoryAsync(
             [Path] Guid itemCategoryId, CancellationToken cancellationToken = default);
 
-        [Get("items/search")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput,
+        [Get("items/search-result-count")]
+        Task<int> GetTotalSearchResultCountAsync([Query] string searchInput,
             CancellationToken cancellationToken = default);
+
+        [Get("items/search")]
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsAsync([Query] string searchInput, [Query] int page = 1,
+            [Query] int pageSize = 20, CancellationToken cancellationToken = default);
 
         [Get("items/filter")]
         Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,

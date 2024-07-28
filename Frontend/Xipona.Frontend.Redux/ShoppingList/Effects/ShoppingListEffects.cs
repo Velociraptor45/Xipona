@@ -112,20 +112,7 @@ public class ShoppingListEffects
         dispatcher.Dispatch(finishAction);
 
         if (stores.Any())
-            dispatcher.Dispatch(new SelectedStoreChangedAction(stores.First().Id));
-    }
-
-    [EffectMethod(typeof(ShoppingListEnteredAction))]
-    public Task HandleShoppingListEnteredAction(IDispatcher dispatcher)
-    {
-        if (!_state.Value.Stores.Stores.Any())
-            return Task.CompletedTask;
-
-        var store = _state.Value.Stores.Stores.First();
-
-        dispatcher.Dispatch(new SelectedStoreChangedAction(store.Id));
-
-        return Task.CompletedTask;
+            dispatcher.Dispatch(new SelectedStoreChangedAction(stores.OrderBy(s => s.Name).First().Id));
     }
 
     [EffectMethod]
@@ -180,9 +167,11 @@ public class ShoppingListEffects
             _state.Value.TemporaryItemCreator.Section!.Id,
             item.Id.OfflineId!.Value);
 
+        dispatcher.Dispatch(new AddTemporaryItemAction(item, _state.Value.TemporaryItemCreator.Section));
+
         await _commandQueue.Enqueue(addRequest);
 
-        dispatcher.Dispatch(new SaveTemporaryItemFinishedAction(item, _state.Value.TemporaryItemCreator.Section));
+        dispatcher.Dispatch(new SaveTemporaryItemFinishedAction());
         dispatcher.Dispatch(new CloseTemporaryItemCreatorAction());
     }
 

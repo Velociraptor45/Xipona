@@ -1067,7 +1067,7 @@ public class ItemEditorEffectsTests
                 Action = new ChangePriceAction(
                     new DomainTestBuilder<EditedItem>().Create(),
                     new DomainTestBuilder<EditedItemAvailability>().Create(),
-                    new DomainTestBuilder<float>().Create());
+                    new DomainTestBuilder<decimal>().Create());
             }
 
             public void SetupActionForItemType()
@@ -1075,7 +1075,7 @@ public class ItemEditorEffectsTests
                 Action = new ChangePriceAction(
                     new DomainTestBuilder<EditedItemType>().Create(),
                     new DomainTestBuilder<EditedItemAvailability>().Create(),
-                    new DomainTestBuilder<float>().Create());
+                    new DomainTestBuilder<decimal>().Create());
             }
         }
     }

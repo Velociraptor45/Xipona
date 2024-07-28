@@ -113,10 +113,12 @@ public class ApiClient : IApiClient
         await _client.RemoveItemFromShoppingListAsync(request.ShoppingListId, contract);
     }
 
-    public async Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
+    public async Task<TemporaryShoppingListItem> AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
     {
         var contract = _converters.ToContract<AddTemporaryItemToShoppingListRequest, AddTemporaryItemToShoppingListContract>(request);
-        await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
+        var tempItem = await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
+
+        return _converters.ToDomain<TemporaryShoppingListItemContract, TemporaryShoppingListItem>(tempItem);
     }
 
     public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
@@ -244,13 +246,18 @@ public class ApiClient : IApiClient
             .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
     }
 
-    public async Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput)
+    public async Task<int> GetTotalSearchResultCountAsync(string searchInput)
     {
-        var result = await _client.SearchItemsAsync(searchInput);
+        return await _client.GetTotalSearchResultCountAsync(searchInput);
+    }
 
-        return result is null ?
-            Enumerable.Empty<ItemSearchResult>() :
-            result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
+    public async Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput, int page, int pageSize)
+    {
+        var result = await _client.SearchItemsAsync(searchInput, page, pageSize);
+
+        return result is null
+            ? Enumerable.Empty<ItemSearchResult>()
+            : result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
     }
 
     public async Task<EditedItem> GetItemByIdAsync(Guid itemId)

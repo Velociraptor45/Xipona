@@ -31,7 +31,7 @@ public class ItemTypeAvailableAtEntityBuilder : TestBuilderBase<ItemTypeAvailabl
         return this;
     }
 
-    public ItemTypeAvailableAtEntityBuilder WithPrice(float price)
+    public ItemTypeAvailableAtEntityBuilder WithPrice(decimal price)
     {
         FillPropertyWith(p => p.Price, price);
         return this;
