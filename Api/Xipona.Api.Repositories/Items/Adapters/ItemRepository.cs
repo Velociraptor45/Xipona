@@ -288,7 +288,7 @@ public class ItemRepository : IItemRepository
 
         await ((AggregateRoot)item).DispatchDomainEvents(_domainEventDispatcher);
 
-        var e = GetItemQuery().First(i => i.Id == entityIdToLoad);
+        var e = await GetItemQuery().FirstAsync(i => i.Id == entityIdToLoad);
         return _toModelConverter.ToDomain(e);
     }
 
