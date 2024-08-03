@@ -4,8 +4,10 @@ services:
   Database:
     image: mariadb
     environment:
-      MARIADB_ROOT_PASSWORD: change_me
+      MARIADB_ROOT_PASSWORD: change_me_root
       MYSQL_DATABASE: xipona
+      MYSQL_USER: xipona
+      MYSQL_PASSWORD: change_me
     ports:
       - "15909:3306"
     networks: 
@@ -14,7 +16,7 @@ services:
       - ph-xipona-database:/var/lib/mysql
 
   Api:
-    image: velocir4ptor/ph-xipona-api:latest
+    image: velocir4ptor/ph-xipona-api:0.12.0
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       PH_XIPONA_DB_USERNAME: xipona
@@ -41,7 +43,7 @@ services:
   #     - ph-xipona
 
   Frontend:
-    image: velocir4ptor/ph-xipona-frontend:latest
+    image: velocir4ptor/ph-xipona-frontend:0.12.0
     ports:
       - "14000:80"
     depends_on:
