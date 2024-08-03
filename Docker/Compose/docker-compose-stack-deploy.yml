@@ -4,7 +4,7 @@ services:
   Database:
     image: mariadb
     environment:
-      MARIADB_ROOT_PASSWORD: change_me
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/ph-xipona-db-root-pwd
       MYSQL_DATABASE: xipona
     ports:
       - "15909:3306"
@@ -12,13 +12,15 @@ services:
       - ph-xipona
     volumes:
       - ph-xipona-database:/var/lib/mysql
+    secrets:
+      - ph-xipona-db-root-pwd
 
   Api:
     image: velocir4ptor/ph-xipona-api:latest
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      PH_XIPONA_DB_USERNAME: xipona
-      PH_XIPONA_DB_PASSWORD: change_me
+      PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
+      PH_XIPONA_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
     ports:
       - "12489:80"
     depends_on:
@@ -29,6 +31,9 @@ services:
       - ph-xipona-api-config:/app/config:ro
     networks:
       - ph-xipona
+    secrets:
+      - ph-xipona-db-username
+      - ph-xipona-db-password
 
   # LogCollector: # uncomment this for frontend log support
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
@@ -74,3 +79,11 @@ volumes:
 networks:
   ph-xipona:
     name: ph-xipona
+
+secrets:
+  ph-xipona-db-username:
+    external: true
+  ph-xipona-db-password:
+    external: true
+  ph-xipona-db-root-pwd:
+    external: true
