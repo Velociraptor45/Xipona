@@ -9,36 +9,41 @@ public class DatabaseConfigurationLoadingService
 {
     private readonly IFileLoadingService _fileLoadingService;
     private readonly IVaultService _vaultService;
+    private readonly IConfiguration _configuration;
 
-    public DatabaseConfigurationLoadingService(IFileLoadingService fileLoadingService, IVaultService vaultService)
+    public DatabaseConfigurationLoadingService(IFileLoadingService fileLoadingService, IVaultService vaultService,
+        IConfiguration configuration)
     {
         _fileLoadingService = fileLoadingService;
         _vaultService = vaultService;
+        _configuration = configuration;
     }
 
-    public async Task<ConnectionStrings> LoadAsync(IConfiguration config)
+    public async Task<ConnectionStrings> LoadAsync()
     {
-        var dbConfig = config.GetSection("Database").Get<DatabaseConfig>()
-            ?? throw new InvalidOperationException("Database configuration is missing in appsettings");
+        var dbConfig = _configuration.GetSection("Database").Get<DatabaseConfig>()
+                       ?? throw new InvalidOperationException("Database configuration is missing in appsettings");
 
-        var usernameFile = config["PH_XIPONA_DB_USERNAME_FILE"];
-        var passwordFile = config["PH_XIPONA_DB_PASSWORD_FILE"];
+        string username = LoadSecret("PH_XIPONA_DB_USERNAME_FILE", "PH_XIPONA_DB_USERNAME");
+        string password = LoadSecret("PH_XIPONA_DB_PASSWORD_FILE", "PH_XIPONA_DB_PASSWORD");
 
-        string username;
-        string password;
-        if (string.IsNullOrWhiteSpace(usernameFile) || string.IsNullOrWhiteSpace(passwordFile))
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             (username, password) = await _vaultService.LoadCredentialsAsync();
-        }
-        else
-        {
-            username = _fileLoadingService.ReadFile(usernameFile);
-            password = _fileLoadingService.ReadFile(passwordFile);
         }
 
         var connectionString =
             $"server={dbConfig.Address};port={dbConfig.Port};database={dbConfig.Name};user id={username};pwd={password};AllowUserVariables=true;UseAffectedRows=false";
         return new ConnectionStrings { ShoppingDatabase = connectionString };
+    }
+
+    private string LoadSecret(string envSecretFileName, string envSecretName)
+    {
+        var file = _configuration[envSecretFileName];
+        if (string.IsNullOrWhiteSpace(file))
+            return _configuration[envSecretName] ?? string.Empty;
+
+        return _fileLoadingService.ReadFile(file);
     }
 
     internal class DatabaseConfig
