@@ -56,7 +56,7 @@ But what if you're missing some ingredients? It's tedious to add all of them to 
 And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/ProjectHermes-ShoppingList/milestones) to get a glimps at what's coming soon 👀
 
 ## Setup in Docker
-To run all required services in containers, Dockerfiles and docker-compose files are provided. Since v0.7.0 Docker Secrets are being used and thus the services must be started via a stack deploy on a Docker Swarm. Starting via docker-compose is not supported anymore.
+To run all required services in containers, Dockerfiles and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
 
 ### Prerequisits
 Prepare the following things:
@@ -68,7 +68,7 @@ Prepare the following things:
     - ph-xipona-frontend-config
   - Database
     - ph-xipona-database
-- Docker Secrets
+- Docker Secrets (if you're using stack deploy)
   - ph-xipona-db-username
   - ph-xipona-db-password
   - ph-xipona-db-root-pwd
@@ -79,12 +79,12 @@ Prepare the following things:
   - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
 
 ### Frontend
-- Configure the webserver address & the frontend's environment in xipona.conf under *Frontend/Docker* and copy it into the root directory of the ph-xipona-frontend-**config**.
+- Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the ph-xipona-frontend-**config**.
 - Set the api's address in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) and copy it into a directory of your choice on your host.
 
 ### yml files
 - Under *Docker/Compose/* is a compose yml file. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings file is
-- Start the containers via e.g. `docker stack deploy --compose-file docker-compose.yml ph-xipona`
+- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml ph-xipona` or `docker compose -f docker-compose.yml -p ph-xipona up -d`
 
 And now you're done. Happy shopping!
 
@@ -96,7 +96,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 #### Api
 1. Create the docker volume ph-xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the ph-xipona-api-**tls** volume.
-3. Replace the existing kestrel http endpoint in your `appsettings.{env}.json` with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
+3. Replace the existing kestrel http endpoint in your *appsettings.{env}.json* with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
     ```
     "Kestrel": {
       "Endpoints": {
@@ -115,7 +115,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 1. Create the docker volume ph-xipona-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the ph-xipona-frontend-**tls** volume.
-3. Replace the `xipona.conf` (under *Frontend/Docker*) with:
+3. Replace the *xipona.conf* (under *Frontend/Docker*) with:
     ```
     server {
         listen 80 default_server;
@@ -157,7 +157,7 @@ Set the `Auth` section in the respective appsettings file (*Frontend/Xipona.Fron
 Set the `Auth` section in the respective appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) to `"Enabled": true` and fill the remaining properties.
 
 ### Key Vault
-Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
+Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault; it also references the stack deploy compose file. If you're using the docker compose, remove the _FILE suffix from all capitalized env variables and provide the values directly in the compose file instead of using secrets):
 
 - Remove the api's two DB environment variables (PH_XIPONA_DB_USERNAME_FILE & PH_XIPONA_DB_PASSWORD_FILE) and both username/password docker secrets from the docker compose file
 - Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
