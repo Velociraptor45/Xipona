@@ -6,8 +6,8 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/ph-xipona-db-root-pwd
       MYSQL_DATABASE: xipona
-      MYSQL_USER: xipona
-      MYSQL_PASSWORD: change_me
+      MYSQL_USER_FILE: /run/secrets/ph-xipona-db-username
+      MYSQL_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
     ports:
       - "15909:3306"
     networks: 
@@ -16,6 +16,8 @@ services:
       - ph-xipona-database:/var/lib/mysql
     secrets:
       - ph-xipona-db-root-pwd
+      - /run/secrets/ph-xipona-db-username
+      - /run/secrets/ph-xipona-db-password
 
   Api:
     image: velocir4ptor/ph-xipona-api:0.12.0
