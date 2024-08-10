@@ -45,6 +45,10 @@ jobs:
           git tag v${{ steps.gitversion.outputs.GitVersion_SemVer }}
           git push --tags
 
+      - name: Setup Docker Compose (temp)
+        run: |
+          ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:

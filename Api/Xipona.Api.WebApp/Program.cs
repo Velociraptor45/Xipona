@@ -48,8 +48,9 @@ Log.Logger = new LoggerConfiguration()
 
 var fileLoadingService = new FileLoadingService();
 var vaultService = new VaultService(configuration, fileLoadingService);
-var configurationLoadingService = new DatabaseConfigurationLoadingService(fileLoadingService, vaultService);
-var connectionStrings = await configurationLoadingService.LoadAsync(configuration);
+var configurationLoadingService =
+    new DatabaseConfigurationLoadingService(fileLoadingService, vaultService, configuration);
+var connectionStrings = await configurationLoadingService.LoadAsync();
 builder.Services.AddSingleton(connectionStrings);
 
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);

@@ -10,6 +10,8 @@ namespace ProjectHermes.Xipona.Api.Vault;
 
 public class VaultService : IVaultService
 {
+    private readonly IConfiguration _configuration;
+    private readonly IFileLoadingService _fileLoadingService;
     private readonly string _password;
     private readonly string _username;
     private readonly Lazy<KeyVaultConfig> _keyVaultConfig;
@@ -19,25 +21,28 @@ public class VaultService : IVaultService
 
     public VaultService(IConfiguration configuration, IFileLoadingService fileLoadingService)
     {
+        _configuration = configuration;
+        _fileLoadingService = fileLoadingService;
         _keyVaultConfig = new Lazy<KeyVaultConfig>(() =>
             configuration.GetSection("KeyVault").Get<KeyVaultConfig>()
                 ?? throw new InvalidOperationException("KeyVault config is missing in appsettings"));
 
-        var usernameFilePath = configuration["PH_XIPONA_VAULT_USERNAME_FILE"];
-        var passwordFilePath = configuration["PH_XIPONA_VAULT_PASSWORD_FILE"];
-
-        _username = string.IsNullOrWhiteSpace(usernameFilePath) ?
-             string.Empty :
-             fileLoadingService.ReadFile(usernameFilePath);
-
-        _password = string.IsNullOrWhiteSpace(passwordFilePath) ?
-             string.Empty :
-             fileLoadingService.ReadFile(passwordFilePath);
+        _username = LoadSecret("PH_XIPONA_VAULT_USERNAME_FILE", "PH_XIPONA_VAULT_USERNAME");
+        _password = LoadSecret("PH_XIPONA_VAULT_PASSWORD_FILE", "PH_XIPONA_VAULT_PASSWORD");
 
         _policy = Policy.Handle<Exception>().WaitAndRetryAsync(
             _retryCount,
             i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1),
             (e, _, tryNo, _) => Console.WriteLine($"Failed to retrieve value from vault (Try no. {tryNo}): {e}"));
+    }
+
+    private string LoadSecret(string envSecretFileName, string envSecretName)
+    {
+        var file = _configuration[envSecretFileName];
+        if (string.IsNullOrWhiteSpace(file))
+            return _configuration[envSecretName] ?? string.Empty;
+
+        return _fileLoadingService.ReadFile(file);
     }
 
     public async Task<(string Username, string Password)> LoadCredentialsAsync()
