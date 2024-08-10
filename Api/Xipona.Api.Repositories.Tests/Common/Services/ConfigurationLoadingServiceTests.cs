@@ -19,7 +19,8 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithEnvironmentVariableSet_ShouldLoadFromFile()
     {
         // Arrange
-        _fixture.SetupEnvironmentVariables();
+        _fixture.SetupUsernameAndPassword();
+        _fixture.SetupFileEnvironmentVariables();
         _fixture.SetupGettingConfigurationFromAppsettings();
         _fixture.SetupExpectedResult();
         _fixture.SetupLoadingUsernameFromFile();
@@ -29,7 +30,7 @@ public class ConfigurationLoadingServiceTests
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
 
         // Act
-        var result = await sut.LoadAsync(_fixture.ConfigurationMock);
+        var result = await sut.LoadAsync();
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -39,14 +40,14 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithEnvironmentVariableSet_WithDatabaseSectionMissing_ShouldThrow()
     {
         // Arrange
-        _fixture.SetupEnvironmentVariables();
+        _fixture.SetupFileEnvironmentVariables();
         _fixture.SetupGettingEmptyConfigurationFromAppsettings();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
 
         // Act
-        var func = async () => await sut.LoadAsync(_fixture.ConfigurationMock);
+        var func = async () => await sut.LoadAsync();
 
         // Assert
         await func.Should().ThrowAsync<InvalidOperationException>();
@@ -56,16 +57,18 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithUsernameEnvironmentVariableNotSet_ShouldLoadFromVault()
     {
         // Arrange
-        _fixture.SetupUsernameEnvironmentVariableEmpty();
+        _fixture.SetupUsernameAndPassword();
+        _fixture.SetupUsernameFileEnvironmentVariableEmpty();
         _fixture.SetupGettingConfigurationFromAppsettings();
         _fixture.SetupExpectedResult();
+        _fixture.SetupLoadingPasswordFromFile();
         _fixture.SetupLoadingCredentialsFromVault();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
 
         // Act
-        var result = await sut.LoadAsync(_fixture.ConfigurationMock);
+        var result = await sut.LoadAsync();
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -75,16 +78,38 @@ public class ConfigurationLoadingServiceTests
     public async Task LoadAsync_WithPasswordEnvironmentVariableNotSet_ShouldLoadFromVault()
     {
         // Arrange
-        _fixture.SetupPasswordEnvironmentVariableEmpty();
+        _fixture.SetupUsernameAndPassword();
+        _fixture.SetupPasswordFileEnvironmentVariableEmpty();
         _fixture.SetupGettingConfigurationFromAppsettings();
         _fixture.SetupExpectedResult();
+        _fixture.SetupLoadingUsernameFromFile();
         _fixture.SetupLoadingCredentialsFromVault();
         var sut = _fixture.CreateSut();
 
         TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
 
         // Act
-        var result = await sut.LoadAsync(_fixture.ConfigurationMock);
+        var result = await sut.LoadAsync();
+
+        // Assert
+        result.Should().BeEquivalentTo(_fixture.ExpectedResult);
+    }
+
+    [Fact]
+    public async Task LoadAsync_WithRawEnvironmentVariables_ShouldLoadFromEnvironmentVariables()
+    {
+        // Arrange
+        _fixture.SetupUsernameAndPassword();
+        _fixture.SetupFileEnvironmentVariablesEmpty();
+        _fixture.SetupRawEnvironmentVariables();
+        _fixture.SetupGettingConfigurationFromAppsettings();
+        _fixture.SetupExpectedResult();
+        var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.ConfigurationMock);
+
+        // Act
+        var result = await sut.LoadAsync();
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);
@@ -105,15 +130,21 @@ public class ConfigurationLoadingServiceTests
 
         public DatabaseConfigurationLoadingService CreateSut()
         {
-            return new DatabaseConfigurationLoadingService(_fileLoadingServiceMock.Object, _vaultServiceMock.Object);
+            TestPropertyNotSetException.ThrowIfNull(ConfigurationMock);
+
+            return new DatabaseConfigurationLoadingService(_fileLoadingServiceMock.Object, _vaultServiceMock.Object,
+                ConfigurationMock);
+        }
+
+        public void SetupUsernameAndPassword()
+        {
+            _username = new TestBuilder<string>().Create();
+            _password = new TestBuilder<string>().Create();
         }
 
         public void SetupExpectedResult()
         {
             TestPropertyNotSetException.ThrowIfNull(_dbConfig);
-
-            _username = new TestBuilder<string>().Create();
-            _password = new TestBuilder<string>().Create();
 
             ExpectedResult = new ConnectionStrings()
             {
@@ -150,7 +181,7 @@ public class ConfigurationLoadingServiceTests
                 .Build();
         }
 
-        public void SetupEnvironmentVariables()
+        public void SetupFileEnvironmentVariables()
         {
             _usernamePath = new TestBuilder<string>().Create();
             _passwordPath = new TestBuilder<string>().Create();
@@ -158,14 +189,29 @@ public class ConfigurationLoadingServiceTests
             Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", _passwordPath);
         }
 
-        public void SetupUsernameEnvironmentVariableEmpty()
+        public void SetupFileEnvironmentVariablesEmpty()
+        {
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_USERNAME_FILE", string.Empty);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", string.Empty);
+        }
+
+        public void SetupRawEnvironmentVariables()
+        {
+            TestPropertyNotSetException.ThrowIfNull(_username);
+            TestPropertyNotSetException.ThrowIfNull(_password);
+
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_USERNAME", _username);
+            Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD", _password);
+        }
+
+        public void SetupUsernameFileEnvironmentVariableEmpty()
         {
             Environment.SetEnvironmentVariable("PH_XIPONA_DB_USERNAME_FILE", string.Empty);
             _passwordPath = new TestBuilder<string>().Create();
             Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", _passwordPath);
         }
 
-        public void SetupPasswordEnvironmentVariableEmpty()
+        public void SetupPasswordFileEnvironmentVariableEmpty()
         {
             Environment.SetEnvironmentVariable("PH_XIPONA_DB_PASSWORD_FILE", string.Empty);
             _usernamePath = new TestBuilder<string>().Create();
