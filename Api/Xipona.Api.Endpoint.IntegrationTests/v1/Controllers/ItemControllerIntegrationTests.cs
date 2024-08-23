@@ -5,6 +5,7 @@ using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem;
@@ -13,6 +14,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -22,6 +24,7 @@ using ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 using ProjectHermes.Xipona.Api.Core.Attributes;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
@@ -60,6 +63,152 @@ namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
 
 public class ItemControllerIntegrationTests
 {
+    public sealed class GetItemTypePricesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly GetItemTypePricesAsyncFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task GetItemTypePricesAsync_WithNoItem_ShouldReturnNotFound()
+        {
+            // Arrange
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NotFoundObjectResult>();
+            var notFoundResult = (NotFoundObjectResult)result;
+            notFoundResult.Value.Should().NotBeNull();
+            notFoundResult.Value.Should().BeOfType<ErrorContract>();
+            var error = (ErrorContract)notFoundResult.Value!;
+            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemNotFound);
+        }
+
+        [Fact]
+        public async Task GetItemTypePricesAsync_WithItemNotAvailableAtStore_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItemNotAvailableAtStore();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
+            unprocessableEntityResult.Value.Should().NotBeNull();
+            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
+            var error = (ErrorContract)unprocessableEntityResult.Value!;
+            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemTypeAtStoreNotAvailable);
+        }
+
+        [Fact]
+        public async Task GetItemTypePricesAsync_WithItemWithoutTypes_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItemWithoutTypes();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
+            unprocessableEntityResult.Value.Should().NotBeNull();
+            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
+            var error = (ErrorContract)unprocessableEntityResult.Value!;
+            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemHasNoItemTypes);
+        }
+
+        [Fact]
+        public async Task GetItemTypePricesAsync_WithItem_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupItem();
+            await _fixture.SetupDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetItemTypePricesAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        {
+            private Item? _item;
+            public ItemTypePrices? ExpectedResult { get; private set; }
+            public Guid ItemId { get; } = Guid.NewGuid();
+            public Guid StoreId { get; } = Guid.NewGuid();
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new TestBuilder<ItemTypePrices>().Create();
+            }
+
+            public void SetupItemWithoutTypes()
+            {
+                _item = ItemEntityMother.InitialForStore(StoreId).WithId(ItemId).Create();
+            }
+
+            public void SetupItemNotAvailableAtStore()
+            {
+                _item = ItemEntityMother.Initial().WithId(ItemId).Create();
+            }
+
+            public void SetupItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var types = ExpectedResult.Prices
+                    .Select(p => ItemTypeEntityMother.Initial()
+                        .WithAvailableAt(new ItemTypeAvailableAtEntityBuilder().WithPrice(p.Price).WithItemTypeId(p.TypeId).Create())
+                        .WithId(p.TypeId)
+                        .Create())
+                    .ToList();
+
+                _item = ItemEntityMother.InitialWithTypes()
+                    .WithItemTypes(types)
+                    .WithId(ExpectedResult.ItemId)
+                    .Create();
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+
+                await itemContext.AddAsync(_item);
+
+                await itemContext.SaveChangesAsync();
+            }
+        }
+    }
+
     public sealed class GetTotalSearchResultCount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
         private readonly GetTotalSearchResultCountFixture _fixture = new(dockerFixture);

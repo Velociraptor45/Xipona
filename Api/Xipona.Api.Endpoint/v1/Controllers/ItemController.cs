@@ -94,6 +94,33 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/type-prices")]
+    public async Task<IActionResult> GetItemTypePricesAsync([FromRoute] Guid id, Guid storeId, CancellationToken cancellationToken = default)
+    {
+        var query = new ItemByIdQuery(new ItemId(id));
+        ItemReadModel result;
+        try
+        {
+            result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        var contract = _converters.ToContract<ItemReadModel, ItemContract>(result);
+
+        return Ok(contract);
+    }
+
+    [HttpGet]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     [Route("search-result-count")]
     public async Task<IActionResult> GetTotalSearchResultCount([FromQuery] string searchInput,
