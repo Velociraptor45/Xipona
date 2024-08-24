@@ -5,16 +5,18 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
     /// <summary>
     /// Represents the price of an item type in a store.
     /// </summary>
-    public class ItemTypePrice
+    public class ItemTypePriceContract
     {
         /// <summary>
         /// </summary>
         /// <param name="typeId"></param>
         /// <param name="price"></param>
-        public ItemTypePrice(Guid typeId, decimal price)
+        /// <param name="name"></param>
+        public ItemTypePriceContract(Guid typeId, decimal price, string name)
         {
             TypeId = typeId;
             Price = price;
+            Name = name;
         }
 
         /// <summary>
@@ -23,8 +25,13 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
         public Guid TypeId { get; set; }
 
         /// <summary>
-        /// The price of the item type. The store is defined in the outer contract (<see cref="ItemTypePrices"/>)
+        /// The price of the item type. The store is defined in the outer contract (<see cref="ItemTypePricesContract"/>)
         /// </summary>
         public decimal Price { get; set; }
+
+        /// <summary>
+        /// The name of the item type. Does not include the item's name.
+        /// </summary>
+        public string Name { get; }
     }
 }

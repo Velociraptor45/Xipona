@@ -14,6 +14,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWith
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
@@ -31,6 +32,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -94,14 +96,15 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(ItemContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ItemTypePricesContract), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
     [Route("{id:guid}/type-prices")]
-    public async Task<IActionResult> GetItemTypePricesAsync([FromRoute] Guid id, Guid storeId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetItemTypePricesAsync([FromRoute] Guid id, [FromQuery] Guid storeId,
+        CancellationToken cancellationToken = default)
     {
-        var query = new ItemByIdQuery(new ItemId(id));
-        ItemReadModel result;
+        var query = new GetItemTypePricesQuery(new ItemId(id), new StoreId(storeId));
+        ItemTypePricesReadModel result;
         try
         {
             result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
@@ -115,7 +118,7 @@ public class ItemController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
-        var contract = _converters.ToContract<ItemReadModel, ItemContract>(result);
+        var contract = _converters.ToContract<ItemTypePricesReadModel, ItemTypePricesContract>(result);
 
         return Ok(contract);
     }

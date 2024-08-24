@@ -11,6 +11,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -176,6 +177,17 @@ namespace ProjectHermes.Xipona.Api.Client
         #endregion ShoppingListController
 
         #region ItemController
+
+        /// <summary>
+        /// Gets the prices of an item's types that are available at a store.
+        /// </summary>
+        /// <param name="itemId"></param>
+        /// <param name="storeId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Get("items/{id}/type-prices")]
+        Task<ItemTypePriceContract> GetItemTypePricesAsync([Path] Guid itemId, [Query] Guid storeId,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates an item.

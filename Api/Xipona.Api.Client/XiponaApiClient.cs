@@ -12,6 +12,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -154,6 +155,13 @@ namespace ProjectHermes.Xipona.Api.Client
         #endregion ShoppingListController
 
         #region ItemController
+
+        /// <inheritdoc/>
+        public async Task<ItemTypePriceContract> GetItemTypePricesAsync(Guid itemId, Guid storeId,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetItemTypePricesAsync(itemId, storeId, cancellationToken);
+        }
 
         /// <inheritdoc/>
         public async Task CreateItemAsync(CreateItemContract contract, CancellationToken cancellationToken = default)

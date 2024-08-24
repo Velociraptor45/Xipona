@@ -71,7 +71,7 @@ public class ItemControllerIntegrationTests
         public async Task GetItemTypePricesAsync_WithNoItem_ShouldReturnNotFound()
         {
             // Arrange
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.SetupDatabaseWithoutItemAsync();
 
             var sut = _fixture.CreateSut();
 
@@ -107,7 +107,7 @@ public class ItemControllerIntegrationTests
             unprocessableEntityResult.Value.Should().NotBeNull();
             unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
             var error = (ErrorContract)unprocessableEntityResult.Value!;
-            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemTypeAtStoreNotAvailable);
+            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemAtStoreNotAvailable);
         }
 
         [Fact]
@@ -158,13 +158,16 @@ public class ItemControllerIntegrationTests
         private sealed class GetItemTypePricesAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
         {
             private Item? _item;
-            public ItemTypePrices? ExpectedResult { get; private set; }
+            public ItemTypePricesContract? ExpectedResult { get; private set; }
             public Guid ItemId { get; } = Guid.NewGuid();
             public Guid StoreId { get; } = Guid.NewGuid();
 
             public void SetupExpectedResult()
             {
-                ExpectedResult = new TestBuilder<ItemTypePrices>().Create();
+                ExpectedResult = new TestBuilder<ItemTypePricesContract>()
+                    .FillPropertyWith(x => x.ItemId, ItemId)
+                    .FillPropertyWith(x => x.StoreId, StoreId)
+                    .Create();
             }
 
             public void SetupItemWithoutTypes()
@@ -174,7 +177,7 @@ public class ItemControllerIntegrationTests
 
             public void SetupItemNotAvailableAtStore()
             {
-                _item = ItemEntityMother.Initial().WithId(ItemId).Create();
+                _item = ItemEntityMother.InitialWithTypes().WithId(ItemId).Create();
             }
 
             public void SetupItem()
@@ -183,15 +186,21 @@ public class ItemControllerIntegrationTests
 
                 var types = ExpectedResult.Prices
                     .Select(p => ItemTypeEntityMother.Initial()
-                        .WithAvailableAt(new ItemTypeAvailableAtEntityBuilder().WithPrice(p.Price).WithItemTypeId(p.TypeId).Create())
+                        .WithAvailableAt(new ItemTypeAvailableAtEntityBuilder().WithPrice(p.Price).WithItemTypeId(p.TypeId).WithStoreId(StoreId).Create())
                         .WithId(p.TypeId)
+                        .WithName(p.Name)
                         .Create())
                     .ToList();
 
                 _item = ItemEntityMother.InitialWithTypes()
                     .WithItemTypes(types)
-                    .WithId(ExpectedResult.ItemId)
+                    .WithId(ItemId)
                     .Create();
+            }
+
+            public async Task SetupDatabaseWithoutItemAsync()
+            {
+                await ApplyMigrationsAsync(ArrangeScope);
             }
 
             public async Task SetupDatabaseAsync()

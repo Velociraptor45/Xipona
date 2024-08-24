@@ -6,14 +6,14 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
     /// <summary>
     /// Represents the prices of all of an item's types in a store.
     /// </summary>
-    public class ItemTypePrices
+    public class ItemTypePricesContract
     {
         /// <summary>
         /// </summary>
         /// <param name="itemId"></param>
         /// <param name="storeId"></param>
         /// <param name="prices"></param>
-        public ItemTypePrices(Guid itemId, Guid storeId, IEnumerable<ItemTypePrice> prices)
+        public ItemTypePricesContract(Guid itemId, Guid storeId, IEnumerable<ItemTypePriceContract> prices)
         {
             ItemId = itemId;
             StoreId = storeId;
@@ -33,6 +33,6 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
         /// <summary>
         /// The prices of the item types in the store.
         /// </summary>
-        public IEnumerable<ItemTypePrice> Prices { get; set; }
+        public IEnumerable<ItemTypePriceContract> Prices { get; set; }
     }
 }
