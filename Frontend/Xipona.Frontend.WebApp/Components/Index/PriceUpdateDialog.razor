@@ -27,6 +27,13 @@
             </Checkbox>
         </div>
     }
+    
+    @foreach (var price in State.Value.PriceUpdate.OtherItemTypePrices)
+    {
+        <div>
+            <span>@price.Name</span>: <span>@FormatUpdatePrice(price.Price)</span>
+        </div>
+    }
 </Modal>
 
 @code {

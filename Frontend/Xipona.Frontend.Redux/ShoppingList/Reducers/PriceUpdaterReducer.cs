@@ -32,7 +32,8 @@ public static class PriceUpdaterReducer
             {
                 Item = null,
                 IsOpen = false,
-                IsSaving = false
+                IsSaving = false,
+                OtherItemTypePrices = []
             }
         };
     }

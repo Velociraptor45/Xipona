@@ -12,6 +12,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -434,5 +435,11 @@ public class ApiClient : IApiClient
     public async Task DeleteStoreAsync(Guid storeId)
     {
         await _client.DeleteStoreAsync(storeId);
+    }
+
+    public async Task<IEnumerable<ItemTypePrice>> GetItemTypePricesAsync(Guid itemId, Guid storeId)
+    {
+        var result = await _client.GetItemTypePricesAsync(itemId, storeId);
+        return _converters.ToDomain<ItemTypePriceContract, ItemTypePrice>(result.Prices);
     }
 }

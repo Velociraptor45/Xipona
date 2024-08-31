@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 
@@ -7,6 +8,27 @@ namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
 
 public static class ShoppingListItemReducer
 {
+    [ReducerMethod]
+    public static ShoppingListState OnLoadingPriceUpdaterPricesFinished(ShoppingListState state,
+        LoadingPriceUpdaterPricesFinishedAction action)
+    {
+        var typeId = state.PriceUpdate.Item!.TypeId!.Value;
+
+        var prices = action.Prices.ToList();
+
+        var selected = prices.FirstOrDefault(p => p.ItemTypeId == typeId);
+        if (selected is not null)
+            prices.Remove(selected);
+
+        return state with
+        {
+            PriceUpdate = state.PriceUpdate with
+            {
+                OtherItemTypePrices = prices
+            }
+        };
+    }
+
     [ReducerMethod]
     public static ShoppingListState OnRemoveItemFromBasket(ShoppingListState state,
         RemoveItemFromBasketAction action)

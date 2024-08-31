@@ -234,7 +234,8 @@ public class PriceUpdaterReducerTests
                     {
                         Item = null,
                         IsOpen = false,
-                        IsSaving = false
+                        IsSaving = false,
+                        OtherItemTypePrices = []
                     }
                 };
             }
