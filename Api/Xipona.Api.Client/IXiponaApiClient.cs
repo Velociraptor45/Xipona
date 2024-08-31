@@ -186,7 +186,7 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("items/{id}/type-prices")]
-        Task<ItemTypePriceContract> GetItemTypePricesAsync([Path] Guid itemId, [Query] Guid storeId,
+        Task<ItemTypePricesContract> GetItemTypePricesAsync([Path("id")] Guid itemId, [Query] Guid storeId,
             CancellationToken cancellationToken = default);
 
         /// <summary>

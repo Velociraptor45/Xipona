@@ -157,7 +157,7 @@ namespace ProjectHermes.Xipona.Api.Client
         #region ItemController
 
         /// <inheritdoc/>
-        public async Task<ItemTypePriceContract> GetItemTypePricesAsync(Guid itemId, Guid storeId,
+        public async Task<ItemTypePricesContract> GetItemTypePricesAsync(Guid itemId, Guid storeId,
             CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetItemTypePricesAsync(itemId, storeId, cancellationToken);
