@@ -63,7 +63,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadQuantityTypesAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        public async Task HandleLoadQuantityTypesAction_WithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
             _fixture.SetupStateContainingNoQuantityTypes();
@@ -82,7 +82,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadQuantityTypesAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        public async Task HandleLoadQuantityTypesAction_WithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
             _fixture.SetupStateContainingNoQuantityTypes();
@@ -902,8 +902,9 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupUpdatingItemPrice();
-                _fixture.SetupDispatchingFinishActionForAllTypes();
+                _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
             });
 
@@ -927,8 +928,9 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupUpdatingItemPrice();
-                _fixture.SetupDispatchingFinishActionForOneType();
+                _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
             });
 
@@ -990,7 +992,6 @@ public class ShoppingListEffectsTests
         private sealed class HandleSavePriceUpdateActionFixture : ShoppingListEffectsFixture
         {
             private UpdateItemPriceRequest? _expectedRequest;
-            private SavePriceUpdateFinishedAction? _expectedFinishAction;
 
             public void SetupPriceUpdateForAllTypes()
             {
@@ -1050,22 +1051,14 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<ClosePriceUpdaterAction>();
             }
 
-            public void SetupDispatchingFinishActionForAllTypes()
+            public void SetupDispatchingReloadShoppingListAction()
             {
-                _expectedFinishAction = new SavePriceUpdateFinishedAction(
-                    State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    null,
-                    State.PriceUpdate.Price);
-                SetupDispatchingAction(_expectedFinishAction);
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
             }
 
-            public void SetupDispatchingFinishActionForOneType()
+            public void SetupDispatchingFinishAction()
             {
-                _expectedFinishAction = new SavePriceUpdateFinishedAction(
-                    State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    State.PriceUpdate.Item.TypeId,
-                    State.PriceUpdate.Price);
-                SetupDispatchingAction(_expectedFinishAction);
+                SetupDispatchingAction<SavePriceUpdateFinishedAction>();
             }
 
             public void SetupUpdatingItemPrice()

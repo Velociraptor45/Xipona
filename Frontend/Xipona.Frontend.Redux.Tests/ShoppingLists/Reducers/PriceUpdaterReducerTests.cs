@@ -2,7 +2,6 @@
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 
@@ -12,12 +11,7 @@ public class PriceUpdaterReducerTests
 {
     public class OnPriceOnPriceUpdaterChanged
     {
-        private readonly OnPriceOnPriceUpdaterChangedFixture _fixture;
-
-        public OnPriceOnPriceUpdaterChanged()
-        {
-            _fixture = new OnPriceOnPriceUpdaterChangedFixture();
-        }
+        private readonly OnPriceOnPriceUpdaterChangedFixture _fixture = new();
 
         [Fact]
         public void OnPriceOnPriceUpdaterChanged_ShouldUpdateState()
@@ -61,12 +55,7 @@ public class PriceUpdaterReducerTests
 
     public class OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged
     {
-        private readonly OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture _fixture;
-
-        public OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged()
-        {
-            _fixture = new OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture();
-        }
+        private readonly OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture _fixture = new();
 
         [Fact]
         public void OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged_ShouldUpdateState()
@@ -110,12 +99,7 @@ public class PriceUpdaterReducerTests
 
     public class OnOpenPriceUpdaterChanged
     {
-        private readonly OnOpenPriceUpdaterChangedFixture _fixture;
-
-        public OnOpenPriceUpdaterChanged()
-        {
-            _fixture = new OnOpenPriceUpdaterChangedFixture();
-        }
+        private readonly OnOpenPriceUpdaterChangedFixture _fixture = new();
 
         [Fact]
         public void OnOpenPriceUpdaterChanged_ShouldUpdateState()
@@ -178,12 +162,7 @@ public class PriceUpdaterReducerTests
 
     public class OnClosePriceUpdaterChanged
     {
-        private readonly OnClosePriceUpdaterChangedFixture _fixture;
-
-        public OnClosePriceUpdaterChanged()
-        {
-            _fixture = new OnClosePriceUpdaterChangedFixture();
-        }
+        private readonly OnClosePriceUpdaterChangedFixture _fixture = new();
 
         [Fact]
         public void OnClosePriceUpdaterChanged_ShouldUpdateState()
@@ -234,7 +213,8 @@ public class PriceUpdaterReducerTests
                     {
                         Item = null,
                         IsOpen = false,
-                        IsSaving = false
+                        IsSaving = false,
+                        OtherItemTypePrices = []
                     }
                 };
             }
@@ -243,47 +223,19 @@ public class PriceUpdaterReducerTests
 
     public class OnSavePriceUpdateFinished
     {
-        private readonly OnSavePriceUpdateFinishedFixture _fixture;
-
-        public OnSavePriceUpdateFinished()
-        {
-            _fixture = new OnSavePriceUpdateFinishedFixture();
-        }
+        private readonly OnSavePriceUpdateFinishedFixture _fixture = new();
 
         [Fact]
-        public void OnSavePriceUpdateFinished_WithUpdateForAllTypes_ShouldUpdateState()
+        public void OnSavePriceUpdateFinished_WithValidData_ShouldReturnExpectedResult()
         {
             // Arrange
-            _fixture.SetupItemIdAndPrice();
-            _fixture.SetupExpectedStateForAllTypes();
-            _fixture.SetupActionForAllTypes();
-            _fixture.SetupInitialStateForAllTypes();
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
             TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
 
             // Act
-            var result = PriceUpdaterReducer.OnSavePriceUpdateFinished(_fixture.InitialState, _fixture.Action);
-
-            // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
-        }
-
-        [Fact]
-        public void OnSavePriceUpdateFinished_WithUpdateForOneType_ShouldUpdateState()
-        {
-            // Arrange
-            _fixture.SetupItemIdAndPrice();
-            _fixture.SetupTypeId();
-            _fixture.SetupExpectedStateForOneType();
-            _fixture.SetupActionForOneType();
-            _fixture.SetupInitialStateForOneType();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
-
-            // Act
-            var result = PriceUpdaterReducer.OnSavePriceUpdateFinished(_fixture.InitialState, _fixture.Action);
+            var result = PriceUpdaterReducer.OnSavePriceUpdateFinished(_fixture.InitialState);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
@@ -291,74 +243,12 @@ public class PriceUpdaterReducerTests
 
         private sealed class OnSavePriceUpdateFinishedFixture : PriceUpdaterReducerFixture
         {
-            private Guid? _itemId;
-            private Guid? _itemTypeId;
-            private decimal? _price;
-
-            public SavePriceUpdateFinishedAction? Action { get; private set; }
             public ShoppingListState? InitialState { get; private set; }
 
-            public void SetupItemIdAndPrice()
+            public void SetupInitialState()
             {
-                _itemId = Guid.NewGuid();
-                _price = new DomainTestBuilder<decimal>().Create();
-            }
-
-            public void SetupTypeId()
-            {
-                _itemTypeId = Guid.NewGuid();
-            }
-
-            public void SetupActionForAllTypes()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_itemId);
-                TestPropertyNotSetException.ThrowIfNull(_price);
-
-                Action = new SavePriceUpdateFinishedAction(_itemId.Value, null, _price.Value);
-            }
-
-            public void SetupActionForOneType()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_itemId);
-                TestPropertyNotSetException.ThrowIfNull(_itemTypeId);
-                TestPropertyNotSetException.ThrowIfNull(_price);
-
-                Action = new SavePriceUpdateFinishedAction(_itemId.Value, _itemTypeId.Value, _price.Value);
-            }
-
-            public void SetupInitialStateForAllTypes()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_itemId);
-
-                var sections = ExpectedState.ShoppingList!.Sections.ToList();
-                for (int i = 0; i < sections.Count; i++)
-                {
-                    var section = sections[i];
-                    var items = section.Items.ToList();
-                    for (int ii = 0; ii < items.Count; ii++)
-                    {
-                        var item = items[ii];
-                        items[ii] = item with
-                        {
-                            PricePerQuantity =
-                                item.Id.ActualId == _itemId.Value
-                                    ? new DomainTestBuilder<decimal>().Create()
-                                    : item.PricePerQuantity
-                        };
-                    }
-
-                    sections[i] = section with
-                    {
-                        Items = items
-                    };
-                }
-
                 InitialState = ExpectedState with
                 {
-                    ShoppingList = ExpectedState.ShoppingList with
-                    {
-                        Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
-                    },
                     PriceUpdate = ExpectedState.PriceUpdate with
                     {
                         IsSaving = true
@@ -366,139 +256,10 @@ public class PriceUpdaterReducerTests
                 };
             }
 
-            public void SetupInitialStateForOneType()
+            public void SetupExpectedState()
             {
-                TestPropertyNotSetException.ThrowIfNull(_itemId);
-                TestPropertyNotSetException.ThrowIfNull(_itemTypeId);
-
-                var sections = ExpectedState.ShoppingList!.Sections.ToList();
-                for (int i = 0; i < sections.Count; i++)
-                {
-                    var section = sections[i];
-                    var items = section.Items.ToList();
-                    for (int ii = 0; ii < items.Count; ii++)
-                    {
-                        var item = items[ii];
-                        items[ii] = item with
-                        {
-                            PricePerQuantity =
-                                item.Id.ActualId == _itemId.Value && item.TypeId == _itemTypeId.Value
-                                    ? new DomainTestBuilder<decimal>().Create()
-                                    : item.PricePerQuantity
-                        };
-                    }
-
-                    sections[i] = section with
-                    {
-                        Items = items
-                    };
-                }
-
-                InitialState = ExpectedState with
-                {
-                    ShoppingList = ExpectedState.ShoppingList with
-                    {
-                        Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
-                    },
-                    PriceUpdate = ExpectedState.PriceUpdate with
-                    {
-                        IsSaving = true
-                    }
-                };
-            }
-
-            public void SetupExpectedStateForAllTypes()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_itemId);
-                TestPropertyNotSetException.ThrowIfNull(_price);
-
-                var section1 = new DomainTestBuilder<ShoppingListSection>().Create() with
-                {
-                    Items = new List<ShoppingListItem>
-                    {
-                        new DomainTestBuilder<ShoppingListItem>().Create(),
-                        new DomainTestBuilder<ShoppingListItem>().Create() with
-                        {
-                            Id = ShoppingListItemId.FromActualId(_itemId.Value),
-                            PricePerQuantity = _price.Value
-                        }
-                    },
-                    SortingIndex = 0
-                };
-                var section2 = new DomainTestBuilder<ShoppingListSection>().Create() with
-                {
-                    Items = new List<ShoppingListItem>
-                    {
-                        new DomainTestBuilder<ShoppingListItem>().Create() with
-                        {
-                            Id = ShoppingListItemId.FromActualId(_itemId.Value),
-                            TypeId = null,
-                            PricePerQuantity = _price.Value
-                        },
-                        new DomainTestBuilder<ShoppingListItem>().Create()
-                    },
-                    SortingIndex = 1
-                };
-
                 ExpectedState = ExpectedState with
                 {
-                    ShoppingList = ExpectedState.ShoppingList! with
-                    {
-                        Sections = new SortedSet<ShoppingListSection>(new SortingIndexComparer()) { section1, section2 }
-                    },
-                    PriceUpdate = ExpectedState.PriceUpdate with
-                    {
-                        IsSaving = false
-                    }
-                };
-            }
-
-            public void SetupExpectedStateForOneType()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_itemId);
-                TestPropertyNotSetException.ThrowIfNull(_itemTypeId);
-                TestPropertyNotSetException.ThrowIfNull(_price);
-
-                var section1 = new DomainTestBuilder<ShoppingListSection>().Create() with
-                {
-                    Items = new List<ShoppingListItem>
-                    {
-                        new DomainTestBuilder<ShoppingListItem>().Create(),
-                        new DomainTestBuilder<ShoppingListItem>().Create() with
-                        {
-                            Id = ShoppingListItemId.FromActualId(_itemId.Value),
-                            TypeId = _itemTypeId.Value,
-                            PricePerQuantity = _price.Value
-                        },
-                        new DomainTestBuilder<ShoppingListItem>().Create() with
-                        {
-                            Id = ShoppingListItemId.FromActualId(_itemId.Value),
-                            TypeId = null,
-                            PricePerQuantity = _price.Value
-                        }
-                    },
-                    SortingIndex = 0
-                };
-                var section2 = new DomainTestBuilder<ShoppingListSection>().Create() with
-                {
-                    Items = new List<ShoppingListItem>
-                    {
-                        new DomainTestBuilder<ShoppingListItem>().Create() with
-                        {
-                            Id = ShoppingListItemId.FromActualId(_itemId.Value),
-                            PricePerQuantity = _price.Value
-                        },
-                        new DomainTestBuilder<ShoppingListItem>().Create()
-                    },
-                    SortingIndex = 1
-                };
-
-                ExpectedState = ExpectedState with
-                {
-                    ShoppingList = ExpectedState.ShoppingList! with
-                    {
-                        Sections = new SortedSet<ShoppingListSection>(new SortingIndexComparer()) { section1, section2 }
-                    },
                     PriceUpdate = ExpectedState.PriceUpdate with
                     {
                         IsSaving = false

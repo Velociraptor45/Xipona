@@ -45,14 +45,14 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
         return new ShoppingListState(
             new List<QuantityType>(),
             new List<QuantityTypeInPacket>(),
-            new AllActiveStores(new List<ShoppingListStore>()),
+            new AllActiveStores([]),
             Guid.Empty,
             true,
             false,
             null,
-            new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
+            new SearchBar(string.Empty, []),
             new TemporaryItemCreator(string.Empty, null, 1m, 0, false, false, false),
-            new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
+            new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false, []),
             new Summary(false, false, DateTime.MinValue, false),
             new InitialStoreCreator(false, string.Empty, false));
     }

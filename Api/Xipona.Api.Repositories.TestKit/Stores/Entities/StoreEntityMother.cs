@@ -48,6 +48,7 @@ public static class StoreEntityMother
             .WithId(sectionIdArray.First())
             .WithIsDefaultSection(true)
             .WithIsDeleted(false)
+            .WithSortIndex(0)
             .Create());
 
         for (int i = 1; i < sectionIdArray.Length; i++)
@@ -56,6 +57,7 @@ public static class StoreEntityMother
                 .WithId(sectionIdArray[i])
                 .WithIsDefaultSection(false)
                 .WithIsDeleted(false)
+                .WithSortIndex(i)
                 .Create());
         }
 

@@ -203,12 +203,10 @@ public class ShoppingListEffects
             return;
         }
 
-        dispatcher.Dispatch(new SavePriceUpdateFinishedAction(
-            _state.Value.PriceUpdate.Item.Id.ActualId!.Value,
-            typeId,
-            _state.Value.PriceUpdate.Price));
+        dispatcher.Dispatch(new SavePriceUpdateFinishedAction());
 
         dispatcher.Dispatch(new ClosePriceUpdaterAction());
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
         _notificationService.NotifySuccess("Successfully updated item price");
     }
 

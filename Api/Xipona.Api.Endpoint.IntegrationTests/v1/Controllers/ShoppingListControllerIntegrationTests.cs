@@ -68,7 +68,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -96,7 +97,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -124,7 +126,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -153,12 +156,14 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
 
             var items = (await _fixture.LoadAllItemsAsync(assertScope)).ToList();
             items.Should().HaveCount(1);
             items.Single().Should().BeEquivalentTo(_fixture.ExpectedItem,
-                opt => opt.ExcludeItemCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeItemCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         private sealed class RemoveItemFromShoppingListAsyncFixture(DockerFixture dockerFixture)
@@ -859,7 +864,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -889,7 +895,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -923,7 +930,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         private sealed class PutItemInBasketAsyncFixture(DockerFixture dockerFixture)
@@ -1067,7 +1075,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -1097,7 +1106,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -1131,7 +1141,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         private sealed class RemoveItemFromBasketAsyncFixture(DockerFixture dockerFixture)
@@ -1275,7 +1286,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -1305,7 +1317,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -1339,7 +1352,8 @@ public class ShoppingListControllerIntegrationTests
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
+                opt => opt.ExcludeShoppingListCycleRef().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion()
+                    .ExcludeItemsOnListId());
         }
 
         private sealed class ChangeItemQuantityOnShoppingListAsyncFixture(DockerFixture dockerFixture)

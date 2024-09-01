@@ -27,10 +27,25 @@
             </Checkbox>
         </div>
     }
+    
+    @if (State.Value.PriceUpdate.OtherItemTypePrices.Count != 0)
+    {
+        <div class="other-type-prices-header">Other type prices:</div>
+
+        @foreach (var price in State.Value.PriceUpdate.OtherItemTypePrices)
+        {
+            <div class="other-type-price">
+                @if(State.Value.PriceUpdate.Item!.PricePerQuantity != price.Price)
+                {
+                    <span class="price-warning"><Icon Type="warning" Theme="fill" Fill="#f7d80f" /></span>
+                }
+                <span>@price.Name</span>: <span>@FormatUpdatePrice(price.Price)</span>
+            </div>
+        }
+    }
 </Modal>
 
 @code {
-    
     private void OnCloseUpdatePriceModalButtonClicked()
     {
         Dispatcher.Dispatch(new ClosePriceUpdaterAction());
