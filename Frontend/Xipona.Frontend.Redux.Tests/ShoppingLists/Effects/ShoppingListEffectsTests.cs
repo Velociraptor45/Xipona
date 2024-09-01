@@ -904,6 +904,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupUpdatingItemPrice();
                 _fixture.SetupDispatchingFinishActionForAllTypes();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
             });
 
@@ -929,6 +930,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupUpdatingItemPrice();
                 _fixture.SetupDispatchingFinishActionForOneType();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
             });
 
@@ -1048,6 +1050,11 @@ public class ShoppingListEffectsTests
             public void SetupDispatchingCloseAction()
             {
                 SetupDispatchingAction<ClosePriceUpdaterAction>();
+            }
+
+            public void SetupDispatchingReloadShoppingListAction()
+            {
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
             }
 
             public void SetupDispatchingFinishActionForAllTypes()

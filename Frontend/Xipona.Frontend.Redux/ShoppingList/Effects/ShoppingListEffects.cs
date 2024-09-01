@@ -209,6 +209,7 @@ public class ShoppingListEffects
             _state.Value.PriceUpdate.Price));
 
         dispatcher.Dispatch(new ClosePriceUpdaterAction());
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
         _notificationService.NotifySuccess("Successfully updated item price");
     }
 
