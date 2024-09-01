@@ -1,0 +1,14 @@
+﻿.other-type-prices-header {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+.other-type-price {
+    padding-bottom: 3px;
+    padding-left: 15px;
+}
+
+.price-warning {
+    padding-right: 5px;
+}
