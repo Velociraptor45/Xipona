@@ -63,7 +63,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadQuantityTypesAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        public async Task HandleLoadQuantityTypesAction_WithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
             _fixture.SetupStateContainingNoQuantityTypes();
@@ -82,7 +82,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadQuantityTypesAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        public async Task HandleLoadQuantityTypesAction_WithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
             _fixture.SetupStateContainingNoQuantityTypes();

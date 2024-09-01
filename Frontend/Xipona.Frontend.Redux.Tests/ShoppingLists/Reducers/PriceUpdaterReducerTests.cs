@@ -12,12 +12,7 @@ public class PriceUpdaterReducerTests
 {
     public class OnPriceOnPriceUpdaterChanged
     {
-        private readonly OnPriceOnPriceUpdaterChangedFixture _fixture;
-
-        public OnPriceOnPriceUpdaterChanged()
-        {
-            _fixture = new OnPriceOnPriceUpdaterChangedFixture();
-        }
+        private readonly OnPriceOnPriceUpdaterChangedFixture _fixture = new();
 
         [Fact]
         public void OnPriceOnPriceUpdaterChanged_ShouldUpdateState()
@@ -61,12 +56,7 @@ public class PriceUpdaterReducerTests
 
     public class OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged
     {
-        private readonly OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture _fixture;
-
-        public OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged()
-        {
-            _fixture = new OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture();
-        }
+        private readonly OnUpdatePriceForAllTypesOnPriceUpdaterChangedChangedFixture _fixture = new();
 
         [Fact]
         public void OnUpdatePriceForAllTypesOnPriceUpdaterChangedChanged_ShouldUpdateState()
@@ -110,12 +100,7 @@ public class PriceUpdaterReducerTests
 
     public class OnOpenPriceUpdaterChanged
     {
-        private readonly OnOpenPriceUpdaterChangedFixture _fixture;
-
-        public OnOpenPriceUpdaterChanged()
-        {
-            _fixture = new OnOpenPriceUpdaterChangedFixture();
-        }
+        private readonly OnOpenPriceUpdaterChangedFixture _fixture = new();
 
         [Fact]
         public void OnOpenPriceUpdaterChanged_ShouldUpdateState()
@@ -178,12 +163,7 @@ public class PriceUpdaterReducerTests
 
     public class OnClosePriceUpdaterChanged
     {
-        private readonly OnClosePriceUpdaterChangedFixture _fixture;
-
-        public OnClosePriceUpdaterChanged()
-        {
-            _fixture = new OnClosePriceUpdaterChangedFixture();
-        }
+        private readonly OnClosePriceUpdaterChangedFixture _fixture = new();
 
         [Fact]
         public void OnClosePriceUpdaterChanged_ShouldUpdateState()
@@ -244,12 +224,7 @@ public class PriceUpdaterReducerTests
 
     public class OnSavePriceUpdateFinished
     {
-        private readonly OnSavePriceUpdateFinishedFixture _fixture;
-
-        public OnSavePriceUpdateFinished()
-        {
-            _fixture = new OnSavePriceUpdateFinishedFixture();
-        }
+        private readonly OnSavePriceUpdateFinishedFixture _fixture = new();
 
         [Fact]
         public void OnSavePriceUpdateFinished_WithUpdateForAllTypes_ShouldUpdateState()

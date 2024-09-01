@@ -34,7 +34,7 @@ public static class ShoppingListItemReducer
         RemoveItemFromBasketAction action)
     {
         var sections = new List<ShoppingListSection>(state.ShoppingList!.Sections);
-        sections = SetBasketStatus(action.ItemId, action.ItemTypeId, false, sections).ToList();
+        sections = SetBasketStatus(action.ItemId, action.ItemTypeId, false, sections);
 
         return state with
         {
@@ -50,7 +50,7 @@ public static class ShoppingListItemReducer
         PutItemInBasketAction action)
     {
         var sections = new List<ShoppingListSection>(state.ShoppingList!.Sections);
-        sections = SetBasketStatus(action.ItemId, action.ItemTypeId, true, sections).ToList();
+        sections = SetBasketStatus(action.ItemId, action.ItemTypeId, true, sections);
 
         return state with
         {
@@ -145,7 +145,7 @@ public static class ShoppingListItemReducer
         };
     }
 
-    private static IEnumerable<ShoppingListSection> SetBasketStatus(ShoppingListItemId itemId,
+    private static List<ShoppingListSection> SetBasketStatus(ShoppingListItemId itemId,
         Guid? itemTypeId, bool inBasket, IEnumerable<ShoppingListSection> sections)
     {
         var sectionsList = sections.ToList();

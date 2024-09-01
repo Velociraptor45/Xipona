@@ -557,4 +557,15 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.SearchItemByItemCategoryAsync(itemCategoryId)).ThrowsAsync(ex);
     }
+
+    public void SetupGetItemTypePricesAsync(Guid itemId, Guid storeId, IEnumerable<ItemTypePrice> returnValue)
+    {
+        this.SetupInOrder(m => m.GetItemTypePricesAsync(itemId, storeId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetItemTypePricesAsyncThrowing(Guid itemId, Guid storeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetItemTypePricesAsync(itemId, storeId)).ThrowsAsync(ex);
+    }
 }
