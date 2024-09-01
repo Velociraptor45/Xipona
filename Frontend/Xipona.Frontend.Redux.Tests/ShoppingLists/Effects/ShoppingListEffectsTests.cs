@@ -902,7 +902,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupUpdatingItemPrice();
-                _fixture.SetupDispatchingFinishActionForAllTypes();
+                _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseAction();
                 _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
@@ -928,7 +928,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupUpdatingItemPrice();
-                _fixture.SetupDispatchingFinishActionForOneType();
+                _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseAction();
                 _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
@@ -992,7 +992,6 @@ public class ShoppingListEffectsTests
         private sealed class HandleSavePriceUpdateActionFixture : ShoppingListEffectsFixture
         {
             private UpdateItemPriceRequest? _expectedRequest;
-            private SavePriceUpdateFinishedAction? _expectedFinishAction;
 
             public void SetupPriceUpdateForAllTypes()
             {
@@ -1057,22 +1056,9 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<ReloadCurrentShoppingListAction>();
             }
 
-            public void SetupDispatchingFinishActionForAllTypes()
+            public void SetupDispatchingFinishAction()
             {
-                _expectedFinishAction = new SavePriceUpdateFinishedAction(
-                    State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    null,
-                    State.PriceUpdate.Price);
-                SetupDispatchingAction(_expectedFinishAction);
-            }
-
-            public void SetupDispatchingFinishActionForOneType()
-            {
-                _expectedFinishAction = new SavePriceUpdateFinishedAction(
-                    State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    State.PriceUpdate.Item.TypeId,
-                    State.PriceUpdate.Price);
-                SetupDispatchingAction(_expectedFinishAction);
+                SetupDispatchingAction<SavePriceUpdateFinishedAction>();
             }
 
             public void SetupUpdatingItemPrice()
