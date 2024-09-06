@@ -1,8 +1,9 @@
 name: Test-Build
 on:
   push:
-    branches:
-      - "features/#512"
+    branches: [ "features/#512" ]
+  pull_request:
+    branches: [ "develop" ]
 jobs:
   docker-image-api:
     name: Docker Image Api
