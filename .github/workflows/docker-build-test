@@ -2,7 +2,7 @@ name: Test-Build
 on:
   push:
     branches:
-      - "feature/#512"
+      - "features/#512"
 jobs:
   docker-image-api:
     name: Docker Image Api
