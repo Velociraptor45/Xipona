@@ -35,7 +35,6 @@ public class ShoppingListReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    SelectedStoreId = Guid.NewGuid(),
                     ItemsInBasketVisible = false,
                     EditModeActive = true,
                     ShoppingList = new DomainTestBuilder<ShoppingListModel>().Create(),
@@ -47,7 +46,6 @@ public class ShoppingListReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    SelectedStoreId = Guid.Empty,
                     ItemsInBasketVisible = true,
                     EditModeActive = false,
                     ShoppingList = null,

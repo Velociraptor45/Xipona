@@ -33,7 +33,7 @@ public class PriceTests
         public void Ctor_WithPriceNegative_ShouldThrow()
         {
             // Arrange
-            var price = new TestBuilder<float>().Create();
+            var price = new TestBuilder<decimal>().Create();
 
             // Act
             var action = () => new Price(-price);
@@ -46,7 +46,7 @@ public class PriceTests
         public void Ctor_WithPricePositive_ShouldNotThrow()
         {
             // Arrange
-            var price = new TestBuilder<float>().Create();
+            var price = new TestBuilder<decimal>().Create();
 
             // Act
             var result = new Price(price);

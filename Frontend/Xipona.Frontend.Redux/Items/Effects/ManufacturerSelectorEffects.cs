@@ -48,8 +48,8 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
     }
 
-    [EffectMethod]
-    public async Task HandleCreateNewManufacturerAction(CreateNewManufacturerAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(CreateNewManufacturerAction))]
+    public async Task HandleCreateNewManufacturerAction(IDispatcher dispatcher)
     {
         EditedManufacturer result;
         try

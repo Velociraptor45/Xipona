@@ -14,11 +14,13 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWith
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypesInPacket;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
@@ -30,6 +32,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -93,22 +96,66 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("search")]
-    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput,
+    [ProducesResponseType(typeof(ItemTypePricesContract), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/type-prices")]
+    public async Task<IActionResult> GetItemTypePricesAsync([FromRoute] Guid id, [FromQuery] Guid storeId,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchItemQuery(searchInput);
+        var query = new GetItemTypePricesQuery(new ItemId(id), new StoreId(storeId));
+        ItemTypePricesReadModel result;
+        try
+        {
+            result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return NotFound(errorContract);
 
-        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+            return UnprocessableEntity(errorContract);
+        }
 
-        if (readModels.Count == 0)
+        var contract = _converters.ToContract<ItemTypePricesReadModel, ItemTypePricesContract>(result);
+
+        return Ok(contract);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [Route("search-result-count")]
+    public async Task<IActionResult> GetTotalSearchResultCount([FromQuery] string searchInput,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new TotalSearchResultCountQuery(searchInput);
+
+        var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [Route("search")]
+    public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput, [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
+    {
+        if (pageSize > 100)
+            return BadRequest("Page size cannot be greater than 100");
+
+        var query = new SearchItemQuery(searchInput, page, pageSize);
+
+        var result = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+
+        if (result.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
+        var contract = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(result);
 
-        return Ok(contracts);
+        return Ok(contract);
     }
 
     [HttpGet]
@@ -320,11 +367,10 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command =
-            _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
-
         try
         {
+            var command =
+                _converters.ToDomain<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -355,10 +401,9 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
-
         try
         {
+            var command = _converters.ToDomain<(Guid, ModifyItemContract), ModifyItemCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -389,10 +434,9 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
-
         try
         {
+            var command = _converters.ToDomain<(Guid, UpdateItemContract), UpdateItemCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -415,10 +459,9 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> UpdateItemPriceAsync([FromRoute] Guid id, [FromBody] UpdateItemPriceContract contract,
         CancellationToken cancellationToken = default)
     {
-        var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
-
         try
         {
+            var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -449,11 +492,10 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command =
-            _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
-
         try
         {
+            var command =
+                _converters.ToDomain<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>((id, contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -484,11 +526,11 @@ public class ItemController : ControllerBase
                 $"{nameof(contract.QuantityInPacket)} and {contract.QuantityTypeInPacket} must both be filled or both empty");
         }
 
-        var command =
-            _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
-                contract));
         try
         {
+            var command =
+                _converters.ToDomain<(Guid, MakeTemporaryItemPermanentContract), MakeTemporaryItemPermanentCommand>((id,
+                    contract));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
@@ -510,9 +552,9 @@ public class ItemController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        var command = new DeleteItemCommand(new ItemId(id));
         try
         {
+            var command = new DeleteItemCommand(new ItemId(id));
             await _commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)

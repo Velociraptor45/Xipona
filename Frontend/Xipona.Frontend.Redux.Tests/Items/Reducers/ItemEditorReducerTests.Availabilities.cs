@@ -78,7 +78,7 @@ public partial class ItemEditorReducerTests
                                 new(
                                     _stores.Last().Id,
                                     _stores.Last().DefaultSectionId,
-                                    4.67f)
+                                    4.67m)
                             }
                         },
                         ValidationResult = InitialState.Editor.ValidationResult with
@@ -100,11 +100,11 @@ public partial class ItemEditorReducerTests
                                 new(
                                     _stores.Last().Id,
                                     _stores.Last().DefaultSectionId,
-                                    4.67f),
+                                    4.67m),
                                 new(
                                     _stores.First().Id,
                                     _stores.First().DefaultSectionId,
-                                    1f),
+                                    1m),
                             }
                         },
                         ValidationResult = InitialState.Editor.ValidationResult with
@@ -131,11 +131,11 @@ public partial class ItemEditorReducerTests
                                 new(
                                     _stores.Last().Id,
                                     _stores.Last().DefaultSectionId,
-                                    4.67f),
+                                    4.67m),
                                 new(
                                     _stores.First().Id,
                                     _stores.First().DefaultSectionId,
-                                    13.98f),
+                                    13.98m),
                             }
                         }
                     }
@@ -539,7 +539,7 @@ public partial class ItemEditorReducerTests
                 var availabilities = ExpectedState.Editor.Item!.Availabilities.ToList();
                 availabilities[0] = availabilities.First() with
                 {
-                    PricePerQuantity = new DomainTestBuilder<float>().Create()
+                    PricePerQuantity = new DomainTestBuilder<decimal>().Create()
                 };
 
                 InitialState = ExpectedState with

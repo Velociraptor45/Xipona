@@ -122,6 +122,240 @@ public class ItemReducerTests
         }
     }
 
+    public class OnSearchPageChanged
+    {
+        private readonly OnSearchPageChangedFixture _fixture = new();
+
+        [Fact]
+        public void OnSearchPageChanged_WithValidData_ShouldSetPage()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemReducer.OnSearchPageChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSearchPageChangedFixture : ItemReducerFixture
+        {
+            public SearchPageChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        Page = new DomainTestBuilder<int>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new SearchPageChangedAction(ExpectedState.Search.Page);
+            }
+        }
+    }
+
+    public class OnSearchPageSizeChanged
+    {
+        private readonly OnSearchPageSizeChangedFixture _fixture = new();
+
+        [Fact]
+        public void OnSearchPageSizeChanged_WithValidData_ShouldSetPageSize()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemReducer.OnSearchPageSizeChanged(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnSearchPageSizeChangedFixture : ItemReducerFixture
+        {
+            public SearchPageSizeChangedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        PageSize = new DomainTestBuilder<int>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new SearchPageSizeChangedAction(ExpectedState.Search.PageSize);
+            }
+        }
+    }
+
+    public class OnRetrieveSearchResultCountStarted
+    {
+        private readonly OnRetrieveSearchResultCountStartedFixture _fixture = new();
+
+        [Fact]
+        public void OnRetrieveSearchResultCountStarted_WithSearchNotLoading_ShouldSetLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithSearchNotLoading();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemReducer.OnRetrieveSearchResultCountStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnRetrieveSearchResultCountStarted_WithSearchLoading_ShouldSetLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithSearchLoading();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemReducer.OnRetrieveSearchResultCountStarted(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRetrieveSearchResultCountStartedFixture : ItemReducerFixture
+        {
+            public void SetupInitialStateWithSearchLoading()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateWithSearchNotLoading()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isLoading)
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        IsLoadingSearchResults = isLoading
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        IsLoadingSearchResults = true
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnRetrieveSearchResultCountFinished
+    {
+        private readonly OnRetrieveSearchResultCountFinishedFixture _fixture = new();
+
+        [Fact]
+        public void OnRetrieveSearchResultCountFinished_WithSearchNotLoading_ShouldSetNotLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithSearchNotLoading();
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemReducer.OnRetrieveSearchResultCountFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnRetrieveSearchResultCountFinished_WithSearchLoading_ShouldSetNotLoading()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithSearchLoading();
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = ItemReducer.OnRetrieveSearchResultCountFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnRetrieveSearchResultCountFinishedFixture : ItemReducerFixture
+        {
+            public RetrieveSearchResultCountFinishedAction? Action { get; private set; }
+
+            public void SetupInitialStateWithSearchLoading()
+            {
+                SetupInitialState(true);
+            }
+
+            public void SetupInitialStateWithSearchNotLoading()
+            {
+                SetupInitialState(false);
+            }
+
+            private void SetupInitialState(bool isLoading)
+            {
+                InitialState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        IsLoadingSearchResults = isLoading
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Search = ExpectedState.Search with
+                    {
+                        TotalResultCount = new DomainTestBuilder<int>().Create(),
+                        IsLoadingSearchResults = false
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new RetrieveSearchResultCountFinishedAction(ExpectedState.Search.TotalResultCount);
+            }
+        }
+    }
+
     public class OnSearchItemFinished
     {
         private readonly OnSearchItemFinishedFixture _fixture = new();

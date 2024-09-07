@@ -14,14 +14,14 @@ public class ContextFactoryBase
         var config = new ConfigurationBuilder()
             .AddEnvironmentVariables()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Xipona.Api.WebApp/"))
-            .AddJsonFile($"appsettings.Local.json", optional: false, true)
+            .AddJsonFile("appsettings.Local.json", optional: false, true)
             .Build();
 
         var fileLoadingService = new FileLoadingService();
         var configurationLoadingService = new DatabaseConfigurationLoadingService(
-            fileLoadingService, new VaultService(config, fileLoadingService));
+            fileLoadingService, new VaultService(config, fileLoadingService), config);
 
-        return configurationLoadingService.LoadAsync(config).GetAwaiter().GetResult().ShoppingDatabase;
+        return configurationLoadingService.LoadAsync().GetAwaiter().GetResult().ShoppingDatabase;
     }
 
     protected MySqlServerVersion GetVersion()

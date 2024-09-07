@@ -30,7 +30,7 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
     }
 
     [SkippableFact]
-    public async Task EndpointCall_WithValidData_ShouldReturnOk()
+    public virtual async Task EndpointCall_WithValidData_ShouldReturnOk()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.OK);
@@ -161,7 +161,7 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
 
         var okEntityAttribute =
             result.Single(attr => attr.StatusCode == StatusCodes.Status200OK);
-        okEntityAttribute.Type.Should().Be(typeof(void));
+        okEntityAttribute.Type.Should().Be(Fixture.OkResultReturnType);
     }
 
     [SkippableFact]
@@ -218,6 +218,8 @@ public abstract class ControllerCommandTestsBase<TController, TCommand, TCommand
         public ErrorContract? ExpectedErrorContract { get; private set; }
         public string ExpectedBadRequestMessage { get; protected set; } = string.Empty;
         public IReadOnlyCollection<IStatusResult> PossibleResults => PossibleResultsList;
+
+        public virtual Type OkResultReturnType => typeof(void);
 
         public abstract TController CreateSut();
 

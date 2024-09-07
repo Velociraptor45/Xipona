@@ -6,17 +6,18 @@
     <RootNamespace>ProjectHermes.Xipona.Api.Contracts</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>ProjectHermes Xipona Api Contracts</Title>
-    <Version>0.12.0-alpha.2</Version>
+    <Version>0.13.0-alpha.8</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/Velociraptor45/ProjectHermes-ShoppingList</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Velociraptor45/Xipona</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageId>ProjectHermes.Xipona.Api.Contracts</PackageId>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\readme.md">
+    <None Include="readme.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

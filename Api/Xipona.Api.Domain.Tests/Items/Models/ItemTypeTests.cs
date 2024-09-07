@@ -126,8 +126,6 @@ public class ItemTypeTests
 
     public class GetDefaultSectionIdForStore
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
         {
@@ -147,7 +145,7 @@ public class ItemTypeTests
         {
             // Arrange
             var sut = ItemTypeMother.Initial().Create();
-            var chosenAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+            var chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
 
             // Act
             var result = sut.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
@@ -545,7 +543,6 @@ public class ItemTypeTests
 
         private sealed class UpdateFixture : ItemTypeFixture
         {
-            private readonly CommonFixture _fixture = new();
             private ItemAvailability? _chosenAvailability;
 
             public Price? Price { get; private set; }
@@ -564,7 +561,7 @@ public class ItemTypeTests
 
             public void SetupStoreId(IItemType sut)
             {
-                _chosenAvailability = _fixture.ChooseRandom(sut.Availabilities);
+                _chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
                 StoreId = _chosenAvailability.StoreId;
             }
 
@@ -712,7 +709,6 @@ public class ItemTypeTests
 
         private sealed class TransferToDefaultSectionFixture : ItemTypeFixture
         {
-            private readonly CommonFixture _commonFixture = new();
             private ItemAvailability? _choseAvailability;
 
             public SectionId? OldSectionId { get; private set; }
@@ -726,7 +722,7 @@ public class ItemTypeTests
 
             public void SetupOldSectionId(IItemType sut)
             {
-                _choseAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+                _choseAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
                 OldSectionId = _choseAvailability.DefaultSectionId;
             }
 
@@ -897,7 +893,6 @@ public class ItemTypeTests
 
         private sealed class RemoveAvailabilitiesForFixture : ItemTypeFixture
         {
-            private readonly CommonFixture _commonFixture = new();
             private ItemAvailability? _chosenAvailability;
 
             public StoreId? StoreId { get; private set; }
@@ -911,7 +906,7 @@ public class ItemTypeTests
 
             public void SetupStoreId(IItemType sut)
             {
-                _chosenAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+                _chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
                 StoreId = _chosenAvailability.StoreId;
             }
 

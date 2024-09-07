@@ -16,6 +16,12 @@ public class TestBuilder<TModel, TBuilder> : TestBuilderBase<TModel>
     {
     }
 
+    public TBuilder AddCustomization(ICustomization customization)
+    {
+        customization.Customize(this);
+        return (TBuilder)this;
+    }
+
     public new TBuilder FillConstructorWith<TParameter>(string parameterName, TParameter value)
     {
         base.FillConstructorWith(parameterName, value);

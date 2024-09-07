@@ -3,8 +3,13 @@ using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 
 namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
 
-public class ShoppingListEntityBuilder : TestBuilderBase<Repositories.ShoppingLists.Entities.ShoppingList>
+public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
 {
+    public ShoppingListEntityBuilder()
+    {
+        WithItemsOnList(new ItemsOnListEntityBuilder().CreateMany(3).ToList());
+    }
+
     public ShoppingListEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);

@@ -107,7 +107,7 @@ public class SharedReducerTests
         {
             // Arrange
             _fixture.SetupInitialStateWithIsOnline();
-            _fixture.SetupExpectedStateWithIsNotOnline();
+            _fixture.SetupExpectedState();
 
             // Act
             var result = SharedReducer.OnApiConnectionDied(_fixture.InitialState);
@@ -121,7 +121,7 @@ public class SharedReducerTests
         {
             // Arrange
             _fixture.SetupInitialStateWithIsNotOnline();
-            _fixture.SetupExpectedStateWithIsNotOnline();
+            _fixture.SetupExpectedState();
 
             // Act
             var result = SharedReducer.OnApiConnectionDied(_fixture.InitialState);
@@ -134,17 +134,29 @@ public class SharedReducerTests
         {
             public void SetupInitialStateWithIsOnline()
             {
-                InitialState = ExpectedState with { IsOnline = true };
+                InitialState = ExpectedState with
+                {
+                    IsRetryOngoing = true,
+                    IsOnline = true
+                };
             }
 
             public void SetupInitialStateWithIsNotOnline()
             {
-                InitialState = ExpectedState with { IsOnline = false };
+                InitialState = ExpectedState with
+                {
+                    IsRetryOngoing = false,
+                    IsOnline = false
+                };
             }
 
-            public void SetupExpectedStateWithIsNotOnline()
+            public void SetupExpectedState()
             {
-                ExpectedState = ExpectedState with { IsOnline = false };
+                ExpectedState = ExpectedState with
+                {
+                    IsRetryOngoing = true,
+                    IsOnline = false
+                };
             }
         }
     }
@@ -158,7 +170,7 @@ public class SharedReducerTests
         {
             // Arrange
             _fixture.SetupInitialStateWithIsOnline();
-            _fixture.SetupExpectedStateWithIsOnline();
+            _fixture.SetupExpectedState();
 
             // Act
             var result = SharedReducer.OnApiConnectionRecovered(_fixture.InitialState);
@@ -172,7 +184,7 @@ public class SharedReducerTests
         {
             // Arrange
             _fixture.SetupInitialStateWithIsNotOnline();
-            _fixture.SetupExpectedStateWithIsOnline();
+            _fixture.SetupExpectedState();
 
             // Act
             var result = SharedReducer.OnApiConnectionRecovered(_fixture.InitialState);
@@ -193,9 +205,60 @@ public class SharedReducerTests
                 InitialState = ExpectedState with { IsOnline = false };
             }
 
-            public void SetupExpectedStateWithIsOnline()
+            public void SetupExpectedState()
             {
                 ExpectedState = ExpectedState with { IsOnline = true };
+            }
+        }
+    }
+
+    public class OnQueueProcessed
+    {
+        private readonly OnQueueProcessedFixture _fixture = new();
+
+        [Fact]
+        public void OnQueueProcessed_WithRetryOngoing_ShouldSetRetryOngoingFalse()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRetryOngoing();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = SharedReducer.OnQueueProcessed(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnQueueProcessed_WithRetryNotOngoing_ShouldSetRetryOngoingFalse()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithRetryNotOngoing();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = SharedReducer.OnQueueProcessed(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnQueueProcessedFixture : SharedReducerFixture
+        {
+            public void SetupInitialStateWithRetryOngoing()
+            {
+                InitialState = ExpectedState with { IsRetryOngoing = true };
+            }
+
+            public void SetupInitialStateWithRetryNotOngoing()
+            {
+                InitialState = ExpectedState with { IsRetryOngoing = false };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with { IsRetryOngoing = false };
             }
         }
     }

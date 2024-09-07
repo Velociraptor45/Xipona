@@ -16,7 +16,7 @@ public class SearchItemForShoppingListResultTests
     [Theory]
     [InlineData("Melon", 32.1f, "€", "Melon | 32,10€")]
     [InlineData("Cheese", 6f, "€", "Cheese | 6,00€")]
-    public void DisplayValue_WithManufacturerNameEmpty_ShouldReturnExpectedValue(string name, float price,
+    public void DisplayValue_WithManufacturerNameEmpty_ShouldReturnExpectedValue(string name, decimal price,
         string priceLabel, string expected)
     {
         // Arrange
@@ -37,7 +37,7 @@ public class SearchItemForShoppingListResultTests
     [InlineData("Butter", "MyMan", 13.5f, "€", "Butter | MyMan | 13,50€")]
     [InlineData("Bread", "AnotherMan", 1f, "€", "Bread | AnotherMan | 1,00€")]
     public void DisplayValue_WithManufacturerName_ShouldReturnExpectedValue(string name, string manufacturerName,
-        float price, string priceLabel, string expected)
+        decimal price, string priceLabel, string expected)
     {
         // Arrange
         _fixture.SetupManufacturerName(manufacturerName);
@@ -82,7 +82,7 @@ public class SearchItemForShoppingListResultTests
             _builder.WithName(name);
         }
 
-        public void SetupPrice(float price)
+        public void SetupPrice(decimal price)
         {
             _builder.WithPrice(price);
         }

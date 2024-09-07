@@ -29,7 +29,7 @@ public class ShoppingListItemIdCustomization : ICustomization
 
         private static ShoppingListItemId CreateInstance()
         {
-            return ShoppingListItemId.FromActualId(Guid.NewGuid());
+            return new ShoppingListItemId(Guid.NewGuid(), Guid.NewGuid());
         }
     }
 }

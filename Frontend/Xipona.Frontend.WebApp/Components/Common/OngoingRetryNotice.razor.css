@@ -1,0 +1,21 @@
+﻿.ongoing-retry-notice {
+    background-color: var(--color-yellow);
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    color: var(--contrast-color;)
+}
+
+@media (min-width: 769px) {
+    .ongoing-retry-notice {
+        left: var(--nav-desktop-width);
+        width: calc(100% - var(--nav-desktop-width));
+    }
+}
+
+@media (max-width: 768px) {
+    .ongoing-retry-notice {
+        bottom: var(--nav-mobile-height)
+    }
+}

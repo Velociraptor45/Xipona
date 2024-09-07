@@ -130,7 +130,8 @@ public class ItemCategorySelectorReducerTests
                         },
                         ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
                         {
-                            ItemCategories = itemCategories
+                            ItemCategories = itemCategories,
+                            Input = string.Empty
                         }
                     }
                 };

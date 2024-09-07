@@ -1,6 +1,6 @@
 ﻿using Fluxor;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.States;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 
@@ -16,12 +16,12 @@ public record ShoppingListState(
     TemporaryItemCreator TemporaryItemCreator,
     PriceUpdate PriceUpdate,
     Summary Summary,
-    ProcessingErrors Errors)
+    InitialStoreCreator InitialStoreCreator)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
         if (ShoppingList is null)
-            return Enumerable.Empty<ShoppingListSection>();
+            return [];
 
         return ShoppingList.Sections.AsEnumerable()
             .Where(s => s.Items.Any() && (!s.AllItemsHidden || ItemsInBasketVisible));
@@ -33,14 +33,7 @@ public record ShoppingListState(
 
 public class ShoppingListFeatureState : Feature<ShoppingListState>
 {
-    private readonly IWebAssemblyHostEnvironment _environment;
-
-    public const float InitialTemporaryItemPrice = 1f;
-
-    public ShoppingListFeatureState(IWebAssemblyHostEnvironment environment)
-    {
-        _environment = environment;
-    }
+    public const decimal InitialTemporaryItemPrice = 1m;
 
     public override string GetName()
     {
@@ -52,15 +45,15 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
         return new ShoppingListState(
             new List<QuantityType>(),
             new List<QuantityTypeInPacket>(),
-            new AllActiveStores(new List<ShoppingListStore>()),
+            new AllActiveStores([]),
             Guid.Empty,
             true,
             false,
             null,
-            new SearchBar(string.Empty, new List<SearchItemForShoppingListResult>()),
-            new TemporaryItemCreator(string.Empty, null, 1f, 0, false, false, false),
-            new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false),
+            new SearchBar(string.Empty, []),
+            new TemporaryItemCreator(string.Empty, null, 1m, 0, false, false, false),
+            new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false, []),
             new Summary(false, false, DateTime.MinValue, false),
-            new ProcessingErrors(!_environment.IsProduction(), false, new List<string>()));
+            new InitialStoreCreator(false, string.Empty, false));
     }
 }

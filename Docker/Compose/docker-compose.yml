@@ -1,26 +1,26 @@
 version: "3.7"
 
-services:  
+services:
   Database:
     image: mariadb
     environment:
-      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/ph-xipona-db-root-pwd
+      MARIADB_ROOT_PASSWORD: change_me_root
       MYSQL_DATABASE: xipona
+      MYSQL_USER: xipona
+      MYSQL_PASSWORD: change_me
     ports:
       - "15909:3306"
     networks: 
       - ph-xipona
     volumes:
       - ph-xipona-database:/var/lib/mysql
-    secrets:
-      - ph-xipona-db-root-pwd
 
   Api:
-    image: velocir4ptor/ph-shoppinglist-api:0.11.0
+    image: velocir4ptor/ph-xipona-api:0.12.0
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
-      PH_XIPONA_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+      PH_XIPONA_DB_USERNAME: xipona
+      PH_XIPONA_DB_PASSWORD: change_me
     ports:
       - "12489:80"
     depends_on:
@@ -29,11 +29,8 @@ services:
       # - ph-xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
       - ph-xipona-api-logs:/app/logs
       - ph-xipona-api-config:/app/config:ro
-    networks: 
+    networks:
       - ph-xipona
-    secrets:
-      - ph-xipona-db-username
-      - ph-xipona-db-password
 
   # LogCollector: # uncomment this for frontend log support
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
@@ -46,8 +43,8 @@ services:
   #     - ph-xipona
 
   Frontend:
-    image: velocir4ptor/ph-shoppinglist-frontend:0.11.0
-    ports: 
+    image: velocir4ptor/ph-xipona-frontend:0.12.0
+    ports:
       - "14000:80"
     depends_on:
       - Api
@@ -55,7 +52,7 @@ services:
       - ph-xipona-frontend-config:/etc/nginx/conf.d:ro
       - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
       # - ph-xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
-    networks: 
+    networks:
       - ph-xipona
 
 volumes:
@@ -79,11 +76,3 @@ volumes:
 networks:
   ph-xipona:
     name: ph-xipona
-
-secrets:
-  ph-xipona-db-username:
-    external: true
-  ph-xipona-db-password:
-    external: true
-  ph-xipona-db-root-pwd:
-    external: true

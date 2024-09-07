@@ -30,7 +30,7 @@ public sealed class ItemCategorySelectorEffects : IDisposable
             return;
 
         var ingredient = _state.Value.GetIngredientByKey(action.Ingredient.Key);
-        if (ingredient is null || ingredient.ItemCategorySelector.ItemCategories.Any())
+        if (ingredient is null || ingredient.ItemCategorySelector.ItemCategories.Count != 0)
             return;
 
         EditedItemCategory itemCategory;

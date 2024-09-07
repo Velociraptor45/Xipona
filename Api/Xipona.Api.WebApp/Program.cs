@@ -25,12 +25,18 @@ using Serilog;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 builder.Logging.AddConsole();
 builder.Logging.AddSerilog();
+
+if (builder.Environment.IsEnvironment("Local"))
+{
+    builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
+}
 
 AddAppsettingsSourceTo(builder.Configuration.Sources);
 
@@ -42,8 +48,9 @@ Log.Logger = new LoggerConfiguration()
 
 var fileLoadingService = new FileLoadingService();
 var vaultService = new VaultService(configuration, fileLoadingService);
-var configurationLoadingService = new DatabaseConfigurationLoadingService(fileLoadingService, vaultService);
-var connectionStrings = await configurationLoadingService.LoadAsync(configuration);
+var configurationLoadingService =
+    new DatabaseConfigurationLoadingService(fileLoadingService, vaultService, configuration);
+var connectionStrings = await configurationLoadingService.LoadAsync();
 builder.Services.AddSingleton(connectionStrings);
 
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);

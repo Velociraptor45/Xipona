@@ -24,13 +24,16 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"AvailableAt\[\d+\].Item")]
     private static partial Regex AvailableAtItemCycle();
 
-    [GeneratedRegex(@"RowVersion$")]
+    [GeneratedRegex("RowVersion$")]
     private static partial Regex RowVersion();
 
-    public static EquivalencyAssertionOptions<T> WithCreatedAtPrecision<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyAssertionOptions<T> WithCreatedAtPrecision<T>(this EquivalencyAssertionOptions<T> options,
+        TimeSpan? precision = null)
     {
+        precision ??= 1.Milliseconds();
+
         return options
-            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, precision.Value))
             .When(info => info.Path.EndsWith("CreatedAt"));
     }
 
@@ -66,6 +69,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     public static EquivalencyAssertionOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
         return options.Excluding(info => ItemsOnListShoppingListCycle().IsMatch(info.Path));
+    }
+
+    [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]
+    private static partial Regex ItemsOnListId();
+
+    public static EquivalencyAssertionOptions<T> ExcludeItemsOnListId<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => ItemsOnListId().IsMatch(info.Path));
     }
 
     [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]

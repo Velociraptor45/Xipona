@@ -11,14 +11,14 @@ namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
 public class Recipe : AggregateRoot, IRecipe
 {
     private readonly Ingredients _ingredients;
-    private readonly PreparationSteps _steps;
+    private readonly PreparationSteps _preparationSteps;
     private readonly RecipeTags _tags;
 
     public Recipe(RecipeId id, RecipeName name, NumberOfServings numberOfServings, Ingredients ingredients,
         PreparationSteps steps, RecipeTags tags, DateTimeOffset createdAt)
     {
         _ingredients = ingredients;
-        _steps = steps;
+        _preparationSteps = steps;
         _tags = tags;
         Id = id;
         Name = name;
@@ -31,7 +31,7 @@ public class Recipe : AggregateRoot, IRecipe
     public NumberOfServings NumberOfServings { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     public IReadOnlyCollection<IIngredient> Ingredients => _ingredients.AsReadOnly();
-    public IReadOnlyCollection<IPreparationStep> PreparationSteps => _steps.AsReadOnly();
+    public IReadOnlyCollection<IPreparationStep> PreparationSteps => _preparationSteps.AsReadOnly();
     public IReadOnlyCollection<RecipeTagId> Tags => _tags.AsReadOnly();
 
     public async Task ModifyAsync(RecipeModification modification, IValidator validator)
@@ -39,7 +39,7 @@ public class Recipe : AggregateRoot, IRecipe
         Name = modification.Name;
         NumberOfServings = modification.NumberOfServings;
         await _ingredients.ModifyManyAsync(modification.IngredientModifications, validator);
-        _steps.ModifyMany(modification.PreparationStepModifications);
+        _preparationSteps.ModifyMany(modification.PreparationStepModifications);
         await _tags.ModifyAsync(validator, modification.RecipeTagIds);
     }
 

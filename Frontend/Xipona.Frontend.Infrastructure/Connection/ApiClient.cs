@@ -12,6 +12,7 @@ using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
@@ -113,10 +114,12 @@ public class ApiClient : IApiClient
         await _client.RemoveItemFromShoppingListAsync(request.ShoppingListId, contract);
     }
 
-    public async Task AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
+    public async Task<TemporaryShoppingListItem> AddTemporaryItemToShoppingListAsync(AddTemporaryItemToShoppingListRequest request)
     {
         var contract = _converters.ToContract<AddTemporaryItemToShoppingListRequest, AddTemporaryItemToShoppingListContract>(request);
-        await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
+        var tempItem = await _client.AddTemporaryItemToShoppingListAsync(request.ShoppingListId, contract);
+
+        return _converters.ToDomain<TemporaryShoppingListItemContract, TemporaryShoppingListItem>(tempItem);
     }
 
     public async Task AddItemToShoppingListAsync(AddItemToShoppingListRequest request)
@@ -244,13 +247,18 @@ public class ApiClient : IApiClient
             .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
     }
 
-    public async Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput)
+    public async Task<int> GetTotalSearchResultCountAsync(string searchInput)
     {
-        var result = await _client.SearchItemsAsync(searchInput);
+        return await _client.GetTotalSearchResultCountAsync(searchInput);
+    }
 
-        return result is null ?
-            Enumerable.Empty<ItemSearchResult>() :
-            result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
+    public async Task<IEnumerable<ItemSearchResult>> SearchItemsAsync(string searchInput, int page, int pageSize)
+    {
+        var result = await _client.SearchItemsAsync(searchInput, page, pageSize);
+
+        return result is null
+            ? Enumerable.Empty<ItemSearchResult>()
+            : result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
     }
 
     public async Task<EditedItem> GetItemByIdAsync(Guid itemId)
@@ -427,5 +435,11 @@ public class ApiClient : IApiClient
     public async Task DeleteStoreAsync(Guid storeId)
     {
         await _client.DeleteStoreAsync(storeId);
+    }
+
+    public async Task<IEnumerable<ItemTypePrice>> GetItemTypePricesAsync(Guid itemId, Guid storeId)
+    {
+        var result = await _client.GetItemTypePricesAsync(itemId, storeId);
+        return _converters.ToDomain<ItemTypePriceContract, ItemTypePrice>(result.Prices);
     }
 }

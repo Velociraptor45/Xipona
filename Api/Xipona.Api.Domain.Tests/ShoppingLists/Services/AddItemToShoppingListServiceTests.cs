@@ -1053,7 +1053,6 @@ public class AddItemToShoppingListServiceTests
 
     private abstract class AddItemToShoppingListServiceFixture
     {
-        protected readonly CommonFixture CommonFixture = new();
         protected readonly ShoppingListSectionFactoryMock ShoppingListSectionFactoryMock = new(MockBehavior.Strict);
         protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
         private readonly SectionFactoryMock _sectionFactoryMock = new(MockBehavior.Strict);

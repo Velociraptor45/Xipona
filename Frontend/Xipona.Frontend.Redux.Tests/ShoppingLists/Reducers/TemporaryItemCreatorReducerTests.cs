@@ -5,6 +5,7 @@ using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common.Extensions;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Reducers;
@@ -13,12 +14,7 @@ public class TemporaryItemCreatorReducerTests
 {
     public class OnTemporaryItemNameChanged
     {
-        private readonly OnTemporaryItemNameChangedFixture _fixture;
-
-        public OnTemporaryItemNameChanged()
-        {
-            _fixture = new OnTemporaryItemNameChangedFixture();
-        }
+        private readonly OnTemporaryItemNameChangedFixture _fixture = new();
 
         [Fact]
         public void OnTemporaryItemNameChanged_WithValidName_ShouldUpdateName()
@@ -62,12 +58,7 @@ public class TemporaryItemCreatorReducerTests
 
     public class OnTemporaryItemPriceChanged
     {
-        private readonly OnTemporaryItemPriceChangedFixture _fixture;
-
-        public OnTemporaryItemPriceChanged()
-        {
-            _fixture = new OnTemporaryItemPriceChangedFixture();
-        }
+        private readonly OnTemporaryItemPriceChangedFixture _fixture = new();
 
         [Fact]
         public void OnTemporaryItemPriceChanged_WithValidPrice_ShouldUpdatePrice()
@@ -102,7 +93,7 @@ public class TemporaryItemCreatorReducerTests
                 {
                     TemporaryItemCreator = ExpectedState.TemporaryItemCreator with
                     {
-                        Price = new DomainTestBuilder<float>().Create()
+                        Price = new DomainTestBuilder<decimal>().Create()
                     }
                 };
             }
@@ -111,12 +102,7 @@ public class TemporaryItemCreatorReducerTests
 
     public class OnTemporaryItemSelectedSectionChanged
     {
-        private readonly OnTemporaryItemSelectedSectionChangedFixture _fixture;
-
-        public OnTemporaryItemSelectedSectionChanged()
-        {
-            _fixture = new OnTemporaryItemSelectedSectionChangedFixture();
-        }
+        private readonly OnTemporaryItemSelectedSectionChangedFixture _fixture = new();
 
         [Fact]
         public void OnTemporaryItemSelectedSectionChanged_WithValidSection_ShouldUpdateSection()
@@ -160,12 +146,7 @@ public class TemporaryItemCreatorReducerTests
 
     public class OnTemporaryItemSelectedQuantityTypeChanged
     {
-        private readonly OnTemporaryItemSelectedQuantityTypeChangedFixture _fixture;
-
-        public OnTemporaryItemSelectedQuantityTypeChanged()
-        {
-            _fixture = new OnTemporaryItemSelectedQuantityTypeChangedFixture();
-        }
+        private readonly OnTemporaryItemSelectedQuantityTypeChangedFixture _fixture = new();
 
         [Fact]
         public void OnTemporaryItemSelectedQuantityTypeChanged_WithValidQuantityTypeId_ShouldUpdateSelectedQuantityTypeId()
@@ -210,12 +191,7 @@ public class TemporaryItemCreatorReducerTests
 
     public class OnOpenTemporaryItemCreator
     {
-        private readonly OnOpenTemporaryItemCreatorFixture _fixture;
-
-        public OnOpenTemporaryItemCreator()
-        {
-            _fixture = new OnOpenTemporaryItemCreatorFixture();
-        }
+        private readonly OnOpenTemporaryItemCreatorFixture _fixture = new();
 
         [Fact]
         public void OnOpenTemporaryItemCreator_WithValidSectionsAndQuantityTypes_ShouldInitializeItemCreator()
@@ -289,7 +265,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = new DomainTestBuilder<string>().Create(),
                         IsOpen = false,
                         IsSaving = true,
-                        Price = new DomainTestBuilder<float>().Create(),
+                        Price = new DomainTestBuilder<decimal>().Create(),
                         Section = new DomainTestBuilder<ShoppingListStoreSection>().Create(),
                         SelectedQuantityTypeId = new DomainTestBuilder<int>().Create()
                     }
@@ -322,7 +298,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = ExpectedState.SearchBar.Input,
                         IsOpen = true,
                         IsSaving = false,
-                        Price = 1f,
+                        Price = 1m,
                         Section = sections.Last(),
                         SelectedQuantityTypeId = quantityTypes.First().Id
                     }
@@ -354,7 +330,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = ExpectedState.SearchBar.Input,
                         IsOpen = true,
                         IsSaving = false,
-                        Price = 1f,
+                        Price = 1m,
                         Section = sections.Last(),
                         SelectedQuantityTypeId = 0
                     }
@@ -387,7 +363,7 @@ public class TemporaryItemCreatorReducerTests
                         ItemName = ExpectedState.SearchBar.Input,
                         IsOpen = true,
                         IsSaving = false,
-                        Price = 1f,
+                        Price = 1m,
                         Section = sections.First(),
                         SelectedQuantityTypeId = quantityTypes.First().Id
                     }
@@ -406,12 +382,7 @@ public class TemporaryItemCreatorReducerTests
 
     public class OnCloseTemporaryItemCreator
     {
-        private readonly OnCloseTemporaryItemCreatorFixture _fixture;
-
-        public OnCloseTemporaryItemCreator()
-        {
-            _fixture = new OnCloseTemporaryItemCreatorFixture();
-        }
+        private readonly OnCloseTemporaryItemCreatorFixture _fixture = new();
 
         [Fact]
         public void OnCloseTemporaryItemCreator_WithValidData_ShouldCloseTemporaryItemCreator()
@@ -461,12 +432,7 @@ public class TemporaryItemCreatorReducerTests
 
     public class OnSaveTemporaryItemStarted
     {
-        private readonly OnSaveTemporaryItemStartedFixture _fixture;
-
-        public OnSaveTemporaryItemStarted()
-        {
-            _fixture = new OnSaveTemporaryItemStartedFixture();
-        }
+        private readonly OnSaveTemporaryItemStartedFixture _fixture = new();
 
         [Fact]
         public void OnSaveTemporaryItemStarted_WithNotAlreadySaving_ShouldSetTemporaryItemCreatorToSaving()
@@ -533,17 +499,12 @@ public class TemporaryItemCreatorReducerTests
         }
     }
 
-    public class OnSaveTemporaryItemFinished
+    public class OnAddTemporaryItem
     {
-        private readonly OnSaveTemporaryItemFinishedFixture _fixture;
-
-        public OnSaveTemporaryItemFinished()
-        {
-            _fixture = new OnSaveTemporaryItemFinishedFixture();
-        }
+        private readonly OnAddTemporaryItemFixture _fixture = new();
 
         [Fact]
-        public void OnSaveTemporaryItemFinished_WithSectionAlreadyExisting_ShouldAddItemToExistingSection()
+        public void OnAddTemporaryItem_WithSectionAlreadyExisting_ShouldAddItemToExistingSection()
         {
             // Arrange
             _fixture.SetupExpectedStateForAlreadyExistingSection();
@@ -553,7 +514,7 @@ public class TemporaryItemCreatorReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ChangeAction);
 
             // Act
-            var result = TemporaryItemCreatorReducer.OnSaveTemporaryItemFinished(_fixture.InitialState,
+            var result = TemporaryItemCreatorReducer.OnAddTemporaryItem(_fixture.InitialState,
                 _fixture.ChangeAction);
 
             // Assert
@@ -561,7 +522,7 @@ public class TemporaryItemCreatorReducerTests
         }
 
         [Fact]
-        public void OnSaveTemporaryItemFinished_WithSectionNotAlreadyExisting_ShouldAddItemToNewSection()
+        public void OnAddTemporaryItem_WithSectionNotAlreadyExisting_ShouldAddItemToNewSection()
         {
             // Arrange
             _fixture.SetupExpectedStateForNotAlreadyExistingSection();
@@ -571,16 +532,16 @@ public class TemporaryItemCreatorReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ChangeAction);
 
             // Act
-            var result = TemporaryItemCreatorReducer.OnSaveTemporaryItemFinished(_fixture.InitialState,
+            var result = TemporaryItemCreatorReducer.OnAddTemporaryItem(_fixture.InitialState,
                 _fixture.ChangeAction);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnSaveTemporaryItemFinishedFixture : TemporaryItemCreatorReducerFixture
+        private sealed class OnAddTemporaryItemFixture : TemporaryItemCreatorReducerFixture
         {
-            public SaveTemporaryItemFinishedAction? ChangeAction { get; private set; }
+            public AddTemporaryItemAction? ChangeAction { get; private set; }
 
             public void SetupAction()
             {
@@ -592,7 +553,7 @@ public class TemporaryItemCreatorReducerTests
                     SortingIndex = section.SortingIndex,
                 };
 
-                ChangeAction = new SaveTemporaryItemFinishedAction(
+                ChangeAction = new AddTemporaryItemAction(
                     ExpectedState.ShoppingList.Sections.Last().Items.Last(),
                     storeSection);
             }
@@ -664,6 +625,95 @@ public class TemporaryItemCreatorReducerTests
                         IsSaving = false
                     }
                 };
+            }
+        }
+    }
+
+    public class OnTemporaryItemCreated
+    {
+        private readonly OnTemporaryItemCreatedFixture _fixture = new();
+
+        [Fact]
+        public void OnTemporaryItemCreated_WithValidData_ShouldUpdateItem()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
+
+            // Act
+            var result = TemporaryItemCreatorReducer.OnTemporaryItemCreated(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnTemporaryItemCreated_WithInvalidTempId_ShouldDoNothing()
+        {
+            // Arrange
+            _fixture.SetupInitialStateEqualToExpectedState();
+            _fixture.SetupActionWithInvalidTempId();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.InitialState);
+
+            // Act
+            var result = TemporaryItemCreatorReducer.OnTemporaryItemCreated(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.InitialState);
+        }
+
+        private sealed class OnTemporaryItemCreatedFixture : TemporaryItemCreatorReducerFixture
+        {
+            private Guid _tempId;
+            private Guid _actualId;
+            public TemporaryItemCreatedAction? Action { get; private set; }
+
+            public void SetupInitialStateEqualToExpectedState()
+            {
+                InitialState = ExpectedState;
+            }
+
+            public void SetupInitialState()
+            {
+                var (section, sectionIndex) = ExpectedState.ShoppingList!.Sections.Random();
+                var (item, itemIndex) = section.Items.Random();
+                _tempId = item.Id.OfflineId!.Value;
+                _actualId = item.Id.ActualId!.Value;
+
+                var sections = ExpectedState.ShoppingList.Sections.ToList();
+                var items = section.Items.ToList();
+                items[itemIndex] = item with
+                {
+                    Id = new(item.Id.OfflineId, null)
+                };
+                section = section with
+                {
+                    Items = items
+                };
+                sections[sectionIndex] = section;
+
+                InitialState = ExpectedState with
+                {
+                    ShoppingList = ExpectedState.ShoppingList with
+                    {
+                        Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new TemporaryItemCreatedAction(_tempId, _actualId);
+            }
+
+            public void SetupActionWithInvalidTempId()
+            {
+                Action = new TemporaryItemCreatedAction(Guid.NewGuid(), Guid.NewGuid());
             }
         }
     }

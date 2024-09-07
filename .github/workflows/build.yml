@@ -11,7 +11,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     outputs:
-      Semver: ${{ steps.gitversion.outputs.semver }}
+      Semver: ${{ steps.gitversionoutput.outputs.semver }}
     steps:
       - name: Set up .net 8
         uses: actions/setup-dotnet@v3
@@ -32,17 +32,22 @@ jobs:
 
       - name: Determine Git Version
         uses: gittools/actions/gitversion/execute@v0
+        id: gitversion
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
-      - name: Output Git Version
-        id: gitversion
-        run: echo "semver=${{ env.GITVERSION_SEMVER }}" >> "$GITHUB_OUTPUT"
+      - name: Output Git Version      
+        id: gitversionoutput
+        run: echo "semver=${{ steps.gitversion.outputs.GitVersion_SemVer }}" >> "$GITHUB_OUTPUT"
       - name: Add Git Tag
         if: github.ref == 'refs/heads/main'
         run: |
-          git tag v${{ env.GITVERSION_SEMVER }}
+          git tag v${{ steps.gitversion.outputs.GitVersion_SemVer }}
           git push --tags
+
+      - name: Setup Docker Compose (temp)
+        run: |
+          ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -90,6 +95,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -99,6 +112,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./Api
           file: ./Api/Dockerfile
           push: true
@@ -114,6 +128,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/arm64
+  
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -123,6 +145,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./Frontend
           file: ./Frontend/Dockerfile
           push: true

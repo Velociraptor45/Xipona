@@ -65,21 +65,24 @@ public class ItemSearchService : IItemSearchService
             .Select(model => new SearchItemResultReadModel(model.Id, model.Name, null));
     }
 
-    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput)
+    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput, int page, int pageSize)
     {
         if (string.IsNullOrWhiteSpace(searchInput))
-            return Enumerable.Empty<SearchItemResultReadModel>();
+            return [];
 
-        var items = (await _itemRepository.FindActiveByAsync(searchInput)).ToList();
+        var items = (await _itemRepository.FindActiveByAsync(searchInput, page, pageSize)).ToList();
 
         var manufacturerIds = items.Where(i => i.ManufacturerId is not null).Select(i => i.ManufacturerId!.Value);
         var manufacturers = (await _manufacturerRepository.FindByAsync(manufacturerIds)).ToDictionary(m => m.Id);
 
-        return items.Select(i =>
-        {
-            var manufacturerName = i.ManufacturerId is null ? null : manufacturers[i.ManufacturerId!.Value].Name;
-            return new SearchItemResultReadModel(i.Id, i.Name, manufacturerName);
-        });
+        var searchResults = items
+            .Select(i =>
+            {
+                var manufacturerName = i.ManufacturerId is null ? null : manufacturers[i.ManufacturerId!.Value].Name;
+                return new SearchItemResultReadModel(i.Id, i.Name, manufacturerName);
+            });
+
+        return searchResults;
     }
 
     public async Task<IEnumerable<SearchItemByItemCategoryResult>> SearchAsync(ItemCategoryId itemCategoryId)
@@ -123,6 +126,14 @@ public class ItemSearchService : IItemSearchService
         }
 
         return results;
+    }
+
+    public async Task<int> GetTotalSearchResultCountAsync(string searchInput)
+    {
+        if (string.IsNullOrWhiteSpace(searchInput))
+            return 0;
+
+        return await _itemRepository.GetTotalCountByAsync(searchInput);
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> SearchForShoppingListAsync(string name, StoreId storeId)

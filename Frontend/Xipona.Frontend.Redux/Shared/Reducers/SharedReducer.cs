@@ -18,7 +18,8 @@ public static class SharedReducer
     {
         return state with
         {
-            IsOnline = false
+            IsOnline = false,
+            IsRetryOngoing = true
         };
     }
 
@@ -28,6 +29,15 @@ public static class SharedReducer
         return state with
         {
             IsOnline = true
+        };
+    }
+
+    [ReducerMethod(typeof(QueueProcessedAction))]
+    public static SharedState OnQueueProcessed(SharedState state)
+    {
+        return state with
+        {
+            IsRetryOngoing = false
         };
     }
 }

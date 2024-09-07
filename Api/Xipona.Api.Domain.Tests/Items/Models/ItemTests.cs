@@ -72,8 +72,6 @@ public class ItemTests
 
     public class IsAvailableInStore
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void IsAvailableInStore_WithNotAvailableInStore_ShouldReturnFalse()
         {
@@ -99,7 +97,7 @@ public class ItemTests
             var availabilityStoreIds = testObject.Availabilities.Select(av => av.StoreId).ToList();
 
             // Act
-            StoreId chosenStoreId = _commonFixture.ChooseRandom(availabilityStoreIds);
+            StoreId chosenStoreId = CommonFixture.ChooseRandom(availabilityStoreIds);
             var result = testObject.IsAvailableInStore(chosenStoreId);
 
             // Assert
@@ -629,8 +627,6 @@ public class ItemTests
 
     public class GetDefaultSectionIdForStore
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void GetDefaultSectionIdForStore_WithItemTypes_ShouldThrowDomainException()
         {
@@ -663,7 +659,7 @@ public class ItemTests
         {
             // Arrange
             var sut = ItemMother.Initial().Create();
-            var chosenAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+            var chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
 
             // Act
             var result = sut.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
@@ -675,14 +671,12 @@ public class ItemTests
 
     public class TryGetType
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void TryGetType_WithExistingType_ShouldReturnTrue()
         {
             // Arrange
             var sut = ItemMother.InitialWithTypes().Create();
-            var existingType = _commonFixture.ChooseRandom(sut.ItemTypes);
+            var existingType = CommonFixture.ChooseRandom(sut.ItemTypes);
 
             // Act
             var result = sut.TryGetType(existingType.Id, out var type);
@@ -818,14 +812,12 @@ public class ItemTests
 
     public class TryGetTypeWithPredecessor
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void TryGetTypeWithPredecessor_WithExistingType_ShouldReturnTrue()
         {
             // Arrange
             var sut = ItemMother.WithTypesWithPredecessor().Create();
-            var existingType = _commonFixture.ChooseRandom(sut.ItemTypes);
+            var existingType = CommonFixture.ChooseRandom(sut.ItemTypes);
 
             // Act
             var result = sut.TryGetTypeWithPredecessor(existingType.PredecessorId!.Value, out var type);

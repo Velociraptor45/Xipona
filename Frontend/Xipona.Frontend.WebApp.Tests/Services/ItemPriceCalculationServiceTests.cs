@@ -26,7 +26,7 @@ public class ItemPriceCalculationServiceTests
     [InlineData(1000, 1.5f, 512, 0.77f)] // round up above .5
     [InlineData(1000, 1.5f, 470, 0.71f)] // round up at .5
     [InlineData(1000, 1.5f, 462, 0.69f)] // round down
-    public void CalculatePrice_ShouldReturnExpectedResult(int quantityNormalizer, float pricePerQuantity,
+    public void CalculatePrice_ShouldReturnExpectedResult(int quantityNormalizer, decimal pricePerQuantity,
         float quantity, float expectedResult)
     {
         // Arrange

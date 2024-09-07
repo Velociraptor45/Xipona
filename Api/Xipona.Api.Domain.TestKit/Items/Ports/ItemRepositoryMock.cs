@@ -98,4 +98,9 @@ public class ItemRepositoryMock : Mock<IItemRepository>
     {
         Verify(m => m.StoreAsync(item), times);
     }
+
+    public void SetupGetTotalCountByAsync(string searchInput, int returnValue)
+    {
+        Setup(m => m.GetTotalCountByAsync(searchInput)).ReturnsAsync(returnValue);
+    }
 }

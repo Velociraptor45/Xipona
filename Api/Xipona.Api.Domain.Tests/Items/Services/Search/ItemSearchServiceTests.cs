@@ -25,6 +25,53 @@ namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.Search;
 
 public class ItemSearchServiceTests
 {
+    public class SearchAsync
+    {
+        private readonly SearchAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task SearchAsync_WithSearchInputEmpty_ShouldReturnEmptyResult()
+        {
+            // Arrange
+            _fixture.SetupSearchInputEmpty();
+            _fixture.SetupPage();
+            _fixture.SetupPageSize();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Page);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PageSize);
+
+            // Act
+            var result = await sut.SearchAsync(_fixture.SearchInput, _fixture.Page.Value, _fixture.PageSize.Value);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        private sealed class SearchAsyncFixture : ItemSearchServiceFixture
+        {
+            public string? SearchInput { get; private set; }
+            public int? Page { get; private set; }
+            public int? PageSize { get; private set; }
+
+            public void SetupSearchInputEmpty()
+            {
+                SearchInput = string.Empty;
+            }
+
+            public void SetupPage()
+            {
+                Page = new TestBuilder<int>().Create();
+            }
+
+            public void SetupPageSize()
+            {
+                PageSize = new TestBuilder<int>().Create();
+            }
+        }
+    }
+
     public class SearchForShoppingListAsync
     {
         private readonly SearchForShoppingListAsyncFixture _fixture = new();
@@ -421,6 +468,82 @@ public class ItemSearchServiceTests
                 TestPropertyNotSetException.ThrowIfNull(ItemCategoryId);
 
                 ValidatorMock.VerifyValidateAsync(ItemCategoryId.Value, Times.Once);
+            }
+        }
+    }
+
+    public sealed class GetTotalSearchResultCountAsync
+    {
+        private readonly GetTotalSearchResultCountAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task GetTotalSearchResultCountAsync_WithSearchInputEmpty_ShouldReturnZero()
+        {
+            // Arrange
+            _fixture.SetupExpectedResultZero();
+            _fixture.SetupSearchInputEmpty();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetTotalSearchResultCountAsync(_fixture.SearchInput);
+
+            // Assert
+            result.Should().Be(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task GetTotalSearchResultCountAsync_WithValidSearchInput_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            _fixture.SetupSearchInput();
+            _fixture.SetupFindingItems();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await sut.GetTotalSearchResultCountAsync(_fixture.SearchInput);
+
+            // Assert
+            result.Should().Be(_fixture.ExpectedResult);
+        }
+
+        private sealed class GetTotalSearchResultCountAsyncFixture : ItemSearchServiceFixture
+        {
+            public string? SearchInput { get; private set; }
+            public int? ExpectedResult { get; private set; }
+
+            public void SetupSearchInputEmpty()
+            {
+                SearchInput = string.Empty;
+            }
+
+            public void SetupSearchInput()
+            {
+                SearchInput = new TestBuilder<string>().Create();
+            }
+
+            public void SetupFindingItems()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                ItemRepositoryMock.SetupGetTotalCountByAsync(SearchInput, ExpectedResult.Value);
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new TestBuilder<int>().Create();
+            }
+
+            public void SetupExpectedResultZero()
+            {
+                ExpectedResult = 0;
             }
         }
     }

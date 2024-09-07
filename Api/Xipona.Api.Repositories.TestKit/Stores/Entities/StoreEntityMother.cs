@@ -4,6 +4,12 @@ namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class StoreEntityMother
 {
+    public static StoreEntityBuilder Active()
+    {
+        return new StoreEntityBuilder()
+            .WithDeleted(false);
+    }
+
     public static StoreEntityBuilder Initial()
     {
         var sections = new List<Section>()
@@ -42,6 +48,7 @@ public static class StoreEntityMother
             .WithId(sectionIdArray.First())
             .WithIsDefaultSection(true)
             .WithIsDeleted(false)
+            .WithSortIndex(0)
             .Create());
 
         for (int i = 1; i < sectionIdArray.Length; i++)
@@ -50,6 +57,7 @@ public static class StoreEntityMother
                 .WithId(sectionIdArray[i])
                 .WithIsDefaultSection(false)
                 .WithIsDeleted(false)
+                .WithSortIndex(i)
                 .Create());
         }
 
