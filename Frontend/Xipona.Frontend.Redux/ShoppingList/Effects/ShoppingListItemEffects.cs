@@ -13,7 +13,7 @@ using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 
-public sealed class ShoppingListItemEffects : IDisposable
+public sealed class ShoppingListItemEffects : IAsyncDisposable
 {
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
@@ -137,8 +137,9 @@ public sealed class ShoppingListItemEffects : IDisposable
         _hideItemsTimer.Start();
     }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _hideItemsTimer?.Dispose();
+        return ValueTask.CompletedTask;
     }
 }
