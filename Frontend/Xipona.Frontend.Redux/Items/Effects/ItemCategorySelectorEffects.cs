@@ -9,7 +9,7 @@ using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
 
-public sealed class ItemCategorySelectorEffects : IDisposable
+public sealed class ItemCategorySelectorEffects : IAsyncDisposable
 {
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
@@ -132,8 +132,10 @@ public sealed class ItemCategorySelectorEffects : IDisposable
         dispatcher.Dispatch(new SearchItemCategoryFinishedAction(result.ToList()));
     }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _startSearchTimer?.Dispose();
+
+        return ValueTask.CompletedTask;
     }
 }

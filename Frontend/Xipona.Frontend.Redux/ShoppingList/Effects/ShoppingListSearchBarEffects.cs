@@ -11,7 +11,7 @@ using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 
-public sealed class ShoppingListSearchBarEffects : IDisposable
+public sealed class ShoppingListSearchBarEffects : IAsyncDisposable
 {
     private readonly IApiClient _client;
     private readonly IState<ShoppingListState> _state;
@@ -137,8 +137,9 @@ public sealed class ShoppingListSearchBarEffects : IDisposable
         return new CancellationTokenSource();
     }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _searchCancellationTokenSource?.Dispose();
+        return ValueTask.CompletedTask;
     }
 }
