@@ -31,7 +31,7 @@ public class ShoppingListSearchBarEffectsTests
 
             // Act
             await sut.HandleItemForShoppingListSearchInputChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
-            await Task.Delay(10);
+            await Task.Delay(50);
 
             // Assert
             _fixture.VerifyNotDispatchingSearchAction();
@@ -49,7 +49,7 @@ public class ShoppingListSearchBarEffectsTests
 
             // Act
             await sut.HandleItemForShoppingListSearchInputChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
-            await Task.Delay(10);
+            await Task.Delay(50);
 
             // Assert
             _fixture.VerifyDispatchingSearchAction();
