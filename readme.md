@@ -141,7 +141,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 ### Backend Logging
 
 The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the ph-xipona-api-**config** volume.<br/>
-In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable PH_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
+In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable PH_XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
 An example for a local seq instance with API key requirement could be
 
 ```json

@@ -89,8 +89,8 @@ public static class ServiceCollectionExtensions
         out string header)
     {
         var headerPrefix = configuration["OpenTelemetry:ApiKeyHeaderPrefix"];
-        var apiKey = configuration["PH_OTEL_API_KEY"];
-        var apiKeyFile = configuration["PH_OTEL_API_KEY_FILE"];
+        var apiKey = configuration["PH_XIPONA_OTEL_API_KEY"];
+        var apiKeyFile = configuration["PH_XIPONA_OTEL_API_KEY_FILE"];
 
         if (string.IsNullOrWhiteSpace(apiKey) && !string.IsNullOrWhiteSpace(apiKeyFile))
             apiKey = fileLoadingService.ReadFile(apiKeyFile);
