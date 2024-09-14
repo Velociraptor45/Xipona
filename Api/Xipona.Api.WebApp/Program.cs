@@ -9,6 +9,11 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Core.Files;
@@ -21,7 +26,6 @@ using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
 using ProjectHermes.Xipona.Api.WebApp.Extensions;
-using Serilog;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -30,8 +34,8 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder();
 
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
-builder.Logging.AddConsole();
-builder.Logging.AddSerilog();
+//builder.Logging.AddConsole();
+//builder.Logging.AddSerilog();
 
 if (builder.Environment.IsEnvironment("Local"))
 {
@@ -42,9 +46,49 @@ AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .CreateLogger();
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(configuration)
+//    .CreateLogger();
+
+var defResourceBuilder = ResourceBuilder.CreateEmpty()
+    .AddService("Xipona.Api", serviceVersion: configuration["APP_VERSION"])
+    .AddAttributes(new Dictionary<string, object>()
+    {
+        ["deployment.environment"] = builder.Environment.EnvironmentName
+    });
+
+builder.Services
+    .AddOpenTelemetry()
+    .WithTracing(traceBuilder =>
+    {
+        traceBuilder.AddHttpClientInstrumentation();
+        traceBuilder.AddAspNetCoreInstrumentation();
+        traceBuilder.SetResourceBuilder(defResourceBuilder);
+        traceBuilder.AddSource("Example.Source"); // todo
+        traceBuilder.AddOtlpExporter(options =>
+        {
+            options.Endpoint = new Uri(configuration["OpenTelemetry:TracesEndpoint"]!);
+            options.Protocol = OtlpExportProtocol.HttpProtobuf;
+        });
+        traceBuilder.AddConsoleExporter();
+    });
+
+builder.Services.AddLogging(logging =>
+{
+    logging.AddOpenTelemetry(logOpt =>
+    {
+        logOpt.SetResourceBuilder(defResourceBuilder);
+        logOpt.IncludeFormattedMessage = true;
+        logOpt.IncludeScopes = true;
+        logOpt.ParseStateValues = true;
+        logOpt.AddOtlpExporter(opt =>
+        {
+            opt.Endpoint = new Uri(configuration["OpenTelemetry:LogsEndpoint"]!);
+            opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+        });
+        logOpt.AddConsoleExporter();
+    });
+});
 
 var fileLoadingService = new FileLoadingService();
 var vaultService = new VaultService(configuration, fileLoadingService);
