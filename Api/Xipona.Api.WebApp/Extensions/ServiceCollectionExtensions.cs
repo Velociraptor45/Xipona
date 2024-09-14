@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -8,13 +10,15 @@ using OpenTelemetry.Trace;
 using ProjectHermes.Xipona.Api.Core.Files;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ProjectHermes.Xipona.Api.WebApp.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddOtel(this IServiceCollection services, IConfiguration configuration,
-        string environmentName, IFileLoadingService fileLoadingService)
+        IWebHostEnvironment environment, IFileLoadingService fileLoadingService)
     {
         var logsEndpointUrl = configuration["OpenTelemetry:LogsEndpoint"];
         var tracesEndpointUrl = configuration["OpenTelemetry:TracesEndpoint"];
@@ -22,7 +26,13 @@ public static class ServiceCollectionExtensions
         if (string.IsNullOrWhiteSpace(logsEndpointUrl) || string.IsNullOrWhiteSpace(tracesEndpointUrl))
         {
             Console.WriteLine("OTEL logs and/or traces endpoint not provided. Skipping OTEL configuration and integrating standard logging");
-            services.AddLogging();
+            services.AddLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+                if (environment.IsProduction())
+                    logging.SetMinimumLevel(LogLevel.Information);
+            });
             return services;
         }
 
@@ -34,7 +44,7 @@ public static class ServiceCollectionExtensions
             .AddService("Xipona.Api", serviceVersion: configuration["APP_VERSION"])
             .AddAttributes(new Dictionary<string, object>()
             {
-                ["deployment.environment"] = environmentName
+                ["deployment.environment"] = environment.EnvironmentName
             });
 
         services
@@ -53,7 +63,7 @@ public static class ServiceCollectionExtensions
                     ShoppingListController.ActivitySourceName,
                     StoreController.ActivitySourceName
                     );
-                if (environmentName != "Local")
+                if (environment.IsEnvironment("Local"))
                 {
                     tracing.AddOtlpExporter(opt =>
                     {
@@ -71,13 +81,14 @@ public static class ServiceCollectionExtensions
 
         services.AddLogging(logging =>
         {
+            logging.ClearProviders();
             logging.AddOpenTelemetry(logOpt =>
             {
                 logOpt.SetResourceBuilder(defResourceBuilder);
                 logOpt.IncludeFormattedMessage = true;
                 logOpt.IncludeScopes = true;
                 logOpt.ParseStateValues = true;
-                if (environmentName != "Local")
+                if (environment.IsEnvironment("Local"))
                 {
                     logOpt.AddOtlpExporter(opt =>
                     {
@@ -92,6 +103,8 @@ public static class ServiceCollectionExtensions
                     logOpt.AddConsoleExporter();
                 }
             });
+            if (environment.IsProduction())
+                logging.SetMinimumLevel(LogLevel.Information);
         });
 
         return services;
