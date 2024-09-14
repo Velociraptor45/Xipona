@@ -117,6 +117,8 @@ jobs:
           file: ./Api/Dockerfile
           push: true
           tags: velocir4ptor/ph-xipona-api:${{ needs.build.outputs.Semver }}
+          build-args: |
+            APP_VERSION=${{ needs.build.outputs.Semver }}
 
   docker-image-frontend:
     name: Docker Image Frontend
