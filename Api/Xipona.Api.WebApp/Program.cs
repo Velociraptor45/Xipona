@@ -28,8 +28,6 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder();
 
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
-//builder.Logging.AddConsole();
-//builder.Logging.AddSerilog();
 
 if (builder.Environment.IsEnvironment("Local"))
 {
@@ -39,10 +37,6 @@ if (builder.Environment.IsEnvironment("Local"))
 AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
-
-//Log.Logger = new LoggerConfiguration()
-//    .ReadFrom.Configuration(configuration)
-//    .CreateLogger();
 
 builder.Services.AddOtel(configuration, builder.Environment.EnvironmentName);
 
