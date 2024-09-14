@@ -21,6 +21,7 @@ using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
+using System.Diagnostics;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -30,6 +31,9 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/stores")]
 public class StoreController : ControllerBase
 {
+    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<StoreController>();
+
+    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -50,6 +54,7 @@ public class StoreController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> GetStoreByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new GetStoreByIdQuery(new StoreId(id));
 
         IStore model;
@@ -77,6 +82,7 @@ public class StoreController : ControllerBase
     [Route("active-for-shopping")]
     public async Task<IActionResult> GetActiveStoresForShoppingAsync(CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new GetActiveStoresForShoppingQuery();
         var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -93,6 +99,7 @@ public class StoreController : ControllerBase
     [Route("active-for-item")]
     public async Task<IActionResult> GetActiveStoresForItemAsync(CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new GetActiveStoresForItemQuery();
         var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -109,6 +116,7 @@ public class StoreController : ControllerBase
     [Route("active-overview")]
     public async Task<IActionResult> GetActiveStoresOverviewAsync(CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new GetActiveStoresOverviewQuery();
         var models = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -125,6 +133,7 @@ public class StoreController : ControllerBase
     public async Task<IActionResult> CreateStoreAsync([FromBody] CreateStoreContract createStoreContract,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var command = _converters.ToDomain<CreateStoreContract, CreateStoreCommand>(createStoreContract);
         var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
@@ -141,6 +150,7 @@ public class StoreController : ControllerBase
     public async Task<IActionResult> ModifyStoreAsync([FromBody] ModifyStoreContract modifyStoreContract,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var command = _converters.ToDomain<ModifyStoreContract, ModifyStoreCommand>(modifyStoreContract);
 
         try
@@ -166,6 +176,7 @@ public class StoreController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> DeleteStoreAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var command = new DeleteStoreCommand(new StoreId(id));
 
         try

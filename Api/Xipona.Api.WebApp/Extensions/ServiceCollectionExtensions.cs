@@ -5,6 +5,7 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using System.Collections.Generic;
 
 namespace ProjectHermes.Xipona.Api.WebApp.Extensions;
@@ -28,7 +29,15 @@ public static class ServiceCollectionExtensions
                 tracing.AddHttpClientInstrumentation();
                 tracing.AddAspNetCoreInstrumentation();
                 tracing.SetResourceBuilder(defResourceBuilder);
-                tracing.AddSource("Example.Source"); // todo
+                tracing.AddSource(
+                    ItemCategoryController.ActivitySourceName,
+                    ItemController.ActivitySourceName,
+                    ManufacturerController.ActivitySourceName,
+                    RecipeController.ActivitySourceName,
+                    RecipeTagController.ActivitySourceName,
+                    ShoppingListController.ActivitySourceName,
+                    StoreController.ActivitySourceName
+                    );
                 tracing.AddOtlpExporter(options =>
                 {
                     // todo

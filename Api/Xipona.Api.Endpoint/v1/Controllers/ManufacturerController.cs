@@ -19,6 +19,7 @@ using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
+using System.Diagnostics;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -28,6 +29,9 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/manufacturers")]
 public class ManufacturerController : ControllerBase
 {
+    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<ManufacturerController>();
+
+    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -50,6 +54,7 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> GetManufacturerByIdAsync([FromRoute] Guid id,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var query = new ManufacturerByIdQuery(new ManufacturerId(id));
@@ -79,6 +84,7 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> GetManufacturerSearchResultsAsync([FromQuery] string searchInput,
         [FromQuery] bool includeDeleted = false, CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
         {
@@ -102,6 +108,7 @@ public class ManufacturerController : ControllerBase
     [Route("active")]
     public async Task<IActionResult> GetAllActiveManufacturersAsync(CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new AllActiveManufacturersQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -121,6 +128,7 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> ModifyManufacturerAsync([FromBody] ModifyManufacturerContract contract,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<ModifyManufacturerContract, ModifyManufacturerCommand>(contract);
@@ -145,6 +153,7 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> CreateManufacturerAsync([FromQuery] string name,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var command = _converters.ToDomain<string, CreateManufacturerCommand>(name);
         var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
@@ -161,6 +170,7 @@ public class ManufacturerController : ControllerBase
     public async Task<IActionResult> DeleteManufacturerAsync([FromRoute] Guid id,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<Guid, DeleteManufacturerCommand>(id);
