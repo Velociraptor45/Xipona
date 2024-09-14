@@ -12,6 +12,7 @@ using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
+using System.Diagnostics;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -21,6 +22,9 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/recipe-tags")]
 public class RecipeTagController : ControllerBase
 {
+    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<RecipeTagController>();
+
+    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -39,6 +43,7 @@ public class RecipeTagController : ControllerBase
     [Route("all")]
     public async Task<IActionResult> GetAllRecipeTagsAsync(CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new GetAllQuery();
         var recipeTags = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -56,6 +61,7 @@ public class RecipeTagController : ControllerBase
     public async Task<IActionResult> CreateRecipeTagAsync(CreateRecipeTagContract contract,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var command = _converters.ToDomain<CreateRecipeTagContract, CreateRecipeTagCommand>(contract);
         try
         {

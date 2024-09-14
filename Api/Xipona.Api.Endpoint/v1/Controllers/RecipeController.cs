@@ -24,6 +24,7 @@ using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
+using System.Diagnostics;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -33,6 +34,9 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/recipes")]
 public class RecipeController : ControllerBase
 {
+    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<RecipeController>();
+
+    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -52,6 +56,7 @@ public class RecipeController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var query = new RecipeByIdQuery(new RecipeId(id));
@@ -80,6 +85,7 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> SearchRecipesByNameAsync([FromQuery] string searchInput,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
         {
@@ -112,6 +118,7 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> SearchRecipesByTagsAsync([FromQuery] IEnumerable<Guid> tagIds,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new SearchRecipesByTagsQuery(tagIds.Select(t => new RecipeTagId(t)));
 
         var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
@@ -128,6 +135,7 @@ public class RecipeController : ControllerBase
     [Route("ingredient-quantity-types")]
     public async Task<IActionResult> GetAllIngredientQuantityTypes(CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         var query = new AllIngredientQuantityTypesQuery();
         var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -147,6 +155,7 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> GetItemAmountsForOneServingAsync([FromRoute] Guid id,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var query = new ItemAmountsForOneServingQuery(new RecipeId(id));
@@ -174,6 +183,7 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> CreateRecipeAsync([FromBody] CreateRecipeContract createRecipeContract,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<CreateRecipeContract, CreateRecipeCommand>(createRecipeContract);
@@ -199,6 +209,7 @@ public class RecipeController : ControllerBase
     public async Task<IActionResult> ModifyRecipeAsync([FromRoute] Guid id, [FromBody] ModifyRecipeContract contract,
         CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<(Guid, ModifyRecipeContract), ModifyRecipeCommand>((id, contract));

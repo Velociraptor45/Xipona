@@ -62,7 +62,6 @@ To run all required services in containers, Dockerfiles and docker-compose files
 Prepare the following things:
 - Docker Volumes
   - Api
-    - ph-xipona-api-logs
     - ph-xipona-api-config
   - Frontend
     - ph-xipona-frontend-config
@@ -139,9 +138,23 @@ If you don't want to run the application behind a reverse proxy that handles the
     }
     ```
 
+### Backend Logging
+
+The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the ph-xipona-api-**config** volume.<br/>
+In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable PH_XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
+An example for a local seq instance with API key requirement could be
+
+```json
+"OpenTelemetry": {
+  "LogsEndpoint": "http://localhost:5341/ingest/otlp/v1/logs",
+  "TracesEndpoint": "http://localhost:5341/ingest/otlp/v1/traces",
+  "ApiKeyHeaderPrefix": "X-Seq-ApiKey="
+}
+```
+
 ### Frontend Logging
 
-It is possible to collect client-side logs (e.g. exceptions). The compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
+It is possible to collect client-side logs (e.g. exceptions). The docker compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
 
 ### Authentication & Authorization
 

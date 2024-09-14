@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS base
+ARG APP_VERSION
 WORKDIR /app
 
 ################## BUILD ##################
@@ -18,4 +19,5 @@ RUN dotnet publish "Xipona.Api.WebApp/Xipona.Api.WebApp.csproj" -c Release -o /a
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV APP_VERSION=${APP_VERSION}
 ENTRYPOINT ["dotnet", "Xipona.Api.WebApp.dll"]

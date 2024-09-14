@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
@@ -21,7 +20,6 @@ using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
 using ProjectHermes.Xipona.Api.WebApp.Extensions;
-using Serilog;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -30,8 +28,6 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder();
 
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
-builder.Logging.AddConsole();
-builder.Logging.AddSerilog();
 
 if (builder.Environment.IsEnvironment("Local"))
 {
@@ -42,11 +38,9 @@ AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .CreateLogger();
-
 var fileLoadingService = new FileLoadingService();
+builder.Services.AddOtel(configuration, builder.Environment, fileLoadingService);
+
 var vaultService = new VaultService(configuration, fileLoadingService);
 var configurationLoadingService =
     new DatabaseConfigurationLoadingService(fileLoadingService, vaultService, configuration);

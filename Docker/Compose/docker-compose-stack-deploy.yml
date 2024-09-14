@@ -25,19 +25,20 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
       PH_XIPONA_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+      #PH_XIPONA_OTEL_API_KEY_FILE: /run/secrets/ph-xipona-otel-api-key # uncomment this for backend OTEL API key support
     ports:
       - "12489:80"
     depends_on:
       - Database
     volumes:
       # - ph-xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
-      - ph-xipona-api-logs:/app/logs
       - ph-xipona-api-config:/app/config:ro
     networks:
       - ph-xipona
     secrets:
       - ph-xipona-db-username
       - ph-xipona-db-password
+      # - ph-xipona-otel-api-key # uncomment this for backend OTEL API key support
 
   # LogCollector: # uncomment this for frontend log support
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
@@ -91,3 +92,5 @@ secrets:
     external: true
   ph-xipona-db-root-pwd:
     external: true
+  # ph-xipona-otel-api-key: # uncomment this for backend OTEL API key support
+  #   external: true

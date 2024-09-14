@@ -21,13 +21,13 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       PH_XIPONA_DB_USERNAME: xipona
       PH_XIPONA_DB_PASSWORD: change_me
+      #PH_XIPONA_OTEL_API_KEY: XXX # uncomment this for backend OTEL API key support
     ports:
       - "12489:80"
     depends_on:
       - Database
     volumes:
       # - ph-xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
-      - ph-xipona-api-logs:/app/logs
       - ph-xipona-api-config:/app/config:ro
     networks:
       - ph-xipona
