@@ -38,9 +38,9 @@ AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
-builder.Services.AddOtel(configuration, builder.Environment.EnvironmentName);
-
 var fileLoadingService = new FileLoadingService();
+builder.Services.AddOtel(configuration, builder.Environment.EnvironmentName, fileLoadingService);
+
 var vaultService = new VaultService(configuration, fileLoadingService);
 var configurationLoadingService =
     new DatabaseConfigurationLoadingService(fileLoadingService, vaultService, configuration);
