@@ -53,14 +53,20 @@ public static class ServiceCollectionExtensions
                     ShoppingListController.ActivitySourceName,
                     StoreController.ActivitySourceName
                     );
-                tracing.AddOtlpExporter(opt =>
+                if (environmentName != "Local")
                 {
-                    opt.Endpoint = new Uri(tracesEndpointUrl);
-                    opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                    if (includeApiKeyHeader)
-                        opt.Headers = apiKeyHeader;
-                });
-                tracing.AddConsoleExporter();
+                    tracing.AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri(tracesEndpointUrl);
+                        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        if (includeApiKeyHeader)
+                            opt.Headers = apiKeyHeader;
+                    });
+                }
+                else
+                {
+                    tracing.AddConsoleExporter();
+                }
             });
 
         services.AddLogging(logging =>
@@ -71,14 +77,20 @@ public static class ServiceCollectionExtensions
                 logOpt.IncludeFormattedMessage = true;
                 logOpt.IncludeScopes = true;
                 logOpt.ParseStateValues = true;
-                logOpt.AddOtlpExporter(opt =>
+                if (environmentName != "Local")
                 {
-                    opt.Endpoint = new Uri(logsEndpointUrl);
-                    opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                    if (includeApiKeyHeader)
-                        opt.Headers = apiKeyHeader;
-                });
-                logOpt.AddConsoleExporter();
+                    logOpt.AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri(logsEndpointUrl);
+                        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        if (includeApiKeyHeader)
+                            opt.Headers = apiKeyHeader;
+                    });
+                }
+                else
+                {
+                    logOpt.AddConsoleExporter();
+                }
             });
         });
 
