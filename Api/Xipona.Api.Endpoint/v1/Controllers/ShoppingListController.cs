@@ -14,6 +14,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.Remove
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Contracts.Common;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
@@ -407,6 +408,18 @@ public class ShoppingListController : ControllerBase
             return UnprocessableEntity(errorContract);
         }
 
+        return NoContent();
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/add-discount")]
+    public async Task<IActionResult> AddItemDiscountAsync([FromRoute] Guid id, [FromBody] AddItemDiscountContract contract,
+        CancellationToken cancellationToken = default)
+    {
+        using var activity = _activitySource.StartActivity();
         return NoContent();
     }
 }

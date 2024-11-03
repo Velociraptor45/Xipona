@@ -79,6 +79,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
         return options.Excluding(info => ItemsOnListId().IsMatch(info.Path));
     }
 
+    [GeneratedRegex(@"Discount\[\d+\].Id")]
+    private static partial Regex DiscountId();
+
+    public static EquivalencyAssertionOptions<T> ExcludeDiscountId<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => DiscountId().IsMatch(info.Path));
+    }
+
     [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]
     private static partial Regex PreparationStepsRecipeCycle();
 

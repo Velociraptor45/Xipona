@@ -49,6 +49,6 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         /// <summary>
         /// The items in the section.
         /// </summary>
-        public IReadOnlyCollection<ShoppingListItemContract> Items { get; }
+        public IReadOnlyCollection<ShoppingListItemContract> Items { get; set; }
     }
 }
