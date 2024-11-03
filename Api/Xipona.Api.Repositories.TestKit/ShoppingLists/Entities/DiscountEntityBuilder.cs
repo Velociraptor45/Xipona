@@ -1,6 +1,5 @@
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
-using System;
 
 namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
 
@@ -9,12 +8,6 @@ public class DiscountEntityBuilder : TestBuilderBase<Discount>
     public DiscountEntityBuilder()
     {
         WithoutShoppingList();
-    }
-
-    public DiscountEntityBuilder WithId(Guid id)
-    {
-        FillPropertyWith(p => p.Id, id);
-        return this;
     }
 
     public DiscountEntityBuilder WithDiscountPrice(decimal discountPrice)

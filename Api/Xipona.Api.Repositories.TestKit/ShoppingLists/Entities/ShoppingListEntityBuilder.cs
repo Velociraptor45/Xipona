@@ -1,14 +1,14 @@
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
-using System;
-using System.Collections.Generic;
 
 namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+
 public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
 {
     public ShoppingListEntityBuilder()
     {
         WithItemsOnList(new ItemsOnListEntityBuilder().CreateMany(3).ToList());
+        WithDiscounts(new DiscountEntityBuilder().CreateMany(3).ToList());
     }
 
     public ShoppingListEntityBuilder WithId(Guid id)
