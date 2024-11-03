@@ -69,7 +69,8 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             {
                 var item = items[sectionItem.Id];
 
-                Price price;
+                Price? price = shoppingList.GetDiscountFor(item.Id)?.Price;
+
                 string name;
                 if (item.HasItemTypes)
                 {
@@ -80,12 +81,12 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     if (itemType == null)
                         throw new DomainException(new ItemTypeNotFoundReason(sectionItem.Id, sectionItem.TypeId.Value));
 
-                    price = itemType.Availabilities.First(av => av.StoreId == store.Id).Price;
+                    price ??= itemType.Availabilities.First(av => av.StoreId == store.Id).Price;
                     name = $"{item.Name} {itemType.Name}";
                 }
                 else
                 {
-                    price = item.Availabilities.First(av => av.StoreId == store.Id).Price;
+                    price ??= item.Availabilities.First(av => av.StoreId == store.Id).Price;
                     name = item.Name;
                 }
 
@@ -101,7 +102,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     item.IsDeleted,
                     item.Comment,
                     item.IsTemporary,
-                    price,
+                    price.Value,
                     new QuantityTypeReadModel(item.ItemQuantity.Type),
                     itemQuantityInPacket?.Quantity,
                     quantityTypeInPacketReadModel,

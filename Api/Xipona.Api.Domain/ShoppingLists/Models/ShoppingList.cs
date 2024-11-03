@@ -12,15 +12,17 @@ namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 public class ShoppingList : AggregateRoot, IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
+    private readonly Dictionary<ItemId, Discount> _discounts;
 
     public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt)
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts)
     {
         Id = id;
         StoreId = storeId;
         CompletionDate = completionDate;
         CreatedAt = createdAt;
         _sections = sections.ToDictionary(s => s.Id);
+        _discounts = discounts.ToDictionary(d => d.ItemId);
     }
 
     public ShoppingListId Id { get; }
@@ -30,16 +32,16 @@ public class ShoppingList : AggregateRoot, IShoppingList
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
+    public IReadOnlyCollection<Discount> Discounts => _discounts.Values.ToList().AsReadOnly();
 
     public void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
         if (throwIfAlreadyPresent && Items.Any(it => it.Id == item.Id && it.TypeId == item.TypeId))
             throw new DomainException(new ItemAlreadyOnShoppingListReason(item.Id, Id));
 
-        if (!_sections.ContainsKey(sectionId))
+        if (!_sections.TryGetValue(sectionId, out IShoppingListSection? section))
             throw new DomainException(new SectionNotPartOfStoreReason(sectionId, StoreId));
 
-        var section = _sections[sectionId];
         _sections[sectionId] = section.AddItem(item, throwIfAlreadyPresent);
     }
 
@@ -103,10 +105,8 @@ public class ShoppingList : AggregateRoot, IShoppingList
 
     public void AddSection(IShoppingListSection section)
     {
-        if (_sections.ContainsKey(section.Id))
+        if (!_sections.TryAdd(section.Id, section))
             throw new DomainException(new SectionAlreadyInShoppingListReason(Id, section.Id));
-
-        _sections.Add(section.Id, section);
     }
 
     public IShoppingList Finish(DateTimeOffset completionDate, IDateTimeService dateTimeService)
@@ -127,7 +127,8 @@ public class ShoppingList : AggregateRoot, IShoppingList
             _sections[key] = _sections[key].RemoveItemsNotInBasket();
         }
 
-        return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values, dateTimeService.UtcNow);
+        return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values, dateTimeService.UtcNow,
+            Discounts);
     }
 
     public void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId)
@@ -146,5 +147,10 @@ public class ShoppingList : AggregateRoot, IShoppingList
 
         _sections[oldSection.Id] = oldSection.RemoveItem(itemId, itemTypeId);
         _sections[newSection.Id] = newSection.AddItem(item);
+    }
+
+    public Discount? GetDiscountFor(ItemId itemId)
+    {
+        return _discounts.TryGetValue(itemId, out var discount) ? discount : null;
     }
 }

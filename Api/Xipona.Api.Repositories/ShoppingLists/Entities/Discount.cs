@@ -9,20 +9,18 @@ namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 public class Discount
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public Guid Id { get; set; }
+    [Column(Order = 1)]
+    public Guid ShoppingListId { get; set; }
 
-    [Required]
-    public decimal DiscountPrice { get; set; }
-
-    [Required]
+    [Key]
+    [Column(Order = 2)]
     public Guid ItemId { get; set; }
 
     [Required]
     public Guid? ItemTypeId { get; set; }
 
     [Required]
-    public Guid ShoppingListId { get; set; }
+    public decimal DiscountPrice { get; set; }
 
     [ForeignKey("ShoppingListId")]
     public ShoppingList? ShoppingList { get; set; }

@@ -15,15 +15,15 @@ public class ShoppingListFactory : IShoppingListFactory
     }
 
     public IShoppingList Create(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt)
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts)
     {
-        return new ShoppingList(id, storeId, completionDate, sections, createdAt);
+        return new ShoppingList(id, storeId, completionDate, sections, createdAt, discounts);
     }
 
     public IShoppingList CreateNew(IStore store)
     {
         var sections = store.Sections.Select(s => _shoppingListSectionFactory.CreateEmpty(s));
 
-        return new ShoppingList(ShoppingListId.New, store.Id, null, sections, _dateTimeService.UtcNow);
+        return new ShoppingList(ShoppingListId.New, store.Id, null, sections, _dateTimeService.UtcNow, []);
     }
 }
