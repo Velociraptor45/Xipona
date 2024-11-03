@@ -20,6 +20,7 @@ public static class ShoppingListEntityMother
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
+            .WithEmptyDiscounts()
             .WithItemsOnList(items);
     }
 
@@ -36,6 +37,7 @@ public static class ShoppingListEntityMother
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
+            .WithEmptyDiscounts()
             .WithItemsOnList([item1, item2]);
     }
 
@@ -43,6 +45,7 @@ public static class ShoppingListEntityMother
     {
         return new ShoppingListEntityBuilder()
             .WithoutCompletionDate()
+            .WithEmptyDiscounts()
             .WithEmptyItemsOnList();
     }
 
@@ -54,6 +57,7 @@ public static class ShoppingListEntityMother
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
+            .WithEmptyDiscounts()
             .WithItemsOnList(items);
     }
 
@@ -65,6 +69,7 @@ public static class ShoppingListEntityMother
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
+            .WithEmptyDiscounts()
             .WithItemsOnList(items);
     }
 }

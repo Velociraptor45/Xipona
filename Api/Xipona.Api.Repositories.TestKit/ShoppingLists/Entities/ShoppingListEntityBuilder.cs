@@ -1,8 +1,9 @@
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
-
 public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
 {
     public ShoppingListEntityBuilder()
@@ -48,5 +49,27 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
     public ShoppingListEntityBuilder WithEmptyItemsOnList()
     {
         return WithItemsOnList(new List<ItemsOnList>());
+    }
+
+    public ShoppingListEntityBuilder WithDiscounts(ICollection<Discount> discounts)
+    {
+        FillPropertyWith(p => p.Discounts, discounts);
+        return this;
+    }
+
+    public ShoppingListEntityBuilder WithEmptyDiscounts()
+    {
+        return WithDiscounts(new List<Discount>());
+    }
+
+    public ShoppingListEntityBuilder WithRowVersion(byte[] rowVersion)
+    {
+        FillPropertyWith(p => p.RowVersion, rowVersion);
+        return this;
+    }
+
+    public ShoppingListEntityBuilder WithEmptyRowVersion()
+    {
+        return WithRowVersion(Array.Empty<byte>());
     }
 }
