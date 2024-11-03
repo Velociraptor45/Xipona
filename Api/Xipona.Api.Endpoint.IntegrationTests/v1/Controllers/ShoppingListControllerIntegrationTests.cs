@@ -16,6 +16,7 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromSh
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
+using ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
@@ -100,20 +101,20 @@ public class ShoppingListControllerIntegrationTests
                     .FillConstructorWith("isDeleted", false);
 
                 _itemNameParts = [Guid.NewGuid().ToString(), Guid.NewGuid().ToString()];
-                _item = new ContractTestBuilder<ShoppingListItemContract>()
-                    .FillConstructorWith("isDeleted", false)
-                    .FillConstructorWith("isTemporary", false)
-                    .FillConstructorWith("itemCategory", itemCategoryBuilder.Create())
-                    .FillConstructorWith("manufacturer", manufacturerBuilder.Create())
-                    .FillConstructorWith("name", $"{_itemNameParts[0]} {_itemNameParts[1]}")
+                _item = ShoppingListItemContractMother.Valid()
+                    .WithIsDeleted(false)
+                    .WithIsTemporary(false)
+                    .WithItemCategory(itemCategoryBuilder.Create())
+                    .WithManufacturer(manufacturerBuilder.Create())
+                    .WithName($"{_itemNameParts[0]} {_itemNameParts[1]}")
                     .Create();
                 _item2NameParts = [Guid.NewGuid().ToString(), Guid.NewGuid().ToString()];
-                _item2 = new ContractTestBuilder<ShoppingListItemContract>()
-                    .FillConstructorWith("isDeleted", false)
-                    .FillConstructorWith("isTemporary", false)
-                    .FillConstructorWith("itemCategory", itemCategoryBuilder.Create())
-                    .FillConstructorWith("manufacturer", manufacturerBuilder.Create())
-                    .FillConstructorWith("name", $"{_item2NameParts[0]} {_item2NameParts[1]}")
+                _item2 = ShoppingListItemContractMother.Valid()
+                    .WithIsDeleted(false)
+                    .WithIsTemporary(false)
+                    .WithItemCategory(itemCategoryBuilder.Create())
+                    .WithManufacturer(manufacturerBuilder.Create())
+                    .WithName($"{_item2NameParts[0]} {_item2NameParts[1]}")
                     .Create();
 
                 IEnumerable<ShoppingListSectionContract> sections =

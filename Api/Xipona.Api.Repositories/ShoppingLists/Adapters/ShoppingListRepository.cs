@@ -196,7 +196,8 @@ public class ShoppingListRepository : IShoppingListRepository
     private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
     {
         return _dbContext.ShoppingLists.AsNoTracking()
-            .Include(l => l.ItemsOnList);
+            .Include(l => l.ItemsOnList)
+            .Include(l => l.Discounts);
     }
 
     #endregion private methods

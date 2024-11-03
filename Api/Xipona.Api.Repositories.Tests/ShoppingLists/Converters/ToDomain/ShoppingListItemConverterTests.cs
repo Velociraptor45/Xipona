@@ -19,10 +19,10 @@ public class ShoppingListItemConverterTests
     protected override void AddMapping(IMappingExpression<ItemsOnList, ShoppingListItem> mapping)
     {
         mapping
-            .ForCtorParam(nameof(ShoppingListItem.Id), opt => opt.MapFrom(src => src.ItemId))
+            .ForCtorParam(nameof(ShoppingListItem.Id), opt => opt.MapFrom(src => new ItemId(src.ItemId)))
             .ForCtorParam(nameof(ShoppingListItem.TypeId), opt => opt.MapFrom(src => new ItemTypeId(src.ItemTypeId!.Value)))
             .ForCtorParam(nameof(ShoppingListItem.IsInBasket), opt => opt.MapFrom(src => src.InBasket))
-            .ForCtorParam(nameof(ShoppingListItem.Quantity), opt => opt.MapFrom(src => src.Quantity));
+            .ForCtorParam(nameof(ShoppingListItem.Quantity), opt => opt.MapFrom(src => new QuantityInBasket(src.Quantity)));
     }
 
     protected override ItemsOnList CreateSource()

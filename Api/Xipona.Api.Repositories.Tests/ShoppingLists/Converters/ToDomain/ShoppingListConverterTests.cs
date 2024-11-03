@@ -18,7 +18,7 @@ public class ShoppingListConverterTests
     public override ShoppingListConverter CreateSut()
     {
         return new(new ShoppingListFactory(new ShoppingListSectionFactory(), _dateTimeServiceMock.Object),
-            new ShoppingListSectionFactory(), new ShoppingListItemConverter());
+            new ShoppingListSectionFactory(), new ShoppingListItemConverter(), new DiscountConverter());
     }
 
     protected override Repositories.ShoppingLists.Entities.ShoppingList CreateSource()
@@ -50,10 +50,13 @@ public class ShoppingListConverterTests
                     .Select(g => new ShoppingListSection(
                         new SectionId(g.SectionId),
                         g.Items))))
+            .ForCtorParam(nameof(IShoppingList.Discounts).LowerFirstChar(),
+                opt => opt.MapFrom((src, ctx) => src.Discounts.Select(d => ctx.Mapper.Map<Discount>(d))))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.Items, opt => opt.Ignore())
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
         new ShoppingListItemConverterTests().AddMapping(cfg);
+        new DiscountConverterTests().AddMapping(cfg);
     }
 }
