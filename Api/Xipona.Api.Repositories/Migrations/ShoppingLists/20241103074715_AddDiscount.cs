@@ -25,15 +25,14 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                 name: "Discount",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    DiscountPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    ShoppingListId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ItemId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ItemTypeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ShoppingListId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    DiscountPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Discount", x => x.Id);
+                    table.PrimaryKey("PK_Discount", x => new { x.ShoppingListId, x.ItemId });
                     table.ForeignKey(
                         name: "FK_Discount_ShoppingLists_ShoppingListId",
                         column: x => x.ShoppingListId,
@@ -52,11 +51,6 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                 name: "IX_Discount_ItemTypeId",
                 table: "Discount",
                 column: "ItemTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Discount_ShoppingListId",
-                table: "Discount",
-                column: "ShoppingListId");
         }
 
         /// <inheritdoc />

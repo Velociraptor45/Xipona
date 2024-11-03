@@ -12,7 +12,7 @@ using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
 namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
 {
     [DbContext(typeof(ShoppingListContext))]
-    [Migration("20241006151458_AddDiscount")]
+    [Migration("20241103074715_AddDiscount")]
     partial class AddDiscount
     {
         /// <inheritdoc />
@@ -27,29 +27,26 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
 
             modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                    b.Property<Guid>("ShoppingListId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(1);
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)")
+                        .HasColumnOrder(2);
 
                     b.Property<decimal>("DiscountPrice")
                         .HasColumnType("decimal(65,30)");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)");
 
                     b.Property<Guid?>("ItemTypeId")
                         .IsRequired()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("ShoppingListId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
+                    b.HasKey("ShoppingListId", "ItemId");
 
                     b.HasIndex("ItemId");
 
                     b.HasIndex("ItemTypeId");
-
-                    b.HasIndex("ShoppingListId");
 
                     b.ToTable("Discount");
                 });
