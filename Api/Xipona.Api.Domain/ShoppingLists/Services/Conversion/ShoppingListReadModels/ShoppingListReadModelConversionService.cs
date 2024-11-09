@@ -69,7 +69,8 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             {
                 var item = items[sectionItem.Id];
 
-                Price? price = shoppingList.GetDiscountFor(sectionItem.Id, sectionItem.TypeId)?.Price;
+                var discount = shoppingList.GetDiscountFor(sectionItem.Id, sectionItem.TypeId);
+                Price? price = discount?.Price;
 
                 string name;
                 if (item.HasItemTypes)
@@ -111,7 +112,8 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     item.ManufacturerId == null ?
                         null : new ManufacturerReadModel(manufacturers[item.ManufacturerId.Value]),
                     sectionItem.IsInBasket,
-                    sectionItem.Quantity);
+                    sectionItem.Quantity,
+                    discount is not null);
 
                 itemReadModels.Add(itemReadModel);
             }

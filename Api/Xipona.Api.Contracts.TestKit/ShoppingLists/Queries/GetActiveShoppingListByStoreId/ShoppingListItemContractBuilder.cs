@@ -2,9 +2,10 @@ using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
+using ProjectHermes.Xipona.Api.Core.TestKit;
+using System;
 
 namespace ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-
 public class ShoppingListItemContractBuilder : ContractTestBuilderBase<ShoppingListItemContract>
 {
     public ShoppingListItemContractBuilder WithId(Guid id)
@@ -128,6 +129,12 @@ public class ShoppingListItemContractBuilder : ContractTestBuilderBase<ShoppingL
     public ShoppingListItemContractBuilder WithQuantity(float quantity)
     {
         FillConstructorWith(nameof(quantity), quantity);
+        return this;
+    }
+
+    public ShoppingListItemContractBuilder WithIsDiscounted(bool isDiscounted)
+    {
+        FillConstructorWith(nameof(isDiscounted), isDiscounted);
         return this;
     }
 }

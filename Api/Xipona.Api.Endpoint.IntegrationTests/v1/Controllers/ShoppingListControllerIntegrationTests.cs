@@ -107,6 +107,7 @@ public class ShoppingListControllerIntegrationTests
                     .WithItemCategory(itemCategoryBuilder.Create())
                     .WithManufacturer(manufacturerBuilder.Create())
                     .WithName($"{_itemNameParts[0]} {_itemNameParts[1]}")
+                    .WithIsDiscounted(true)
                     .Create();
                 _item2NameParts = [Guid.NewGuid().ToString(), Guid.NewGuid().ToString()];
                 _item2 = ShoppingListItemContractMother.Valid()
@@ -115,6 +116,7 @@ public class ShoppingListControllerIntegrationTests
                     .WithItemCategory(itemCategoryBuilder.Create())
                     .WithManufacturer(manufacturerBuilder.Create())
                     .WithName($"{_item2NameParts[0]} {_item2NameParts[1]}")
+                    .WithIsDiscounted(false)
                     .Create();
 
                 IEnumerable<ShoppingListSectionContract> sections =

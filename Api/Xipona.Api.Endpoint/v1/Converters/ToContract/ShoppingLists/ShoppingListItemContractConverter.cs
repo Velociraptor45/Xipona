@@ -57,6 +57,7 @@ public class ShoppingListItemContractConverter : IToContractConverter<ShoppingLi
             itemCategoryContract,
             manufacturerContract,
             source.IsInBasket,
-            source.Quantity.Value);
+            source.Quantity.Value,
+            source.IsDiscounted);
     }
 }

@@ -214,7 +214,8 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
                 itemCategoryReadModel,
                 manufacturerReadModel,
                 list.Sections.First().Items.First().IsInBasket,
-                list.Sections.First().Items.First().Quantity);
+                list.Sections.First().Items.First().Quantity,
+                false);
             listItemReadModels.Add(listItem);
         }
 
