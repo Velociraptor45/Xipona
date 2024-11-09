@@ -319,3 +319,6 @@ dotnet_diagnostic.CS8762.severity = error
 
 # S2094: Classes should not be empty
 dotnet_diagnostic.S2094.severity = none
+
+# ReSharper
+resharper_convert_to_primary_constructor_highlighting=none

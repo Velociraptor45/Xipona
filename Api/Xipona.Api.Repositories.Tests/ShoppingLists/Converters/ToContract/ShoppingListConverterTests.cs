@@ -4,6 +4,7 @@ using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Converters.ToContract;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 using System;
+using Discount = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
 
 namespace ProjectHermes.Xipona.Api.Repositories.Tests.ShoppingLists.Converters.ToContract;
 
@@ -23,9 +24,11 @@ public class ShoppingListConverterTests
             .ForMember(dest => dest.CompletionDate, opt => opt.MapFrom(src => src.CompletionDate))
             .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId.Value))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForMember(dest => dest.RowVersion,
-                opt => opt.MapFrom(src => src.RowVersion))
-            .ForMember(dest => dest.ItemsOnList, opt => opt.MapFrom(src => Convert(src)));
+            .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
+            .ForMember(dest => dest.ItemsOnList, opt => opt.MapFrom((src, _, _, ctx) =>
+                ConvertItems(src).Select(
+                    ctx.Mapper.Map<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem), ItemsOnList>)))
+            .ForMember(dest => dest.Discounts, opt => opt.MapFrom(src => ConvertDiscounts(src)));
     }
 
     protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -41,7 +44,7 @@ public class ShoppingListConverterTests
             .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 
-    private static List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> Convert(
+    private static List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> ConvertItems(
         Domain.ShoppingLists.Models.ShoppingList src)
     {
         List<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem)> list = [];
@@ -53,5 +56,16 @@ public class ShoppingListConverterTests
             }
         }
         return list;
+    }
+
+    private static List<Discount> ConvertDiscounts(Domain.ShoppingLists.Models.ShoppingList src)
+    {
+        return src.Discounts.Select(d => new Discount
+        {
+            ShoppingListId = src.Id.Value,
+            ItemId = d.ItemId.Value,
+            ItemTypeId = d.ItemTypeId,
+            DiscountPrice = d.Price
+        }).ToList();
     }
 }

@@ -28,4 +28,6 @@ public interface IShoppingListModificationService
     Task<TemporaryShoppingListItemReadModel> AddTemporaryItemAsync(ShoppingListId shoppingListId, ItemName itemName,
         QuantityType quantityType,
         QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId);
+
+    Task AddDiscountAsync(ShoppingListId id, Discount discount);
 }

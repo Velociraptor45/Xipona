@@ -26,6 +26,7 @@ using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneSer
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
@@ -150,6 +151,13 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             await _apiClient.FinishListAsync(id, finishedAt, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task AddItemDiscount(Guid id, AddItemDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddItemDiscount(id, contract, cancellationToken);
         }
 
         #endregion ShoppingListController

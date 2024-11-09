@@ -35,5 +35,8 @@ public interface IShoppingList
     void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId);
 
     void RemoveItemAndItsTypes(ItemId itemId);
-    Discount? GetDiscountFor(ItemId itemId);
+
+    Discount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
+
+    void AddDiscount(Discount discount);
 }

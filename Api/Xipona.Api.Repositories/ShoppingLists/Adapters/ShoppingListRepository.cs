@@ -9,20 +9,23 @@ using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+using Discount = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
+using ShoppingList = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList;
 
 namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Adapters;
 
 public class ShoppingListRepository : IShoppingListRepository
 {
     private readonly ShoppingListContext _dbContext;
-    private readonly IToDomainConverter<Entities.ShoppingList, IShoppingList> _toDomainConverter;
-    private readonly IToContractConverter<IShoppingList, Entities.ShoppingList> _toContractConverter;
+    private readonly IToDomainConverter<ShoppingList, IShoppingList> _toDomainConverter;
+    private readonly IToContractConverter<IShoppingList, ShoppingList> _toContractConverter;
     private readonly ILogger<ShoppingListRepository> _logger;
     private readonly CancellationToken _cancellationToken;
 
     public ShoppingListRepository(ShoppingListContext dbContext,
-        IToDomainConverter<Entities.ShoppingList, IShoppingList> toDomainConverter,
-        IToContractConverter<IShoppingList, Entities.ShoppingList> toContractConverter,
+        IToDomainConverter<ShoppingList, IShoppingList> toDomainConverter,
+        IToContractConverter<IShoppingList, ShoppingList> toContractConverter,
         ILogger<ShoppingListRepository> logger,
         CancellationToken cancellationToken)
     {
@@ -63,7 +66,7 @@ public class ShoppingListRepository : IShoppingListRepository
 
     public async Task<IEnumerable<IShoppingList>> FindByAsync(ItemId itemId)
     {
-        List<Entities.ShoppingList> entities = await GetShoppingListQuery()
+        List<ShoppingList> entities = await GetShoppingListQuery()
             .Where(l => l.ItemsOnList.Any(i => i.ItemId == itemId))
             .ToListAsync(cancellationToken: _cancellationToken);
 
@@ -81,7 +84,7 @@ public class ShoppingListRepository : IShoppingListRepository
 
     public async Task<IEnumerable<IShoppingList>> FindActiveByAsync(ItemId itemId)
     {
-        List<Entities.ShoppingList> entities = await GetShoppingListQuery()
+        List<ShoppingList> entities = await GetShoppingListQuery()
             .Where(l => l.ItemsOnList.FirstOrDefault(i => i.ItemId == itemId) != null
                         && l.CompletionDate == null)
             .ToListAsync(cancellationToken: _cancellationToken);
@@ -129,17 +132,36 @@ public class ShoppingListRepository : IShoppingListRepository
 
     #region private methods
 
-    private async Task StoreModifiedListAsync(Entities.ShoppingList existingEntity,
+    private async Task StoreModifiedListAsync(ShoppingList existingEntity,
         IShoppingList shoppingList)
     {
         var updatedEntity = _toContractConverter.ToContract(shoppingList);
         var onListMappings = existingEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
+        var onListDiscounts = existingEntity.Discounts.ToDictionary(map => (map.ItemId, map.ItemTypeId));
 
         var existingRowVersion = existingEntity.RowVersion;
         _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
         _dbContext.Entry(existingEntity).Property(r => r.RowVersion).OriginalValue = existingRowVersion;
         _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
+        StoreMapping(updatedEntity, onListMappings);
+        StoreDiscounts(updatedEntity, onListDiscounts);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(_cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogInformation(ex,
+                () => "Saving shopping list {ShoppingListId} failed due to concurrency violation", shoppingList.Id.Value);
+            throw new DomainException(new ModelOutOfDateReason());
+        }
+    }
+
+    private void StoreMapping(ShoppingList updatedEntity,
+        Dictionary<(Guid ItemId, Guid? ItemTypeId), ItemsOnList> onListMappings)
+    {
         foreach (var map in updatedEntity.ItemsOnList)
         {
             if (onListMappings.TryGetValue((map.ItemId, map.ItemTypeId), out var existingMapping))
@@ -161,16 +183,30 @@ public class ShoppingListRepository : IShoppingListRepository
         {
             _dbContext.Entry(map).State = EntityState.Deleted;
         }
+    }
 
-        try
+    private void StoreDiscounts(ShoppingList updatedEntity,
+        Dictionary<(Guid ItemId, Guid? ItemTypeId), Discount> onListDiscounts)
+    {
+        foreach (var discount in updatedEntity.Discounts)
         {
-            await _dbContext.SaveChangesAsync(_cancellationToken);
+            if (onListDiscounts.ContainsKey((discount.ItemId, discount.ItemTypeId)))
+            {
+                // mapping was modified
+                _dbContext.Entry(discount).State = EntityState.Modified;
+                onListDiscounts.Remove((discount.ItemId, discount.ItemTypeId));
+            }
+            else
+            {
+                // mapping was added
+                _dbContext.Entry(discount).State = EntityState.Added;
+            }
         }
-        catch (DbUpdateConcurrencyException ex)
+
+        // mapping was deleted
+        foreach (var discount in onListDiscounts.Values)
         {
-            _logger.LogInformation(ex,
-                () => "Saving shopping list {ShoppingListId} failed due to concurrency violation", shoppingList.Id.Value);
-            throw new DomainException(new ModelOutOfDateReason());
+            _dbContext.Entry(discount).State = EntityState.Deleted;
         }
     }
 
@@ -183,17 +219,21 @@ public class ShoppingListRepository : IShoppingListRepository
         {
             _dbContext.Entry(onListMap).State = EntityState.Added;
         }
+        foreach (var onListDiscount in entity.Discounts)
+        {
+            _dbContext.Entry(onListDiscount).State = EntityState.Added;
+        }
 
         await _dbContext.SaveChangesAsync(_cancellationToken);
     }
 
-    private async Task<Entities.ShoppingList?> FindEntityByIdAsync(ShoppingListId id)
+    private async Task<ShoppingList?> FindEntityByIdAsync(ShoppingListId id)
     {
         return await GetShoppingListQuery()
             .FirstOrDefaultAsync(list => list.Id == id, _cancellationToken);
     }
 
-    private IQueryable<Entities.ShoppingList> GetShoppingListQuery()
+    private IQueryable<ShoppingList> GetShoppingListQuery()
     {
         return _dbContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)

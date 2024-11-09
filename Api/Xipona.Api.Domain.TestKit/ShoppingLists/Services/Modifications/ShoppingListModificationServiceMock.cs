@@ -83,4 +83,14 @@ public class ShoppingListModificationServiceMock : Mock<IShoppingListModificatio
     {
         Verify(m => m.PutItemInBasketAsync(shoppingListId, offlineTolerantItemId, itemTypeId), times);
     }
+
+    public void SetupAddDiscountAsync(ShoppingListId id, Discount discount)
+    {
+        Setup(m => m.AddDiscountAsync(id, discount)).Returns(Task.CompletedTask);
+    }
+
+    public void VerifyAddDiscountAsync(ShoppingListId id, Discount discount, Func<Times> times)
+    {
+        Verify(m => m.AddDiscountAsync(id, discount), times);
+    }
 }

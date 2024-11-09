@@ -1753,7 +1753,10 @@ public class ShoppingListControllerIntegrationTests
 
             // Assert
             result.Should().BeOfType<NoContentResult>();
-            var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var allShoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             allShoppingLists.Should().HaveCount(2);
             allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
 
@@ -1780,7 +1783,10 @@ public class ShoppingListControllerIntegrationTests
 
             // Assert
             result.Should().BeOfType<NoContentResult>();
-            var allShoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var allShoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             allShoppingLists.Should().HaveCount(2);
             allShoppingLists.Should().ContainSingle(sl => sl.Id == _fixture.ShoppingListId.Value);
 
@@ -1864,10 +1870,11 @@ public class ShoppingListControllerIntegrationTests
 
             using var assertScope = _fixture.CreateServiceScope();
 
-            var shoppingLists = (await _fixture.LoadAllShoppingLists()).ToList();
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
-                opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId());
+                opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
+                    .WithCreatedAtPrecision());
         }
 
         private sealed class AddItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListControllerFixture(dockerFixture)
@@ -1937,16 +1944,6 @@ public class ShoppingListControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
-        }
-
-        public async Task<IEnumerable<ShoppingList>> LoadAllShoppingLists()
-        {
-            using var assertScope = CreateServiceScope();
-            var dbContext = assertScope.ServiceProvider.GetRequiredService<ShoppingListContext>();
-
-            return await dbContext.ShoppingLists.AsNoTracking()
-                .Include(sl => sl.ItemsOnList)
-                .ToListAsync();
         }
     }
 }

@@ -1,32 +1,31 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using DomainModels = ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 
-public class ShoppingListBuilder : DomainTestBuilderBase<DomainModels.ShoppingList>
+public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
 {
     public ShoppingListBuilder()
     {
         Customize(new QuantityInBasketCustomization());
     }
 
-    public ShoppingListBuilder WithId(DomainModels.ShoppingListId id)
+    public ShoppingListBuilder WithId(ShoppingListId id)
     {
-        FillConstructorWith("id", id);
+        FillConstructorWith(nameof(id), id);
         return this;
     }
 
     public ShoppingListBuilder WithStoreId(StoreId storeId)
     {
-        FillConstructorWith("storeId", storeId);
+        FillConstructorWith(nameof(storeId), storeId);
         return this;
     }
 
     public ShoppingListBuilder WithCompletionDate(DateTimeOffset? completionDate)
     {
-        FillConstructorWith("completionDate", completionDate);
+        FillConstructorWith(nameof(completionDate), completionDate);
         return this;
     }
 
@@ -35,19 +34,37 @@ public class ShoppingListBuilder : DomainTestBuilderBase<DomainModels.ShoppingLi
         return WithCompletionDate(null);
     }
 
-    public ShoppingListBuilder WithSections(IEnumerable<DomainModels.IShoppingListSection> sections)
+    // tcg keep
+    public ShoppingListBuilder WithSection(IShoppingListSection section)
     {
-        FillConstructorWith("sections", sections);
+        return WithSections([section]);
+    }
+
+    public ShoppingListBuilder WithSections(IEnumerable<IShoppingListSection> sections)
+    {
+        FillConstructorWith(nameof(sections), sections);
         return this;
     }
 
-    public ShoppingListBuilder WithSection(DomainModels.IShoppingListSection section)
+    public ShoppingListBuilder WithEmptySections()
     {
-        return WithSections(section.ToMonoList());
+        return WithSections(Enumerable.Empty<IShoppingListSection>());
     }
 
-    public ShoppingListBuilder WithoutSections()
+    public ShoppingListBuilder WithCreatedAt(DateTimeOffset createdAt)
     {
-        return WithSections(Enumerable.Empty<DomainModels.IShoppingListSection>());
+        FillConstructorWith(nameof(createdAt), createdAt);
+        return this;
+    }
+
+    public ShoppingListBuilder WithDiscounts(IEnumerable<Discount> discounts)
+    {
+        FillConstructorWith(nameof(discounts), discounts);
+        return this;
+    }
+
+    public ShoppingListBuilder WithEmptyDiscounts()
+    {
+        return WithDiscounts(Enumerable.Empty<Discount>());
     }
 }

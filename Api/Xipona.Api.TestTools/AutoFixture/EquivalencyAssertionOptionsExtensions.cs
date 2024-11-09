@@ -66,9 +66,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"ItemsOnList\[\d+\].ShoppingList")]
     private static partial Regex ItemsOnListShoppingListCycle();
 
+    [GeneratedRegex(@"Discounts\[\d+\].ShoppingList")]
+    private static partial Regex DiscountsShoppingListCycle();
+
     public static EquivalencyAssertionOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => ItemsOnListShoppingListCycle().IsMatch(info.Path));
+        return options.Excluding(info =>
+            ItemsOnListShoppingListCycle().IsMatch(info.Path)
+            || DiscountsShoppingListCycle().IsMatch(info.Path));
     }
 
     [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]

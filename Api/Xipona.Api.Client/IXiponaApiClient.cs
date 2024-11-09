@@ -25,6 +25,7 @@ using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneSer
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
@@ -173,6 +174,17 @@ namespace ProjectHermes.Xipona.Api.Client
         [Delete("shopping-lists/{id}/items")]
         Task RemoveItemFromShoppingListAsync([Path] Guid id,
             [Body] RemoveItemFromShoppingListContract contract, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Adds a discount to an item on the shopping list
+        /// </summary>
+        /// <param name="id">The shopping list's ID</param>
+        /// <param name="contract"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Put("shopping-lists/{id}/items/add-discount")]
+        Task AddItemDiscount([Path] Guid id, [Body] AddItemDiscountContract contract,
+            CancellationToken cancellationToken = default);
 
         #endregion ShoppingListController
 

@@ -676,6 +676,224 @@ public class ShoppingListTests
         }
     }
 
+    public class GetDiscountFor
+    {
+        private readonly GetDiscountForFixture _fixture = new();
+
+        [Fact]
+        public void GetDiscountFor_WithoutDiscountForItem_ShouldReturnNull()
+        {
+            // Arrange
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var result = sut.GetDiscountFor(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public void GetDiscountFor_WithDiscountForItemType_ShouldReturnDiscount()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.GetDiscountFor(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            result.Should().Be(_fixture.ExpectedResult.Value);
+        }
+
+        [Fact]
+        public void GetDiscountFor_WithDiscountForItem_ShouldReturnDiscount()
+        {
+            // Arrange
+            _fixture.SetupDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = sut.GetDiscountFor(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            result.Should().Be(_fixture.ExpectedResult.Value);
+        }
+
+        private sealed class GetDiscountForFixture : ShoppingListFixture
+        {
+            public ItemId ItemId { get; private set; } = ItemId.New;
+            public ItemTypeId? ItemTypeId { get; private set; }
+            public Discount? ExpectedResult { get; private set; }
+
+            public void SetupItemTypeId()
+            {
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupDiscount()
+            {
+                ExpectedResult = new DiscountBuilder().Create() with
+                {
+                    ItemId = ItemId,
+                    ItemTypeId = ItemTypeId
+                };
+
+                Builder.WithDiscounts([ExpectedResult.Value]);
+            }
+        }
+    }
+
+    public class AddDiscount
+    {
+        private readonly AddDiscountFixture _fixture = new();
+
+        [Fact]
+        public void AddDiscount_WithDiscountAlreadyExisting_WithType_ShouldOverwriteExistingDiscount()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupDiscount();
+            _fixture.SetupItemOnShoppingList();
+            _fixture.SetupDiscountAlreadyExisting();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Discount);
+
+            // Act
+            sut.AddDiscount(_fixture.Discount.Value);
+
+            // Assert
+            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+        }
+
+        [Fact]
+        public void AddDiscount_WithDiscountAlreadyExisting_WithoutType_ShouldOverwriteExistingDiscount()
+        {
+            // Arrange
+            _fixture.SetupDiscount();
+            _fixture.SetupItemOnShoppingList();
+            _fixture.SetupDiscountAlreadyExisting();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Discount);
+
+            // Act
+            sut.AddDiscount(_fixture.Discount.Value);
+
+            // Assert
+            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+        }
+
+        [Fact]
+        public void AddDiscount_WithItemNotOnShoppingList_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Discount);
+
+            // Act
+            var action = () => sut.AddDiscount(_fixture.Discount.Value);
+
+            // Assert
+            action.Should().ThrowDomainException(ErrorReasonCode.ItemNotOnShoppingList);
+        }
+
+        [Fact]
+        public void AddDiscount_WithDiscountNotAlreadyExisting_WithType_ShouldAddDiscount()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupDiscount();
+            _fixture.SetupItemOnShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Discount);
+
+            // Act
+            sut.AddDiscount(_fixture.Discount.Value);
+
+            // Assert
+            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+        }
+
+        [Fact]
+        public void AddDiscount_WithDiscountNotAlreadyExisting_WithoutType_ShouldAddDiscount()
+        {
+            // Arrange
+            _fixture.SetupDiscount();
+            _fixture.SetupItemOnShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Discount);
+
+            // Act
+            sut.AddDiscount(_fixture.Discount.Value);
+
+            // Assert
+            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+        }
+
+        private sealed class AddDiscountFixture : ShoppingListFixture
+        {
+            public ItemId ItemId { get; private set; } = ItemId.New;
+            public ItemTypeId? ItemTypeId { get; private set; }
+            public Discount? Discount { get; private set; }
+
+            public void SetupItemTypeId()
+            {
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupItemOnShoppingList()
+            {
+                var item = new ShoppingListItemBuilder()
+                    .WithId(ItemId)
+                    .WithTypeId(ItemTypeId)
+                    .Create();
+
+                var section = new ShoppingListSectionBuilder()
+                    .WithItem(item)
+                    .Create();
+
+                Builder.WithSection(section);
+            }
+
+            public void SetupDiscount()
+            {
+                Discount = new DiscountBuilder().Create() with
+                {
+                    ItemId = ItemId,
+                    ItemTypeId = ItemTypeId
+                };
+            }
+
+            public void SetupDiscountAlreadyExisting()
+            {
+                var discount = new DiscountBuilder().Create() with
+                {
+                    ItemId = ItemId,
+                    ItemTypeId = ItemTypeId
+                };
+
+                var sut = new ShoppingListBuilder()
+                    .WithDiscounts([discount])
+                    .Create();
+
+                Builder.WithDiscounts([discount]);
+            }
+        }
+    }
+
     private abstract class ShoppingListFixture
     {
         protected readonly ShoppingListBuilder Builder = new();

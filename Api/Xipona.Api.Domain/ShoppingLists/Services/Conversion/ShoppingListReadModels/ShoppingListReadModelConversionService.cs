@@ -69,7 +69,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             {
                 var item = items[sectionItem.Id];
 
-                Price? price = shoppingList.GetDiscountFor(item.Id)?.Price;
+                Price? price = shoppingList.GetDiscountFor(sectionItem.Id, sectionItem.TypeId)?.Price;
 
                 string name;
                 if (item.HasItemTypes)
