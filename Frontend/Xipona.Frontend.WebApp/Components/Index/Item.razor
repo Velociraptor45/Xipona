@@ -2,6 +2,7 @@
 
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.States
+@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Discounts
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
@@ -63,8 +64,13 @@
                     }
                     else
                     {
-                        <!-- update item price -->
                         <div class="px-2 m-0 ml-auto">
+                            <!-- open discount dialog -->
+                            <Button Class="px-2" OnClick="OnOpenDiscountClicked"
+                                    Disabled="@(!SharedState.Value.IsOnline)">
+                                <i class="bi bi-percent"></i>
+                            </Button>
+                            <!-- update item price -->
                             <Button Class="px-2" OnClick="OnOpenUpdatePriceClicked"
                                     Disabled="@(!SharedState.Value.IsOnline)">
                                 <i class="bi bi-currency-dollar"></i>
@@ -147,6 +153,11 @@
     private void OnOpenUpdatePriceClicked()
     {
         Dispatcher.Dispatch(new OpenPriceUpdaterAction(Model));
+    }
+
+    private void OnOpenDiscountClicked()
+    {
+        Dispatcher.Dispatch(new OpenDiscountDialogAction(Model));
     }
 
     private string FormatQuantityInput(float quantity)

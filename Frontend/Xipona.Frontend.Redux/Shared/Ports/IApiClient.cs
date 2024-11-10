@@ -126,4 +126,5 @@ public interface IApiClient
     Task DeleteStoreAsync(Guid storeId);
 
     Task<IEnumerable<ItemTypePrice>> GetItemTypePricesAsync(Guid itemId, Guid storeId);
+    Task AddItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount);
 }

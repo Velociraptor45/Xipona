@@ -26,6 +26,7 @@ using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneSer
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
@@ -441,5 +442,11 @@ public class ApiClient : IApiClient
     {
         var result = await _client.GetItemTypePricesAsync(itemId, storeId);
         return _converters.ToDomain<ItemTypePriceContract, ItemTypePrice>(result.Prices);
+    }
+
+    public async Task AddItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount)
+    {
+        var contract = new AddItemDiscountContract(discount, itemId, itemTypeId);
+        await _client.AddItemDiscount(shoppingListId, contract);
     }
 }
