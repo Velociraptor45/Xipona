@@ -53,4 +53,36 @@ public class DiscountEffects
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
         _notificationService.NotifySuccess($"Successfully discounted {state.DiscountDialog.Item.Name}");
     }
+
+    [EffectMethod]
+    public async Task HandleRemoveDiscountAction(RemoveDiscountAction action, IDispatcher dispatcher)
+    {
+        var state = _state.Value;
+        if (state.DiscountDialog.Item == null)
+            return;
+
+        var item = state.DiscountDialog.Item;
+
+        dispatcher.Dispatch(new RemoveDiscountStartedAction());
+
+        try
+        {
+            await _apiClient.RemoveItemDiscountAsync(state.ShoppingList!.Id, item.Id.ActualId!.Value, item.TypeId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Removing discount failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Removing discount failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new RemoveDiscountFinishedAction());
+        dispatcher.Dispatch(new CloseDiscountDialogAction());
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
+        _notificationService.NotifySuccess($"Successfully removed discount from {state.DiscountDialog.Item.Name}");
+    }
 }

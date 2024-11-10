@@ -67,6 +67,7 @@
                         <div class="px-2 m-0 ml-auto">
                             <!-- open discount dialog -->
                             <Button Class="px-2" OnClick="OnOpenDiscountClicked"
+                                    Type="@(Model.IsDiscounted ? ButtonType.Primary : ButtonType.Default)"
                                     Disabled="@(!SharedState.Value.IsOnline)">
                                 <i class="bi bi-percent"></i>
                             </Button>

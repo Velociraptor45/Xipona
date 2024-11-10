@@ -7,19 +7,22 @@
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<Modal Title="@GetTitle()"
-       Visible="State.Value.DiscountDialog.IsOpen"
-       OnCancel="@OnCloseDialogButtonClicked"
-       ConfirmLoading="State.Value.DiscountDialog.IsSaving"
-       Footer="@GetFooter()">
-    <AntDesign.InputNumber Formatter="FormatDiscount"
-                           Parser="ParseDiscount"
-                           Class="price-update-input"
-                           TValue="decimal"
-                           Value="State.Value.DiscountDialog.Discount"
-                           ValueChanged="OnDiscountChanged"
-                           Min="0.01m"></AntDesign.InputNumber>
-</Modal>
+@if (State.Value.DiscountDialog.Item is not null)
+{
+    <Modal Title="@GetTitle()"
+           Visible="State.Value.DiscountDialog.IsOpen"
+           OnCancel="@OnCloseDialogButtonClicked"
+           ConfirmLoading="State.Value.DiscountDialog.IsSaving"
+           Footer="@GetFooter()">
+        <AntDesign.InputNumber Formatter="FormatDiscount"
+                               Parser="ParseDiscount"
+                               Class="price-update-input"
+                               TValue="decimal"
+                               Value="State.Value.DiscountDialog.Discount"
+                               ValueChanged="OnDiscountChanged"
+                               Min="0.01m"></AntDesign.InputNumber>
+    </Modal>
+}
 
 @code {
     private void OnCloseDialogButtonClicked()
@@ -35,6 +38,11 @@
     private void OnSaveDiscountButtonClicked()
     {
         Dispatcher.Dispatch(new SaveDiscountAction());
+    }
+
+    private void OnRemoveDiscountButtonClicked()
+    {
+        Dispatcher.Dispatch(new RemoveDiscountAction());
     }
 
     private string FormatDiscount(decimal value)
@@ -60,9 +68,16 @@
         return
             @<Template>
                 <div class="d-flex">
+                    @if (State.Value.DiscountDialog.Item!.IsDiscounted)
+                    {
+                        <Button OnClick="OnRemoveDiscountButtonClicked"
+                                Type="@ButtonType.Default"
+                                Loading="State.Value.DiscountDialog.IsRemoving">
+                            Remove Discount
+                        </Button>
+                    }
                     <Button Class="ml-auto"
                             OnClick="OnSaveDiscountButtonClicked"
-                            @key="@("submit")"
                             Type="@ButtonType.Primary"
                             Loading="State.Value.DiscountDialog.IsSaving">
                         Save

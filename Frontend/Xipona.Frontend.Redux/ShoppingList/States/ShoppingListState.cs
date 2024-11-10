@@ -56,6 +56,6 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false, []),
             new Summary(false, false, DateTime.MinValue, false),
             new InitialStoreCreator(false, string.Empty, false),
-            new DiscountDialog(null, 0m, false, false));
+            new DiscountDialog(null, 0m, false, false, false));
     }
 }

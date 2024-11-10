@@ -44,6 +44,30 @@ public static class DiscountReducer
         };
     }
 
+    [ReducerMethod(typeof(RemoveDiscountStartedAction))]
+    public static ShoppingListState OnRemoveDiscountStarted(ShoppingListState state)
+    {
+        return state with
+        {
+            DiscountDialog = state.DiscountDialog with
+            {
+                IsRemoving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(RemoveDiscountFinishedAction))]
+    public static ShoppingListState OnRemoveDiscountFinished(ShoppingListState state)
+    {
+        return state with
+        {
+            DiscountDialog = state.DiscountDialog with
+            {
+                IsRemoving = false
+            }
+        };
+    }
+
     [ReducerMethod(typeof(CloseDiscountDialogAction))]
     public static ShoppingListState OnCloseDiscountDialog(ShoppingListState state)
     {
