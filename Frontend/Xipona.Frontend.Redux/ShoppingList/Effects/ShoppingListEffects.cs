@@ -155,6 +155,7 @@ public class ShoppingListEffects
             Manufacturer: "",
             IsInBasket: false,
             Quantity: quantityType.DefaultQuantity,
+            false,
             false);
 
         var addRequest = new AddTemporaryItemToShoppingListRequest(
