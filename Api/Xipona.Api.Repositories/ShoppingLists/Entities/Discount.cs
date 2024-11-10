@@ -9,15 +9,15 @@ namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 public class Discount
 {
     [Key]
-    [Column(Order = 1)]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
+    [Required]
     public Guid ShoppingListId { get; set; }
 
-    [Key]
-    [Column(Order = 2)]
+    [Required]
     public Guid ItemId { get; set; }
 
-    [Key]
-    [Column(Order = 3)]
     public Guid? ItemTypeId { get; set; }
 
     [Required]

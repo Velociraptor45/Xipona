@@ -15,11 +15,4 @@ public class ShoppingListContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Discount>()
-            .HasKey(d => new { d.ShoppingListId, d.ItemId, d.ItemTypeId });
-    }
 }

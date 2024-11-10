@@ -190,9 +190,10 @@ public class ShoppingListRepository : IShoppingListRepository
     {
         foreach (var discount in updatedEntity.Discounts)
         {
-            if (onListDiscounts.ContainsKey((discount.ItemId, discount.ItemTypeId)))
+            if (onListDiscounts.TryGetValue((discount.ItemId, discount.ItemTypeId), out var existingDiscount))
             {
                 // mapping was modified
+                discount.Id = existingDiscount.Id;
                 _dbContext.Entry(discount).State = EntityState.Modified;
                 onListDiscounts.Remove((discount.ItemId, discount.ItemTypeId));
             }
