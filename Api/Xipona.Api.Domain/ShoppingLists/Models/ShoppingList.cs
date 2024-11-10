@@ -162,6 +162,11 @@ public class ShoppingList : AggregateRoot, IShoppingList
         _discounts[(discount.ItemId, discount.ItemTypeId)] = discount;
     }
 
+    public void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId)
+    {
+        _discounts.Remove((itemId, itemTypeId));
+    }
+
     private bool IsItemOnShoppingList(ItemId itemId, ItemTypeId? itemTypeId)
     {
         return GetItemSection(itemId, itemTypeId) is not null;

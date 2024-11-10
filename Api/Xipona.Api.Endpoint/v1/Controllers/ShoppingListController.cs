@@ -11,6 +11,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTem
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.FinishShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
@@ -21,6 +22,7 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeT
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
@@ -423,6 +425,33 @@ public class ShoppingListController : ControllerBase
         using var activity = _activitySource.StartActivity();
 
         var command = _converters.ToDomain<(Guid, AddItemDiscountContract), AddItemDiscountCommand>((id, contract));
+        try
+        {
+            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound)
+                return NotFound(errorContract);
+
+            return UnprocessableEntity(errorContract);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
+    [Route("{id:guid}/items/remove-discount")]
+    public async Task<IActionResult> RemoveItemDiscountAsync([FromRoute] Guid id, [FromBody] RemoveItemDiscountContract contract,
+        CancellationToken cancellationToken = default)
+    {
+        using var activity = _activitySource.StartActivity();
+
+        var command = _converters.ToDomain<(Guid, RemoveItemDiscountContract), RemoveItemDiscountCommand>((id, contract));
         try
         {
             await _commandDispatcher.DispatchAsync(command, cancellationToken);

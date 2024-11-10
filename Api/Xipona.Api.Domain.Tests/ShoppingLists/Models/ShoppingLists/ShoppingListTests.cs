@@ -894,6 +894,111 @@ public class ShoppingListTests
         }
     }
 
+    public class RemoveDiscount
+    {
+        private readonly RemoveDiscountFixture _fixture = new();
+
+        [Fact]
+        public void RemoveDiscount_WithDiscountNotExisting_WithType_ShouldDoNothing()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupNoMatchingDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public void RemoveDiscount_WithDiscountNotExisting_WithoutType_ShouldDoNothing()
+        {
+            // Arrange
+            _fixture.SetupNoMatchingDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public void RemoveDiscount_WithDiscountExisting_WithType_ShouldRemoveDiscount()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public void RemoveDiscount_WithDiscountExisting_WithoutType_ShouldRemoveDiscount()
+        {
+            // Arrange
+            _fixture.SetupDiscount();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class RemoveDiscountFixture : ShoppingListFixture
+        {
+            public ItemId ItemId { get; private set; } = ItemId.New;
+            public ItemTypeId? ItemTypeId { get; private set; }
+            public IReadOnlyCollection<Discount>? ExpectedResult { get; private set; }
+
+            public void SetupItemTypeId()
+            {
+                ItemTypeId = Domain.Items.Models.ItemTypeId.New;
+            }
+
+            public void SetupNoMatchingDiscount()
+            {
+                ExpectedResult = new DiscountBuilder().CreateMany(2).ToList();
+
+                Builder.WithDiscounts(ExpectedResult);
+            }
+
+            public void SetupDiscount()
+            {
+                ExpectedResult = new DiscountBuilder().CreateMany(2).ToList();
+
+                var discount = new DiscountBuilder().Create() with
+                {
+                    ItemId = ItemId,
+                    ItemTypeId = ItemTypeId
+                };
+
+                Builder.WithDiscounts(ExpectedResult.Union([discount]));
+            }
+        }
+    }
+
     private abstract class ShoppingListFixture
     {
         protected readonly ShoppingListBuilder Builder = new();

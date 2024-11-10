@@ -30,4 +30,5 @@ public interface IShoppingListModificationService
         QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId);
 
     Task AddDiscountAsync(ShoppingListId id, Discount discount);
+    Task RemoveDiscountAsync(ShoppingListId id, ItemId itemId, ItemTypeId? itemTypeId);
 }

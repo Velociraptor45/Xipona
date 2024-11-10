@@ -84,7 +84,7 @@ public static partial class EquivalencyAssertionOptionsExtensions
         return options.Excluding(info => ItemsOnListId().IsMatch(info.Path));
     }
 
-    [GeneratedRegex(@"Discount\[\d+\].Id")]
+    [GeneratedRegex(@"Discounts\[\d+\].Id")]
     private static partial Regex DiscountId();
 
     public static EquivalencyAssertionOptions<T> ExcludeDiscountId<T>(this EquivalencyAssertionOptions<T> options)

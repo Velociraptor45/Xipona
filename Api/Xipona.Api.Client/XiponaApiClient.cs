@@ -32,6 +32,7 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeT
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
@@ -154,10 +155,17 @@ namespace ProjectHermes.Xipona.Api.Client
         }
 
         /// <inheritdoc/>
-        public async Task AddItemDiscount(Guid id, AddItemDiscountContract contract,
+        public async Task AddItemDiscountAsync(Guid id, AddItemDiscountContract contract,
             CancellationToken cancellationToken = default)
         {
-            await _apiClient.AddItemDiscount(id, contract, cancellationToken);
+            await _apiClient.AddItemDiscountAsync(id, contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task RemoveItemDiscountAsync(Guid id, RemoveItemDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.RemoveItemDiscountAsync(id, contract, cancellationToken);
         }
 
         #endregion ShoppingListController

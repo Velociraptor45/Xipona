@@ -39,4 +39,5 @@ public interface IShoppingList
     Discount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
 
     void AddDiscount(Discount discount);
+    void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId);
 }

@@ -11,6 +11,7 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeT
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
@@ -1920,6 +1921,81 @@ public class ShoppingListControllerIntegrationTests
                 var discount = ExpectedResult.Discounts.First();
                 Contract = new AddItemDiscountContract(discount.DiscountPrice, discount.ItemId, discount.ItemTypeId);
             }
+        }
+    }
+
+    public sealed class RemoveItemDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly RemoveItemDiscountFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task RemoveItemDiscountAsync_WithValidData_ShouldRemoveItemDiscount()
+        {
+            // Arrange
+            _fixture.SetupShoppingListWithDiscount();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabaseAsync();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+
+            // Act
+            var result = await sut.RemoveItemDiscountAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+
+            // Assert
+            result.Should().BeOfType<NoContentResult>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
+                    .WithCreatedAtPrecision());
+        }
+
+        private sealed class RemoveItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListControllerFixture(dockerFixture)
+        {
+            private ShoppingList? _shoppingList;
+            public Guid ItemId { get; } = Domain.Items.Models.ItemId.New;
+            public Guid ItemTypeId { get; } = Domain.Items.Models.ItemTypeId.New;
+            public RemoveItemDiscountContract? Contract { get; private set; }
+            public ShoppingList? ExpectedResult { get; private set; }
+            public Guid? ShoppingListId { get; private set; }
+
+            public void SetupShoppingListWithDiscount()
+            {
+                ExpectedResult = ShoppingListEntityMother.Active().Create();
+
+                var discount = new DiscountEntityBuilder()
+                    .WithItemId(ItemId)
+                    .WithItemTypeId(ItemTypeId)
+                    .Create();
+                _shoppingList = ExpectedResult.DeepClone();
+                _shoppingList.Discounts.Add(discount);
+                ShoppingListId = _shoppingList.Id;
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+
+                await shoppingListContext.AddAsync(_shoppingList);
+
+                await shoppingListContext.SaveChangesAsync();
+            }
+
+            public void SetupContract()
+            {
+                Contract = new RemoveItemDiscountContract(ItemId, ItemTypeId);
+            }
+
         }
     }
 

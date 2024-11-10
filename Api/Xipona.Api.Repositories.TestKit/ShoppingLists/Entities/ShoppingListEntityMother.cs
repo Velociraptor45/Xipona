@@ -57,7 +57,6 @@ public static class ShoppingListEntityMother
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
-            .WithEmptyDiscounts()
             .WithItemsOnList(items);
     }
 
