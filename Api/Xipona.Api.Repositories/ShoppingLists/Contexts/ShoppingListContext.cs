@@ -20,6 +20,6 @@ public class ShoppingListContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Discount>()
-            .HasKey(d => new { d.ShoppingListId, d.ItemId });
+            .HasKey(d => new { d.ShoppingListId, d.ItemId, d.ItemTypeId });
     }
 }

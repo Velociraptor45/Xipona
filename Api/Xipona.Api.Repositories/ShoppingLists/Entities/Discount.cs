@@ -16,7 +16,8 @@ public class Discount
     [Column(Order = 2)]
     public Guid ItemId { get; set; }
 
-    [Required]
+    [Key]
+    [Column(Order = 3)]
     public Guid? ItemTypeId { get; set; }
 
     [Required]
