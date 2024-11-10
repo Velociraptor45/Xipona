@@ -15,7 +15,8 @@ public static class DiscountReducer
                 Item = action.Item,
                 Discount = action.Item.PricePerQuantity,
                 IsOpen = true,
-                IsSaving = false
+                IsSaving = false,
+                IsRemoving = false
             }
         };
     }
@@ -77,7 +78,8 @@ public static class DiscountReducer
             {
                 Item = null,
                 IsOpen = false,
-                IsSaving = false
+                IsSaving = false,
+                IsRemoving = false
             }
         };
     }
