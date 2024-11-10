@@ -21,8 +21,8 @@ public class DiscountEffects
         _notificationService = notificationService;
     }
 
-    [EffectMethod]
-    public async Task HandleSaveDiscountAction(SaveDiscountAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SaveDiscountAction))]
+    public async Task HandleSaveDiscountAction(IDispatcher dispatcher)
     {
         var state = _state.Value;
         if (state.DiscountDialog.Item == null)
@@ -54,8 +54,8 @@ public class DiscountEffects
         _notificationService.NotifySuccess($"Successfully discounted {state.DiscountDialog.Item.Name}");
     }
 
-    [EffectMethod]
-    public async Task HandleRemoveDiscountAction(RemoveDiscountAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(RemoveDiscountAction))]
+    public async Task HandleRemoveDiscountAction(IDispatcher dispatcher)
     {
         var state = _state.Value;
         if (state.DiscountDialog.Item == null)

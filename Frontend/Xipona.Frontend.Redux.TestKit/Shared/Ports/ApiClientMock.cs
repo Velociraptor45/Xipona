@@ -568,4 +568,29 @@ public class ApiClientMock : Mock<IApiClient>
     {
         this.SetupInOrder(m => m.GetItemTypePricesAsync(itemId, storeId)).ThrowsAsync(ex);
     }
+
+    public void SetupAddItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount)
+    {
+        this.SetupInOrder(m => m.AddItemDiscountAsync(shoppingListId, itemId, itemTypeId, discount))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupAddItemDiscountAsyncThrowing(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount,
+        Exception ex)
+    {
+        this.SetupInOrder(m => m.AddItemDiscountAsync(shoppingListId, itemId, itemTypeId, discount))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupRemoveItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId)
+    {
+        this.SetupInOrder(m => m.RemoveItemDiscountAsync(shoppingListId, itemId, itemTypeId))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupRemoveItemDiscountAsyncThrowing(Guid shoppingListId, Guid itemId, Guid? itemTypeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.RemoveItemDiscountAsync(shoppingListId, itemId, itemTypeId))
+            .ThrowsAsync(ex);
+    }
 }
