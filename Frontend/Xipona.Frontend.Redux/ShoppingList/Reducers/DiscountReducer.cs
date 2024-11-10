@@ -52,7 +52,6 @@ public static class DiscountReducer
             DiscountDialog = state.DiscountDialog with
             {
                 Item = null,
-                Discount = 0m,
                 IsOpen = false,
                 IsSaving = false
             }

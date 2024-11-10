@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Discounts;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using RestEase;
@@ -49,6 +50,7 @@ public class DiscountEffects
 
         dispatcher.Dispatch(new SaveDiscountFinishedAction());
         dispatcher.Dispatch(new CloseDiscountDialogAction());
-        _notificationService.NotifySuccess($"{state.DiscountDialog.Item.Name} discounted");
+        dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
+        _notificationService.NotifySuccess($"Successfully discounted {state.DiscountDialog.Item.Name}");
     }
 }
