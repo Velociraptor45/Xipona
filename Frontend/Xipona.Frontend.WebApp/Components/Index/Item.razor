@@ -93,13 +93,17 @@
                 @Model.Name
             </div>
             <div class="px-2 m-0 align-self-center ml-auto price">
+                @if (@Model.IsDiscounted)
+                {
+                    <span class="pr-1"><i class="bi bi-percent discount-symbol"></i></span>
+                }
                 <span>@($"{CalculatePrice():0.00}")</span><span class="price-currency">€</span>
             </div>
         </div>
     }
 </li>
 
-@code{
+@code {
     [Parameter] public ShoppingListItem Model { get; set; }
 
     private void OnItemClicked()
