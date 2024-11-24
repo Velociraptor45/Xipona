@@ -47,9 +47,9 @@ public class RemoveItemDiscountAsyncTests : ControllerCommandTestsBase<ShoppingL
 
         public RemoveItemDiscountAsyncFixture()
         {
-            PossibleResultsList.Remove(new NoContentStatusResult());
-            PossibleResultsList.Remove(new NotFoundStatusResult());
-            PossibleResultsList.Remove(new UnprocessableEntityStatusResult(ErrorReasonCode.ShoppingListNotFound));
+            PossibleResultsList.Add(new NoContentStatusResult());
+            PossibleResultsList.Add(new NotFoundStatusResult());
+            PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.ShoppingListNotFound));
         }
 
         public override MethodInfo Method =>

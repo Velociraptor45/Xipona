@@ -18,18 +18,13 @@ using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 
 using DomainModels = ProjectHermes.Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.ShoppingListModifications;
+namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.Modifications;
 
 public class ShoppingListModificationServiceTests
 {
-    public class ChangeItemQuantityAsyncTests
+    public class ChangeItemQuantityAsync
     {
-        private readonly ChangeItemQuantityAsyncFixture _fixture;
-
-        public ChangeItemQuantityAsyncTests()
-        {
-            _fixture = new ChangeItemQuantityAsyncFixture();
-        }
+        private readonly ChangeItemQuantityAsyncFixture _fixture = new();
 
         [Fact]
         public async Task ChangeItemQuantityAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
@@ -260,14 +255,9 @@ public class ShoppingListModificationServiceTests
         }
     }
 
-    public class RemoveItemAsyncTests
+    public class RemoveItemAsync
     {
-        private readonly RemoveItemAsyncFixture _fixture;
-
-        public RemoveItemAsyncTests()
-        {
-            _fixture = new RemoveItemAsyncFixture();
-        }
+        private readonly RemoveItemAsyncFixture _fixture = new();
 
         [Fact]
         public async Task RemoveItemAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
@@ -566,14 +556,9 @@ public class ShoppingListModificationServiceTests
         }
     }
 
-    public class RemoveItemFromBasketAsyncTests
+    public class RemoveItemFromBasketAsync
     {
-        private readonly RemoveItemFromBasketAsyncFixture _fixture;
-
-        public RemoveItemFromBasketAsyncTests()
-        {
-            _fixture = new RemoveItemFromBasketAsyncFixture();
-        }
+        private readonly RemoveItemFromBasketAsyncFixture _fixture = new();
 
         [Fact]
         public async Task RemoveItemFromBasketAsync_WithInvalidOfflineId_ShouldThrowDomainException()
@@ -847,14 +832,9 @@ public class ShoppingListModificationServiceTests
         }
     }
 
-    public class PutItemInBasketAsyncTests
+    public class PutItemInBasketAsync
     {
-        private readonly PutItemInBasketAsyncFixture _fixture;
-
-        public PutItemInBasketAsyncTests()
-        {
-            _fixture = new PutItemInBasketAsyncFixture();
-        }
+        private readonly PutItemInBasketAsyncFixture _fixture = new();
 
         [Fact]
         public async Task PutItemInBasketAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
@@ -1083,14 +1063,9 @@ public class ShoppingListModificationServiceTests
         }
     }
 
-    public class FinishAsyncTests
+    public class FinishAsync
     {
-        private readonly FinishAsyncFixture _fixture;
-
-        public FinishAsyncTests()
-        {
-            _fixture = new FinishAsyncFixture();
-        }
+        private readonly FinishAsyncFixture _fixture = new();
 
         [Fact]
         public async Task HandleAsync_WithInvalidShoppingListId_ShouldThrowDomainException()
@@ -1222,14 +1197,9 @@ public class ShoppingListModificationServiceTests
         }
     }
 
-    public class RemoveSectionAsyncTests
+    public class RemoveSectionAsync
     {
-        private readonly RemoveSectionAsyncFixture _fixture;
-
-        public RemoveSectionAsyncTests()
-        {
-            _fixture = new RemoveSectionAsyncFixture();
-        }
+        private readonly RemoveSectionAsyncFixture _fixture = new();
 
         [Fact]
         public async Task RemoveSectionAsync_WithNotFindingStore_ShouldThrowDomainException()
@@ -1302,6 +1272,82 @@ public class ShoppingListModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(_storeMock);
 
                 ShoppingListRepositoryMock.SetupFindActiveByAsync(_storeMock.Object.Id, null);
+            }
+        }
+    }
+
+    public class AddDiscountAsync
+    {
+        private readonly AddDiscountAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task AddDiscountAsync_WithNotFindingShoppingList_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupDiscount();
+            _fixture.SetupNotFindingShoppingList();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Discount);
+
+            // Act
+            var func = async () => await sut.AddDiscountAsync(_fixture.ShoppingListId, _fixture.Discount.Value);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
+        }
+
+        private sealed class AddDiscountAsyncFixture : ShoppingListModificationServiceFixture
+        {
+            public ShoppingListId ShoppingListId { get; private set; } = ShoppingListId.New;
+            public Discount? Discount { get; private set; }
+
+            public void SetupDiscount()
+            {
+                Discount = new DiscountBuilder().Create();
+            }
+
+            public void SetupNotFindingShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, null);
+            }
+        }
+    }
+
+    public class RemoveDiscountAsync
+    {
+        private readonly RemoveDiscountAsyncFixture _fixture = new();
+
+        [Fact]
+        public async Task RemoveDiscountAsync_WithNotFindingShoppingList_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupItemTypeId();
+            _fixture.SetupNotFindingShoppingList();
+            var sut = _fixture.CreateSut();
+
+            // Act
+            var func = async () =>
+                await sut.RemoveDiscountAsync(_fixture.ShoppingListId, _fixture.ItemId, _fixture.ItemTypeId);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.ShoppingListNotFound);
+        }
+
+        private sealed class RemoveDiscountAsyncFixture : ShoppingListModificationServiceFixture
+        {
+            public ShoppingListId ShoppingListId { get; private set; } = ShoppingListId.New;
+            public ItemId ItemId { get; private set; } = ItemId.New;
+            public ItemTypeId? ItemTypeId { get; private set; }
+
+            public void SetupItemTypeId()
+            {
+                ItemTypeId = DomainModels.ItemTypeId.New;
+            }
+
+            public void SetupNotFindingShoppingList()
+            {
+                ShoppingListRepositoryMock.SetupFindByAsync(ShoppingListId, null);
             }
         }
     }
