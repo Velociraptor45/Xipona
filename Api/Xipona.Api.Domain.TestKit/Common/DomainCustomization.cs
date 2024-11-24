@@ -45,6 +45,8 @@ public class DomainCustomization : ICustomization
         fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<RecipeTagId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
+        fixture.Customize<Discount>(c => c.FromFactory(new MethodInvoker(new DiscountConstructorQuery())));
+
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());
         fixture.Customize(new QuantityInBasketCustomization());

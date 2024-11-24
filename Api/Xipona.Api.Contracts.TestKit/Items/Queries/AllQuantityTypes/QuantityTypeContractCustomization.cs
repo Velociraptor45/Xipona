@@ -29,7 +29,7 @@ public class QuantityTypeContractCustomization : ICustomization
             return CreateInstance(context);
         }
 
-        private bool MatchesType(object request)
+        private static bool MatchesType(object request)
         {
             var t = request as Type;
             return typeof(QuantityTypeContract) == t;

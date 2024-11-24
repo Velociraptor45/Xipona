@@ -15,4 +15,5 @@ public record ShoppingListItem(
     string Manufacturer,
     bool IsInBasket,
     float Quantity,
-    bool Hidden);
+    bool Hidden,
+    bool IsDiscounted);

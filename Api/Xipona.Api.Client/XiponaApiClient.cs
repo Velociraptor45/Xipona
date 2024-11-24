@@ -26,11 +26,13 @@ using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneSer
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
@@ -150,6 +152,20 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             await _apiClient.FinishListAsync(id, finishedAt, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task AddItemDiscountAsync(Guid id, AddItemDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddItemDiscountAsync(id, contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task RemoveItemDiscountAsync(Guid id, RemoveItemDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.RemoveItemDiscountAsync(id, contract, cancellationToken);
         }
 
         #endregion ShoppingListController

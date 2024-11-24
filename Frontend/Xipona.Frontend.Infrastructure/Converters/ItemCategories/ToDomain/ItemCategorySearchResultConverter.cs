@@ -2,14 +2,13 @@
 using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToDomain
+namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToDomain;
+
+public class ItemCategorySearchResultConverter :
+    IToDomainConverter<ItemCategorySearchResultContract, ItemCategorySearchResult>
 {
-    public class ItemCategorySearchResultConverter :
-        IToDomainConverter<ItemCategorySearchResultContract, ItemCategorySearchResult>
+    public ItemCategorySearchResult ToDomain(ItemCategorySearchResultContract source)
     {
-        public ItemCategorySearchResult ToDomain(ItemCategorySearchResultContract source)
-        {
-            return new ItemCategorySearchResult(source.Id, source.Name);
-        }
+        return new ItemCategorySearchResult(source.Id, source.Name);
     }
 }

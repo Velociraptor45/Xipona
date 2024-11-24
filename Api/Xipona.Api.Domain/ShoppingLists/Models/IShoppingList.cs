@@ -12,6 +12,7 @@ public interface IShoppingList
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<ShoppingListItem> Items { get; }
     DateTimeOffset CreatedAt { get; }
+    IReadOnlyCollection<Discount> Discounts { get; }
 
     void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
 
@@ -34,4 +35,9 @@ public interface IShoppingList
     void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId);
 
     void RemoveItemAndItsTypes(ItemId itemId);
+
+    Discount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
+
+    void AddDiscount(Discount discount);
+    void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId);
 }

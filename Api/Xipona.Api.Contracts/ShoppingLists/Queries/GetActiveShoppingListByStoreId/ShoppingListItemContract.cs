@@ -24,11 +24,12 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         /// <param name="itemCategory"></param>
         /// <param name="manufacturer"></param>
         /// <param name="isInBasket"></param>
-        /// <param name="quantity"></param>
+        /// <param name="quantity"></param> 
+        /// <param name="isDiscounted"></param> 
         public ShoppingListItemContract(Guid id, Guid? typeId, string name, bool isDeleted, string comment, bool isTemporary,
             decimal pricePerQuantity, QuantityTypeContract quantityType, float? quantityInPacket,
-            QuantityTypeInPacketContract quantityTypeInPacket,
-            ItemCategoryContract itemCategory, ManufacturerContract manufacturer, bool isInBasket, float quantity)
+            QuantityTypeInPacketContract quantityTypeInPacket, ItemCategoryContract itemCategory,
+            ManufacturerContract manufacturer, bool isInBasket, float quantity, bool isDiscounted)
         {
             Id = id;
             TypeId = typeId;
@@ -44,6 +45,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
             Manufacturer = manufacturer;
             IsInBasket = isInBasket;
             Quantity = quantity;
+            IsDiscounted = isDiscounted;
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         public string Name { get; }
 
         /// <summary>
-        /// Whether the item is deleted. True if the item is deleted, false otherwise.
+        /// Whether the item is deleted. <c>True</c> if the item is deleted, <c>false</c> otherwise.
         /// </summary>
         public bool IsDeleted { get; }
 
@@ -73,7 +75,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         public string Comment { get; }
 
         /// <summary>
-        /// Whether the item is temporary. True if the item is temporary, false otherwise.
+        /// Whether the item is temporary. <c>True</c> if the item is temporary, <c>false</c> otherwise.
         /// </summary>
         public bool IsTemporary { get; }
 
@@ -110,7 +112,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         public ManufacturerContract Manufacturer { get; }
 
         /// <summary>
-        /// Whether the item is in the basket. True if the item is in the basket, false otherwise.
+        /// Whether the item is in the basket. <c>True</c> if the item is in the basket, <c>false</c> otherwise.
         /// </summary>
         public bool IsInBasket { get; }
 
@@ -118,5 +120,10 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         /// The quantity of the item.
         /// </summary>
         public float Quantity { get; }
+
+        /// <summary>
+        /// Whether the item is discounted. <c>True</c> if the item is discounted, <c>false</c> otherwise.
+        /// </summary>
+        public bool IsDiscounted { get; }
     }
 }

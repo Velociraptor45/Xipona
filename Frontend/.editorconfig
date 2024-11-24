@@ -311,3 +311,6 @@ dotnet_diagnostic.CS8618.severity = error
 
 # CS8762: Parameter must have a non-null value when exiting
 dotnet_diagnostic.CS8762.severity = error
+
+# ReSharper
+resharper_convert_to_primary_constructor_highlighting=none

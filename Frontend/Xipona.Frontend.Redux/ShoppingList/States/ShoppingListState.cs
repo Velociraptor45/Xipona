@@ -16,7 +16,8 @@ public record ShoppingListState(
     TemporaryItemCreator TemporaryItemCreator,
     PriceUpdate PriceUpdate,
     Summary Summary,
-    InitialStoreCreator InitialStoreCreator)
+    InitialStoreCreator InitialStoreCreator,
+    DiscountDialog DiscountDialog)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
@@ -54,6 +55,7 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             new TemporaryItemCreator(string.Empty, null, 1m, 0, false, false, false),
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false, []),
             new Summary(false, false, DateTime.MinValue, false),
-            new InitialStoreCreator(false, string.Empty, false));
+            new InitialStoreCreator(false, string.Empty, false),
+            new DiscountDialog(null, 0m, false, false, false));
     }
 }

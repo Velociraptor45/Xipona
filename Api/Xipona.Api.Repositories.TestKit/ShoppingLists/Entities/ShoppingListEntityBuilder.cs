@@ -8,6 +8,7 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
     public ShoppingListEntityBuilder()
     {
         WithItemsOnList(new ItemsOnListEntityBuilder().CreateMany(3).ToList());
+        WithDiscounts(new DiscountEntityBuilder().CreateMany(3).ToList());
     }
 
     public ShoppingListEntityBuilder WithId(Guid id)
@@ -48,5 +49,27 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
     public ShoppingListEntityBuilder WithEmptyItemsOnList()
     {
         return WithItemsOnList(new List<ItemsOnList>());
+    }
+
+    public ShoppingListEntityBuilder WithDiscounts(ICollection<Discount> discounts)
+    {
+        FillPropertyWith(p => p.Discounts, discounts);
+        return this;
+    }
+
+    public ShoppingListEntityBuilder WithEmptyDiscounts()
+    {
+        return WithDiscounts(new List<Discount>());
+    }
+
+    public ShoppingListEntityBuilder WithRowVersion(byte[] rowVersion)
+    {
+        FillPropertyWith(p => p.RowVersion, rowVersion);
+        return this;
+    }
+
+    public ShoppingListEntityBuilder WithEmptyRowVersion()
+    {
+        return WithRowVersion(Array.Empty<byte>());
     }
 }

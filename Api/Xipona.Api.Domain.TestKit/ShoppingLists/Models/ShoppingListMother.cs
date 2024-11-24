@@ -8,7 +8,7 @@ public static class ShoppingListMother
     {
         return new ShoppingListBuilder()
             .WithoutCompletionDate()
-            .WithoutSections();
+            .WithEmptySections();
     }
 
     public static ShoppingListBuilder OneSectionWithOneItemInBasket()

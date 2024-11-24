@@ -251,4 +251,26 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         await _shoppingListRepository.StoreAsync(shoppingList);
     }
+
+    public async Task AddDiscountAsync(ShoppingListId id, Discount discount)
+    {
+        var shoppingList = await _shoppingListRepository.FindByAsync(id);
+        if (shoppingList == null)
+            throw new DomainException(new ShoppingListNotFoundReason(id));
+
+        shoppingList.AddDiscount(discount);
+
+        await _shoppingListRepository.StoreAsync(shoppingList);
+    }
+
+    public async Task RemoveDiscountAsync(ShoppingListId id, ItemId itemId, ItemTypeId? itemTypeId)
+    {
+        var shoppingList = await _shoppingListRepository.FindByAsync(id);
+        if (shoppingList == null)
+            throw new DomainException(new ShoppingListNotFoundReason(id));
+
+        shoppingList.RemoveDiscount(itemId, itemTypeId);
+
+        await _shoppingListRepository.StoreAsync(shoppingList);
+    }
 }

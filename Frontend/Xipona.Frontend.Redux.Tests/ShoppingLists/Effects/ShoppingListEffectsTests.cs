@@ -822,6 +822,7 @@ public class ShoppingListEffectsTests
                     Manufacturer: "",
                     IsInBasket: false,
                     Quantity: _quantityType.DefaultQuantity,
+                    false,
                     false);
             }
 
@@ -842,6 +843,7 @@ public class ShoppingListEffectsTests
                     Manufacturer: "",
                     IsInBasket: false,
                     Quantity: _quantityType.DefaultQuantity,
+                    false,
                     false);
             }
 

@@ -66,9 +66,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"ItemsOnList\[\d+\].ShoppingList")]
     private static partial Regex ItemsOnListShoppingListCycle();
 
+    [GeneratedRegex(@"Discounts\[\d+\].ShoppingList")]
+    private static partial Regex DiscountsShoppingListCycle();
+
     public static EquivalencyAssertionOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyAssertionOptions<T> options)
     {
-        return options.Excluding(info => ItemsOnListShoppingListCycle().IsMatch(info.Path));
+        return options.Excluding(info =>
+            ItemsOnListShoppingListCycle().IsMatch(info.Path)
+            || DiscountsShoppingListCycle().IsMatch(info.Path));
     }
 
     [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]
@@ -77,6 +82,14 @@ public static partial class EquivalencyAssertionOptionsExtensions
     public static EquivalencyAssertionOptions<T> ExcludeItemsOnListId<T>(this EquivalencyAssertionOptions<T> options)
     {
         return options.Excluding(info => ItemsOnListId().IsMatch(info.Path));
+    }
+
+    [GeneratedRegex(@"Discounts\[\d+\].Id")]
+    private static partial Regex DiscountId();
+
+    public static EquivalencyAssertionOptions<T> ExcludeDiscountId<T>(this EquivalencyAssertionOptions<T> options)
+    {
+        return options.Excluding(info => DiscountId().IsMatch(info.Path));
     }
 
     [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]

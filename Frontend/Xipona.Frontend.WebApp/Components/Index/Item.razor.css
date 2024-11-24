@@ -24,3 +24,7 @@
 .quantity {
     width: 44px;
 }
+
+.discount-symbol {
+    font-size: 60%;
+}
