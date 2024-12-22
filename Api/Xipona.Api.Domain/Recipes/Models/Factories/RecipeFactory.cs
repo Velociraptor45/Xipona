@@ -42,11 +42,12 @@ public class RecipeFactory : IRecipeFactory
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(preparationSteps, _preparationStepFactory),
             new RecipeTags(creation.RecipeTagIds),
+            creation.SideDishId,
             _dateTimeService.UtcNow);
     }
 
     public IRecipe Create(RecipeId id, RecipeName name, NumberOfServings numberOfServings, IEnumerable<IIngredient> ingredients,
-        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds, DateTimeOffset createdAt)
+        IEnumerable<IPreparationStep> steps, IEnumerable<RecipeTagId> recipeTagIds, RecipeId? sideDishId, DateTimeOffset createdAt)
     {
         return new Recipe(
             id,
@@ -55,6 +56,7 @@ public class RecipeFactory : IRecipeFactory
             new Ingredients(ingredients, _ingredientFactory),
             new PreparationSteps(steps, _preparationStepFactory),
             new RecipeTags(recipeTagIds),
+            sideDishId,
             createdAt);
     }
 }

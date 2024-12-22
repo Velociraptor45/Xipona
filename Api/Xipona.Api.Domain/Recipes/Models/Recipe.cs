@@ -15,7 +15,7 @@ public class Recipe : AggregateRoot, IRecipe
     private readonly RecipeTags _tags;
 
     public Recipe(RecipeId id, RecipeName name, NumberOfServings numberOfServings, Ingredients ingredients,
-        PreparationSteps steps, RecipeTags tags, DateTimeOffset createdAt)
+        PreparationSteps steps, RecipeTags tags, RecipeId? sideDishId, DateTimeOffset createdAt)
     {
         _ingredients = ingredients;
         _preparationSteps = steps;
@@ -23,12 +23,14 @@ public class Recipe : AggregateRoot, IRecipe
         Id = id;
         Name = name;
         NumberOfServings = numberOfServings;
+        SideDishId = sideDishId;
         CreatedAt = createdAt;
     }
 
     public RecipeId Id { get; }
     public RecipeName Name { get; private set; }
     public NumberOfServings NumberOfServings { get; private set; }
+    public RecipeId? SideDishId { get; }
     public DateTimeOffset CreatedAt { get; }
     public IReadOnlyCollection<IIngredient> Ingredients => _ingredients.AsReadOnly();
     public IReadOnlyCollection<IPreparationStep> PreparationSteps => _preparationSteps.AsReadOnly();

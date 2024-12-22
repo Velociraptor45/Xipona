@@ -24,13 +24,15 @@ public class RecipeConverterTests : ToContractConverterTestBase<IRecipe, Recipe,
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.NumberOfServings, opt => opt.MapFrom(src => src.NumberOfServings.Value))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.SideDishId, opt => opt.MapFrom(src => src.SideDishId!.Value))
             .ForMember(dest => dest.Ingredients, opt => opt.MapFrom((src, _, _, ctx) =>
                 src.Ingredients.Select(i => ctx.Mapper.Map<Ingredient>((src.Id, i)))))
             .ForMember(dest => dest.PreparationSteps, opt => opt.MapFrom((src, _, _, ctx) =>
                 src.PreparationSteps.Select(p => ctx.Mapper.Map<PreparationStep>((src.Id, p)))))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom((src, _, _, ctx) =>
                 src.Tags.Select(t => ctx.Mapper.Map<TagsForRecipe>((src.Id, t)))))
-            .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => ((AggregateRoot)src).RowVersion));
+            .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => ((AggregateRoot)src).RowVersion))
+            .ForMember(dest => dest.SideDish, opt => opt.Ignore());
     }
 
     protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)

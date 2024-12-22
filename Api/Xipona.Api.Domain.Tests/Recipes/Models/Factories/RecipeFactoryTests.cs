@@ -35,6 +35,7 @@ public class RecipeFactoryTests
                 _fixture.ExpectedResult.Ingredients,
                 _fixture.ExpectedResult.PreparationSteps,
                 _fixture.ExpectedResult.Tags,
+                _fixture.ExpectedResult.SideDishId,
                 _fixture.ExpectedResult.CreatedAt);
 
             // Assert
@@ -125,6 +126,7 @@ public class RecipeFactoryTests
                     ExpectedResult.PreparationSteps.Select(p => new PreparationStepCreation(
                         p.Instruction,
                         p.SortingIndex)),
+                    ExpectedResult.SideDishId,
                     ExpectedResult.Tags);
             }
 

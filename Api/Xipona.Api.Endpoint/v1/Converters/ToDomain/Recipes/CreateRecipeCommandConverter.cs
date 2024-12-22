@@ -49,6 +49,7 @@ public class CreateRecipeCommandConverter : IToDomainConverter<CreateRecipeContr
             new NumberOfServings(source.NumberOfServings),
             ingredients,
             steps,
+            source.SideDishId is null ? null : new RecipeId(source.SideDishId.Value),
             tags);
 
         return new CreateRecipeCommand(creation);
