@@ -15,14 +15,16 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe
         /// <param name="ingredients"></param>
         /// <param name="preparationSteps"></param>
         /// <param name="recipeTagIds"></param>
+        /// <param name="sideDishId"></param>
         public ModifyRecipeContract(string name, int numberOfServings, IEnumerable<ModifyIngredientContract> ingredients,
-            IEnumerable<ModifyPreparationStepContract> preparationSteps, IEnumerable<Guid> recipeTagIds)
+            IEnumerable<ModifyPreparationStepContract> preparationSteps, IEnumerable<Guid> recipeTagIds, Guid? sideDishId)
         {
             Name = name;
             NumberOfServings = numberOfServings;
             Ingredients = ingredients;
             PreparationSteps = preparationSteps;
             RecipeTagIds = recipeTagIds;
+            SideDishId = sideDishId;
         }
 
         /// <summary>
@@ -49,5 +51,10 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe
         /// The IDs of the recipe's tags.
         /// </summary>
         public IEnumerable<Guid> RecipeTagIds { get; set; }
+
+        /// <summary>
+        /// The ID of the recipe's side dish. <c>Null</c> if the recipe does not have a side dish.
+        /// </summary>
+        public Guid? SideDishId { get; set; }
     }
 }

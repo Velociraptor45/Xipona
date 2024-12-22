@@ -462,10 +462,19 @@ public class RecipeControllerIntegrationTests
             using var assertScope = _fixture.CreateServiceScope();
             result.Should().BeOfType<NoContentResult>();
             var entities = (await _fixture.LoadAllRecipesAsync(assertScope)).ToList();
-            entities.Should().HaveCount(1);
-            var entity = entities.First();
+            entities.Should().HaveCount(2);
+            var entity = entities.First(r => r.Id == _fixture.ExpectedRecipe.Id);
+
+            entity.Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt.Excluding(p => p.Ingredients).Excluding(p => p.PreparationSteps).Excluding(p => p.Tags)
+                    .WithCreatedAtPrecision().ExcludeRecipeCycleRef().ExcludeRowVersion());
+
             entity.Ingredients.Should().HaveCount(3);
             entity.PreparationSteps.Should().HaveCount(3);
+
+            // tags
+            entity.Tags.Select(t => t.RecipeTagId).Should()
+                .BeEquivalentTo(_fixture.ExpectedRecipe.Tags.Select(t => t.RecipeTagId));
 
             // ingredients
             var firstExpectedIngredient = _fixture.ExpectedRecipe.Ingredients.ElementAt(0);
@@ -546,12 +555,13 @@ public class RecipeControllerIntegrationTests
                     .WithTags(new TagsForRecipeEntityBuilder().WithRecipeId(recipeId).CreateMany(2).ToList())
                     .WithoutSideDishId()
                     .Create();
-                _existingSideDish = new RecipeEntityBuilder().WithEmptyTags().Create();
+                _existingSideDish = new RecipeEntityBuilder().WithEmptyTags().WithoutSideDishId().Create();
             }
 
             public void SetupExpectedRecipe()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+                TestPropertyNotSetException.ThrowIfNull(_existingSideDish);
                 TestPropertyNotSetException.ThrowIfNull(RecipeId);
 
                 var recipeId = RecipeId.Value;
@@ -562,6 +572,8 @@ public class RecipeControllerIntegrationTests
                     .WithId(recipeId)
                     .WithIngredients(ingredients)
                     .WithPreparationSteps(steps)
+                    .WithSideDishId(_existingSideDish.Id)
+                    .WithCreatedAt(_existingRecipe.CreatedAt)
                     .Create();
 
                 _itemCategories = ingredients
@@ -664,13 +676,14 @@ public class RecipeControllerIntegrationTests
                     ExpectedRecipe.NumberOfServings,
                     ingredients,
                     steps,
-                    ExpectedRecipe.Tags.Select(t => t.RecipeTagId));
-                //todo add side dish
+                    ExpectedRecipe.Tags.Select(t => t.RecipeTagId),
+                    ExpectedRecipe.SideDishId);
             }
 
             public async Task PrepareDatabase()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+                TestPropertyNotSetException.ThrowIfNull(_existingSideDish);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
                 TestPropertyNotSetException.ThrowIfNull(_items);
                 TestPropertyNotSetException.ThrowIfNull(Contract);
@@ -682,6 +695,7 @@ public class RecipeControllerIntegrationTests
                 await using var itemDbContext = GetContextInstance<ItemContext>(ArrangeScope);
 
                 recipeContext.Add(_existingRecipe);
+                recipeContext.Add(_existingSideDish);
                 itemCategoryDbContext.AddRange(_itemCategories);
                 itemDbContext.AddRange(_items);
                 foreach (var existingRecipeTag in _existingRecipe.Tags)

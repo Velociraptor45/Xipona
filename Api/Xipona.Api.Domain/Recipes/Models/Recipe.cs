@@ -30,7 +30,7 @@ public class Recipe : AggregateRoot, IRecipe
     public RecipeId Id { get; }
     public RecipeName Name { get; private set; }
     public NumberOfServings NumberOfServings { get; private set; }
-    public RecipeId? SideDishId { get; }
+    public RecipeId? SideDishId { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     public IReadOnlyCollection<IIngredient> Ingredients => _ingredients.AsReadOnly();
     public IReadOnlyCollection<IPreparationStep> PreparationSteps => _preparationSteps.AsReadOnly();
@@ -40,6 +40,7 @@ public class Recipe : AggregateRoot, IRecipe
     {
         Name = modification.Name;
         NumberOfServings = modification.NumberOfServings;
+        SideDishId = modification.SideDishId;
         await _ingredients.ModifyManyAsync(modification.IngredientModifications, validator);
         _preparationSteps.ModifyMany(modification.PreparationStepModifications);
         await _tags.ModifyAsync(validator, modification.RecipeTagIds);
