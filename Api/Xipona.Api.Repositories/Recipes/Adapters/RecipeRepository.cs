@@ -115,6 +115,11 @@ public class RecipeRepository : IRecipeRepository
         return _toModelConverter.ToDomain(entities);
     }
 
+    public async Task<bool> Exists(RecipeId recipeId)
+    {
+        return await _dbContext.Recipes.AnyAsync(r => r.Id == recipeId, _cancellationToken);
+    }
+
     public async Task<IRecipe> StoreAsync(IRecipe recipe)
     {
         var existingEntity = await FindTrackedEntityBy(recipe.Id);

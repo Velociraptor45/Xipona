@@ -6,13 +6,6 @@ namespace ProjectHermes.Xipona.Api.Core.Extensions;
 
 public static class LoggerExtensions
 {
-    public static void LogTrace<T>(this ILogger<T> logger, Func<string> message, params object[] args)
-    {
-        if (!logger.IsEnabled(LogLevel.Trace))
-            return;
-
-        logger.LogTrace(message(), args);
-    }
 
     public static void LogDebug<T>(this ILogger<T> logger, Func<string> message, params object[] args)
     {

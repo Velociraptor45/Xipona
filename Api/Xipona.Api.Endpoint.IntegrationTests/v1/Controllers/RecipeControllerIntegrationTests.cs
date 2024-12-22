@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
@@ -10,6 +11,7 @@ using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneSer
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
@@ -95,6 +97,32 @@ public class RecipeControllerIntegrationTests
             recipe.CreatedAt.Should().BeCloseTo(DateTimeOffset.Now, TimeSpan.FromSeconds(20));
         }
 
+        [Fact]
+        public async Task CreateRecipeAsync_WithSideDishNotExisting_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupExpectedEntityWithInvalidSideDish();
+            _fixture.SetupContract();
+            await _fixture.PrepareDatabaseAsync();
+
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedEntity);
+
+            // Act
+            var result = await sut.CreateRecipeAsync(_fixture.Contract);
+
+            // Assert
+            using var assertScope = _fixture.CreateServiceScope();
+            result.Should().BeOfType<UnprocessableEntityObjectResult>();
+            var ueResult = result as UnprocessableEntityObjectResult;
+            ueResult!.Value.Should().NotBeNull();
+            ueResult.Value.Should().BeOfType<ErrorContract>();
+            var error = (ErrorContract)ueResult.Value!;
+            error.ErrorCode.Should().Be((int)ErrorReasonCode.RecipeNotFound);
+        }
+
         private sealed class CreateRecipeAsyncFixture : RecipeControllerFixture
         {
             private List<ItemCategory>? _itemCategories;
@@ -116,15 +144,20 @@ public class RecipeControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(Contract);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
                 TestPropertyNotSetException.ThrowIfNull(_items);
-                TestPropertyNotSetException.ThrowIfNull(_existingSideDish);
 
                 await ApplyMigrationsAsync(ArrangeScope);
-                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                if (_existingSideDish is not null)
+                {
+                    await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+                    await recipeContext.AddAsync(_existingSideDish);
+                    await recipeContext.SaveChangesAsync();
+                }
+
                 await using var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
                 await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
                 await using var tagContext = GetContextInstance<RecipeTagContext>(ArrangeScope);
 
-                await recipeContext.AddAsync(_existingSideDish);
                 await itemCategoryContext.AddRangeAsync(_itemCategories);
                 await itemContext.AddRangeAsync(_items);
 
@@ -133,7 +166,6 @@ public class RecipeControllerIntegrationTests
                     await tagContext.RecipeTags.AddAsync(new RecipeTagEntityBuilder().WithId(tagId).Create());
                 }
 
-                await recipeContext.SaveChangesAsync();
                 await itemCategoryContext.SaveChangesAsync();
                 await itemContext.SaveChangesAsync();
                 await tagContext.SaveChangesAsync();
@@ -215,6 +247,23 @@ public class RecipeControllerIntegrationTests
                 ExpectedEntity = new RecipeEntityBuilder()
                     .WithIngredients(ingredients)
                     .WithSideDishId(_existingSideDish.Id)
+                    .Create();
+
+                SetupItemCategoriesAndItems();
+            }
+
+            public void SetupExpectedEntityWithInvalidSideDish()
+            {
+                var ingredients = new List<Ingredient>()
+                {
+                    new IngredientEntityBuilder().WithoutDefaultItemId().WithoutDefaultItemTypeId()
+                        .WithoutDefaultStoreId().WithoutAddToShoppingListByDefault().Create(),
+                    new IngredientEntityBuilder().WithoutDefaultItemTypeId().Create(),
+                    new IngredientEntityBuilder().Create()
+                };
+
+                ExpectedEntity = new RecipeEntityBuilder()
+                    .WithIngredients(ingredients)
                     .Create();
 
                 SetupItemCategoriesAndItems();

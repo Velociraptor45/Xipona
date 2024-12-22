@@ -24,4 +24,5 @@ public interface IRecipeRepository
     Task<IEnumerable<IRecipe>> FindByAsync(ItemCategoryId itemCategoryId);
 
     Task<IEnumerable<IRecipe>> FindByContainingAllAsync(IEnumerable<RecipeTagId> recipeTagIds);
+    Task<bool> Exists(RecipeId recipeId);
 }
