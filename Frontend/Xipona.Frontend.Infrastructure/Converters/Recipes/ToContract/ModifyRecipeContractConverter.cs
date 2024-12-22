@@ -26,6 +26,7 @@ public class ModifyRecipeContractConverter : IToContractConverter<EditedRecipe, 
                 p.Id == Guid.Empty ? null : p.Id,
                 p.Name,
                 p.SortingIndex)),
-            source.RecipeTagIds);
+            source.RecipeTagIds,
+            source.SideDish?.Id);
     }
 }

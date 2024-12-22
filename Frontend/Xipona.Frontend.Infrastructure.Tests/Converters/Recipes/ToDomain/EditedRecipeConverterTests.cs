@@ -49,7 +49,8 @@ public class EditedRecipeConverterTests : ToDomainConverterBase<RecipeContract, 
                 new SortedSet<EditedPreparationStep>(
                     context.Mapper.Map<List<EditedPreparationStep>>(source.PreparationSteps.ToList()),
                     new SortingIndexComparer()),
-                source.RecipeTagIds.ToList());
+                source.RecipeTagIds.ToList(),
+                new SideDish(source.SideDish.Id, source.SideDish.Name));
         }
     }
 }

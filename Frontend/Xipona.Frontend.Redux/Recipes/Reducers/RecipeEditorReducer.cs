@@ -62,7 +62,8 @@ public static class RecipeEditorReducer
             {
                 new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
             },
-            new List<Guid>(0));
+            new List<Guid>(0),
+            null);
 
         return state with
         {

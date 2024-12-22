@@ -322,7 +322,8 @@ public class RecipeEditorReducerTests
                             {
                                 new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
                             },
-                            new List<Guid>(0)),
+                            new List<Guid>(0),
+                            null),
                         IsInEditMode = true,
                         ValidationResult = new()
                     }
