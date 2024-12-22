@@ -6,5 +6,6 @@ public record RecipeEditor(
     bool IsSaving,
     bool IsInEditMode,
     bool IsAddToShoppingListOpen,
+    SideDishSelector SideDishSelector,
     AddToShoppingList? AddToShoppingList,
     EditorValidationResult ValidationResult);
