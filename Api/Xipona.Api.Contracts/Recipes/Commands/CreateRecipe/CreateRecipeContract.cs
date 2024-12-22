@@ -56,7 +56,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe
         public IEnumerable<Guid> RecipeTagIds { get; set; }
 
         /// <summary>
-        /// The ID of the recipe's side dish. <c>Null</c> if the recipe has no side dish.
+        /// The recipe ID of the recipe's side dish. <c>Null</c> if the recipe has no side dish.
         /// </summary>
         public Guid? SideDishId { get; set; }
     }

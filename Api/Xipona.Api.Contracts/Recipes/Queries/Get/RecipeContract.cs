@@ -16,8 +16,9 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get
         /// <param name="ingredients"></param>
         /// <param name="preparationSteps"></param>
         /// <param name="recipeTagIds"></param>
+        /// <param name="sideDish"></param>
         public RecipeContract(Guid id, string name, int numberOfServings, IEnumerable<IngredientContract> ingredients,
-            IEnumerable<PreparationStepContract> preparationSteps, IEnumerable<Guid> recipeTagIds)
+            IEnumerable<PreparationStepContract> preparationSteps, IEnumerable<Guid> recipeTagIds, SideDishContract sideDish)
         {
             Id = id;
             Name = name;
@@ -25,6 +26,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get
             Ingredients = ingredients;
             PreparationSteps = preparationSteps;
             RecipeTagIds = recipeTagIds;
+            SideDish = sideDish;
         }
 
         /// <summary>
@@ -56,5 +58,10 @@ namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get
         /// The IDs of the recipe's tags.
         /// </summary>
         public IEnumerable<Guid> RecipeTagIds { get; }
+
+        /// <summary>
+        /// The side dish of the recipe. <c>Null</c> if the recipe has no side dish.
+        /// </summary>
+        public SideDishContract SideDish { get; }
     }
 }

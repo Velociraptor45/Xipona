@@ -196,6 +196,7 @@ public class RecipeControllerIntegrationTests
             public void SetupExpectedResult()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedEntity);
+                TestPropertyNotSetException.ThrowIfNull(_existingSideDish);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategories);
                 TestPropertyNotSetException.ThrowIfNull(_items);
 
@@ -215,7 +216,8 @@ public class RecipeControllerIntegrationTests
                         p.Id,
                         p.Instruction,
                         p.SortingIndex)),
-                    ExpectedEntity.Tags.Select(t => t.RecipeTagId));
+                    ExpectedEntity.Tags.Select(t => t.RecipeTagId),
+                    new SideDishContract(_existingSideDish.Id, _existingSideDish.Name));
 
                 IngredientContract CreateContract(Ingredient i, string name)
                 {
