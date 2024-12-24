@@ -33,18 +33,6 @@
 }
 
 @media (max-width: 768px) {
-    .view-top-row-item:nth-child(3) {
-        order: 4;
-        flex-basis: 100%;
-        margin-left: 62px;
-    }
-
-    .view-top-row-item:nth-child(4) {
-        order: 5;
-        flex-basis: 100%;
-        margin-left: 62px;
-    }
-
     .ingredients {
         padding-top: 16px;
     }
@@ -54,12 +42,21 @@
     }
 }
 
-.view-top-row-parent {
-    flex-wrap: wrap;
+.view-general {
+    margin-top: 16px;
 }
 
-.number-of-servings {
-    margin-left: 16px;
+    .view-general .view-general-second-row {
+        display: flex;
+        margin-top: 8px;
+    }
+
+    .view-general .view-general-side-dish {
+        margin-left: 25px;
+    }
+
+.view-top-row-parent {
+    flex-wrap: wrap;
 }
 
 .view-name {
