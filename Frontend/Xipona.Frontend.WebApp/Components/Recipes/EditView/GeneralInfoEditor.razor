@@ -8,58 +8,55 @@
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
 
-@if (State.Value.Editor.Recipe is not null)
-{
-    <div class="editor-content-general">
-        <div class="editor-content-general-first-row">
-            <div class="editor-tags">
-                <div class="font-weight-bold">Tags</div>
-                <MultiSelect Class="min-w-150 w-auto"
-                             TItem="RecipeTag"
-                             TValue="Guid"
-                             DataSource="@State.Value.RecipeTags"
-                             ValueName="@nameof(RecipeTag.Id)"
-                             LabelName="@nameof(RecipeTag.Name)"
-                             OnItemsChanged="@OnRecipeTagsChanged"
-                             OnItemAdded="@OnRecipeTagCreated"
-                             OnInputChanged="OnRecipeTagInputChanged"
-                             Placeholder="Tags"
-                             Values="@State.Value.Editor.Recipe.RecipeTagIds"
-                             SearchInput="@State.Value.Editor.RecipeTagCreateInput"
-                             OnDropdownClosed="OnRecipeTagsDropdownClosed"
-                             CanAddItem="true">
-                </MultiSelect>
-            </div>
-        </div>
-        <div class="editor-content-general-second-row">
-            <div class="editor-number-of-servings">
-                <div class="font-weight-bold">Number of Servings</div>
-                <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
-                                       Class="editor-number-of-servings-input"
-                                       TValue="int"
-                                       Step="1"
-                                       Min="1"
-                                       OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
-                <span>People</span>
-            </div>
-            <div class="editor-side-dish">
-                <div class="font-weight-bold">Side Dish</div>
-                <SingleSearchSelect TItem="SideDish"
-                                    TValue="Guid?"
-                                    DataSource="@State.Value.Editor.SideDishSelector.SideDishes"
-                                    ValueName="@nameof(SideDish.Id)"
-                                    LabelName="@nameof(SideDish.Name)"
-                                    OnItemChanged="@OnSideDishChanged"
-                                    OnInputChanged="@OnSideDishInputChanged"
-                                    OnDropdownClosed="@OnSideDishDropdownClosed"
-                                    Placeholder="Side Dish"
-                                    Value="@State.Value.Editor.Recipe.SideDish?.Id"
-                                    SearchInput="@State.Value.Editor.SideDishSelector.Input">
-                </SingleSearchSelect>
-            </div>
+<div class="editor-content-general">
+    <div class="editor-content-general-first-row">
+        <div class="editor-tags">
+            <div class="font-weight-bold">Tags</div>
+            <MultiSelect Class="min-w-150 w-auto"
+                         TItem="RecipeTag"
+                         TValue="Guid"
+                         DataSource="@State.Value.RecipeTags"
+                         ValueName="@nameof(RecipeTag.Id)"
+                         LabelName="@nameof(RecipeTag.Name)"
+                         OnItemsChanged="@OnRecipeTagsChanged"
+                         OnItemAdded="@OnRecipeTagCreated"
+                         OnInputChanged="OnRecipeTagInputChanged"
+                         Placeholder="Tags"
+                         Values="@State.Value.Editor.Recipe!.RecipeTagIds"
+                         SearchInput="@State.Value.Editor.RecipeTagCreateInput"
+                         OnDropdownClosed="OnRecipeTagsDropdownClosed"
+                         CanAddItem="true">
+            </MultiSelect>
         </div>
     </div>
-}
+    <div class="editor-content-general-second-row">
+        <div class="editor-number-of-servings">
+            <div class="font-weight-bold">Number of Servings</div>
+            <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
+                                   Class="editor-number-of-servings-input"
+                                   TValue="int"
+                                   Step="1"
+                                   Min="1"
+                                   OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
+            <span>People</span>
+        </div>
+        <div class="editor-side-dish">
+            <div class="font-weight-bold">Side Dish</div>
+            <SingleSearchSelect TItem="SideDish"
+                                TValue="Guid?"
+                                DataSource="@State.Value.Editor.SideDishSelector.SideDishes"
+                                ValueName="@nameof(SideDish.Id)"
+                                LabelName="@nameof(SideDish.Name)"
+                                OnItemChanged="@OnSideDishChanged"
+                                OnInputChanged="@OnSideDishInputChanged"
+                                OnDropdownClosed="@OnSideDishDropdownClosed"
+                                Placeholder="Side Dish"
+                                Value="@State.Value.Editor.Recipe.SideDish?.Id"
+                                SearchInput="@State.Value.Editor.SideDishSelector.Input">
+            </SingleSearchSelect>
+        </div>
+    </div>
+</div>
 
 @code
 {
@@ -102,5 +99,4 @@
     {
         Dispatcher.Dispatch(new SideDishDropdownClosedAction());
     }
-
 }

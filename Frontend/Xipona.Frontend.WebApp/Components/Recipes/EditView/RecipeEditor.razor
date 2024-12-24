@@ -3,96 +3,64 @@
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor
 @using ProjectHermes.Xipona.Frontend.Redux.Recipes.States
-@using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients
-@using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps
 
 @inject IState<RecipeState> State
 @inject IDispatcher Dispatcher
 
-<div class="d-flex editor-top-row-parent">
-    <Button Class="editor-top-row-item d-flex align-items-center" OnClick="@OnBackButtonClicked">
-        <i class="bi bi-arrow-left"></i>
-    </Button>
-    <div class="mx-3 editor-top-row-item">
-        <Input TValue="string" Value="@State.Value.Editor.Recipe!.Name"
-               Placeholder="Recipe name" OnInput="OnNameChanged" />
-        @if (State.Value.Editor.ValidationResult.Name is not null)
-        {
-            <div class="validation-error-message">@State.Value.Editor.ValidationResult.Name</div>
-        }
+
+@if (State.Value.Editor.Recipe is not null)
+{
+    <div class="d-flex editor-top-row-parent">
+        <Button Class="editor-top-row-item d-flex align-items-center" OnClick="@OnBackButtonClicked">
+            <i class="bi bi-arrow-left"></i>
+        </Button>
+        <div class="mx-3 editor-top-row-item">
+            <Input TValue="string" Value="@State.Value.Editor.Recipe!.Name"
+                   Placeholder="Recipe name" OnInput="OnNameChanged"/>
+            @if (State.Value.Editor.ValidationResult.Name is not null)
+            {
+                <div class="validation-error-message">@State.Value.Editor.ValidationResult.Name</div>
+            }
+        </div>
+        <Button Class="editor-top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
+            <i class="bi bi-pencil-fill"></i>
+        </Button>
     </div>
-    <Button Class="editor-top-row-item d-flex ml-auto align-items-center" OnClick="@OnToggleEditModeButtonClicked">
-        <i class="bi bi-pencil-fill"></i>
-    </Button>
-</div>
-<hr class="my-3" />
-<div class="editor-main">
-    <div class="editor-content">
-        <GeneralInfoEditor></GeneralInfoEditor>
-        <div class="editor-content-split">
-            <div class="ingredients">
-                <div class="d-flex align-items-center mb-3">
-                    <h4 class="mb-0 pr-2">Ingredients</h4>
-                    <Button class="d-flex align-items-center"
-                            Size="@AntSizeLDSType.Small"
-                            OnClick="OnAddIngredientButtonClicked">
-                        <i class="bi bi-plus-lg"></i>
-                    </Button>
+    <hr class="my-3"/>
+    <div class="editor-main">
+        <div class="editor-content">
+            <GeneralInfoEditor></GeneralInfoEditor>
+            <div class="editor-content-split">
+                <div class="ingredients">
+                    <IngredientsEditor></IngredientsEditor>
                 </div>
-                @for (int i = 0; i < State.Value.Editor.Recipe.Ingredients.Count; i++)
-                {
-                    <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
-                    @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
-                    {
-                        <hr class="my-3"/>
-                    }
-                }
-            </div>
-            <div class="preparation-steps">
-                <div class="d-flex align-items-center mb-3">
-                    <h4 class="mb-0 pr-2">Steps</h4>
-                    <Button class="d-flex align-items-center"
-                            Size="@AntSizeLDSType.Small"
-                            OnClick="OnAddPreparationStepButtonClicked">
-                        <i class="bi bi-plus-lg"></i>
-                    </Button>
+                <div class="preparation-steps">
+                    <PreparationStepsEditor></PreparationStepsEditor>
                 </div>
-                @foreach (var step in State.Value.Editor.Recipe.PreparationSteps)
-                {
-                    <SortableListItem T="EditedPreparationStep"
-                                      State="State.Value.Editor.Recipe"
-                                      Model="step"
-                                      Placeholder="Instruction"
-                                      IsTextArea="true"
-                                      OnDecrement="OnDecrementPreparationStep"
-                                      OnIncrement="OnIncrementPreparationStep"
-                                      OnRemove="OnRemovePreparationStep"
-                                      OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
-                }
             </div>
         </div>
+        <div class="d-flex justify-content-end mt-2">
+            @if (State.Value.Editor.Recipe.Id == Guid.Empty)
+            {
+                <Button Type="@ButtonType.Primary"
+                        Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
+                        Loading="@State.Value.Editor.IsSaving"
+                        @onclick="@OnCreateButtonClickedAsync">
+                    Create
+                </Button>
+            }
+            else
+            {
+                <Button Type="@ButtonType.Primary"
+                        Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
+                        Loading="@State.Value.Editor.IsSaving"
+                        @onclick="@OnModifyButtonClickedAsync">
+                    Save
+                </Button>
+            }
+        </div>
     </div>
-    <div class="d-flex justify-content-end mt-2">
-        @if (State.Value.Editor.Recipe.Id == Guid.Empty)
-        {
-            <Button Type="@ButtonType.Primary"
-                    Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
-                    Loading="@State.Value.Editor.IsSaving"
-                    @onclick="@OnCreateButtonClickedAsync">
-                Create
-            </Button>
-        }
-        else
-        {
-            <Button Type="@ButtonType.Primary"
-                    Disabled="@(State.Value.Editor.Recipe.Name.Length == 0)"
-                    Loading="@State.Value.Editor.IsSaving"
-                    @onclick="@OnModifyButtonClickedAsync">
-                Save
-            </Button>
-        }
-    </div>
-</div>
+}
 
 @code {
     private void OnNameChanged(ChangeEventArgs args)
@@ -118,36 +86,6 @@
     private void OnModifyButtonClickedAsync()
     {
         Dispatcher.Dispatch(new ModifyRecipeAction());
-    }
-
-    private void OnAddIngredientButtonClicked()
-    {
-        Dispatcher.Dispatch(new IngredientAddedAction());
-    }
-
-    private void OnAddPreparationStepButtonClicked()
-    {
-        Dispatcher.Dispatch(new PreparationStepAddedAction());
-    }
-
-    private void OnDecrementPreparationStep(EditedPreparationStep step)
-    {
-        Dispatcher.Dispatch(new DecrementPreparationStepAction(step));
-    }
-
-    private void OnIncrementPreparationStep(EditedPreparationStep step)
-    {
-        Dispatcher.Dispatch(new IncrementPreparationStepAction(step));
-    }
-
-    private void OnRemovePreparationStep(EditedPreparationStep step)
-    {
-        Dispatcher.Dispatch(new PreparationStepRemovedAction(step));
-    }
-
-    private void OnPreparationStepTextChanged(EditedPreparationStep step, string text)
-    {
-        Dispatcher.Dispatch(new PreparationStepTextChangedAction(step.Key, text));
     }
 
 }
