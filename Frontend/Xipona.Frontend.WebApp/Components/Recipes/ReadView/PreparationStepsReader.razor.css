@@ -1,0 +1,10 @@
+﻿.preparation-steps {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.preparation-step-number {
+    font-size: 1.5em;
+    border-right: 1px solid var(--button-border-color);
+}
