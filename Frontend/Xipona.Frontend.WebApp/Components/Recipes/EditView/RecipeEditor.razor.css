@@ -32,18 +32,6 @@
         padding-bottom: 8px;
     }
 
-    .editor-content-general {
-        display: flex;
-    }
-
-    .editor-tags {
-        width: 50%;
-    }
-
-    .editor-number-of-servings {
-        width: 50%;
-    }
-
     .ingredients {
         padding-top: 24px;
     }
@@ -65,18 +53,6 @@
     .preparation-steps {
         padding-top: 24px;
     }
-
-    .editor-number-of-servings {
-        padding-top: 8px;
-    }
-}
-
-.number-of-servings {
-    margin-left: 16px;
-}
-
-.editor-number-of-servings {
-    width: 150px;
 }
 
 .preparation-step-number {

@@ -28,36 +28,7 @@
 <hr class="my-3" />
 <div class="editor-main">
     <div class="editor-content">
-        <div class="editor-content-general">
-            <div class="editor-tags">
-                <div class="font-weight-bold">Tags</div>
-                <MultiSelect Class="min-w-150 w-auto"
-                             TItem="RecipeTag"
-                             TValue="Guid"
-                             DataSource="@State.Value.RecipeTags"
-                             ValueName="@nameof(RecipeTag.Id)"
-                             LabelName="@nameof(RecipeTag.Name)"
-                             OnItemsChanged="@OnRecipeTagsChanged"
-                             OnItemAdded="@OnRecipeTagCreated"
-                             OnInputChanged="OnRecipeTagInputChanged"
-                             Placeholder="Tags"
-                             Values="@State.Value.Editor.Recipe.RecipeTagIds"
-                             SearchInput="@State.Value.Editor.RecipeTagCreateInput"
-                             OnDropdownClosed="OnRecipeTagsDropdownClosed"
-                             CanAddItem="true">
-                </MultiSelect>
-            </div>
-            <div class="editor-number-of-servings">
-                <div class="font-weight-bold">Number of Servings</div>
-                <AntDesign.InputNumber Value="@State.Value.Editor.Recipe.NumberOfServings"
-                                       Class="editor-number-of-servings-input"
-                                       TValue="int"
-                                       Step="1"
-                                       Min="1"
-                                       OnChange="OnNumberOfServingsChanged"></AntDesign.InputNumber>
-                <span>People</span>
-            </div>
-        </div>
+        <GeneralInfoEditor></GeneralInfoEditor>
         <div class="editor-content-split">
             <div class="ingredients">
                 <div class="d-flex align-items-center mb-3">
@@ -177,31 +148,6 @@
     private void OnPreparationStepTextChanged(EditedPreparationStep step, string text)
     {
         Dispatcher.Dispatch(new PreparationStepTextChangedAction(step.Key, text));
-    }
-
-    private void OnRecipeTagsChanged(IEnumerable<RecipeTag> tags)
-    {
-        Dispatcher.Dispatch(new RecipeTagsChangedAction(tags.Select(t => t.Id).ToList()));
-    }
-
-    private void OnRecipeTagCreated()
-    {
-        Dispatcher.Dispatch(new CreateNewRecipeTagAction());
-    }
-
-    private void OnRecipeTagInputChanged(string input)
-    {
-        Dispatcher.Dispatch(new RecipeTagInputChangedAction(input));
-    }
-
-    private void OnRecipeTagsDropdownClosed()
-    {
-        Dispatcher.Dispatch(new RecipeTagsDropdownClosedAction());
-    }
-
-    private void OnNumberOfServingsChanged(int servings)
-    {
-        Dispatcher.Dispatch(new RecipeNumberOfServingsChangedAction(servings));
     }
 
 }
