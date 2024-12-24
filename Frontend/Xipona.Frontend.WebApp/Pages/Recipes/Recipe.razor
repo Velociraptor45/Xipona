@@ -31,10 +31,10 @@
 @code {
     [Parameter] public Guid RecipeId { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        base.OnInitialized();
-
+        base.OnParametersSet();
         Dispatcher.Dispatch(new InitializeRecipeAction(RecipeId));
     }
+
 }

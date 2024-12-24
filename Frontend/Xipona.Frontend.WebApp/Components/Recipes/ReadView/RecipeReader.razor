@@ -3,6 +3,7 @@
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor
 @using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal
+@using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes
 @using ProjectHermes.Xipona.Frontend.Redux.Recipes.States
 
 @inject IState<RecipeState> State
@@ -51,7 +52,14 @@
             </div>
             <div class="view-general-side-dish">
                 <div class="font-weight-bold">Side Dish</div>
-                <div>@(State.Value.Editor.Recipe.SideDish?.Name ?? "-")</div>
+                @if (State.Value.Editor.Recipe.SideDish is null)
+                {
+                    <div>-</div>
+                }
+                else
+                {
+                    <div class="view-general-side-dish-name" @onclick="OnSideDishClicked">@(State.Value.Editor.Recipe.SideDish.Name)</div>
+                }
             </div>
         </div>
     </div>
@@ -79,5 +87,10 @@
     private void OnAddToShoppingListButtonClicked()
     {
         Dispatcher.Dispatch(new LoadAddToShoppingListAction());
+    }
+
+    private void OnSideDishClicked()
+    {
+        Dispatcher.Dispatch(new OpenSideDishAction());
     }
 }

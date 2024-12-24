@@ -1,7 +1,9 @@
 ﻿using Fluxor;
+using Microsoft.AspNetCore.Components;
 using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
 using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
+using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
 using RestEase;
 using Timer = System.Timers.Timer;
@@ -11,13 +13,15 @@ public sealed class SideDishSelectorEffects : IAsyncDisposable
 {
     private readonly IApiClient _client;
     private readonly IState<RecipeState> _state;
+    private readonly NavigationManager _navigationManager;
 
     private Timer? _startSearchTimer;
 
-    public SideDishSelectorEffects(IApiClient client, IState<RecipeState> state)
+    public SideDishSelectorEffects(IApiClient client, IState<RecipeState> state, NavigationManager navigationManager)
     {
         _client = client;
         _state = state;
+        _navigationManager = navigationManager;
     }
 
     [EffectMethod]
@@ -68,6 +72,17 @@ public sealed class SideDishSelectorEffects : IAsyncDisposable
         dispatcher.Dispatch(new SearchSideDishesFinishedAction(results.ToList()));
     }
 
+    [EffectMethod(typeof(OpenSideDishAction))]
+    public Task HandleOpenSideDishAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.Recipe?.SideDish is null)
+            return Task.CompletedTask;
+
+        var recipeId = _state.Value.Editor.Recipe.SideDish!.Id;
+        _navigationManager.NavigateTo($"{PageRoutes.Recipes}/{recipeId}");
+
+        return Task.CompletedTask;
+    }
 
     public ValueTask DisposeAsync()
     {

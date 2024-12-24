@@ -46,3 +46,7 @@
         border-radius: 5px;
         padding: 1px 3px;
     }
+
+    .view-general .view-general-side-dish-name:hover {
+        cursor: pointer;
+    }

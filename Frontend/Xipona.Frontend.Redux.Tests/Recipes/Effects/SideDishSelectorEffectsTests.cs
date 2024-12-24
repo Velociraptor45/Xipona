@@ -180,12 +180,79 @@ public class SideDishSelectorEffectsTests
         }
     }
 
+    public class HandleOpenSideDishAction
+    {
+        private readonly HandleOpenSideDishActionFixture _fixture = new();
+
+        [Fact]
+        public void HandleOpenSideDishAction_WithRecipeNull_ShouldNotNavigate()
+        {
+            // Arrange
+            _fixture.SetupRecipeNull();
+
+            var queue = CallQueue.Create(_ => { });
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            sut.HandleOpenSideDishAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public void HandleOpenSideDishAction_WithSideDishNull_ShouldNotNavigate()
+        {
+            // Arrange
+            _fixture.SetupSideDishNull();
+
+            var queue = CallQueue.Create(_ => { });
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            sut.HandleOpenSideDishAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleOpenSideDishActionFixture : SideDishSelectorEffectsFixture
+        {
+            public void SetupRecipeNull()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Recipe = null
+                    }
+                };
+            }
+
+            public void SetupSideDishNull()
+            {
+                State = State with
+                {
+                    Editor = State.Editor with
+                    {
+                        Recipe = State.Editor.Recipe! with
+                        {
+                            SideDish = null
+                        }
+                    }
+                };
+            }
+        }
+    }
+
     private abstract class SideDishSelectorEffectsFixture : RecipeEffectsFixtureBase
     {
         public SideDishSelectorEffects CreateSut()
         {
             SetupStateReturningState();
-            return new(ApiClientMock.Object, RecipeStateMock.Object);
+            return new(ApiClientMock.Object, RecipeStateMock.Object, NavigationManagerMock.Object);
         }
     }
 }
