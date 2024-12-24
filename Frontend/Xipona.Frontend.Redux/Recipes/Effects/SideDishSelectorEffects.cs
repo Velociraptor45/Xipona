@@ -43,10 +43,10 @@ public sealed class SideDishSelectorEffects : IAsyncDisposable
         return Task.CompletedTask;
     }
 
-    [EffectMethod]
-    public async Task HandleSearchSideDishesAction(SearchSideDishesAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(SearchSideDishesAction))]
+    public async Task HandleSearchSideDishesAction(IDispatcher dispatcher)
     {
-        if (_state.Value.Editor.Recipe is null)
+        if (_state.Value.Editor.Recipe is null || _state.Value.Editor.SideDishSelector.Input == string.Empty)
             return;
 
         IEnumerable<RecipeSearchResult> results;

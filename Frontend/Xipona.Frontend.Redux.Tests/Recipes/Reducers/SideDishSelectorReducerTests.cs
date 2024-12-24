@@ -354,11 +354,12 @@ public class SideDishSelectorReducerTests
         private readonly OnSearchSideDishesFinishedFixture _fixture = new();
 
         [Fact]
-        public void OnSearchSideDishesFinished_WithValidData_ShouldUpdateAvailableSideDishes()
+        public void OnSearchSideDishesFinished_WithSelectedSideDishInResults_ShouldUpdateAvailableSideDishes()
         {
             // Arrange
+            _fixture.SetupExpectedState();
             _fixture.SetupInitialState();
-            _fixture.SetupAction();
+            _fixture.SetupActionWithSelectedDishInResults();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
@@ -366,12 +367,48 @@ public class SideDishSelectorReducerTests
             var result = SideDishSelectorReducer.OnSearchSideDishesFinished(_fixture.InitialState, _fixture.Action);
 
             // Assert
-            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
+        }
+
+        [Fact]
+        public void OnSearchSideDishesFinished_WithSelectedSideDishNotInResults_ShouldUpdateAvailableSideDishes()
+        {
+            // Arrange
+            _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
+            _fixture.SetupActionWithSelectedDishNotInResults();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = SideDishSelectorReducer.OnSearchSideDishesFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState, opt => opt.WithStrictOrdering());
         }
 
         private sealed class OnSearchSideDishesFinishedFixture : SideDishSelectorReducerFixture
         {
             public SearchSideDishesFinishedAction? Action { get; private set; }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        SideDishSelector = ExpectedState.Editor.SideDishSelector with
+                        {
+                            SideDishes = [
+                                ExpectedState.Editor.Recipe!.SideDish!,
+                                new SideDish(Guid.NewGuid(), "A"),
+                                new SideDish(Guid.NewGuid(), "B"),
+                                new SideDish(Guid.NewGuid(), "C"),
+                                ]
+                        }
+                    }
+                };
+            }
 
             public void SetupInitialState()
             {
@@ -387,11 +424,24 @@ public class SideDishSelectorReducerTests
                 };
             }
 
-            public void SetupAction()
+            public void SetupActionWithSelectedDishInResults()
             {
                 var results = ExpectedState.Editor.SideDishSelector.SideDishes
                     .Select(s => new RecipeSearchResult(s.Id, s.Name))
-                    .ToList();
+                    .ToArray();
+                Random.Shared.Shuffle(results);
+
+                Action = new SearchSideDishesFinishedAction(results);
+            }
+
+            public void SetupActionWithSelectedDishNotInResults()
+            {
+                var results = ExpectedState.Editor.SideDishSelector.SideDishes
+                    .Skip(1)
+                    .Select(s => new RecipeSearchResult(s.Id, s.Name))
+                    .ToArray();
+                Random.Shared.Shuffle(results);
+
                 Action = new SearchSideDishesFinishedAction(results);
             }
         }

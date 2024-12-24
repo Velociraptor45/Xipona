@@ -90,13 +90,22 @@ public static class SideDishSelectorReducer
     [ReducerMethod]
     public static RecipeState OnSearchSideDishesFinished(RecipeState state, SearchSideDishesFinishedAction action)
     {
+        var dishes = action.SideDishes.Select(s => new SideDish(s.Id, s.Name)).OrderBy(s => s.Name).ToList();
+
+        if (state.Editor.Recipe?.SideDish is not null)
+        {
+            dishes.Remove(state.Editor.Recipe.SideDish);
+
+            dishes.Insert(0, state.Editor.Recipe.SideDish);
+        }
+
         return state with
         {
             Editor = state.Editor with
             {
                 SideDishSelector = state.Editor.SideDishSelector with
                 {
-                    SideDishes = action.SideDishes.Select(s => new SideDish(s.Id, s.Name)).ToList()
+                    SideDishes = dishes
                 }
             }
         };
