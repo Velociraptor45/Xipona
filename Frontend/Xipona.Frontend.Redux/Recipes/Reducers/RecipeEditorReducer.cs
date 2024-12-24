@@ -70,6 +70,7 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = recipe,
+                SideDishSelector = new SideDishSelector([], string.Empty),
                 IsInEditMode = true,
                 ValidationResult = new()
             }
@@ -84,6 +85,11 @@ public static class RecipeEditorReducer
             Editor = state.Editor with
             {
                 Recipe = action.Recipe,
+                SideDishSelector = new SideDishSelector(
+                    action.Recipe.SideDish is null
+                        ? []
+                        : [action.Recipe.SideDish],
+                    string.Empty),
                 IsInEditMode = false,
                 ValidationResult = new()
             }

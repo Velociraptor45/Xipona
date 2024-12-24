@@ -49,10 +49,12 @@
                                 LabelName="@nameof(SideDish.Name)"
                                 OnItemChanged="@OnSideDishChanged"
                                 OnInputChanged="@OnSideDishInputChanged"
-                                OnDropdownClosed="@OnSideDishDropdownClosed"
+                                OnDropdownClosed="@OnSideDishDropdownClosed" 
+                                OnClear="@(() => OnSideDishChanged(null))"
                                 Placeholder="Side Dish"
                                 Value="@State.Value.Editor.Recipe.SideDish?.Id"
-                                SearchInput="@State.Value.Editor.SideDishSelector.Input">
+                                SearchInput="@State.Value.Editor.SideDishSelector.Input"
+                                AllowClear="true">
             </SingleSearchSelect>
         </div>
     </div>
@@ -87,6 +89,12 @@
 
     private void OnSideDishChanged(SideDish sideDish)
     {
+        if (sideDish is null)
+        {
+            Dispatcher.Dispatch(new SideDishClearedAction());
+            return;
+        }
+
         Dispatcher.Dispatch(new SideDishChangedAction(sideDish));
     }
 

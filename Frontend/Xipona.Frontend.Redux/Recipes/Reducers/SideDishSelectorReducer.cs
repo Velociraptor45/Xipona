@@ -64,6 +64,29 @@ public static class SideDishSelectorReducer
         };
     }
 
+    [ReducerMethod(typeof(SideDishClearedAction))]
+    public static RecipeState OnSideDishCleared(RecipeState state)
+    {
+        if (state.Editor.Recipe is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Recipe = state.Editor.Recipe with
+                {
+                    SideDish = null
+                },
+                SideDishSelector = state.Editor.SideDishSelector with
+                {
+                    SideDishes = [],
+                    Input = string.Empty
+                }
+            }
+        };
+    }
+
     [ReducerMethod(typeof(SideDishRemovedAction))]
     public static RecipeState OnSideDishRemoved(RecipeState state)
     {
