@@ -96,6 +96,7 @@ public class ItemCategoryControllerIntegrationTests
                     .Create();
 
                 _recipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
                     .WithIngredients(ingredient.ToMonoList())
                     .Create();
             }
