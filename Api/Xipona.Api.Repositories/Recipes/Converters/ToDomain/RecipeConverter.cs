@@ -36,6 +36,7 @@ public class RecipeConverter : IToDomainConverter<Entities.Recipe, IRecipe>
             ingredients,
             steps,
             recipeTagIds,
+            source.SideDishId is null ? null : new RecipeId(source.SideDishId.Value),
             source.CreatedAt);
 
         recipe.EnrichWithRowVersion(source.RowVersion);

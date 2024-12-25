@@ -50,6 +50,7 @@ public class RecipeFeatureState : Feature<RecipeState>
                 false,
                 false,
                 false,
+                new SideDishSelector([], string.Empty),
                 null,
                 new()));
     }

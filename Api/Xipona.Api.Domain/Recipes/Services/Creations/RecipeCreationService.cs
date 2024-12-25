@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
+using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Shared;
 
@@ -25,6 +27,13 @@ public class RecipeCreationService : IRecipeCreationService
 
     public async Task<RecipeReadModel> CreateAsync(RecipeCreation creation)
     {
+        if (creation.SideDishId is not null)
+        {
+            var sideDishExists = await _recipeRepository.Exists(creation.SideDishId.Value);
+            if (!sideDishExists)
+                throw new DomainException(new RecipeNotFoundReason(creation.SideDishId.Value));
+        }
+
         var recipe = await _recipeFactory.CreateNewAsync(creation);
         var storedRecipe = await _recipeRepository.StoreAsync(recipe);
 

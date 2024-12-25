@@ -31,6 +31,7 @@ public class RecipeContractConverter : IToContractConverter<RecipeReadModel, Rec
             source.NumberOfServings,
             ingredients,
             steps,
-            source.Tags.Select(t => t.Value));
+            source.Tags.Select(t => t.Value),
+            source.SideDish is null ? null : new SideDishContract(source.SideDish.Id, source.SideDish.Name));
     }
 }

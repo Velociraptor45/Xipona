@@ -48,4 +48,9 @@ public class RecipeRepositoryMock : Mock<IRecipeRepository>
     {
         Setup(m => m.FindByContainingAllAsync(recipeTagIds)).ReturnsAsync(returnValue);
     }
+
+    public void SetupExists(RecipeId recipeId, bool returnValue)
+    {
+        Setup(m => m.Exists(recipeId)).ReturnsAsync(returnValue);
+    }
 }

@@ -1,5 +1,4 @@
 ﻿@using System.Timers;
-@using System.Diagnostics
 
 @typeparam TValue
 @typeparam TItem
@@ -81,18 +80,19 @@
     @<Template>
         <div>
             @originNode
-            @if (CanAddItem)
-            {
-                <hr class="my-1" />
-                <div class="d-flex p-2">
-                    <div class="max-w-100">
-                        <Input @ref="_searchInput" Value="SearchInput" OnInput="OnSearchInput" />
-                    </div>
+            <hr class="my-1" />
+            <div class="d-flex p-2">
+                <div>
+                    <Input @ref="_searchInput" Value="SearchInput" OnInput="OnSearchInput" />
+                </div>
+
+                @if (CanAddItem)
+                {
                     <a class="d-flex align-items-center min-w-50 px-2 py-1" @onclick="OnAddNewItem">
                         <i class="bi bi-plus-lg"></i>
                     </a>
-                </div>
-            }
+                }
+            </div>
         </div>
     </Template>;
     }

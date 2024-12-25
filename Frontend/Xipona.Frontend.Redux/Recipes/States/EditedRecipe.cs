@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
 public record EditedRecipe(Guid Id, string Name, int NumberOfServings, IReadOnlyCollection<EditedIngredient> Ingredients,
-    SortedSet<EditedPreparationStep> PreparationSteps, IReadOnlyCollection<Guid> RecipeTagIds)
+    SortedSet<EditedPreparationStep> PreparationSteps, IReadOnlyCollection<Guid> RecipeTagIds, SideDish? SideDish)
         : ISortable<EditedPreparationStep>
 {
     public int MinSortingIndex => PreparationSteps.Any() ? PreparationSteps.Min(s => s.SortingIndex) : 0;

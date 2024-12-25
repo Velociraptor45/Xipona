@@ -217,7 +217,8 @@ public class RecipeTests
                     ExpectedRecipe.NumberOfServings,
                     ingredients,
                     preparationSteps,
-                    tags);
+                    tags,
+                    ExpectedRecipe.SideDishId);
             }
 
             public void SetupIngredientValidationSuccess()

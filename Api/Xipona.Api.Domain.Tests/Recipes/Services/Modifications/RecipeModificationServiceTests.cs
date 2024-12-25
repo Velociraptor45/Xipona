@@ -25,6 +25,7 @@ public class RecipeModificationServiceTests
             // Arrange
             _fixture.SetupModification();
             _fixture.SetupRecipe();
+            _fixture.SetupSideDishExisting();
             _fixture.SetupFindingRecipe();
             _fixture.SetupModifyingRecipe();
             _fixture.SetupStoringRecipe();
@@ -45,6 +46,7 @@ public class RecipeModificationServiceTests
             // Arrange
             _fixture.SetupModification();
             _fixture.SetupRecipe();
+            _fixture.SetupSideDishExisting();
             _fixture.SetupFindingRecipe();
             _fixture.SetupModifyingRecipe();
             _fixture.SetupStoringRecipe();
@@ -64,7 +66,28 @@ public class RecipeModificationServiceTests
         {
             // Arrange
             _fixture.SetupModification();
+            _fixture.SetupSideDishExisting();
             _fixture.SetupNotFindingRecipe();
+            var sut = _fixture.CreateSut();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
+
+            // Act
+            var func = async () => await sut.ModifyAsync(_fixture.Modification);
+
+            // Assert
+            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.RecipeNotFound);
+        }
+
+        [Fact]
+        public async Task ModifyAsync_WithInvalidSideDishId_ShouldThrowDomainException()
+        {
+            // Arrange
+            _fixture.SetupModification();
+            _fixture.SetupRecipe();
+            _fixture.SetupSideDishNotExisting();
+            _fixture.SetupFindingRecipe();
+            _fixture.SetupModifyingRecipe();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Modification);
@@ -98,6 +121,20 @@ public class RecipeModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(Modification);
 
                 _recipeMock.SetupModifyAsync(Modification, ValidatorMock.Object);
+            }
+
+            public void SetupSideDishExisting()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+
+                RecipeRepositoryMock.SetupExists(Modification.SideDishId!.Value, true);
+            }
+
+            public void SetupSideDishNotExisting()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Modification);
+
+                RecipeRepositoryMock.SetupExists(Modification.SideDishId!.Value, false);
             }
 
             public void SetupFindingRecipe()

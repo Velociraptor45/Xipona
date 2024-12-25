@@ -1,0 +1,7 @@
+﻿@media (min-width: 769px) {
+    .ingredients {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+    }
+}

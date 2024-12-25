@@ -150,6 +150,15 @@ public static class ServiceCollectionExtensions
                 new RecipeRepository(context, searchResultToDomainConverter, toDomainConverter, toContractConverter,
                     logger, cancellationToken);
         });
+
+        services.AddTransient<Func<CancellationToken, IRecipeReadRepository>>(provider =>
+        {
+            return ct => new RecipeReadRepository(
+                provider.GetRequiredService<RecipeContext>(),
+                provider.GetRequiredService<IToDomainConverter<Recipe, SideDishReadModel>>(),
+                ct);
+        });
+
         services.AddTransient<Func<CancellationToken, IRecipeTagRepository>>(provider =>
         {
             var context = provider.GetRequiredService<RecipeTagContext>();

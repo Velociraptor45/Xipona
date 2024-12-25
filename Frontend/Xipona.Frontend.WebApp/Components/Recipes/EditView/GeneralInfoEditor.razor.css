@@ -1,0 +1,13 @@
+﻿.editor-number-of-servings {
+    width: 150px;
+}
+
+.editor-side-dish {
+    min-width: 250px;
+    margin-left: 25px;
+}
+
+.editor-content-general-second-row {
+    display: flex;
+    padding-top: 8px;
+}

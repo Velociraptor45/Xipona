@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Ports;
@@ -22,11 +24,12 @@ public class RecipeCreationServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WithValidData_ShouldStoreNewRecipe()
+    public async Task CreateAsync_WithSideDishExisting_ShouldStoreNewRecipe()
     {
         // Arrange
         _fixture.SetupCreation();
         _fixture.SetupCreatingNewRecipe();
+        _fixture.SetupSideDishExisting();
         _fixture.SetupStoringRecipe();
         _fixture.SetupConvertingRecipe();
         var sut = _fixture.CreateSut();
@@ -41,11 +44,12 @@ public class RecipeCreationServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_WithValidData_ShouldReturnStoredRecipe()
+    public async Task CreateAsync_WithSideDishExisting_ShouldReturnStoredRecipe()
     {
         // Arrange
         _fixture.SetupCreation();
         _fixture.SetupCreatingNewRecipe();
+        _fixture.SetupSideDishExisting();
         _fixture.SetupStoringRecipe();
         _fixture.SetupConvertingRecipe();
         var sut = _fixture.CreateSut();
@@ -58,6 +62,27 @@ public class RecipeCreationServiceTests
 
         // Assert
         result.Should().Be(_fixture.ExpectedResult);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WithSideDishNotExisting_ShouldThrowDomainException()
+    {
+        // Arrange
+        _fixture.SetupCreation();
+        _fixture.SetupCreatingNewRecipe();
+        _fixture.SetupSideDishNotExisting();
+        _fixture.SetupStoringRecipe();
+        _fixture.SetupConvertingRecipe();
+        var sut = _fixture.CreateSut();
+
+        TestPropertyNotSetException.ThrowIfNull(_fixture.Creation);
+        TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+        // Act
+        var func = async () => await sut.CreateAsync(_fixture.Creation);
+
+        // Assert
+        await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.RecipeNotFound);
     }
 
     private class RecipeCreationServiceFixture
@@ -97,6 +122,20 @@ public class RecipeCreationServiceTests
 
             _createdRecipe = new RecipeBuilder().Create();
             _recipeFactoryMock.SetupCreateNewAsync(Creation, _createdRecipe);
+        }
+
+        public void SetupSideDishExisting()
+        {
+            TestPropertyNotSetException.ThrowIfNull(Creation);
+
+            _recipeRepository.SetupExists(Creation.SideDishId!.Value, true);
+        }
+
+        public void SetupSideDishNotExisting()
+        {
+            TestPropertyNotSetException.ThrowIfNull(Creation);
+
+            _recipeRepository.SetupExists(Creation.SideDishId!.Value, false);
         }
 
         public void SetupStoringRecipe()

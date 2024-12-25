@@ -26,6 +26,13 @@ public class RecipeModificationService : IRecipeModificationService
 
     public async Task ModifyAsync(RecipeModification modification)
     {
+        if (modification.SideDishId is not null)
+        {
+            var sideDishExists = await _recipeRepository.Exists(modification.SideDishId.Value);
+            if (!sideDishExists)
+                throw new DomainException(new RecipeNotFoundReason(modification.SideDishId.Value));
+        }
+
         var recipe = await _recipeRepository.FindByAsync(modification.Id);
 
         if (recipe is null)
@@ -66,9 +73,11 @@ public class RecipeModificationService : IRecipeModificationService
         if (item is null)
             throw new DomainException(new ItemNotFoundReason(itemId));
 
+        var newAvailabilitiesList = newAvailabilities.ToList();
+
         foreach (var recipe in recipes)
         {
-            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, newAvailabilities);
+            recipe.ModifyIngredientsAfterAvailabilitiesChanged(itemId, itemTypeId, newAvailabilitiesList);
             await _recipeRepository.StoreAsync(recipe);
         }
     }

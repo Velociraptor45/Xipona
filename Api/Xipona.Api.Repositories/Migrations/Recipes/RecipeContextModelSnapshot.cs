@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
 
@@ -16,8 +17,10 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient", b =>
                 {
@@ -97,7 +100,12 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp(6)");
 
+                    b.Property<Guid?>("SideDishId")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SideDishId");
 
                     b.ToTable("Recipes");
                 });
@@ -137,6 +145,15 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                         .IsRequired();
 
                     b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
+                {
+                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", "SideDish")
+                        .WithMany()
+                        .HasForeignKey("SideDishId");
+
+                    b.Navigation("SideDish");
                 });
 
             modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>

@@ -1,6 +1,7 @@
 ﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.Items.Ports;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 
 namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Shared;
@@ -9,11 +10,14 @@ public class RecipeConversionService : IRecipeConversionService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IItemCategoryRepository _itemCategoryRepository;
+    private readonly IRecipeReadRepository _recipeReadRepository;
 
-    public RecipeConversionService(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository)
+    public RecipeConversionService(IItemRepository itemRepository, IItemCategoryRepository itemCategoryRepository,
+        IRecipeReadRepository recipeReadRepository)
     {
         _itemRepository = itemRepository;
         _itemCategoryRepository = itemCategoryRepository;
+        _recipeReadRepository = recipeReadRepository;
     }
 
     public async Task<RecipeReadModel> ToReadModelAsync(IRecipe recipe)
@@ -51,8 +55,21 @@ public class RecipeConversionService : IRecipeConversionService
                     i.ShoppingListProperties);
             })
             .ToList();
-        var readModel = new RecipeReadModel(recipe.Id, recipe.Name, recipe.NumberOfServings, ingredients,
-            steps, recipe.Tags);
+
+        SideDishReadModel? sideDish = null;
+        if (recipe.SideDishId is not null)
+        {
+            sideDish = await _recipeReadRepository.GetSideDishAsync(recipe.SideDishId.Value);
+        }
+
+        var readModel = new RecipeReadModel(
+            recipe.Id,
+            recipe.Name,
+            recipe.NumberOfServings,
+            ingredients,
+            steps,
+            recipe.Tags,
+            sideDish);
 
         return readModel;
     }

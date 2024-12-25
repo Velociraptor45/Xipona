@@ -1720,6 +1720,7 @@ public class ItemControllerIntegrationTests
                     .WithDefaultStoreId(_expectedAvailability.StoreId)
                     .Create();
                 ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
                     .WithIngredient(ingredient)
                     .Create();
             }
@@ -1889,6 +1890,7 @@ public class ItemControllerIntegrationTests
                     .WithDefaultStoreId(_expectedAvailability.StoreId)
                     .Create();
                 ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
                     .WithIngredient(ingredient)
                     .Create();
             }
@@ -2228,6 +2230,7 @@ public class ItemControllerIntegrationTests
                     .WithDefaultItemTypeId(ExpectedNewItem.ItemTypes.First().Id)
                     .Create();
                 ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
                     .WithIngredient(ingredient)
                     .Create();
             }
@@ -2385,6 +2388,7 @@ public class ItemControllerIntegrationTests
                     .WithDefaultStoreId(_expectedAvailability.StoreId)
                     .Create();
                 ExpectedRecipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
                     .WithIngredient(ingredient)
                     .Create();
             }
@@ -2802,6 +2806,7 @@ public class ItemControllerIntegrationTests
                     .ToArray();
 
                 _recipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
                     .WithIngredients(ingredients)
                     .Create();
             }
