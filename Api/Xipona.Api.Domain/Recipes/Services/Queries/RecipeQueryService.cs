@@ -51,7 +51,7 @@ public class RecipeQueryService : IRecipeQueryService
 
         var results = (await _recipeRepository.SearchByAsync(searchInput)).ToList();
 
-        _logger.LogInformation(() => "Found {ResultCount} result(s) for input '{Input}'",
+        _logger.LogInformation("Found {ResultCount} result(s) for input '{Input}'",
             results.Count, searchInput);
 
         return results;
@@ -86,10 +86,9 @@ public class RecipeQueryService : IRecipeQueryService
             .Where(i => i.DefaultItemId is not null)
             .Select(ingredient =>
             {
-                if (!items.ContainsKey(ingredient.DefaultItemId!.Value))
+                if (!items.TryGetValue(ingredient.DefaultItemId!.Value, out IItem? item))
                     throw new DomainException(new ItemNotFoundReason(ingredient.DefaultItemId!.Value));
 
-                var item = items[ingredient.DefaultItemId!.Value];
                 IItemType? itemType = null;
                 if (ingredient.DefaultItemTypeId is not null)
                 {

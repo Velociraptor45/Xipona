@@ -33,7 +33,7 @@ public class Transaction : ITransaction
             }
             catch (Exception e)
             {
-                _logger.LogError(e, () => "An error occurred while commiting a transaction");
+                _logger.LogError(e, "An error occurred while commiting a transaction");
             }
 
             _transaction = null;
@@ -57,7 +57,7 @@ public class Transaction : ITransaction
             }
             catch (Exception e)
             {
-                _logger.LogError(e, () => "An error occurred while rolling back a transaction");
+                _logger.LogError(e, "An error occurred while rolling back a transaction");
             }
 
             _transaction = null;

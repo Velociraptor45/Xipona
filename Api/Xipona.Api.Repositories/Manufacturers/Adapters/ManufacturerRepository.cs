@@ -110,7 +110,7 @@ public class ManufacturerRepository : IManufacturerRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogInformation(ex,
-                () => "Saving manufacturer '{ManufacturerId}' failed due to concurrency violation", model.Id.Value);
+                "Saving manufacturer '{ManufacturerId}' failed due to concurrency violation", model.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
         return _toModelConverter.ToDomain(convertedEntity);

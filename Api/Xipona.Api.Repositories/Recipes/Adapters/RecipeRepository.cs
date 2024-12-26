@@ -152,7 +152,7 @@ public class RecipeRepository : IRecipeRepository
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            _logger.LogInformation(ex, () => "Saving recipe '{RecipeId}' failed due to concurrency violation", recipe.Id.Value);
+            _logger.LogInformation(ex, "Saving recipe '{RecipeId}' failed due to concurrency violation", recipe.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
 
