@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
@@ -129,28 +128,28 @@ public class RecipeTests
             {
                 _existingIngredient = new IngredientBuilder().Create();
                 RecipeBuilder.WithIngredients(
-                    new Ingredients(_existingIngredient.ToMonoList(), _ingredientFactory));
+                    new Ingredients([_existingIngredient], _ingredientFactory));
             }
 
             public void SetupExistingPreparationStep()
             {
                 _existingPreparationStep = new PreparationStepBuilder().Create();
                 RecipeBuilder.WithSteps(
-                    new PreparationSteps(_existingPreparationStep.ToMonoList(), _preparationStepFactoryMock));
+                    new PreparationSteps([_existingPreparationStep], _preparationStepFactoryMock));
             }
 
             public void SetupExistingIngredientEmpty()
             {
                 _existingIngredient = new IngredientBuilder().Create();
                 RecipeBuilder.WithIngredients(
-                    new Ingredients(_existingIngredient.ToMonoList(), _ingredientFactory));
+                    new Ingredients([_existingIngredient], _ingredientFactory));
             }
 
             public void SetupExistingPreparationStepEmpty()
             {
                 _existingPreparationStep = new PreparationStepBuilder().Create();
                 RecipeBuilder.WithSteps(
-                    new PreparationSteps(_existingPreparationStep.ToMonoList(), _preparationStepFactoryMock));
+                    new PreparationSteps([_existingPreparationStep], _preparationStepFactoryMock));
             }
 
             public void SetupExistingRecipeTagsEmpty()
@@ -206,9 +205,12 @@ public class RecipeTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedRecipe);
 
-                var ingredients = _ingredientModification?.ToMonoList() ?? Enumerable.Empty<IngredientModification>();
-                var preparationSteps = _preparationSetupModification?.ToMonoList() ??
-                                       Enumerable.Empty<PreparationStepModification>();
+                var ingredients = _ingredientModification is null
+                    ? Enumerable.Empty<IngredientModification>()
+                    : [_ingredientModification];
+                var preparationSteps = _preparationSetupModification is null
+                    ? Enumerable.Empty<PreparationStepModification>()
+                    : [_preparationSetupModification];
                 var tags = _expectedTagIds ?? Enumerable.Empty<RecipeTagId>();
 
                 Modification = new RecipeModification(
@@ -276,8 +278,10 @@ public class RecipeTests
 
             public void SetupExpectedRecipe(Recipe sut)
             {
-                var ingredients = _expectedIngredient?.ToMonoList() ?? Enumerable.Empty<Ingredient>();
-                var preparationSteps = _expectedPreparationStep?.ToMonoList() ?? Enumerable.Empty<PreparationStep>();
+                var ingredients = _expectedIngredient is null ? Enumerable.Empty<Ingredient>() : [_expectedIngredient];
+                var preparationSteps = _expectedPreparationStep is null
+                    ? Enumerable.Empty<PreparationStep>()
+                    : [_expectedPreparationStep];
                 var tags = _expectedTagIds ?? Enumerable.Empty<RecipeTagId>();
 
                 ExpectedRecipe = new RecipeBuilder()
@@ -646,13 +650,9 @@ public class RecipeTests
                     ExpectedIngredient.ItemCategoryId,
                     ExpectedIngredient.QuantityType,
                     ExpectedIngredient.Quantity,
-                    new IngredientShoppingListProperties(
-                        ExpectedIngredient.ShoppingListProperties.DefaultItemId,
-                        ExpectedIngredient.ShoppingListProperties.DefaultItemTypeId,
-                        StoreId,
-                        ExpectedIngredient.ShoppingListProperties.AddToShoppingListByDefault));
+                    ExpectedIngredient.ShoppingListProperties with { DefaultStoreId = StoreId });
 
-                RecipeBuilder.WithIngredients(new Ingredients(ingredient.ToMonoList(),
+                RecipeBuilder.WithIngredients(new Ingredients([ingredient],
                     new IngredientFactoryMock(MockBehavior.Strict).Object));
             }
 
@@ -660,7 +660,7 @@ public class RecipeTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedIngredient);
 
-                RecipeBuilder.WithIngredients(new Ingredients(ExpectedIngredient.ToMonoList(),
+                RecipeBuilder.WithIngredients(new Ingredients([ExpectedIngredient],
                     new IngredientFactoryMock(MockBehavior.Strict).Object));
             }
         }

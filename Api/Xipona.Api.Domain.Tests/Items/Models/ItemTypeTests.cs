@@ -1,6 +1,5 @@
 ﻿using Force.DeepCloner;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -570,7 +569,7 @@ public class ItemTypeTests
                 TestPropertyNotSetException.ThrowIfNull(_chosenAvailability);
                 TestPropertyNotSetException.ThrowIfNull(Price);
 
-                var availabilities = sut.Availabilities.Except(_chosenAvailability.ToMonoList()).ToList();
+                var availabilities = sut.Availabilities.Except([_chosenAvailability]).ToList();
                 availabilities.Add(_chosenAvailability with { Price = Price.Value });
 
                 ExpectedResult = new ItemTypeBuilder()
@@ -736,7 +735,7 @@ public class ItemTypeTests
                 TestPropertyNotSetException.ThrowIfNull(_choseAvailability);
                 TestPropertyNotSetException.ThrowIfNull(NewSectionId);
 
-                var availabilities = sut.Availabilities.Except(_choseAvailability.ToMonoList()).ToList();
+                var availabilities = sut.Availabilities.Except([_choseAvailability]).ToList();
                 availabilities.Add(_choseAvailability with { DefaultSectionId = NewSectionId.Value });
 
                 ExpectedResult = new ItemTypeBuilder()
@@ -913,14 +912,14 @@ public class ItemTypeTests
             public void SetupOneAvailability()
             {
                 var availability = new ItemAvailabilityBuilder().Create();
-                Builder.WithAvailabilities(availability.ToMonoList());
+                Builder.WithAvailabilities([availability]);
             }
 
             public void SetupExpectedResultWithMultipleAvailabilities(IItemType sut)
             {
                 TestPropertyNotSetException.ThrowIfNull(_chosenAvailability);
 
-                var availabilities = sut.Availabilities.Except(_chosenAvailability.ToMonoList()).ToList();
+                var availabilities = sut.Availabilities.Except([_chosenAvailability]).ToList();
 
                 ExpectedResult = new ItemTypeBuilder()
                     .WithId(sut.Id)

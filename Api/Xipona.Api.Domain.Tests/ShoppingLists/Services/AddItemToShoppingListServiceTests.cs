@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
@@ -1104,7 +1103,7 @@ public class AddItemToShoppingListServiceTests
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
             var sectionId = new SectionId(Guid.NewGuid());
             var section = SectionMother.Default().WithId(sectionId).Create();
-            var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
+            var sections = new Sections([section], _sectionFactoryMock.Object);
 
             _store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSections(sections).Create();
         }
@@ -1116,7 +1115,7 @@ public class AddItemToShoppingListServiceTests
                             ?? Availability?.DefaultSectionId
                             ?? throw new TestPropertyNotSetException(nameof(Availability));
             var section = SectionMother.Default().WithId(sectionId).Create();
-            var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
+            var sections = new Sections([section], _sectionFactoryMock.Object);
 
             _store = StoreMother.Initial().WithId(ShoppingListMock.Object.StoreId).WithSections(sections).Create();
         }

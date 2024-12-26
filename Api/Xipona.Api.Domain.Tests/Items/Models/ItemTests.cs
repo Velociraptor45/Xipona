@@ -1,5 +1,4 @@
 ﻿using Force.DeepCloner;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit.Services;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
@@ -1027,7 +1026,7 @@ public class ItemTests
                     new ItemTypeBuilder().WithIsDeleted(false).Create(),
                     MockBehavior.Strict);
 
-                var types = new ItemTypes(_existingItemTypeMock.Object.ToMonoList(), _itemTypeFactoryMock.Object);
+                var types = new ItemTypes([_existingItemTypeMock.Object], _itemTypeFactoryMock.Object);
                 ItemMother.InitialWithTypes(Builder)
                     .WithTypes(types);
             }
@@ -1041,7 +1040,7 @@ public class ItemTests
             {
                 ExpectedItemType = new ItemTypeBuilder().WithIsDeleted(false).Create();
                 ExpectedResult = ItemMother.InitialWithTypes()
-                    .WithTypes(new ItemTypes(ExpectedItemType.ToMonoList(), _itemTypeFactoryMock.Object))
+                    .WithTypes(new ItemTypes([ExpectedItemType], _itemTypeFactoryMock.Object))
                     .WithPredecessorId(sut.Id)
                     .WithCreatedAt(sut.CreatedAt)
                     .Create();
@@ -2287,8 +2286,10 @@ public class ItemTests
                 Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
                 ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
-                ExpectedItemTypeDeletedDomainEvents = new ItemTypeDeletedDomainEvent(itemTypes.First().Id) { ItemId = Id }
-                    .ToMonoList();
+                ExpectedItemTypeDeletedDomainEvents =
+                [
+                    new ItemTypeDeletedDomainEvent(itemTypes.First().Id) { ItemId = Id }
+                ];
             }
 
             public void SetupMultipleTypesWithAllOnlyAvailableAtStore()

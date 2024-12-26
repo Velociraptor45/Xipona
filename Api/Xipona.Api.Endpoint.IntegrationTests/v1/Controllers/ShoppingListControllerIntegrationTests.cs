@@ -683,7 +683,7 @@ public class ShoppingListControllerIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(ExpectedShoppingList);
 
                 _store = StoreEntityMother
-                    .ValidSections(ExpectedShoppingList.ItemsOnList.First().SectionId.ToMonoList())
+                    .ValidSections([ExpectedShoppingList.ItemsOnList.First().SectionId])
                     .WithId(ExpectedShoppingList.StoreId)
                     .Create();
             }

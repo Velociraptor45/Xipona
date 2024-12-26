@@ -3,7 +3,6 @@ using Force.DeepCloner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
@@ -97,7 +96,7 @@ public class ItemCategoryControllerIntegrationTests
 
                 _recipe = new RecipeEntityBuilder()
                     .WithoutSideDishId()
-                    .WithIngredients(ingredient.ToMonoList())
+                    .WithIngredients([ingredient])
                     .Create();
             }
 

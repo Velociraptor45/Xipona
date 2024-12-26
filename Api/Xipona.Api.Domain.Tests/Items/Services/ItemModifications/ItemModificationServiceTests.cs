@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
@@ -426,9 +425,8 @@ public class ItemModificationServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(_itemMock);
             var choseItem = CommonFixture.ChooseRandom(_itemMock.Object.ItemTypes);
-            _modifiedItemTypes = new ItemTypeModification(choseItem.Id, choseItem.Name, choseItem.Availabilities)
-                .ToMonoList();
-            _notExistingItemTypes = _itemMock.Object.ItemTypes.Except(choseItem.ToMonoList()).ToList();
+            _modifiedItemTypes = [new ItemTypeModification(choseItem.Id, choseItem.Name, choseItem.Availabilities)];
+            _notExistingItemTypes = _itemMock.Object.ItemTypes.Except([choseItem]).ToList();
         }
 
         private void SetupModifiedItemTypesEqualToExistingButOneWithDifferentStores()
@@ -855,7 +853,7 @@ public class ItemModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(OldSectionId);
                 TestPropertyNotSetException.ThrowIfNull(_itemMock);
 
-                ItemRepositoryMock.SetupFindActiveByAsync(OldSectionId.Value, _itemMock.Object.ToMonoList());
+                ItemRepositoryMock.SetupFindActiveByAsync(OldSectionId.Value, [_itemMock.Object]);
             }
 
             public void SetupStoringItem()

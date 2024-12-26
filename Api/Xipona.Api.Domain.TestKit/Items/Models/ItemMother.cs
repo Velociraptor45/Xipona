@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
@@ -27,7 +26,7 @@ public static class ItemMother
     public static ItemBuilder InitialWithType(IItemType itemType)
     {
         var types = new ItemTypes(
-            itemType.ToMonoList(),
+            [itemType],
             new ItemTypeFactoryMock(MockBehavior.Strict).Object);
 
         return EnrichAsActiveWithoutPredecessor(new ItemBuilder())
@@ -43,7 +42,7 @@ public static class ItemMother
             .WithIsTemporary(true)
             .WithoutItemCategoryId()
             .WithoutManufacturerId()
-            .WithAvailabilities(ItemAvailabilityMother.Initial().Create().ToMonoList())
+            .WithAvailabilities([ItemAvailabilityMother.Initial().Create()])
             .WithoutUpdatedOn()
             .WithoutPredecessorId()
             .AsItem();
