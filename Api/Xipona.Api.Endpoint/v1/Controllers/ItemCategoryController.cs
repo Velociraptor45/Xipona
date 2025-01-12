@@ -19,7 +19,6 @@ using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
-using System.Diagnostics;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -29,9 +28,6 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/item-categories")]
 public class ItemCategoryController : ControllerBase
 {
-    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<ItemCategoryController>();
-
-    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -52,7 +48,6 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> GetItemCategoryByIdAsync([FromRoute] Guid id,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         try
         {
             var query = new ItemCategoryByIdQuery(new ItemCategoryId(id));
@@ -82,7 +77,6 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput,
         [FromQuery] bool includeDeleted = false, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
         {
@@ -108,7 +102,6 @@ public class ItemCategoryController : ControllerBase
     [Route("active")]
     public async Task<IActionResult> GetAllActiveItemCategoriesAsync(CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new AllActiveItemCategoriesQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -128,7 +121,6 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> ModifyItemCategoryAsync([FromBody] ModifyItemCategoryContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<ModifyItemCategoryContract, ModifyItemCategoryCommand>(contract);
@@ -153,7 +145,6 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> CreateItemCategoryAsync([FromQuery] string name,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var command = _converters.ToDomain<string, CreateItemCategoryCommand>(name);
         var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
 
@@ -170,7 +161,6 @@ public class ItemCategoryController : ControllerBase
     public async Task<IActionResult> DeleteItemCategoryAsync([FromRoute] Guid id,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<Guid, DeleteItemCategoryCommand>(id);

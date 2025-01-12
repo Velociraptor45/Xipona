@@ -47,7 +47,6 @@ using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
-using System.Diagnostics;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -57,9 +56,6 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/items")]
 public class ItemController : ControllerBase
 {
-    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<ItemController>();
-
-    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -79,7 +75,6 @@ public class ItemController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new ItemByIdQuery(new ItemId(id));
         ItemReadModel result;
         try
@@ -108,7 +103,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> GetItemTypePricesAsync([FromRoute] Guid id, [FromQuery] Guid storeId,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new GetItemTypePricesQuery(new ItemId(id), new StoreId(storeId));
         ItemTypePricesReadModel result;
         try
@@ -135,7 +129,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> GetTotalSearchResultCount([FromQuery] string searchInput,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new TotalSearchResultCountQuery(searchInput);
 
         var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
@@ -150,7 +143,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> SearchItemsAsync([FromQuery] string searchInput, [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if (pageSize > 100)
             return BadRequest("Page size cannot be greater than 100");
 
@@ -174,7 +166,6 @@ public class ItemController : ControllerBase
         [FromQuery] IEnumerable<Guid> itemCategoryIds, [FromQuery] IEnumerable<Guid> manufacturerIds,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new SearchItemsByFilterQuery(
             storeIds.Select(id => new StoreId(id)),
             itemCategoryIds.Select(id => new ItemCategoryId(id)),
@@ -199,7 +190,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> SearchItemsForShoppingListAsync([FromRoute] Guid storeId,
         [FromQuery] string searchInput, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new SearchItemsForShoppingListQuery(searchInput, new StoreId(storeId));
 
         List<SearchItemForShoppingResultReadModel> readModels;
@@ -235,7 +225,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> SearchItemsByItemCategoryAsync([FromRoute] Guid itemCategoryId,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new SearchItemsByItemCategoryQuery(new ItemCategoryId(itemCategoryId));
 
         List<SearchItemByItemCategoryResult> readModels;
@@ -267,7 +256,6 @@ public class ItemController : ControllerBase
     [Route("quantity-types")]
     public async Task<IActionResult> GetAllQuantityTypesAsync(CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new AllQuantityTypesQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -285,7 +273,6 @@ public class ItemController : ControllerBase
     [Route("quantity-types-in-packet")]
     public async Task<IActionResult> GetAllQuantityTypesInPacketAsync(CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new AllQuantityTypesInPacketQuery();
         var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
@@ -305,7 +292,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> CreateItemAsync([FromBody] CreateItemContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
         {
@@ -340,7 +326,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> CreateItemWithTypesAsync([FromBody] CreateItemWithTypesContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
            || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
         {
@@ -375,7 +360,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> ModifyItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] ModifyItemWithTypesContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
         {
@@ -410,7 +394,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> ModifyItemAsync([FromRoute] Guid id,
         [FromBody] ModifyItemContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
         {
@@ -444,7 +427,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> UpdateItemAsync([FromRoute] Guid id, [FromBody] UpdateItemContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
         {
@@ -477,7 +459,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> UpdateItemPriceAsync([FromRoute] Guid id, [FromBody] UpdateItemPriceContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         try
         {
             var command = _converters.ToDomain<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>((id, contract));
@@ -504,7 +485,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> UpdateItemWithTypesAsync([FromRoute] Guid id,
         [FromBody] UpdateItemWithTypesContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if ((contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null)
             || (contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null))
         {
@@ -539,7 +519,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> MakeTemporaryItemPermanentAsync([FromRoute] Guid id,
         [FromBody] MakeTemporaryItemPermanentContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if (contract.QuantityInPacket is not null && contract.QuantityTypeInPacket is null
             || contract.QuantityInPacket is null && contract.QuantityTypeInPacket is not null)
         {
@@ -573,7 +552,6 @@ public class ItemController : ControllerBase
     [Route("{id:guid}")]
     public async Task<IActionResult> DeleteItemAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         try
         {
             var command = new DeleteItemCommand(new ItemId(id));

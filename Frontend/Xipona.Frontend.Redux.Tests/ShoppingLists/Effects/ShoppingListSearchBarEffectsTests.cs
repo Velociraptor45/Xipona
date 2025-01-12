@@ -7,6 +7,7 @@ using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+using ProjectHermes.Xipona.Frontend.TestTools;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
@@ -42,6 +43,8 @@ public class ShoppingListSearchBarEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
+            _fixture.SetupCreatingTimer();
+            _fixture.SetupDisposingTimer();
             _fixture.SetupDispatchingSearchAction();
             var sut = _fixture.CreateSut();
 
@@ -49,37 +52,18 @@ public class ShoppingListSearchBarEffectsTests
 
             // Act
             await sut.HandleItemForShoppingListSearchInputChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
-            await Task.Delay(1000);
+            _fixture.TimeProviderMock.CapturedCallback?.Invoke(null);
 
             // Assert
             _fixture.VerifyDispatchingSearchAction();
-        }
-
-        [Fact]
-        public async Task HandleItemForShoppingListSearchInputChangedAction_WithRepeatedInvocation_ShouldDispatchAction()
-        {
-            // Arrange
-            _fixture.SetupAction();
-            _fixture.SetupDispatchingSearchAction();
-            _fixture.SetupLongSearchDelay();
-
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
-
-            // Act
-            await sut.HandleItemForShoppingListSearchInputChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
-            await sut.HandleItemForShoppingListSearchInputChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
-            await Task.Delay(1000);
-
-            // Assert
-            _fixture.VerifyDispatchingSearchAction();
+            _fixture.VerifyDisposingTimer();
         }
 
         private sealed class HandleItemForShoppingListSearchInputChangedActionFixture :
             ShoppingListSearchBarEffectsFixture
         {
             public ItemForShoppingListSearchInputChangedAction? Action { get; private set; }
+            private readonly TimerMock _timerMock = new(MockBehavior.Strict);
 
             public void SetupAction()
             {
@@ -91,14 +75,20 @@ public class ShoppingListSearchBarEffectsTests
                 Action = new ItemForShoppingListSearchInputChangedAction(input);
             }
 
-            public void SetupLongSearchDelay()
-            {
-                SearchDelayInMilliseconds = 100;
-            }
-
             public void SetupDispatchingSearchAction()
             {
                 SetupDispatchingAction<SearchItemForShoppingListAction>();
+            }
+
+            public void SetupDisposingTimer()
+            {
+                _timerMock.SetupDispose();
+            }
+
+            public void SetupCreatingTimer()
+            {
+                TimeProviderMock.SetupCreateTimer(TimeSpan.FromMilliseconds(SearchDelayInMilliseconds),
+                    _timerMock.Object);
             }
 
             public void VerifyDispatchingSearchAction()
@@ -109,6 +99,11 @@ public class ShoppingListSearchBarEffectsTests
             public void VerifyNotDispatchingSearchAction()
             {
                 VerifyNotDispatchingAction<SearchItemForShoppingListAction>();
+            }
+
+            public void VerifyDisposingTimer()
+            {
+                _timerMock.VerifyDispose(Times.Once);
             }
         }
     }
@@ -390,7 +385,9 @@ public class ShoppingListSearchBarEffectsTests
 
     private abstract class ShoppingListSearchBarEffectsFixture : ShoppingListEffectsFixtureBase
     {
-        protected int SearchDelayInMilliseconds = 1;
+        protected const int SearchDelayInMilliseconds = 1;
+
+        public TimeProviderMock TimeProviderMock { get; } = new();
 
         public ShoppingListSearchBarEffects CreateSut()
         {
@@ -399,7 +396,7 @@ public class ShoppingListSearchBarEffectsTests
                 SearchDelayAfterInput = TimeSpan.FromMilliseconds(SearchDelayInMilliseconds),
             };
 
-            return new ShoppingListSearchBarEffects(ApiClientMock.Object, ShoppingListStateMock.Object, config);
+            return new ShoppingListSearchBarEffects(ApiClientMock.Object, ShoppingListStateMock.Object, config, TimeProviderMock.Object);
         }
     }
 }
