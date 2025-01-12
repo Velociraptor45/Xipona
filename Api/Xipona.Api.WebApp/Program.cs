@@ -21,6 +21,7 @@ using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
 using ProjectHermes.Xipona.Api.WebApp.Extensions;
+using ProjectHermes.Xipona.Api.WebApp.Serialization;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -48,7 +49,8 @@ var configurationLoadingService =
 var connectionStrings = await configurationLoadingService.LoadAsync();
 builder.Services.AddSingleton(connectionStrings);
 
-builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)
+    .AddJsonOptions(opt => opt.JsonSerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointControllers();

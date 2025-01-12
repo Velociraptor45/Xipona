@@ -72,7 +72,7 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<RecipeSearchResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<RecipeSearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -94,7 +94,7 @@ public class RecipeController : ControllerBase
             if (results.Count == 0)
                 return NoContent();
 
-            var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results);
+            var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results).ToList();
 
             return Ok(contracts);
         }
@@ -106,7 +106,7 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<RecipeSearchResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<RecipeSearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("search-by-tags")]
     public async Task<IActionResult> SearchRecipesByTagsAsync([FromQuery] IEnumerable<Guid> tagIds,
@@ -118,12 +118,12 @@ public class RecipeController : ControllerBase
         if (results.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results);
+        var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results).ToList();
         return Ok(contracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<IngredientQuantityTypeContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<IngredientQuantityTypeContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("ingredient-quantity-types")]
     public async Task<IActionResult> GetAllIngredientQuantityTypes(CancellationToken cancellationToken = default)
@@ -134,7 +134,8 @@ public class RecipeController : ControllerBase
         if (results.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>(results);
+        var contracts = _converters.ToContract<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>(results)
+            .ToList();
 
         return Ok(contracts);
     }

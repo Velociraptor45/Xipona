@@ -136,7 +136,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SearchItemResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("search")]
@@ -153,13 +153,13 @@ public class ItemController : ControllerBase
         if (result.Count == 0)
             return NoContent();
 
-        var contract = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(result);
+        var contract = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(result).ToList();
 
         return Ok(contract);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SearchItemResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("filter")]
     public async Task<IActionResult> SearchItemsByFilterAsync([FromQuery] IEnumerable<Guid> storeIds,
@@ -176,13 +176,13 @@ public class ItemController : ControllerBase
         if (readModels.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels);
+        var contracts = _converters.ToContract<SearchItemResultReadModel, SearchItemResultContract>(readModels).ToList();
 
         return Ok(contracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SearchItemForShoppingListResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -217,7 +217,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SearchItemByItemCategoryResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SearchItemByItemCategoryResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
@@ -244,14 +244,15 @@ public class ItemController : ControllerBase
         if (readModels.Count == 0)
             return NoContent();
 
-        var contracts =
-            _converters.ToContract<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>(readModels);
+        var contracts = _converters
+            .ToContract<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>(readModels)
+            .ToList();
 
         return Ok(contracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<QuantityTypeContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<QuantityTypeContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("quantity-types")]
     public async Task<IActionResult> GetAllQuantityTypesAsync(CancellationToken cancellationToken = default)
@@ -262,13 +263,13 @@ public class ItemController : ControllerBase
         if (readModels.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<QuantityTypeReadModel, QuantityTypeContract>(readModels);
+        var contracts = _converters.ToContract<QuantityTypeReadModel, QuantityTypeContract>(readModels).ToList();
 
         return Ok(contracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<QuantityTypeInPacketContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<QuantityTypeInPacketContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("quantity-types-in-packet")]
     public async Task<IActionResult> GetAllQuantityTypesInPacketAsync(CancellationToken cancellationToken = default)
@@ -279,7 +280,9 @@ public class ItemController : ControllerBase
         if (readModels.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract>(readModels);
+        var contracts = _converters
+            .ToContract<QuantityTypeInPacketReadModel, QuantityTypeInPacketContract>(readModels)
+            .ToList();
 
         return Ok(contracts);
     }

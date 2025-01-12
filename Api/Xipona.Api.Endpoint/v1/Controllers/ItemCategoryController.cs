@@ -70,7 +70,7 @@ public class ItemCategoryController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ItemCategorySearchResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ItemCategorySearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [Route("")]
@@ -89,15 +89,15 @@ public class ItemCategoryController : ControllerBase
         if (itemCategoryReadModels.Count == 0)
             return NoContent();
 
-        var itemCategoryContracts =
-            _converters.ToContract<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract>(
-                itemCategoryReadModels);
+        var itemCategoryContracts = _converters
+            .ToContract<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract>(itemCategoryReadModels)
+            .ToList();
 
         return Ok(itemCategoryContracts);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ItemCategoryContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ItemCategoryContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active")]
     public async Task<IActionResult> GetAllActiveItemCategoriesAsync(CancellationToken cancellationToken = default)
@@ -108,7 +108,7 @@ public class ItemCategoryController : ControllerBase
         if (readModels.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(readModels);
+        var contracts = _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(readModels).ToList();
 
         return Ok(contracts);
     }

@@ -72,7 +72,7 @@ public class StoreController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<StoreForShoppingContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<StoreForShoppingContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active-for-shopping")]
     public async Task<IActionResult> GetActiveStoresForShoppingAsync(CancellationToken cancellationToken = default)
@@ -83,12 +83,12 @@ public class StoreController : ControllerBase
         if (models.Count == 0)
             return NoContent();
 
-        var contract = _converters.ToContract<IStore, StoreForShoppingContract>(models);
+        var contract = _converters.ToContract<IStore, StoreForShoppingContract>(models).ToList();
         return Ok(contract);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<StoreForItemContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<StoreForItemContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active-for-item")]
     public async Task<IActionResult> GetActiveStoresForItemAsync(CancellationToken cancellationToken = default)
@@ -99,12 +99,12 @@ public class StoreController : ControllerBase
         if (models.Count == 0)
             return NoContent();
 
-        var contract = _converters.ToContract<IStore, StoreForItemContract>(models);
+        var contract = _converters.ToContract<IStore, StoreForItemContract>(models).ToList();
         return Ok(contract);
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<StoreSearchResultContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<StoreSearchResultContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("active-overview")]
     public async Task<IActionResult> GetActiveStoresOverviewAsync(CancellationToken cancellationToken = default)
@@ -115,7 +115,7 @@ public class StoreController : ControllerBase
         if (models.Count == 0)
             return NoContent();
 
-        var contract = _converters.ToContract<IStore, StoreSearchResultContract>(models);
+        var contract = _converters.ToContract<IStore, StoreSearchResultContract>(models).ToList();
         return Ok(contract);
     }
 
