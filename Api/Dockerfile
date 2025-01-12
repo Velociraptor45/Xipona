@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS base
+FROM scratch AS base
 ARG APP_VERSION
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN dotnet build "Xipona.Api.WebApp/Xipona.Api.WebApp.csproj" -c Release -o /app
 
 ################# PUBLISH #################
 FROM build AS publish
-RUN dotnet publish "Xipona.Api.WebApp/Xipona.Api.WebApp.csproj" -c Release -o /app/publish --no-restore --sc false -a $TARGETARCH
+RUN dotnet publish "Xipona.Api.WebApp/Xipona.Api.WebApp.csproj" -c Release -o /app/publish --no-restore --sc true -a $TARGETARCH
 
 ################## FINAL ##################
 FROM base AS final
