@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
@@ -979,7 +978,7 @@ public class ShoppingListExchangeServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(OldShoppingListItem);
             TestPropertyNotSetException.ThrowIfNull(ShoppingListMock);
-            ShoppingListRepositoryMock.SetupFindActiveByAsync(OldShoppingListItem.Id, ShoppingListMock.Object.ToMonoList());
+            ShoppingListRepositoryMock.SetupFindActiveByAsync(OldShoppingListItem.Id, [ShoppingListMock.Object]);
         }
 
         public void SetupFindingNoShoppingList()

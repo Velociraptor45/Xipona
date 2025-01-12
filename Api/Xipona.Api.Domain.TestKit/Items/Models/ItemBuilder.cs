@@ -1,5 +1,4 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
@@ -77,7 +76,7 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
 
     public ItemBuilder WithAvailability(ItemAvailability availability)
     {
-        return WithAvailabilities(availability.ToMonoList());
+        return WithAvailabilities([availability]);
     }
 
     public ItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)

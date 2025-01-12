@@ -36,7 +36,6 @@ using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
-using System.Diagnostics;
 using System.Threading;
 using AddItemToShoppingListContract = ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 
@@ -47,9 +46,6 @@ namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 [Route("v1/shopping-lists")]
 public class ShoppingListController : ControllerBase
 {
-    public static readonly string ActivitySourceName = ActivitySourceNameGenerator.Generate<ShoppingListController>();
-
-    private readonly ActivitySource _activitySource = new(ActivitySourceName);
     private readonly IQueryDispatcher _queryDispatcher;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IEndpointConverters _converters;
@@ -72,7 +68,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> GetActiveShoppingListByStoreIdAsync([FromRoute] Guid storeId,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var query = new ActiveShoppingListByStoreIdQuery(new StoreId(storeId));
 
         ShoppingListReadModel readModel;
@@ -103,7 +98,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> RemoveItemFromShoppingListAsync([FromRoute] Guid id,
         [FromBody] RemoveItemFromShoppingListContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         OfflineTolerantItemId tolerantItemId;
         try
         {
@@ -148,7 +142,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> AddTemporaryItemToShoppingListAsync([FromRoute] Guid id,
         [FromBody] AddTemporaryItemToShoppingListContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         if (string.IsNullOrWhiteSpace(contract.ItemName))
         {
             return BadRequest("Item name mustn't be empty");
@@ -181,7 +174,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> AddItemToShoppingListAsync([FromRoute] Guid id,
         [FromBody] AddItemToShoppingListContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var command = new AddItemToShoppingListCommand(
             new ShoppingListId(id),
             new ItemId(contract.ItemId),
@@ -213,7 +205,6 @@ public class ShoppingListController : ControllerBase
         [FromRoute] Guid itemId, [FromRoute] Guid itemTypeId, [FromBody] AddItemWithTypeToShoppingListContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var command = new AddItemWithTypeToShoppingListCommand(
             new ShoppingListId(id),
             new ItemId(itemId),
@@ -245,7 +236,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> AddItemsToShoppingListsAsync(
         [FromBody] AddItemsToShoppingListsContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var command = _converters.ToDomain<AddItemsToShoppingListsContract, AddItemsToShoppingListsCommand>(contract);
 
         try
@@ -273,7 +263,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> PutItemInBasketAsync([FromRoute] Guid id,
         [FromBody] PutItemInBasketContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         OfflineTolerantItemId itemId;
         try
         {
@@ -314,7 +303,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> RemoveItemFromBasketAsync([FromRoute] Guid id,
         [FromBody] RemoveItemFromBasketContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         OfflineTolerantItemId itemId;
         try
         {
@@ -355,7 +343,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> ChangeItemQuantityOnShoppingListAsync([FromRoute] Guid id,
         [FromBody] ChangeItemQuantityOnShoppingListContract contract, CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         OfflineTolerantItemId itemId;
         try
         {
@@ -396,7 +383,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> FinishListAsync([FromRoute] Guid id, [FromQuery] DateTimeOffset? finishedAt,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
         var command = new FinishShoppingListCommand(new ShoppingListId(id), finishedAt ?? DateTimeOffset.UtcNow);
         try
         {
@@ -422,8 +408,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> AddItemDiscountAsync([FromRoute] Guid id, [FromBody] AddItemDiscountContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
-
         var command = _converters.ToDomain<(Guid, AddItemDiscountContract), AddItemDiscountCommand>((id, contract));
         try
         {
@@ -449,8 +433,6 @@ public class ShoppingListController : ControllerBase
     public async Task<IActionResult> RemoveItemDiscountAsync([FromRoute] Guid id, [FromBody] RemoveItemDiscountContract contract,
         CancellationToken cancellationToken = default)
     {
-        using var activity = _activitySource.StartActivity();
-
         var command = _converters.ToDomain<(Guid, RemoveItemDiscountContract), RemoveItemDiscountCommand>((id, contract));
         try
         {

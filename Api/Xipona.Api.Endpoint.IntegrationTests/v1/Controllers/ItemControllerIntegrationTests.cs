@@ -806,7 +806,7 @@ public class ItemControllerIntegrationTests
                 var itemTypes = ItemTypeEntityMother
                     .Initial()
                     .WithName("ABC" + SearchInput)
-                    .WithAvailableAt(availability.ToMonoList())
+                    .WithAvailableAt([availability])
                     .CreateMany(1)
                     .ToList();
                 var item = ItemEntityMother
@@ -835,7 +835,7 @@ public class ItemControllerIntegrationTests
                 var itemTypes = ItemTypeEntityMother
                     .Initial()
                     .WithName("ABC4732" + SearchInput)
-                    .WithAvailableAt(availability.ToMonoList())
+                    .WithAvailableAt([availability])
                     .CreateMany(1)
                     .ToList();
                 var item = ItemEntityMother
@@ -862,7 +862,7 @@ public class ItemControllerIntegrationTests
                     .Create();
                 var item = ItemEntityMother.Initial()
                     .WithName("Item" + SearchInput)
-                    .WithAvailableAt(availability.ToMonoList())
+                    .WithAvailableAt([availability])
                     .Create();
                 _items.Add(item);
             }
@@ -877,7 +877,7 @@ public class ItemControllerIntegrationTests
                     .Create();
                 var item = ItemEntityMother.Initial()
                     .WithoutManufacturerId()
-                    .WithAvailableAt(availability.ToMonoList())
+                    .WithAvailableAt([availability])
                     .Create();
                 _items.Add(item);
 
@@ -986,7 +986,7 @@ public class ItemControllerIntegrationTests
                 var availability = item.ItemTypes.First().AvailableAt.First(av => av.StoreId == StoreId);
                 var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
 
-                ExpectedResult = new SearchItemForShoppingListResultContract(
+                ExpectedResult = [new SearchItemForShoppingListResultContract(
                         item.Id,
                         item.ItemTypes.First().Id,
                         $"{item.Name} {item.ItemTypes.First().Name}",
@@ -996,7 +996,7 @@ public class ItemControllerIntegrationTests
                         _itemCategories.First().Name,
                         "",
                         new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
-                    .ToMonoList();
+                    ];
             }
 
             public void SetupExpectedResultForOnlyTypeNameMatch()
@@ -1008,7 +1008,7 @@ public class ItemControllerIntegrationTests
                 var availability = item.ItemTypes.First().AvailableAt.First(av => av.StoreId == StoreId);
                 var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
 
-                ExpectedResult = new SearchItemForShoppingListResultContract(
+                ExpectedResult = [new SearchItemForShoppingListResultContract(
                         item.Id,
                         item.ItemTypes.First().Id,
                         $"{item.Name} {item.ItemTypes.First().Name}",
@@ -1018,7 +1018,7 @@ public class ItemControllerIntegrationTests
                         _itemCategories.First().Name,
                         "",
                         new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
-                    .ToMonoList();
+                    ];
             }
 
             public async Task SetupDatabaseAsync()
@@ -1749,12 +1749,12 @@ public class ItemControllerIntegrationTests
                     ExpectedItem.QuantityTypeInPacket,
                     ExpectedItem.ItemCategoryId!.Value,
                     ExpectedItem.ManufacturerId,
-                    new ItemAvailabilityContract
+                    [new ItemAvailabilityContract
                     {
                         StoreId = _expectedAvailability.StoreId,
                         DefaultSectionId = _expectedAvailability.DefaultSectionId,
                         Price = _expectedAvailability.Price
-                    }.ToMonoList());
+                    }]);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -1925,14 +1925,14 @@ public class ItemControllerIntegrationTests
                         {
                             Id = ExistingItem.ItemTypes.First().Id,
                             Name = ExpectedItem.ItemTypes.First().Name,
-                            Availabilities = new ItemAvailabilityContract
+                            Availabilities = [new ItemAvailabilityContract
                             {
                                 StoreId = _expectedAvailability.StoreId,
                                 DefaultSectionId = _expectedAvailability.DefaultSectionId,
                                 Price = _expectedAvailability.Price
-                            }.ToMonoList()
+                            }]
                         }
-                    });
+        });
             }
 
             public async Task PrepareDatabaseAsync()

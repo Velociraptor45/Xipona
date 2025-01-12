@@ -1,5 +1,4 @@
 ﻿using Force.DeepCloner;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
@@ -612,7 +611,7 @@ public class ShoppingListSectionTests
                 var item = sut.Items.First();
                 var newItem = new ShoppingListItem(item.Id, item.TypeId, true, item.Quantity);
 
-                ExpectedResult = new ShoppingListSection(sut.Id, newItem.ToMonoList());
+                ExpectedResult = new ShoppingListSection(sut.Id, [newItem]);
             }
         }
     }
@@ -731,7 +730,7 @@ public class ShoppingListSectionTests
                 var item = sut.Items.First();
                 var newItem = new ShoppingListItem(item.Id, item.TypeId, false, item.Quantity);
 
-                ExpectedResult = new ShoppingListSection(sut.Id, newItem.ToMonoList());
+                ExpectedResult = new ShoppingListSection(sut.Id, [newItem]);
             }
         }
     }
@@ -843,7 +842,7 @@ public class ShoppingListSectionTests
                 var item = sut.Items.First();
                 var newItem = new ShoppingListItem(item.Id, item.TypeId, item.IsInBasket, Quantity.Value);
 
-                ExpectedResult = new ShoppingListSection(sut.Id, newItem.ToMonoList());
+                ExpectedResult = new ShoppingListSection(sut.Id, [newItem]);
             }
         }
     }

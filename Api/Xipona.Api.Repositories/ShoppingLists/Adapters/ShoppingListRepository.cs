@@ -154,7 +154,7 @@ public class ShoppingListRepository : IShoppingListRepository
         catch (DbUpdateConcurrencyException ex)
         {
             _logger.LogInformation(ex,
-                () => "Saving shopping list {ShoppingListId} failed due to concurrency violation", shoppingList.Id.Value);
+                "Saving shopping list {ShoppingListId} failed due to concurrency violation", shoppingList.Id.Value);
             throw new DomainException(new ModelOutOfDateReason());
         }
     }

@@ -7,8 +7,8 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using ProjectHermes.Xipona.Api.Core.Constants;
 using ProjectHermes.Xipona.Api.Core.Files;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
             Console.WriteLine("OTEL API key not provided. Skipping API key header configuration");
 
         var defResourceBuilder = ResourceBuilder.CreateEmpty()
-            .AddService("Xipona.Api", serviceVersion: configuration["APP_VERSION"])
+            .AddService(Application.ServiceName, serviceVersion: configuration["APP_VERSION"])
             .AddAttributes(new Dictionary<string, object>()
             {
                 ["deployment.environment"] = environment.EnvironmentName
@@ -54,15 +54,7 @@ public static class ServiceCollectionExtensions
                 tracing.AddHttpClientInstrumentation();
                 tracing.AddAspNetCoreInstrumentation();
                 tracing.SetResourceBuilder(defResourceBuilder);
-                tracing.AddSource(
-                    ItemCategoryController.ActivitySourceName,
-                    ItemController.ActivitySourceName,
-                    ManufacturerController.ActivitySourceName,
-                    RecipeController.ActivitySourceName,
-                    RecipeTagController.ActivitySourceName,
-                    ShoppingListController.ActivitySourceName,
-                    StoreController.ActivitySourceName
-                    );
+                tracing.AddSource(Application.ActivitySourceName);
                 if (environment.IsEnvironment("Local"))
                 {
                     tracing.AddOtlpExporter(opt =>

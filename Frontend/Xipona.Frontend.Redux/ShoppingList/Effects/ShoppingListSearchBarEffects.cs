@@ -7,7 +7,6 @@ using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using RestEase;
-using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 
@@ -16,15 +15,17 @@ public sealed class ShoppingListSearchBarEffects : IAsyncDisposable
     private readonly IApiClient _client;
     private readonly IState<ShoppingListState> _state;
     private readonly ShoppingListConfiguration _config;
-    private Timer? _startSearchTimer;
+    private readonly TimeProvider _provider;
+    private ITimer? _startSearchTimer;
     private CancellationTokenSource? _searchCancellationTokenSource;
 
     public ShoppingListSearchBarEffects(IApiClient client, IState<ShoppingListState> state,
-        ShoppingListConfiguration config)
+        ShoppingListConfiguration config, TimeProvider provider)
     {
         _client = client;
         _state = state;
         _config = config;
+        _provider = provider;
     }
 
     [EffectMethod]
@@ -33,20 +34,24 @@ public sealed class ShoppingListSearchBarEffects : IAsyncDisposable
     {
         if (string.IsNullOrWhiteSpace(action.Input))
         {
-            _startSearchTimer?.Stop();
+            _startSearchTimer?.Dispose();
+            _startSearchTimer = null;
             return Task.CompletedTask;
         }
 
         if (_startSearchTimer is not null)
         {
-            _startSearchTimer.Stop();
             _startSearchTimer.Dispose();
         }
 
-        _startSearchTimer = new(_config.SearchDelayAfterInput);
-        _startSearchTimer.AutoReset = false;
-        _startSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchItemForShoppingListAction());
-        _startSearchTimer.Start();
+        _startSearchTimer = _provider.CreateTimer(Search, null, _config.SearchDelayAfterInput, Timeout.InfiniteTimeSpan);
+
+        void Search(object? o)
+        {
+            _startSearchTimer?.Dispose();
+            _startSearchTimer = null;
+            dispatcher.Dispatch(new SearchItemForShoppingListAction());
+        }
 
         return Task.CompletedTask;
     }
@@ -140,6 +145,7 @@ public sealed class ShoppingListSearchBarEffects : IAsyncDisposable
     public ValueTask DisposeAsync()
     {
         _searchCancellationTokenSource?.Dispose();
+        _startSearchTimer?.Dispose();
         return ValueTask.CompletedTask;
     }
 }

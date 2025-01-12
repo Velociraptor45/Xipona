@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
@@ -22,7 +21,7 @@ public static class ItemTypeMother
     public static ItemTypeBuilder InitialAvailableAt(ItemAvailability availability)
     {
         return new ItemTypeBuilder()
-            .WithAvailabilities(availability.ToMonoList())
+            .WithAvailabilities([availability])
             .WithIsDeleted(false)
             .WithoutPredecessorId();
     }

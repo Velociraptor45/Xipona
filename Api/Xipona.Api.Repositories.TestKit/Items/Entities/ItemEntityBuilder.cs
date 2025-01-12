@@ -134,7 +134,7 @@ public class ItemEntityBuilder : TestBuilder<Item>
 
     public ItemEntityBuilder WithItemType(ItemType itemType)
     {
-        return WithItemTypes(itemType.ToMonoList());
+        return WithItemTypes([itemType]);
     }
 
     public ItemEntityBuilder WithItemTypes(ICollection<ItemType> itemTypes)

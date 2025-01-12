@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Validations;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
@@ -127,9 +126,7 @@ public class AvailabilityValidationServiceTests
 
         public void SetupAvailabilities()
         {
-            Availabilities =
-                ((IEnumerable<ItemAvailability>)ItemAvailabilityMother.Initial().CreateMany(3))
-                .ToList();
+            Availabilities = ItemAvailabilityMother.Initial().CreateMany(3).ToList();
         }
 
         public void SetupStores()
@@ -139,7 +136,7 @@ public class AvailabilityValidationServiceTests
             foreach (var availability in Availabilities)
             {
                 var section = new SectionBuilder().WithId(availability.DefaultSectionId).Create();
-                var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
+                var sections = new Sections([section], _sectionFactoryMock.Object);
                 var store = StoreMother.Initial()
                     .WithSections(sections)
                     .WithId(availability.StoreId)

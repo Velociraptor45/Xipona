@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -292,7 +291,7 @@ public class ItemReadModelConversionServiceTests
             var section = SectionMother.Default()
                 .WithId(availability.DefaultSectionId)
                 .Create();
-            var sections = new Sections(section.ToMonoList(), _sectionFactoryMock.Object);
+            var sections = new Sections([section], _sectionFactoryMock.Object);
 
             _store = StoreMother.Initial()
                 .WithId(availability.StoreId)
@@ -341,7 +340,7 @@ public class ItemReadModelConversionServiceTests
                 new ItemTypeReadModel(
                     itemType.Id,
                     itemType.Name,
-                    itemTypeAvailabilityReadModel.ToMonoList())
+                    [itemTypeAvailabilityReadModel])
             };
 
             var itemQuantityInPacket = Item.ItemQuantity.InPacket;
@@ -394,7 +393,7 @@ public class ItemReadModelConversionServiceTests
                 itemTypeReadModels.Add(new ItemTypeReadModel(
                     itemType.Id,
                     itemType.Name,
-                    itemTypeAvailabilityReadModel.ToMonoList()));
+                    [itemTypeAvailabilityReadModel]));
             }
 
             var itemQuantityInPacket = Item.ItemQuantity.InPacket;
@@ -413,7 +412,7 @@ public class ItemReadModelConversionServiceTests
                 quantityTypeInPacketReadModel,
                 itemCategoryReadModel,
                 manufacturerReadModel,
-                availabilityReadModel.ToMonoList(),
+                [availabilityReadModel],
                 itemTypeReadModels);
         }
 
@@ -429,7 +428,7 @@ public class ItemReadModelConversionServiceTests
             var storeReadModel = new ItemStoreReadModel(
                 store.Id,
                 store.Name,
-                sectionReadModel.ToMonoList());
+                [sectionReadModel]);
 
             return new ItemAvailabilityReadModel(
                 storeReadModel,
@@ -462,7 +461,7 @@ public class ItemReadModelConversionServiceTests
         public void SetupFindingStore()
         {
             TestPropertyNotSetException.ThrowIfNull(_store);
-            _storeRepositoryMock.SetupFindActiveByAsync(_store.Id.ToMonoList(), _store.ToMonoList());
+            _storeRepositoryMock.SetupFindActiveByAsync([_store.Id], [_store]);
         }
 
         #endregion Mock Setup

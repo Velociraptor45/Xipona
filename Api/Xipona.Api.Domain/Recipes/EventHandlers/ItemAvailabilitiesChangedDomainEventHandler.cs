@@ -22,7 +22,7 @@ public class ItemAvailabilitiesChangedDomainEventHandler : IDomainEventHandler<I
     public async Task HandleAsync(ItemAvailabilitiesChangedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         _logger.LogDebug(
-            () => "Started handling {EventName} for item '{ItemId}' for recipes",
+            "Started handling {EventName} for item '{ItemId}' for recipes",
             nameof(ItemAvailabilitiesChangedDomainEvent),
             domainEvent.ItemId);
 
@@ -31,7 +31,7 @@ public class ItemAvailabilitiesChangedDomainEventHandler : IDomainEventHandler<I
             domainEvent.NewAvailabilities);
 
         _logger.LogDebug(
-            () => "Finished handling {EventName} for item '{ItemId}' for recipes",
+            "Finished handling {EventName} for item '{ItemId}' for recipes",
             nameof(ItemAvailabilitiesChangedDomainEvent),
             domainEvent.ItemId);
     }

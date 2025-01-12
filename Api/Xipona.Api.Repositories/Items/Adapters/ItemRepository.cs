@@ -280,7 +280,7 @@ public class ItemRepository : IItemRepository
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogInformation(ex, () => "Saving item '{ItemId}' failed due to concurrency violation", item.Id.Value);
+                _logger.LogInformation(ex, "Saving item '{ItemId}' failed due to concurrency violation", item.Id.Value);
                 throw new DomainException(new ModelOutOfDateReason());
             }
             entityIdToLoad = updatedEntity.Id;
@@ -288,7 +288,7 @@ public class ItemRepository : IItemRepository
 
         await ((AggregateRoot)item).DispatchDomainEvents(_domainEventDispatcher);
 
-        var e = await GetItemQuery().FirstAsync(i => i.Id == entityIdToLoad);
+        var e = await GetItemQuery().FirstAsync(i => i.Id == entityIdToLoad, cancellationToken: _cancellationToken);
         return _toModelConverter.ToDomain(e);
     }
 

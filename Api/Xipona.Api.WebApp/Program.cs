@@ -13,6 +13,7 @@ using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Core.Files;
 using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
+using ProjectHermes.Xipona.Api.Endpoint.Middleware;
 using ProjectHermes.Xipona.Api.Repositories;
 using ProjectHermes.Xipona.Api.Repositories.Common.Services;
 using ProjectHermes.Xipona.Api.Vault;
@@ -92,6 +93,11 @@ SetupSecurity();
 
 var app = builder.Build();
 
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    Diagnostics.DisposeInstance();
+});
+
 app.UseExceptionHandling();
 if (!app.Environment.IsProduction())
 {
@@ -119,6 +125,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<DiagnosticsMiddleware>();
 
 app.MapControllers();
 
