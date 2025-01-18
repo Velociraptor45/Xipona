@@ -21,8 +21,8 @@ public class DatabaseConfigurationLoadingService
 
     public async Task<ConnectionStrings> LoadAsync()
     {
-        var dbConfig = _configuration.GetSection("Database").Get<DatabaseConfig>()
-                       ?? throw new InvalidOperationException("Database configuration is missing in appsettings");
+        var dbConfig = new DatabaseConfig();
+        _configuration.GetSection("Database").Bind(dbConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
         string username = LoadSecret("PH_XIPONA_DB_USERNAME_FILE", "PH_XIPONA_DB_USERNAME");
         string password = LoadSecret("PH_XIPONA_DB_PASSWORD_FILE", "PH_XIPONA_DB_PASSWORD");
@@ -48,8 +48,8 @@ public class DatabaseConfigurationLoadingService
 
     internal class DatabaseConfig
     {
-        public string Name { get; init; } = string.Empty;
-        public string Address { get; init; } = string.Empty;
-        public string Port { get; init; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string Port { get; set; } = string.Empty;
     }
 }

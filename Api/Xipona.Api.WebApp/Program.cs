@@ -49,13 +49,15 @@ var configurationLoadingService =
 var connectionStrings = await configurationLoadingService.LoadAsync();
 builder.Services.AddSingleton(connectionStrings);
 
-builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)
+builder.Services
+    .AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)
     .AddJsonOptions(opt => opt.JsonSerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointControllers();
 
-var authOptions = configuration.GetSection("Auth").Get<AuthenticationOptions>();
+var authOptions = new AuthenticationOptions();
+configuration.GetSection("Auth").Bind(authOptions);
 
 builder.Services.AddSwaggerGen(opt =>
 {
