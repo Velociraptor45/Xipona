@@ -57,6 +57,10 @@ public static class ServiceCollectionExtensions
                 tracing.AddSource(Application.ActivitySourceName);
                 if (environment.IsEnvironment("Local"))
                 {
+                    tracing.AddConsoleExporter();
+                }
+                else
+                {
                     tracing.AddOtlpExporter(opt =>
                     {
                         opt.Endpoint = new Uri(tracesEndpointUrl);
@@ -64,10 +68,6 @@ public static class ServiceCollectionExtensions
                         if (includeApiKeyHeader)
                             opt.Headers = apiKeyHeader;
                     });
-                }
-                else
-                {
-                    tracing.AddConsoleExporter();
                 }
             });
 
@@ -82,6 +82,10 @@ public static class ServiceCollectionExtensions
                 logOpt.ParseStateValues = true;
                 if (environment.IsEnvironment("Local"))
                 {
+                    logOpt.AddConsoleExporter();
+                }
+                else
+                {
                     logOpt.AddOtlpExporter(opt =>
                     {
                         opt.Endpoint = new Uri(logsEndpointUrl);
@@ -89,10 +93,6 @@ public static class ServiceCollectionExtensions
                         if (includeApiKeyHeader)
                             opt.Headers = apiKeyHeader;
                     });
-                }
-                else
-                {
-                    logOpt.AddConsoleExporter();
                 }
             });
             if (environment.IsProduction())
