@@ -24,8 +24,12 @@ public class VaultService : IVaultService
         _configuration = configuration;
         _fileLoadingService = fileLoadingService;
         _keyVaultConfig = new Lazy<KeyVaultConfig>(() =>
-            configuration.GetSection("KeyVault").Get<KeyVaultConfig>()
-                ?? throw new InvalidOperationException("KeyVault config is missing in appsettings"));
+        {
+            var instance = new KeyVaultConfig();
+            // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
+            configuration.GetSection("KeyVault").Bind(instance, opt => opt.ErrorOnUnknownConfiguration = true);
+            return instance;
+        });
 
         _username = LoadSecret("PH_XIPONA_VAULT_USERNAME_FILE", "PH_XIPONA_VAULT_USERNAME");
         _password = LoadSecret("PH_XIPONA_VAULT_PASSWORD_FILE", "PH_XIPONA_VAULT_PASSWORD");
@@ -80,13 +84,13 @@ public class VaultService : IVaultService
 
     internal sealed class KeyVaultConfig
     {
-        public string Uri { get; init; } = string.Empty;
-        public string MountPoint { get; init; } = string.Empty;
-        public PathsConfig Paths { get; init; } = new();
+        public string Uri { get; set; } = string.Empty;
+        public string MountPoint { get; set; } = string.Empty;
+        public PathsConfig Paths { get; set; } = new();
     }
 
     internal sealed class PathsConfig
     {
-        public string Database { get; init; } = string.Empty;
+        public string Database { get; set; } = string.Empty;
     }
 }

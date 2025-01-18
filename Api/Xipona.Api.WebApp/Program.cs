@@ -114,7 +114,9 @@ app.UseSwaggerUI(c =>
 
 app.UseCors(policyBuilder =>
 {
-    var corsConfig = app.Configuration.GetSection("Cors").Get<CorsConfig>();
+    var corsConfig = new CorsConfig();
+    // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
+    app.Configuration.GetSection("Cors").Bind(corsConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
     policyBuilder
         .WithOrigins(corsConfig.AllowedOrigins)
