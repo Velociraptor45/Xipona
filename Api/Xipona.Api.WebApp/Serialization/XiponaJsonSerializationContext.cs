@@ -83,8 +83,6 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists.AddItemToShoppingListContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00ShoppingLists00Commands00AddItemsToShoppingLists00AddItemToShoppingListContract")]
 [JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00ShoppingLists00Commands00AddItemToShoppingList00AddItemToShoppingListContract")]
 // Recipe
-[JsonSerializable(typeof(RecipeTagContract))]
-[JsonSerializable(typeof(CreateRecipeTagContract))]
 [JsonSerializable(typeof(List<RecipeSearchResultContract>))]
 [JsonSerializable(typeof(IngredientContract))]
 [JsonSerializable(typeof(PreparationStepContract))]
@@ -133,6 +131,10 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 // ItemCategory
 [JsonSerializable(typeof(List<ItemCategorySearchResultContract>))]
 [JsonSerializable(typeof(ModifyItemCategoryContract))]
+// Recipe Tag
+[JsonSerializable(typeof(RecipeTagContract))]
+[JsonSerializable(typeof(List<RecipeTagContract>))]
+[JsonSerializable(typeof(CreateRecipeTagContract))]
 // Common
 [JsonSerializable(typeof(List<ItemCategoryContract>))]
 [JsonSerializable(typeof(List<ManufacturerContract>))]

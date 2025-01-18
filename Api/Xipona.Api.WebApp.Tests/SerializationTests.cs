@@ -18,6 +18,8 @@ public class SerializationTests
             .Concat(GetTypesForController(typeof(ItemCategoryController)))
             .Concat(GetTypesForController(typeof(ManufacturerController)))
             .Concat(GetTypesForController(typeof(ItemController)))
+            .Concat(GetTypesForController(typeof(RecipeTagController)))
+            .Concat(GetTypesForController(typeof(MonitoringController)))
             .Distinct()
             .ToList();
 

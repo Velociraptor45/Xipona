@@ -78,14 +78,14 @@ public class VaultService : IVaultService
         public string Password { get; init; } = string.Empty;
     }
 
-    private sealed class KeyVaultConfig
+    internal sealed class KeyVaultConfig
     {
         public string Uri { get; init; } = string.Empty;
         public string MountPoint { get; init; } = string.Empty;
         public PathsConfig Paths { get; init; } = new();
     }
 
-    private sealed class PathsConfig
+    internal sealed class PathsConfig
     {
         public string Database { get; init; } = string.Empty;
     }

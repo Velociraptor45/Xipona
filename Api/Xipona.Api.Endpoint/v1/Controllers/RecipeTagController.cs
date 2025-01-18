@@ -34,7 +34,7 @@ public class RecipeTagController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<RecipeTagContract>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<RecipeTagContract>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Route("all")]
     public async Task<IActionResult> GetAllRecipeTagsAsync(CancellationToken cancellationToken = default)
@@ -45,7 +45,7 @@ public class RecipeTagController : ControllerBase
         if (recipeTags.Count == 0)
             return NoContent();
 
-        var contracts = _converters.ToContract<IRecipeTag, RecipeTagContract>(recipeTags);
+        var contracts = _converters.ToContract<IRecipeTag, RecipeTagContract>(recipeTags).ToList();
         return Ok(contracts);
     }
 
