@@ -6,8 +6,17 @@
     <Version>0.12.0</Version>
     <UserSecretsId>fa7d8437-775b-44ff-a217-06a4efe92f94</UserSecretsId>
     <PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>full</TrimMode>
+    <TrimMode>partial</TrimMode>
+    <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
   </PropertyGroup>
+
+  <ItemGroup>
+    <TrimmableAssembly Include="Xipona.Api.WebApp" />
+    <TrimmableAssembly Include="Xipona.Api.ApplicationServices" />
+    <TrimmableAssembly Include="Xipona.Api.Domain" />
+    <TrimmableAssembly Include="Xipona.Api.Core" />
+    <TrimmableAssembly Include="Xipona.Api.Vault" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
