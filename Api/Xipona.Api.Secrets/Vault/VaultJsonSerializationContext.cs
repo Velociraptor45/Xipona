@@ -11,6 +11,9 @@ namespace ProjectHermes.Xipona.Api.Secrets.Vault;
 [JsonSerializable(typeof(VaultResponse<DatabaseSecret>))]
 [JsonSerializable(typeof(VaultEntry<DatabaseSecret>))]
 [JsonSerializable(typeof(DatabaseSecret))]
+[JsonSerializable(typeof(VaultResponse<LoggingSecret>))]
+[JsonSerializable(typeof(VaultEntry<LoggingSecret>))]
+[JsonSerializable(typeof(LoggingSecret))]
 internal partial class VaultJsonSerializationContext : JsonSerializerContext
 {
 }

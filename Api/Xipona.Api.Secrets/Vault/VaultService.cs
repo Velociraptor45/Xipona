@@ -31,31 +31,40 @@ public class VaultService : ISecretStore
         _jsonSerializationOptions.TypeInfoResolverChain.Add(VaultJsonSerializationContext.Default);
     }
 
-    public Task<string?> LoadLoggingApiKey()
+    public async Task<string?> LoadLoggingApiKey()
     {
-        return Task.FromResult<string?>("");
+        if (string.IsNullOrWhiteSpace(_config.Paths.Logging))
+            return null;
+
+        return await _policy.ExecuteAsync(async () =>
+        {
+            var loggingSecret = await GetSecret<LoggingSecret>(_config.Paths.Logging);
+            return loggingSecret.ApiKey;
+        });
     }
 
     public async Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
     {
         return await _policy.ExecuteAsync(async () =>
         {
-            using var client = GetClient();
-            var token = await GetToken(client);
-            return await GetDbCredentials(client, token);
+            var dbSecret = await GetSecret<DatabaseSecret>(_config.Paths.Database);
+            return (dbSecret.Username, dbSecret.Password);
         });
     }
 
-    private async Task<(string Username, string Password)> GetDbCredentials(HttpClient client, string token)
+    private async Task<T> GetSecret<T>(string secret)
     {
+        using var client = GetClient();
+        var token = await GetToken(client);
+
         client.DefaultRequestHeaders.Add("X-Vault-Token", token);
         var response = await client.GetAsync(
-            new Uri($"v1/{_config.MountPoint}/data/{_config.Paths.Database}", UriKind.Relative));
+            new Uri($"v1/{_config.MountPoint}/data/{secret}", UriKind.Relative));
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
-        var deserializedResponse = JsonSerializer.Deserialize<VaultResponse<DatabaseSecret>>(content, _jsonSerializationOptions)!;
-        return (deserializedResponse.Type.Data.Username, deserializedResponse.Type.Data.Password);
+        var deserializedResponse = JsonSerializer.Deserialize<VaultResponse<T>>(content, _jsonSerializationOptions)!;
+        return deserializedResponse.Type.Data;
     }
 
     private HttpClient GetClient()
