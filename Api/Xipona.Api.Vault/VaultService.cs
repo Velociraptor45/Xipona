@@ -1,77 +1,92 @@
-﻿using Microsoft.Extensions.Configuration;
-using Polly;
+﻿using Polly;
 using Polly.Retry;
-using ProjectHermes.Xipona.Api.Core.Files;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using VaultSharp;
-using VaultSharp.V1.AuthMethods.UserPass;
 
 namespace ProjectHermes.Xipona.Api.Vault;
 
 public class VaultService : IVaultService
 {
-    private readonly IConfiguration _configuration;
-    private readonly IFileLoadingService _fileLoadingService;
-    private readonly string _password;
-    private readonly string _username;
-    private readonly Lazy<KeyVaultConfig> _keyVaultConfig;
+    private readonly VaultCredentials _credentials;
+    private readonly VaultConfig _config;
+
     private readonly AsyncRetryPolicy _policy;
+    private readonly JsonSerializerOptions _jsonSerializationOptions;
 
     private const int _retryCount = 10;
 
-    public VaultService(IConfiguration configuration, IFileLoadingService fileLoadingService)
+    public VaultService(VaultCredentials credentials, VaultConfig config)
     {
-        _configuration = configuration;
-        _fileLoadingService = fileLoadingService;
-        _keyVaultConfig = new Lazy<KeyVaultConfig>(() =>
-        {
-            var instance = new KeyVaultConfig();
-            // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
-            configuration.GetSection("KeyVault").Bind(instance, opt => opt.ErrorOnUnknownConfiguration = true);
-            return instance;
-        });
-
-        _username = LoadSecret("PH_XIPONA_VAULT_USERNAME_FILE", "PH_XIPONA_VAULT_USERNAME");
-        _password = LoadSecret("PH_XIPONA_VAULT_PASSWORD_FILE", "PH_XIPONA_VAULT_PASSWORD");
+        _credentials = credentials;
+        _config = config;
 
         _policy = Policy.Handle<Exception>().WaitAndRetryAsync(
             _retryCount,
             i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1),
             (e, _, tryNo, _) => Console.WriteLine($"Failed to retrieve value from vault (Try no. {tryNo}): {e}"));
+
+        _jsonSerializationOptions = new JsonSerializerOptions();
+        _jsonSerializationOptions.TypeInfoResolverChain.Add(VaultJsonSerializationContext.Default);
+
     }
 
-    private string LoadSecret(string envSecretFileName, string envSecretName)
-    {
-        var file = _configuration[envSecretFileName];
-        if (string.IsNullOrWhiteSpace(file))
-            return _configuration[envSecretName] ?? string.Empty;
-
-        return _fileLoadingService.ReadFile(file);
-    }
-
-    public async Task<(string Username, string Password)> LoadCredentialsAsync()
+    public async Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
     {
         return await _policy.ExecuteAsync(async () =>
         {
-            var client = GetClient();
-            var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<DatabaseSecret>(
-                _keyVaultConfig.Value.Paths.Database,
-                mountPoint: _keyVaultConfig.Value.MountPoint);
-            Console.WriteLine("Successfully retrieved database credentials from vault");
+            using var client = GetClient();
+            var token = await GetToken(client);
 
-            var data = result.Data.Data;
-            return (data.Username, password: data.Password);
+            //using var client2 = new HttpClient(new HttpClientHandler());
+            //client2.BaseAddress = new Uri(_config.Uri);
+            //var content = new StringContent()
+            //client2.PostAsync($"", )
+
+            //var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<DatabaseSecret>(
+            //    _keyVaultConfig.Value.Paths.Database,
+            //    mountPoint: _keyVaultConfig.Value.MountPoint);
+            //Console.WriteLine("Successfully retrieved database credentials from vault");
+
+            //var data = result.Data.Data;
+            //return (data.Username, password: data.Password);
+            return ("", "");
         });
     }
 
-    private IVaultClient GetClient()
+    private HttpClient GetClient()
     {
-        var authMethod = new UserPassAuthMethodInfo(_username, _password);
-
-        var clientSettings = new VaultClientSettings(_keyVaultConfig.Value.Uri, authMethod);
-
-        return new VaultClient(clientSettings);
+        var client = new HttpClient(new HttpClientHandler());
+        client.BaseAddress = new Uri(_config.Uri);
+        return client;
     }
+
+    private async Task<string> GetToken(HttpClient client)
+    {
+        var data = new Dictionary<string, string>
+        {
+            { "password", _credentials.Password }
+        };
+
+        var requestData = new StringContent(JsonSerializer.Serialize(data, _jsonSerializationOptions));
+
+        var response = await client.PostAsync(
+            new Uri($"v1/auth/userpass/login/{_credentials.Username}", UriKind.Relative),
+            requestData);
+
+        response.EnsureSuccessStatusCode();
+        var json = await response.Content.ReadAsStringAsync();
+        var token = JsonSerializer.Deserialize<TokenAuthResponse>(json, _jsonSerializationOptions)!;
+        return token.Auth.ClientToken;
+    }
+
+    //private IVaultClient GetClient()
+    //{
+    //    var authMethod = new UserPassAuthMethodInfo(_username, _password);
+
+    //    var clientSettings = new VaultClientSettings(_keyVaultConfig.Value.Uri, authMethod);
+
+    //    return new VaultClient(clientSettings);
+    //}
 
     private sealed class DatabaseSecret
     {
@@ -81,16 +96,43 @@ public class VaultService : IVaultService
         [JsonPropertyName("password")]
         public string Password { get; init; } = string.Empty;
     }
+}
 
-    internal sealed class KeyVaultConfig
-    {
-        public string Uri { get; set; } = string.Empty;
-        public string MountPoint { get; set; } = string.Empty;
-        public PathsConfig Paths { get; set; } = new();
-    }
+internal sealed class TokenAuthResponse
+{
+    [JsonPropertyName("auth")]
+    public Auth Auth { get; init; } = new();
+}
 
-    internal sealed class PathsConfig
-    {
-        public string Database { get; set; } = string.Empty;
-    }
+internal sealed class Auth
+{
+    [JsonPropertyName("client_token")]
+    public string ClientToken { get; init; } = string.Empty;
+}
+
+[JsonSourceGenerationOptions(WriteIndented = false)]
+[JsonSerializable(typeof(TokenAuthResponse))]
+[JsonSerializable(typeof(Auth))]
+[JsonSerializable(typeof(Dictionary<string, string>))]
+internal partial class VaultJsonSerializationContext : JsonSerializerContext
+{
+}
+
+
+public sealed class VaultConfig
+{
+    public string Uri { get; set; } = string.Empty;
+    public string MountPoint { get; set; } = string.Empty;
+    public PathsConfig Paths { get; set; } = new();
+}
+
+public sealed class PathsConfig
+{
+    public string Database { get; set; } = string.Empty;
+}
+
+public sealed class VaultCredentials
+{
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 }

@@ -2,5 +2,5 @@
 
 public interface IVaultService
 {
-    Task<(string Username, string Password)> LoadCredentialsAsync();
+    Task<(string Username, string Password)> LoadDatabaseCredentialsAsync();
 }

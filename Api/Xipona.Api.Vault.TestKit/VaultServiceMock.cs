@@ -10,7 +10,7 @@ public class VaultServiceMock : Mock<IVaultService>
 
     public void SetupLoadCredentialsAsync((string UserName, string Password) returnValue)
     {
-        Setup(m => m.LoadCredentialsAsync())
+        Setup(m => m.LoadDatabaseCredentialsAsync())
             .ReturnsAsync(returnValue);
     }
 }

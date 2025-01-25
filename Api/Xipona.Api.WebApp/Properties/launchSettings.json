@@ -16,10 +16,6 @@
       "applicationUrl": "https://localhost:5050",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "PH_XIPONA_DB_USERNAME_FILE": "E:\\dev-ph-xipona-db-username.txt",
-        "PH_XIPONA_DB_PASSWORD_FILE": "E:\\dev-ph-xipona-db-password.txt",
-        //"PH_XIPONA_VAULT_PASSWORD_FILE": "E:\\dev-ph-xipona-vault-api-password.txt",
-        //"PH_XIPONA_VAULT_USERNAME_FILE": "E:\\dev-ph-xipona-vault-api-username.txt",
         "APP_VERSION": "0.13.0-pre"
       }
     },
@@ -30,10 +26,6 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "PH_XIPONA_DB_USERNAME_FILE": "E:\\dev-ph-xipona-db-username.txt",
-        "PH_XIPONA_DB_PASSWORD_FILE": "E:\\dev-ph-xipona-db-password.txt",
-        //"PH_XIPONA_VAULT_PASSWORD_FILE": "E:\\dev-ph-xipona-vault-api-password.txt",
-        //"PH_XIPONA_VAULT_USERNAME_FILE": "E:\\dev-ph-xipona-vault-api-username.txt",
         "APP_VERSION": "0.13.0-pre"
       }
     }

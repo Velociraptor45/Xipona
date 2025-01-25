@@ -29,7 +29,7 @@ public class DatabaseConfigurationLoadingService
 
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
-            (username, password) = await _vaultService.LoadCredentialsAsync();
+            (username, password) = await _vaultService.LoadDatabaseCredentialsAsync();
         }
 
         var connectionString =
