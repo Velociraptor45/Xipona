@@ -58,19 +58,19 @@ public class SecretRetriever : ISecretRetriever
     {
         return _secretStore.LoadLoggingApiKey();
     }
+}
 
-    class Secrets
-    {
-        [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME")]
-        public string VaultUsername { get; set; } = string.Empty;
+internal class Secrets
+{
+    [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME")]
+    public string VaultUsername { get; set; } = string.Empty;
 
-        [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME_FILE")]
-        public string VaultUsernameFile { get; set; } = string.Empty;
+    [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME_FILE")]
+    public string VaultUsernameFile { get; set; } = string.Empty;
 
-        [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD")]
-        public string VaultPassword { get; set; } = string.Empty;
+    [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD")]
+    public string VaultPassword { get; set; } = string.Empty;
 
-        [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD_FILE")]
-        public string VaultPasswordFile { get; set; } = string.Empty;
-    }
+    [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD_FILE")]
+    public string VaultPasswordFile { get; set; } = string.Empty;
 }
