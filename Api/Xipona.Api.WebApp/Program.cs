@@ -15,7 +15,6 @@ using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
 using ProjectHermes.Xipona.Api.Endpoint.Middleware;
 using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Vault;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
@@ -25,7 +24,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -41,15 +39,12 @@ AddAppsettingsSourceTo(builder.Configuration.Sources);
 var configuration = builder.Configuration;
 
 var fileLoadingService = new FileLoadingService();
-builder.Services.AddOtel(configuration, builder.Environment, fileLoadingService);
 
-await Configure(configuration, fileLoadingService);
+var secretRetriever = new SecretRetriever(configuration, fileLoadingService);
+var connectionStrings = await secretRetriever.LoadDatabaseCredentialsAsync();
+builder.Services.AddSingleton(connectionStrings);
 
-//var vaultService = new VaultService(configuration, fileLoadingService);
-//var configurationLoadingService =
-//    new DatabaseConfigurationLoadingService(fileLoadingService, vaultService, configuration);
-//var connectionStrings = await configurationLoadingService.LoadAsync();
-//builder.Services.AddSingleton(connectionStrings);
+await builder.Services.AddOtelAsync(configuration, builder.Environment, secretRetriever);
 
 builder.Services
     .AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)
@@ -185,69 +180,4 @@ void SetupSecurity()
     builder.Services
         .AddAuthorizationBuilder()
         .AddPolicy("User", policy => policy.RequireRole(authOptions.UserRoleName));
-}
-
-async Task Configure(IConfiguration configuration, IFileLoadingService fileLoadingService)
-{
-    //var services = new ServiceCollection();
-    //services.AddTransient<IFileLoadingService, FileLoadingService>();
-    //services.AddTransient<IVaultService, VaultService>();
-
-    var secrets = new Secrets();
-    configuration.Bind(secrets);
-
-    if ((!string.IsNullOrWhiteSpace(secrets.VaultUsername) || !string.IsNullOrWhiteSpace(secrets.VaultUsernameFile))
-        && (!string.IsNullOrWhiteSpace(secrets.VaultPassword) || !string.IsNullOrWhiteSpace(secrets.VaultPasswordFile)))
-    {
-        // use vault
-        var vaultCredentials = new VaultCredentials
-        {
-            Username = !string.IsNullOrWhiteSpace(secrets.VaultUsername)
-                ? secrets.VaultUsername
-                : fileLoadingService.ReadFile(secrets.VaultUsernameFile),
-            Password = !string.IsNullOrWhiteSpace(secrets.VaultPassword)
-                ? secrets.VaultPassword
-                : fileLoadingService.ReadFile(secrets.VaultPasswordFile)
-        };
-
-        var vaultConfig = new VaultConfig();
-        configuration.GetSection("KeyVault").Bind(vaultConfig, opt => opt.ErrorOnUnknownConfiguration = true);
-
-        var vaultService = new VaultService(vaultCredentials, vaultConfig);
-        var x = await vaultService.LoadDatabaseCredentialsAsync();
-    }
-    else
-    {
-        // use env
-    }
-
-    //services.AddHttpClient("vault", client => client.BaseAddress = )
-}
-
-
-class Secrets
-{
-    [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME")]
-    public string VaultUsername { get; set; }
-
-    [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME_FILE")]
-    public string VaultUsernameFile { get; set; }
-
-    [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD")]
-    public string VaultPassword { get; set; }
-
-    [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD_FILE")]
-    public string VaultPasswordFile { get; set; }
-
-    //[JsonPropertyName("PH_XIPONA_DB_USERNAME")]
-    //public string DbUsername { get; set; }
-
-    //[JsonPropertyName("PH_XIPONA_DB_USERNAME_FILE")]
-    //public string DbUsernameFile { get; set; }
-
-    //[JsonPropertyName("PH_XIPONA_DB_PASSWORD")]
-    //public string DbPassword { get; set; }
-
-    //[JsonPropertyName("PH_XIPONA_DB_PASSWORD_FILE")]
-    //public string DbPasswordFile { get; set; }
 }

@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
-    <ProjectReference Include="..\Xipona.Api.Vault\Xipona.Api.Vault.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Secrets\Xipona.Api.Secrets.csproj" />
   </ItemGroup>
 
   <ItemGroup>

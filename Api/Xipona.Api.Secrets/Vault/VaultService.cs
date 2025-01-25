@@ -3,9 +3,9 @@ using Polly.Retry;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ProjectHermes.Xipona.Api.Vault;
+namespace ProjectHermes.Xipona.Api.Secrets.Vault;
 
-public class VaultService : IVaultService
+public class VaultService : IVaultService, ISecretStore
 {
     private readonly VaultCredentials _credentials;
     private readonly VaultConfig _config;
@@ -27,7 +27,11 @@ public class VaultService : IVaultService
 
         _jsonSerializationOptions = new JsonSerializerOptions();
         _jsonSerializationOptions.TypeInfoResolverChain.Add(VaultJsonSerializationContext.Default);
+    }
 
+    public Task<string?> LoadLoggingApiKey()
+    {
+        return Task.FromResult<string?>("");
     }
 
     public async Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
@@ -36,21 +40,20 @@ public class VaultService : IVaultService
         {
             using var client = GetClient();
             var token = await GetToken(client);
-
-            //using var client2 = new HttpClient(new HttpClientHandler());
-            //client2.BaseAddress = new Uri(_config.Uri);
-            //var content = new StringContent()
-            //client2.PostAsync($"", )
-
-            //var result = await client.V1.Secrets.KeyValue.V2.ReadSecretAsync<DatabaseSecret>(
-            //    _keyVaultConfig.Value.Paths.Database,
-            //    mountPoint: _keyVaultConfig.Value.MountPoint);
-            //Console.WriteLine("Successfully retrieved database credentials from vault");
-
-            //var data = result.Data.Data;
-            //return (data.Username, password: data.Password);
-            return ("", "");
+            return await GetDbCredentials(client, token);
         });
+    }
+
+    private async Task<(string Username, string Password)> GetDbCredentials(HttpClient client, string token)
+    {
+        client.DefaultRequestHeaders.Add("X-Vault-Token", token);
+        var response = await client.GetAsync(
+            new Uri($"v1/{_config.MountPoint}/data/{_config.Paths.Database}", UriKind.Relative));
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+        var deserializedResponse = JsonSerializer.Deserialize<VaultResponse<DatabaseSecret>>(content, _jsonSerializationOptions)!;
+        return (deserializedResponse.Type.Data.Username, deserializedResponse.Type.Data.Password);
     }
 
     private HttpClient GetClient()
@@ -78,24 +81,6 @@ public class VaultService : IVaultService
         var token = JsonSerializer.Deserialize<TokenAuthResponse>(json, _jsonSerializationOptions)!;
         return token.Auth.ClientToken;
     }
-
-    //private IVaultClient GetClient()
-    //{
-    //    var authMethod = new UserPassAuthMethodInfo(_username, _password);
-
-    //    var clientSettings = new VaultClientSettings(_keyVaultConfig.Value.Uri, authMethod);
-
-    //    return new VaultClient(clientSettings);
-    //}
-
-    private sealed class DatabaseSecret
-    {
-        [JsonPropertyName("username")]
-        public string Username { get; init; } = string.Empty;
-
-        [JsonPropertyName("password")]
-        public string Password { get; init; } = string.Empty;
-    }
 }
 
 internal sealed class TokenAuthResponse
@@ -114,6 +99,9 @@ internal sealed class Auth
 [JsonSerializable(typeof(TokenAuthResponse))]
 [JsonSerializable(typeof(Auth))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
+[JsonSerializable(typeof(VaultResponse<DatabaseSecret>))]
+[JsonSerializable(typeof(VaultEntry<DatabaseSecret>))]
+[JsonSerializable(typeof(DatabaseSecret))]
 internal partial class VaultJsonSerializationContext : JsonSerializerContext
 {
 }
@@ -135,4 +123,25 @@ public sealed class VaultCredentials
 {
     public required string Username { get; set; }
     public required string Password { get; set; }
+}
+
+internal sealed class VaultResponse<T>
+{
+    [JsonPropertyName("data")]
+    public required VaultEntry<T> Type { get; set; }
+}
+
+internal sealed class VaultEntry<T>
+{
+    [JsonPropertyName("data")]
+    public required T Data { get; set; }
+}
+
+internal sealed class DatabaseSecret
+{
+    [JsonPropertyName("username")]
+    public string Username { get; init; } = string.Empty;
+
+    [JsonPropertyName("password")]
+    public string Password { get; init; } = string.Empty;
 }

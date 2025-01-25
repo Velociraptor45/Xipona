@@ -5,6 +5,7 @@
     <RootNamespace>ProjectHermes.Xipona.Api.WebApp</RootNamespace>
     <Version>0.12.0</Version>
     <UserSecretsId>fa7d8437-775b-44ff-a217-06a4efe92f94</UserSecretsId>
+    <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
@@ -13,7 +14,7 @@
   <ItemGroup>
     <TrimmableAssembly Include="Xipona.Api.WebApp" />
     <TrimmableAssembly Include="Xipona.Api.Core" />
-    <TrimmableAssembly Include="Xipona.Api.Vault" />
+    <TrimmableAssembly Include="Xipona.Api.Secrets" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +32,7 @@
     <ProjectReference Include="..\Xipona.Api.Core\Xipona.Api.Core.csproj" />
     <ProjectReference Include="..\Xipona.Api.Endpoint\Xipona.Api.Endpoint.csproj" />
     <ProjectReference Include="..\Xipona.Api.Repositories\Xipona.Api.Repositories.csproj" />
-    <ProjectReference Include="..\Xipona.Api.Vault\Xipona.Api.Vault.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Secrets\Xipona.Api.Secrets.csproj" />
   </ItemGroup>
 
   <ItemGroup>

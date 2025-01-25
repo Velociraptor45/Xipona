@@ -34,7 +34,7 @@
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
     <ProjectReference Include="..\Xipona.Api.Repositories.TestKit\Xipona.Api.Repositories.TestKit.csproj" />
     <ProjectReference Include="..\Xipona.Api.Repositories\Xipona.Api.Repositories.csproj" />
-    <ProjectReference Include="..\Xipona.Api.Vault.TestKit\Xipona.Api.Vault.TestKit.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Secrets.TestKit\Xipona.Api.Secrets.TestKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

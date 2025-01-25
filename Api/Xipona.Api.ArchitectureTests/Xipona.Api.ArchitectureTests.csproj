@@ -32,7 +32,7 @@
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
     <ProjectReference Include="..\Xipona.Api.Endpoint\Xipona.Api.Endpoint.csproj" />
     <ProjectReference Include="..\Xipona.Api.Repositories\Xipona.Api.Repositories.csproj" />
-    <ProjectReference Include="..\Xipona.Api.Vault\Xipona.Api.Vault.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Secrets\Xipona.Api.Secrets.csproj" />
     <ProjectReference Include="..\Xipona.Api.WebApp\Xipona.Api.WebApp.csproj" />
   </ItemGroup>
 

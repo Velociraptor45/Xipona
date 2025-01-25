@@ -59,9 +59,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.TestTools", "Xip
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Endpoints", "03_Endpoints", "{6C4F18D9-BC6B-4F05-9B65-7A5294E5E245}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Vault", "Xipona.Api.Vault\Xipona.Api.Vault.csproj", "{E7892CA9-5FEE-4A39-941A-7F844AB0101C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Secrets", "Xipona.Api.Secrets\Xipona.Api.Secrets.csproj", "{E7892CA9-5FEE-4A39-941A-7F844AB0101C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Vault.TestKit", "Xipona.Api.Vault.TestKit\Xipona.Api.Vault.TestKit.csproj", "{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Secrets.TestKit", "Xipona.Api.Secrets.TestKit\Xipona.Api.Secrets.TestKit.csproj", "{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06_ApplicationServices", "06_ApplicationServices", "{D2DA4BE0-E274-4058-A85A-A985C24D4AF5}"
 EndProject

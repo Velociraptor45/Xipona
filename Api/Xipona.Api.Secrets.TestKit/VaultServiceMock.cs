@@ -1,6 +1,7 @@
 ﻿using Moq;
+using ProjectHermes.Xipona.Api.Secrets.Vault;
 
-namespace ProjectHermes.Xipona.Api.Vault.TestKit;
+namespace ProjectHermes.Xipona.Api.Secrets.TestKit;
 
 public class VaultServiceMock : Mock<IVaultService>
 {

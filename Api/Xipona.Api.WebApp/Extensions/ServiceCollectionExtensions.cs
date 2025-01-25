@@ -8,22 +8,23 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using ProjectHermes.Xipona.Api.Core.Constants;
-using ProjectHermes.Xipona.Api.Core.Files;
+using ProjectHermes.Xipona.Api.WebApp.Configs;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace ProjectHermes.Xipona.Api.WebApp.Extensions;
 
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddOtel(this IServiceCollection services, IConfiguration configuration,
-        IWebHostEnvironment environment, IFileLoadingService fileLoadingService)
+    public static async Task<IServiceCollection> AddOtelAsync(this IServiceCollection services, IConfiguration configuration,
+        IWebHostEnvironment environment, ISecretRetriever secretRetriever)
     {
-        var logsEndpointUrl = configuration["OpenTelemetry:LogsEndpoint"];
-        var tracesEndpointUrl = configuration["OpenTelemetry:TracesEndpoint"];
+        var otelConfig = new OtelConfig();
+        configuration.GetSection("OpenTelemetry").Bind(otelConfig);
 
-        if (string.IsNullOrWhiteSpace(logsEndpointUrl) || string.IsNullOrWhiteSpace(tracesEndpointUrl))
+        if (string.IsNullOrWhiteSpace(otelConfig.LogsEndpoint) || string.IsNullOrWhiteSpace(otelConfig.TracesEndpoint))
         {
             Console.WriteLine("OTEL logs and/or traces endpoint not provided. Skipping OTEL configuration and integrating standard logging");
             services.AddLogging(logging =>
@@ -36,8 +37,8 @@ public static class ServiceCollectionExtensions
             return services;
         }
 
-        var includeApiKeyHeader = TryGetApiKeyHeader(configuration, fileLoadingService, out var apiKeyHeader);
-        if (!includeApiKeyHeader)
+        var apiKeyHeader = await GetApiKeyHeaderAsync(otelConfig, secretRetriever);
+        if (apiKeyHeader is null)
             Console.WriteLine("OTEL API key not provided. Skipping API key header configuration");
 
         var defResourceBuilder = ResourceBuilder.CreateEmpty()
@@ -61,11 +62,12 @@ public static class ServiceCollectionExtensions
                 }
                 else
                 {
+                    tracing.AddConsoleExporter();
                     tracing.AddOtlpExporter(opt =>
                     {
-                        opt.Endpoint = new Uri(tracesEndpointUrl);
+                        opt.Endpoint = new Uri(otelConfig.TracesEndpoint);
                         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        if (includeApiKeyHeader)
+                        if (apiKeyHeader is not null)
                             opt.Headers = apiKeyHeader;
                     });
                 }
@@ -86,15 +88,17 @@ public static class ServiceCollectionExtensions
                 }
                 else
                 {
+                    logOpt.AddConsoleExporter();
                     logOpt.AddOtlpExporter(opt =>
                     {
-                        opt.Endpoint = new Uri(logsEndpointUrl);
+                        opt.Endpoint = new Uri(otelConfig.LogsEndpoint);
                         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        if (includeApiKeyHeader)
+                        if (apiKeyHeader is not null)
                             opt.Headers = apiKeyHeader;
                     });
                 }
             });
+
             if (environment.IsProduction())
                 logging.SetMinimumLevel(LogLevel.Information);
         });
@@ -102,23 +106,23 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static bool TryGetApiKeyHeader(IConfiguration configuration, IFileLoadingService fileLoadingService,
-        out string header)
+    private static async Task<string?> GetApiKeyHeaderAsync(OtelConfig otelConfig, ISecretRetriever secretRetriever)
     {
-        var headerPrefix = configuration["OpenTelemetry:ApiKeyHeaderPrefix"];
-        var apiKey = configuration["PH_XIPONA_OTEL_API_KEY"];
-        var apiKeyFile = configuration["PH_XIPONA_OTEL_API_KEY_FILE"];
+        if (string.IsNullOrWhiteSpace(otelConfig.ApiKeyHeaderPrefix))
+            return null;
 
-        if (string.IsNullOrWhiteSpace(apiKey) && !string.IsNullOrWhiteSpace(apiKeyFile))
-            apiKey = fileLoadingService.ReadFile(apiKeyFile);
+        var apiKey = await secretRetriever.LoadLoggingApiKey();
 
-        if (string.IsNullOrWhiteSpace(headerPrefix) || string.IsNullOrWhiteSpace(apiKey))
-        {
-            header = null;
-            return false;
-        }
+        if (string.IsNullOrWhiteSpace(apiKey))
+            return null;
 
-        header = $"{headerPrefix}{apiKey}";
-        return true;
+        return $"{otelConfig.ApiKeyHeaderPrefix}{apiKey}";
+    }
+
+    internal sealed class OtelConfig
+    {
+        public string LogsEndpoint { get; set; } = string.Empty;
+        public string TracesEndpoint { get; set; } = string.Empty;
+        public string ApiKeyHeaderPrefix { get; set; } = string.Empty;
     }
 }

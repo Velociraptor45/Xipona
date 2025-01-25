@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Vault;
+﻿namespace ProjectHermes.Xipona.Api.Secrets.Vault;
 
 public interface IVaultService
 {
