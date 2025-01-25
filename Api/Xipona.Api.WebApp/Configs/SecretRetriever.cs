@@ -4,6 +4,7 @@ using ProjectHermes.Xipona.Api.Repositories.Common.Services;
 using ProjectHermes.Xipona.Api.Repositories.Configs;
 using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.Secrets.Vault;
+using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
 using System.Threading.Tasks;
 
 namespace ProjectHermes.Xipona.Api.WebApp.Configs;

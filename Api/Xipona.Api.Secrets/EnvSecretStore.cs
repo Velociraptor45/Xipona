@@ -16,12 +16,21 @@ public class EnvSecretStore : ISecretStore
 
     public Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
     {
-        throw new NotImplementedException();
+        var username = LoadSecret("PH_XIPONA_VAULT_USERNAME_FILE", "PH_XIPONA_VAULT_USERNAME");
+        var password = LoadSecret("PH_XIPONA_DB_PASSWORD_FILE", "PH_XIPONA_DB_PASSWORD");
+
+        if (string.IsNullOrWhiteSpace(username))
+            throw new InvalidOperationException("Database username is missing");
+        if (string.IsNullOrWhiteSpace(password))
+            throw new InvalidOperationException("Database password is missing");
+
+        return Task.FromResult((username, password));
     }
 
     public Task<string?> LoadLoggingApiKey()
     {
-        throw new NotImplementedException();
+        var apiKey = LoadSecret("PH_XIPONA_OTEL_API_KEY_FILE", "PH_XIPONA_OTEL_API_KEY");
+        return Task.FromResult<string?>(apiKey);
     }
 
     private string LoadSecret(string envSecretFileName, string envSecretName)

@@ -1,11 +1,13 @@
 ﻿using Polly;
 using Polly.Retry;
+using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
+using ProjectHermes.Xipona.Api.Secrets.Vault.Response;
+using ProjectHermes.Xipona.Api.Secrets.Vault.Response.Token;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ProjectHermes.Xipona.Api.Secrets.Vault;
 
-public class VaultService : IVaultService, ISecretStore
+public class VaultService : ISecretStore
 {
     private readonly VaultCredentials _credentials;
     private readonly VaultConfig _config;
@@ -81,67 +83,4 @@ public class VaultService : IVaultService, ISecretStore
         var token = JsonSerializer.Deserialize<TokenAuthResponse>(json, _jsonSerializationOptions)!;
         return token.Auth.ClientToken;
     }
-}
-
-internal sealed class TokenAuthResponse
-{
-    [JsonPropertyName("auth")]
-    public Auth Auth { get; init; } = new();
-}
-
-internal sealed class Auth
-{
-    [JsonPropertyName("client_token")]
-    public string ClientToken { get; init; } = string.Empty;
-}
-
-[JsonSourceGenerationOptions(WriteIndented = false)]
-[JsonSerializable(typeof(TokenAuthResponse))]
-[JsonSerializable(typeof(Auth))]
-[JsonSerializable(typeof(Dictionary<string, string>))]
-[JsonSerializable(typeof(VaultResponse<DatabaseSecret>))]
-[JsonSerializable(typeof(VaultEntry<DatabaseSecret>))]
-[JsonSerializable(typeof(DatabaseSecret))]
-internal partial class VaultJsonSerializationContext : JsonSerializerContext
-{
-}
-
-
-public sealed class VaultConfig
-{
-    public string Uri { get; set; } = string.Empty;
-    public string MountPoint { get; set; } = string.Empty;
-    public PathsConfig Paths { get; set; } = new();
-}
-
-public sealed class PathsConfig
-{
-    public string Database { get; set; } = string.Empty;
-}
-
-public sealed class VaultCredentials
-{
-    public required string Username { get; set; }
-    public required string Password { get; set; }
-}
-
-internal sealed class VaultResponse<T>
-{
-    [JsonPropertyName("data")]
-    public required VaultEntry<T> Type { get; set; }
-}
-
-internal sealed class VaultEntry<T>
-{
-    [JsonPropertyName("data")]
-    public required T Data { get; set; }
-}
-
-internal sealed class DatabaseSecret
-{
-    [JsonPropertyName("username")]
-    public string Username { get; init; } = string.Empty;
-
-    [JsonPropertyName("password")]
-    public string Password { get; init; } = string.Empty;
 }
