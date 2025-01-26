@@ -8,7 +8,7 @@ namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 
 public abstract class ControllerEnumerableQueryTestsBase<TController, TQuery, TQueryReturnType, TReturnType, TFixture>
 
-    : ControllerQueryTestsBase<TController, TQuery, IEnumerable<TQueryReturnType>, IEnumerable<TReturnType>, TFixture>
+    : ControllerQueryTestsBase<TController, TQuery, IEnumerable<TQueryReturnType>, List<TReturnType>, TFixture>
     where TController : ControllerBase
     where TQuery : IQuery<IEnumerable<TQueryReturnType>>
     where TFixture : ControllerEnumerableQueryTestsBase<TController, TQuery, TQueryReturnType, TReturnType, TFixture>
@@ -58,14 +58,14 @@ public abstract class ControllerEnumerableQueryTestsBase<TController, TQuery, TQ
         {
             base.SetupQueryResult(statusCode);
             if (statusCode == HttpStatusCode.NoContent)
-                ExpectedQueryResult = Enumerable.Empty<TQueryReturnType>();
+                ExpectedQueryResult = [];
         }
 
         public override void SetupResultConverter()
         {
             TestPropertyNotSetException.ThrowIfNull(ExpectedQueryResult);
             TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
-            EndpointConvertersMock.SetupToContract(ExpectedQueryResult, ExpectedResult);
+            EndpointConvertersMock.SetupToContract(ExpectedQueryResult, (IEnumerable<TReturnType>)ExpectedResult);
         }
     }
 }

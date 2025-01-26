@@ -36,7 +36,7 @@ using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using ProjectHermes.Xipona.Api.Vault.Configs;
+using ProjectHermes.Xipona.Api.Secrets.Configs;
 using System.Data.Common;
 using System.Reflection;
 using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;

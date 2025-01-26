@@ -15,12 +15,12 @@ using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
 using ProjectHermes.Xipona.Api.Endpoint.Middleware;
 using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Repositories.Common.Services;
-using ProjectHermes.Xipona.Api.Vault;
+using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
 using ProjectHermes.Xipona.Api.WebApp.Extensions;
+using ProjectHermes.Xipona.Api.WebApp.Serialization;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -39,21 +39,31 @@ AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
-var fileLoadingService = new FileLoadingService();
-builder.Services.AddOtel(configuration, builder.Environment, fileLoadingService);
+var secretServices = new ServiceCollection();
+secretServices.AddSingleton<IConfiguration>(configuration);
+secretServices.AddTransient<IFileLoadingService, FileLoadingService>();
+SecretStoreRegister.RegisterSecretStore(configuration, new FileLoadingService(), secretServices);
+secretServices.AddTransient<ISecretLoadingService, SecretLoadingService>();
 
-var vaultService = new VaultService(configuration, fileLoadingService);
-var configurationLoadingService =
-    new DatabaseConfigurationLoadingService(fileLoadingService, vaultService, configuration);
-var connectionStrings = await configurationLoadingService.LoadAsync();
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+var secretProvider = secretServices.BuildServiceProvider();
+#pragma warning restore ASP0000
+
+var secretLoadingService = secretProvider.GetRequiredService<ISecretLoadingService>();
+var connectionStrings = await secretLoadingService.LoadConnectionStringsAsync();
 builder.Services.AddSingleton(connectionStrings);
 
-builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLoadingService);
+
+builder.Services
+    .AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)
+    .AddJsonOptions(opt => opt.JsonSerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointControllers();
 
-var authOptions = configuration.GetSection("Auth").Get<AuthenticationOptions>();
+var authOptions = new AuthenticationOptions();
+configuration.GetSection("Auth").Bind(authOptions);
 
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -93,10 +103,7 @@ SetupSecurity();
 
 var app = builder.Build();
 
-app.Lifetime.ApplicationStopping.Register(() =>
-{
-    Diagnostics.DisposeInstance();
-});
+app.Lifetime.ApplicationStopping.Register(Diagnostics.DisposeInstance);
 
 app.UseExceptionHandling();
 if (!app.Environment.IsProduction())
@@ -112,7 +119,9 @@ app.UseSwaggerUI(c =>
 
 app.UseCors(policyBuilder =>
 {
-    var corsConfig = app.Configuration.GetSection("Cors").Get<CorsConfig>();
+    var corsConfig = new CorsConfig();
+    // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
+    app.Configuration.GetSection("Cors").Bind(corsConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
     policyBuilder
         .WithOrigins(corsConfig.AllowedOrigins)

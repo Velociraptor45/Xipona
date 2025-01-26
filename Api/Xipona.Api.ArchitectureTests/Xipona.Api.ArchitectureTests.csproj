@@ -11,14 +11,14 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageReference Include="xunit" Version="2.9.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
+    <PackageReference Include="coverlet.collector" Version="6.0.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -32,7 +32,7 @@
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
     <ProjectReference Include="..\Xipona.Api.Endpoint\Xipona.Api.Endpoint.csproj" />
     <ProjectReference Include="..\Xipona.Api.Repositories\Xipona.Api.Repositories.csproj" />
-    <ProjectReference Include="..\Xipona.Api.Vault\Xipona.Api.Vault.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Secrets\Xipona.Api.Secrets.csproj" />
     <ProjectReference Include="..\Xipona.Api.WebApp\Xipona.Api.WebApp.csproj" />
   </ItemGroup>
 
