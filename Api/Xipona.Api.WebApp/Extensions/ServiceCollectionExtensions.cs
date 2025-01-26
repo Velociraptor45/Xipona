@@ -8,7 +8,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using ProjectHermes.Xipona.Api.Core.Constants;
-using ProjectHermes.Xipona.Api.WebApp.Configs;
+using ProjectHermes.Xipona.Api.Secrets;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace ProjectHermes.Xipona.Api.WebApp.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static async Task<IServiceCollection> AddOtelAsync(this IServiceCollection services, IConfiguration configuration,
-        IWebHostEnvironment environment, ISecretRetriever secretRetriever)
+        IWebHostEnvironment environment, ISecretLoadingService secretLoadingService)
     {
         var otelConfig = new OtelConfig();
         configuration.GetSection("OpenTelemetry").Bind(otelConfig);
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
             return services;
         }
 
-        var apiKeyHeader = await GetApiKeyHeaderAsync(otelConfig, secretRetriever);
+        var apiKeyHeader = await GetApiKeyHeaderAsync(otelConfig, secretLoadingService);
         if (apiKeyHeader is null)
             Console.WriteLine("OTEL API key not provided. Skipping API key header configuration");
 
@@ -106,12 +106,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static async Task<string?> GetApiKeyHeaderAsync(OtelConfig otelConfig, ISecretRetriever secretRetriever)
+    private static async Task<string?> GetApiKeyHeaderAsync(OtelConfig otelConfig, ISecretLoadingService secretLoadingService)
     {
         if (string.IsNullOrWhiteSpace(otelConfig.ApiKeyHeaderPrefix))
             return null;
 
-        var apiKey = await secretRetriever.LoadLoggingApiKey();
+        var apiKey = await secretLoadingService.LoadLoggingApiKey();
 
         if (string.IsNullOrWhiteSpace(apiKey))
             return null;

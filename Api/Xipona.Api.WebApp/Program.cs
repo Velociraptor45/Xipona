@@ -15,6 +15,7 @@ using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
 using ProjectHermes.Xipona.Api.Endpoint.Middleware;
 using ProjectHermes.Xipona.Api.Repositories;
+using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
@@ -38,13 +39,19 @@ AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
-var fileLoadingService = new FileLoadingService();
+var secretServices = new ServiceCollection();
+secretServices.AddSingleton<IConfiguration>(configuration);
+secretServices.AddTransient<IFileLoadingService, FileLoadingService>();
+SecretStoreRegister.RegisterSecretStore(configuration, new FileLoadingService(), secretServices);
+secretServices.AddTransient<ISecretLoadingService, SecretLoadingService>();
 
-var secretRetriever = new SecretRetriever(configuration, fileLoadingService);
-var connectionStrings = await secretRetriever.LoadDatabaseCredentialsAsync();
+var secretProvider = secretServices.BuildServiceProvider();
+
+var secretLoadingService = secretProvider.GetRequiredService<ISecretLoadingService>();
+var connectionStrings = await secretLoadingService.LoadConnectionStringsAsync();
 builder.Services.AddSingleton(connectionStrings);
 
-await builder.Services.AddOtelAsync(configuration, builder.Environment, secretRetriever);
+await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLoadingService);
 
 builder.Services
     .AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)

@@ -1,22 +1,17 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Core.Files;
-using ProjectHermes.Xipona.Api.Repositories.Common.Services;
-using ProjectHermes.Xipona.Api.Repositories.Configs;
 using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.Secrets.Vault;
 using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
-using System.Threading.Tasks;
 
 namespace ProjectHermes.Xipona.Api.WebApp.Configs;
-public class SecretRetriever : ISecretRetriever
+
+public static class SecretStoreRegister
 {
-    private readonly IConfiguration _configuration;
-    private readonly ISecretStore _secretStore;
-
-    public SecretRetriever(IConfiguration configuration, IFileLoadingService fileLoadingService)
+    public static void RegisterSecretStore(IConfiguration configuration, IFileLoadingService fileLoadingService,
+        IServiceCollection services)
     {
-        _configuration = configuration;
-
         var secrets = new Secrets();
         configuration.Bind(secrets);
 
@@ -24,6 +19,8 @@ public class SecretRetriever : ISecretRetriever
             && (!string.IsNullOrWhiteSpace(secrets.VaultPassword) || !string.IsNullOrWhiteSpace(secrets.VaultPasswordFile)))
         {
             // use vault
+            Console.WriteLine("Found Vault username & password configuration. Using Vault as secret store.");
+
             var vaultCredentials = new VaultCredentials
             {
                 Username = !string.IsNullOrWhiteSpace(secrets.VaultUsername)
@@ -37,26 +34,17 @@ public class SecretRetriever : ISecretRetriever
             var vaultConfig = new VaultConfig();
             configuration.GetSection("KeyVault").Bind(vaultConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
-            _secretStore = new VaultService(vaultCredentials, vaultConfig);
+            services.AddSingleton(vaultConfig);
+            services.AddSingleton(vaultCredentials);
+            services.AddTransient<ISecretStore, VaultService>();
+            services.AddHttpClient("vault", client => client.BaseAddress = new Uri(vaultConfig.Uri));
         }
         else
         {
             // use env
-            _secretStore = new EnvSecretStore(configuration, fileLoadingService);
+            Console.WriteLine("Couldn't find Vault username & password configuration. Using environment variables as secret store.");
+            services.AddTransient<ISecretStore, EnvSecretStore>();
         }
-    }
-
-    public async Task<ConnectionStrings> LoadDatabaseCredentialsAsync()
-    {
-        var credentials = await _secretStore.LoadDatabaseCredentialsAsync();
-        var connectionStrings = new DatabaseConfigurationLoadingService(_configuration)
-            .GetConnectionString(credentials.Username, credentials.Password);
-        return connectionStrings;
-    }
-
-    public Task<string?> LoadLoggingApiKey()
-    {
-        return _secretStore.LoadLoggingApiKey();
     }
 }
 

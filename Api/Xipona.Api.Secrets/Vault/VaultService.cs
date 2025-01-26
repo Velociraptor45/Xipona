@@ -11,16 +11,18 @@ public class VaultService : ISecretStore
 {
     private readonly VaultCredentials _credentials;
     private readonly VaultConfig _config;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly AsyncRetryPolicy _policy;
     private readonly JsonSerializerOptions _jsonSerializationOptions;
 
     private const int _retryCount = 10;
 
-    public VaultService(VaultCredentials credentials, VaultConfig config)
+    public VaultService(VaultCredentials credentials, VaultConfig config, IHttpClientFactory httpClientFactory)
     {
         _credentials = credentials;
         _config = config;
+        _httpClientFactory = httpClientFactory;
 
         _policy = Policy.Handle<Exception>().WaitAndRetryAsync(
             _retryCount,
@@ -54,7 +56,7 @@ public class VaultService : ISecretStore
 
     private async Task<T> GetSecret<T>(string secret)
     {
-        using var client = GetClient();
+        using var client = _httpClientFactory.CreateClient("vault");
         var token = await GetToken(client);
 
         client.DefaultRequestHeaders.Add("X-Vault-Token", token);
@@ -65,13 +67,6 @@ public class VaultService : ISecretStore
         var content = await response.Content.ReadAsStringAsync();
         var deserializedResponse = JsonSerializer.Deserialize<VaultResponse<T>>(content, _jsonSerializationOptions)!;
         return deserializedResponse.Type.Data;
-    }
-
-    private HttpClient GetClient()
-    {
-        var client = new HttpClient(new HttpClientHandler());
-        client.BaseAddress = new Uri(_config.Uri);
-        return client;
     }
 
     private async Task<string> GetToken(HttpClient client)
