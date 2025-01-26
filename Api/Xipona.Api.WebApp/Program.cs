@@ -45,7 +45,9 @@ secretServices.AddTransient<IFileLoadingService, FileLoadingService>();
 SecretStoreRegister.RegisterSecretStore(configuration, new FileLoadingService(), secretServices);
 secretServices.AddTransient<ISecretLoadingService, SecretLoadingService>();
 
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 var secretProvider = secretServices.BuildServiceProvider();
+#pragma warning restore ASP0000
 
 var secretLoadingService = secretProvider.GetRequiredService<ISecretLoadingService>();
 var connectionStrings = await secretLoadingService.LoadConnectionStringsAsync();
@@ -101,10 +103,7 @@ SetupSecurity();
 
 var app = builder.Build();
 
-app.Lifetime.ApplicationStopping.Register(() =>
-{
-    Diagnostics.DisposeInstance();
-});
+app.Lifetime.ApplicationStopping.Register(Diagnostics.DisposeInstance);
 
 app.UseExceptionHandling();
 if (!app.Environment.IsProduction())

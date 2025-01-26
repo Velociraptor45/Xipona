@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Core.Files;
-using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.Secrets.Vault;
 using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
 
-namespace ProjectHermes.Xipona.Api.WebApp.Configs;
+namespace ProjectHermes.Xipona.Api.Secrets;
 
 public static class SecretStoreRegister
 {

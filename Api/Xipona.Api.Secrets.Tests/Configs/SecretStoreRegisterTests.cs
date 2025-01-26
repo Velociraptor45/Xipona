@@ -9,7 +9,7 @@ using ProjectHermes.Xipona.Api.Secrets.Vault;
 using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.WebApp.Configs;
+namespace Xipona.Api.Secrets.Tests.Configs;
 
 public class SecretStoreRegisterTests
 {
