@@ -16,7 +16,7 @@ public class EnvSecretStore : ISecretStore
 
     public Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
     {
-        var username = LoadSecret("PH_XIPONA_VAULT_USERNAME_FILE", "PH_XIPONA_VAULT_USERNAME");
+        var username = LoadSecret("PH_XIPONA_DB_USERNAME_FILE", "PH_XIPONA_DB_USERNAME");
         var password = LoadSecret("PH_XIPONA_DB_PASSWORD_FILE", "PH_XIPONA_DB_PASSWORD");
 
         if (string.IsNullOrWhiteSpace(username))
