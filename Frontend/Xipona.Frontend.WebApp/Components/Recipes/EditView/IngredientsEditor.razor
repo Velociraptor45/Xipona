@@ -9,27 +9,48 @@
 
 <div class="ingredients">
     <div class="d-flex align-items-center mb-3">
-        <h4 class="mb-0 pr-2">Ingredients</h4>
+        <div class="mr-1 collapse-arrow" @onclick="OnHeadlineClicked">
+            @if (_isCollapsed)
+            {
+                <i class="bi bi-chevron-right"></i>
+            }
+            else
+            {
+                <i class="bi bi-chevron-down"></i>
+            }
+        </div>
+        <h4 class="mb-0 pr-2 headline" @onclick="OnHeadlineClicked">Ingredients</h4>
         <Button class="d-flex align-items-center"
                 Size="@AntSizeLDSType.Small"
                 OnClick="OnAddIngredientButtonClicked">
             <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    @for (int i = 0; i < State.Value.Editor.Recipe!.Ingredients.Count; i++)
+    @if (!_isCollapsed)
     {
-        <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
-        @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
+        @for (int i = 0; i < State.Value.Editor.Recipe!.Ingredients.Count; i++)
         {
-            <hr class="my-3"/>
+            <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
+            @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
+            {
+                <hr class="my-3"/>
+            }
         }
     }
 </div>
 
 @code
 {
+    private bool _isCollapsed = false;
+
     private void OnAddIngredientButtonClicked()
     {
         Dispatcher.Dispatch(new IngredientAddedAction());
+    }
+
+    private void OnHeadlineClicked()
+    {
+        _isCollapsed = !_isCollapsed;
+        StateHasChanged();
     }
 }
