@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace ProjectHermes.Xipona.Api.TestTools.AutoFixture;
 
-public static partial class EquivalencyAssertionOptionsExtensions
+public static partial class EquivalencyOptionsExtensions
 {
     [GeneratedRegex(@"ItemTypes\[\d+\].Id")]
     private static partial Regex ItemTypesId();
@@ -27,7 +27,7 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex("RowVersion$")]
     private static partial Regex RowVersion();
 
-    public static EquivalencyAssertionOptions<T> WithCreatedAtPrecision<T>(this EquivalencyAssertionOptions<T> options,
+    public static EquivalencyOptions<T> WithCreatedAtPrecision<T>(this EquivalencyOptions<T> options,
         TimeSpan? precision = null)
     {
         precision ??= 1.Milliseconds();
@@ -37,19 +37,19 @@ public static partial class EquivalencyAssertionOptionsExtensions
             .When(info => info.Path.EndsWith("CreatedAt"));
     }
 
-    public static EquivalencyAssertionOptions<T> WithUpdatedOnPrecision<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> WithUpdatedOnPrecision<T>(this EquivalencyOptions<T> options)
     {
         return options
             .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, 1.Milliseconds()))
             .When(info => info.Path.EndsWith("UpdatedOn"));
     }
 
-    public static EquivalencyAssertionOptions<T> ExcludeRowVersion<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeRowVersion<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => RowVersion().IsMatch(info.Path));
     }
 
-    public static EquivalencyAssertionOptions<T> ExcludeItemCycleRef<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeItemCycleRef<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => info.Path == "Predecessor"
                                          || ItemTypesItemCycle().IsMatch(info.Path)
@@ -58,7 +58,7 @@ public static partial class EquivalencyAssertionOptionsExtensions
                                          || AvailableAtItemCycle().IsMatch(info.Path));
     }
 
-    public static EquivalencyAssertionOptions<T> ExcludeItemTypeId<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeItemTypeId<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => ItemTypesId().IsMatch(info.Path));
     }
@@ -69,7 +69,7 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"Discounts\[\d+\].ShoppingList")]
     private static partial Regex DiscountsShoppingListCycle();
 
-    public static EquivalencyAssertionOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info =>
             ItemsOnListShoppingListCycle().IsMatch(info.Path)
@@ -79,7 +79,7 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]
     private static partial Regex ItemsOnListId();
 
-    public static EquivalencyAssertionOptions<T> ExcludeItemsOnListId<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeItemsOnListId<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => ItemsOnListId().IsMatch(info.Path));
     }
@@ -87,7 +87,7 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"Discounts\[\d+\].Id")]
     private static partial Regex DiscountId();
 
-    public static EquivalencyAssertionOptions<T> ExcludeDiscountId<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeDiscountId<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => DiscountId().IsMatch(info.Path));
     }
@@ -101,15 +101,15 @@ public static partial class EquivalencyAssertionOptionsExtensions
     [GeneratedRegex(@"Tags\[\d+\].Recipe")]
     private static partial Regex RecipeTagRecipeCycle();
 
-    public static EquivalencyAssertionOptions<T> ExcludeRecipeCycleRef<T>(this EquivalencyAssertionOptions<T> options)
+    public static EquivalencyOptions<T> ExcludeRecipeCycleRef<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => PreparationStepsRecipeCycle().IsMatch(info.Path)
                                          || IngredientsRecipeCycle().IsMatch(info.Path)
                                          || RecipeTagRecipeCycle().IsMatch(info.Path));
     }
 
-    public static EquivalencyAssertionOptions<T> UsingDateTimeOffsetWithPrecision<T>(
-        this EquivalencyAssertionOptions<T> options, TimeSpan? precision = null)
+    public static EquivalencyOptions<T> UsingDateTimeOffsetWithPrecision<T>(
+        this EquivalencyOptions<T> options, TimeSpan? precision = null)
     {
         precision ??= TimeSpan.FromSeconds(1);
 
@@ -118,15 +118,15 @@ public static partial class EquivalencyAssertionOptionsExtensions
             .WhenTypeIs<DateTimeOffset>();
     }
 
-    public static EquivalencyAssertionOptions<T> UsingDateTimeOffsetWithPrecision<T, TParameter>(
-        this EquivalencyAssertionOptions<T> options, Expression<Func<T, TParameter>> property, TimeSpan? precision = null)
+    public static EquivalencyOptions<T> UsingDateTimeOffsetWithPrecision<T, TParameter>(
+        this EquivalencyOptions<T> options, Expression<Func<T, TParameter>> property, TimeSpan? precision = null)
     {
         var body = (MemberExpression)property.Body;
         return UsingDateTimeOffsetWithPrecision(options, body.Member.Name, precision);
     }
 
-    public static EquivalencyAssertionOptions<T> UsingDateTimeOffsetWithPrecision<T>(
-        this EquivalencyAssertionOptions<T> options, [StringSyntax(StringSyntaxAttribute.Regex)] string pathRegex,
+    public static EquivalencyOptions<T> UsingDateTimeOffsetWithPrecision<T>(
+        this EquivalencyOptions<T> options, [StringSyntax(StringSyntaxAttribute.Regex)] string pathRegex,
         TimeSpan? precision = null)
     {
         precision ??= TimeSpan.FromSeconds(1);
