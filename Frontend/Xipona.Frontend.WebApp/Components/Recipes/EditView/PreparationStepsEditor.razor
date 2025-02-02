@@ -8,30 +8,47 @@
 @inject IDispatcher Dispatcher
 
 <div class="preparation-steps">
-    <div class="d-flex align-items-center mb-3">
-        <h4 class="mb-0 pr-2">Steps</h4>
+    <div class="d-flex align-items-center pb-2 pt-2 top-bar">
+        <div class="mr-1 collapse-arrow" @onclick="OnHeadlineClicked">
+            @if (_isCollapsed)
+            {
+                <i class="bi bi-chevron-right"></i>
+            }
+            else
+            {
+                <i class="bi bi-chevron-down"></i>
+            }
+        </div>
+        <h4 class="mb-0 pr-2 headline" @onclick="OnHeadlineClicked">Steps</h4>
         <Button class="d-flex align-items-center"
                 Size="@AntSizeLDSType.Small"
                 OnClick="OnAddPreparationStepButtonClicked">
             <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    @foreach (var step in State.Value.Editor.Recipe!.PreparationSteps)
-    {
-        <SortableListItem T="EditedPreparationStep"
-                          State="State.Value.Editor.Recipe"
-                          Model="step"
-                          Placeholder="Instruction"
-                          IsTextArea="true"
-                          OnDecrement="OnDecrementPreparationStep"
-                          OnIncrement="OnIncrementPreparationStep"
-                          OnRemove="OnRemovePreparationStep"
-                          OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
-    }
+    <div class="mt-1">
+        @if (!_isCollapsed)
+        {
+            @foreach (var step in State.Value.Editor.Recipe!.PreparationSteps)
+            {
+                <SortableListItem T="EditedPreparationStep"
+                                  State="State.Value.Editor.Recipe"
+                                  Model="step"
+                                  Placeholder="Instruction"
+                                  IsTextArea="true"
+                                  OnDecrement="OnDecrementPreparationStep"
+                                  OnIncrement="OnIncrementPreparationStep"
+                                  OnRemove="OnRemovePreparationStep"
+                                  OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
+            }
+        }
+    </div>
 </div>
 
 @code
 {
+    private bool _isCollapsed = false;
+
     private void OnAddPreparationStepButtonClicked()
     {
         Dispatcher.Dispatch(new PreparationStepAddedAction());
@@ -55,5 +72,11 @@
     private void OnPreparationStepTextChanged(EditedPreparationStep step, string text)
     {
         Dispatcher.Dispatch(new PreparationStepTextChangedAction(step.Key, text));
+    }
+
+    private void OnHeadlineClicked()
+    {
+        _isCollapsed = !_isCollapsed;
+        StateHasChanged();
     }
 }

@@ -3,13 +3,12 @@
     .recipe-editor {
         max-width: 800px;
         margin: 0 auto;
-        padding-bottom: 8px;
     }
 }
 
 @media (max-width: 768px) {
     .recipe-editor {
-        padding-bottom: 79.15px;
+        padding-bottom: var(--nav-mobile-height);
         padding-left: 8px;
         padding-right: 8px;
     }
