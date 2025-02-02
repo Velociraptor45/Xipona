@@ -8,7 +8,7 @@
 @inject IDispatcher Dispatcher
 
 <div class="preparation-steps">
-    <div class="d-flex align-items-center mb-3">
+    <div class="d-flex align-items-center pb-2 pt-2 top-bar">
         <div class="mr-1 collapse-arrow" @onclick="OnHeadlineClicked">
             @if (_isCollapsed)
             {
@@ -26,21 +26,23 @@
             <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    @if (!_isCollapsed)
-    {
-        @foreach (var step in State.Value.Editor.Recipe!.PreparationSteps)
+    <div class="mt-1">
+        @if (!_isCollapsed)
         {
-            <SortableListItem T="EditedPreparationStep"
-                              State="State.Value.Editor.Recipe"
-                              Model="step"
-                              Placeholder="Instruction"
-                              IsTextArea="true"
-                              OnDecrement="OnDecrementPreparationStep"
-                              OnIncrement="OnIncrementPreparationStep"
-                              OnRemove="OnRemovePreparationStep"
-                              OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
+            @foreach (var step in State.Value.Editor.Recipe!.PreparationSteps)
+            {
+                <SortableListItem T="EditedPreparationStep"
+                                  State="State.Value.Editor.Recipe"
+                                  Model="step"
+                                  Placeholder="Instruction"
+                                  IsTextArea="true"
+                                  OnDecrement="OnDecrementPreparationStep"
+                                  OnIncrement="OnIncrementPreparationStep"
+                                  OnRemove="OnRemovePreparationStep"
+                                  OnTextChanged="OnPreparationStepTextChanged"></SortableListItem>
+            }
         }
-    }
+    </div>
 </div>
 
 @code

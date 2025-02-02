@@ -8,7 +8,7 @@
 @inject IDispatcher Dispatcher
 
 <div class="ingredients">
-    <div class="d-flex align-items-center mb-3">
+    <div class="d-flex align-items-center pb-2 pt-2 top-bar">
         <div class="mr-1 collapse-arrow" @onclick="OnHeadlineClicked">
             @if (_isCollapsed)
             {
@@ -26,17 +26,19 @@
             <i class="bi bi-plus-lg"></i>
         </Button>
     </div>
-    @if (!_isCollapsed)
-    {
-        @for (int i = 0; i < State.Value.Editor.Recipe!.Ingredients.Count; i++)
+    <div class="mt-1">
+        @if (!_isCollapsed)
         {
-            <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
-            @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
+            @for (int i = 0; i < State.Value.Editor.Recipe!.Ingredients.Count; i++)
             {
-                <hr class="my-3"/>
+                <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
+                @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
+                {
+                    <hr class="my-3"/>
+                }
             }
         }
-    }
+    </div>
 </div>
 
 @code
