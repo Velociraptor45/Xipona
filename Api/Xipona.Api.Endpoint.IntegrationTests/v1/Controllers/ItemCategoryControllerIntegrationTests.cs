@@ -1,8 +1,14 @@
 ﻿using FluentAssertions;
 using Force.DeepCloner;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
+using ProjectHermes.Xipona.Api.Contracts.Common;
+using ProjectHermes.Xipona.Api.Core.Converter;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
@@ -37,14 +43,13 @@ public class ItemCategoryControllerIntegrationTests
             _fixture.SetupRecipeContainingItemCategory();
             _fixture.SetupExpectedItemCategory();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.DeleteItemCategoryAsync(_fixture.ItemCategoryId);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertionServiceScope = _fixture.CreateServiceScope();
 
@@ -71,6 +76,17 @@ public class ItemCategoryControllerIntegrationTests
 
             public Guid ItemCategoryId { get; } = Guid.NewGuid();
             public ItemCategory? ExpectedItemCategory { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await MinimalItemCategoryController.DeleteItemCategory(
+                    ItemCategoryId,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<Guid, DeleteItemCategoryCommand>>(),
+                    default);
+            }
 
             public void SetupItemCategory()
             {
@@ -127,12 +143,6 @@ public class ItemCategoryControllerIntegrationTests
         }
 
         protected readonly IServiceScope ArrangeScope;
-
-        public ItemCategoryController CreateSut()
-        {
-            var scope = CreateServiceScope();
-            return scope.ServiceProvider.GetRequiredService<ItemCategoryController>();
-        }
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {

@@ -2,18 +2,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Core.Files;
 using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
 using ProjectHermes.Xipona.Api.Endpoint.Middleware;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Repositories;
 using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
@@ -21,10 +22,12 @@ using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
 using ProjectHermes.Xipona.Api.WebApp.Extensions;
 using ProjectHermes.Xipona.Api.WebApp.Serialization;
+using Scalar.AspNetCore;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -55,45 +58,58 @@ builder.Services.AddSingleton(connectionStrings);
 
 await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLoadingService);
 
-builder.Services
-    .AddControllers(options => options.SuppressAsyncSuffixInActionNames = false)
-    .AddJsonOptions(opt => opt.JsonSerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
+//builder.Services
+//    .AddControllers(options =>
+//    {
+//        options.SuppressAsyncSuffixInActionNames = false;
+//    })
+//    .AddJsonOptions(opt => opt.JsonSerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
+
+builder.Services.Configure<JsonOptions>(opt =>
+    opt.SerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
+
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointControllers();
 
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+builder.Services.AddCors();
+
 var authOptions = new AuthenticationOptions();
 configuration.GetSection("Auth").Bind(authOptions);
 
-builder.Services.AddSwaggerGen(opt =>
-{
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Xipona API", Version = "v1" });
-    opt.CustomSchemaIds(type => type.ToString());
+builder.Services.AddOpenApi();
 
-    if (!authOptions.Enabled)
-        return;
+//builder.Services.AddSwaggerGen(opt =>
+//{
+//    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Xipona API", Version = "v1" });
+//    opt.CustomSchemaIds(type => type.ToString());
 
-    var securityScheme = new OpenApiSecurityScheme
-    {
-        Name = "Auth",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.OpenIdConnect,
-        OpenIdConnectUrl = new Uri(authOptions.OidcUrl),
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        Reference = new OpenApiReference
-        {
-            Id = "Bearer",
-            Type = ReferenceType.SecurityScheme
-        }
-    };
+//    if (!authOptions.Enabled)
+//        return;
 
-    opt.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { securityScheme, Array.Empty<string>() }
-    });
-});
+//    var securityScheme = new OpenApiSecurityScheme
+//    {
+//        Name = "Auth",
+//        In = ParameterLocation.Header,
+//        Type = SecuritySchemeType.OpenIdConnect,
+//        OpenIdConnectUrl = new Uri(authOptions.OidcUrl),
+//        Scheme = "bearer",
+//        BearerFormat = "JWT",
+//        Reference = new OpenApiReference
+//        {
+//            Id = "Bearer",
+//            Type = ReferenceType.SecurityScheme
+//        }
+//    };
+
+//    opt.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        { securityScheme, Array.Empty<string>() }
+//    });
+//});
 
 builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
@@ -111,11 +127,15 @@ if (!app.Environment.IsProduction())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xipona API v1");
-});
+
+app.MapOpenApi();
+app.MapScalarApiReference(); // TODO auth?
+
+//app.UseSwagger();
+//app.UseSwaggerUI(c =>
+//{
+//    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xipona API v1");
+//});
 
 app.UseCors(policyBuilder =>
 {
@@ -135,9 +155,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<DiagnosticsMiddleware>();
+app.UseDiagnosticsMiddleware();
 
-app.MapControllers();
+app.RegisterItemCategoryEndpoints();
+app.MapGet("/test", () => "Moin!");
+app.MapGet("/v1/monitoring/alive", () => Task.FromResult(true));
 
 await app.RunAsync();
 

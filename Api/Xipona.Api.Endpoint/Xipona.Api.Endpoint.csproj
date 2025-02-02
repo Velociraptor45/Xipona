@@ -11,6 +11,11 @@
     <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
+  </ItemGroup>
   
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

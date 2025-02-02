@@ -1,20 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.Middleware;
 
-public class DiagnosticsMiddleware
+public static class DiagnosticsMiddleware
 {
-    private readonly RequestDelegate _next;
-
-    public DiagnosticsMiddleware(RequestDelegate next)
+    public static IApplicationBuilder UseDiagnosticsMiddleware(this IApplicationBuilder app)
     {
-        _next = next;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        using var activity = Diagnostics.Instance.StartActivity(context.Request.Path);
-
-        await _next(context);
+        return app.Use((context, next) =>
+        {
+            using var activity = Diagnostics.Instance.StartActivity(context.Request.Path);
+            return next();
+        });
     }
 }

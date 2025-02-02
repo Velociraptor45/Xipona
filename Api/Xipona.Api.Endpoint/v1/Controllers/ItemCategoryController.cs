@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
@@ -13,169 +14,223 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
+using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 
-[ApiController]
-[Authorize(Policy = "User")]
-[Route("v1/item-categories")]
-public class ItemCategoryController : ControllerBase
+public static class MinimalItemCategoryController
 {
-    private readonly IQueryDispatcher _queryDispatcher;
-    private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IEndpointConverters _converters;
+    private const string _routeBase = "v1/item-categories";
 
-    public ItemCategoryController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-        IEndpointConverters converters)
+    public static void RegisterItemCategoryEndpoints(this IEndpointRouteBuilder builder)
     {
-        _queryDispatcher = queryDispatcher;
-        _commandDispatcher = commandDispatcher;
-        _converters = converters;
+        builder
+            .RegisterGetItemCategoryById()
+            .RegisterSearchItemCategoriesByName()
+            .RegisterGetAllActiveItemCategories()
+            .RegisterModifyItemCategory()
+            .RegisterCreateItemCategory()
+            .RegisterDeleteItemCategory();
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(ItemCategoryContract), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> GetItemCategoryByIdAsync([FromRoute] Guid id,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterGetItemCategoryById(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/{{id:guid}}", GetItemCategoryById)
+            .WithName("GetItemCategoryById")
+            .Produces<ItemCategoryContract>()
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> GetItemCategoryById(
+        [FromRoute] Guid id,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<IItemCategory, ItemCategoryContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+
     {
         try
         {
             var query = new ItemCategoryByIdQuery(new ItemCategoryId(id));
-
-            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
-
-            var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(result);
-
-            return Ok(contract);
+            var result = await queryDispatcher.DispatchAsync(query, cancellationToken);
+            var contract = contractConverter.ToContract(result);
+            return Results.Ok(contract);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-
+            var errorContract = errorContractConverter.ToContract(e.Reason);
             if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
-                return NotFound(errorContract);
-
-            return UnprocessableEntity(errorContract);
+                return Results.NotFound(errorContract);
+            return Results.UnprocessableEntity(errorContract);
         }
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(List<ItemCategorySearchResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [Route("")]
-    public async Task<IActionResult> SearchItemCategoriesByNameAsync([FromQuery] string searchInput,
-        [FromQuery] bool includeDeleted = false, CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterSearchItemCategoriesByName(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}", SearchItemCategoriesByName)
+            .WithName("SearchItemCategoriesByName")
+            .Produces<List<ItemCategorySearchResultContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<string>(StatusCodes.Status400BadRequest)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+    internal static async Task<IResult> SearchItemCategoriesByName(
+        [FromQuery] string searchInput,
+        [FromQuery] bool includeDeleted,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract> contractConverter,
+        CancellationToken cancellationToken)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
         {
-            return BadRequest("Search input mustn't be null or empty");
+            return Results.BadRequest("Search input mustn't be null or empty");
         }
 
         var query = new ItemCategorySearchQuery(searchInput, includeDeleted);
-        var itemCategoryReadModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var itemCategoryReadModels = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (itemCategoryReadModels.Count == 0)
-            return NoContent();
+            return Results.NoContent();
 
-        var itemCategoryContracts = _converters
-            .ToContract<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract>(itemCategoryReadModels)
-            .ToList();
+        var itemCategoryContracts = contractConverter.ToContract(itemCategoryReadModels).ToList();
 
-        return Ok(itemCategoryContracts);
+        return Results.Ok(itemCategoryContracts);
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(List<ItemCategoryContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("active")]
-    public async Task<IActionResult> GetAllActiveItemCategoriesAsync(CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterGetAllActiveItemCategories(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/active", GetAllActiveItemCategories)
+            .WithName("GetAllActiveItemCategories")
+            .Produces<List<ItemCategoryContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+    internal static async Task<IResult> GetAllActiveItemCategories(
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> contractConverter,
+        CancellationToken cancellationToken)
     {
         var query = new AllActiveItemCategoriesQuery();
-        var readModels = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var readModels = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (readModels.Count == 0)
-            return NoContent();
+            return Results.NoContent();
 
-        var contracts = _converters.ToContract<ItemCategoryReadModel, ItemCategoryContract>(readModels).ToList();
+        var contracts = contractConverter.ToContract(readModels).ToList();
 
-        return Ok(contracts);
+        return Results.Ok(contracts);
     }
 
-    [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("")]
-    public async Task<IActionResult> ModifyItemCategoryAsync([FromBody] ModifyItemCategoryContract contract,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterModifyItemCategory(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPut($"/{_routeBase}", ModifyItemCategory)
+            .WithName("ModifyItemCategory")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+    internal static async Task<IResult> ModifyItemCategory(
+        [FromBody] ModifyItemCategoryContract contract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        [FromServices] IToDomainConverter<ModifyItemCategoryContract, ModifyItemCategoryCommand> domainConverter,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var command = _converters.ToDomain<ModifyItemCategoryContract, ModifyItemCategoryCommand>(contract);
-            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            var command = domainConverter.ToDomain(contract);
+            await commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            var errorContract = errorContractConverter.ToContract(e.Reason);
 
             if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
-                return NotFound(errorContract);
+                return Results.NotFound(errorContract);
 
-            return UnprocessableEntity(errorContract);
+            return Results.UnprocessableEntity(errorContract);
         }
 
-        return NoContent();
+        return Results.NoContent();
     }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(ItemCategoryContract), StatusCodes.Status201Created)]
-    [Route("")]
-    public async Task<IActionResult> CreateItemCategoryAsync([FromQuery] string name,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterCreateItemCategory(this IEndpointRouteBuilder builder)
     {
-        var command = _converters.ToDomain<string, CreateItemCategoryCommand>(name);
-        var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
+        builder.MapPost($"/{_routeBase}", CreateItemCategory)
+            .WithName("CreateItemCategory")
+            .Produces<ItemCategoryContract>(StatusCodes.Status201Created)
+            .RequireAuthorization("User");
 
-        var contract = _converters.ToContract<IItemCategory, ItemCategoryContract>(model);
-
-        return CreatedAtAction(nameof(GetItemCategoryByIdAsync), new { id = contract.Id }, contract);
+        return builder;
     }
 
-    [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id}")]
-    public async Task<IActionResult> DeleteItemCategoryAsync([FromRoute] Guid id,
-        CancellationToken cancellationToken = default)
+    internal static async Task<IResult> CreateItemCategory(
+        [FromQuery] string name,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToContractConverter<IItemCategory, ItemCategoryContract> contractConverter,
+        [FromServices] IToDomainConverter<string, CreateItemCategoryCommand> domainConverter,
+        CancellationToken cancellationToken)
+    {
+        var command = domainConverter.ToDomain(name);
+        var model = await commandDispatcher.DispatchAsync(command, cancellationToken);
+
+        var contract = contractConverter.ToContract(model);
+
+        return Results.CreatedAtRoute("GetItemCategoryById", new { id = contract.Id }, contract);
+    }
+
+    private static IEndpointRouteBuilder RegisterDeleteItemCategory(this IEndpointRouteBuilder builder)
+    {
+        builder.MapDelete($"/{_routeBase}/{{id:guid}}", DeleteItemCategory)
+            .WithName("DeleteItemCategory")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> DeleteItemCategory(
+        [FromRoute] Guid id,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        [FromServices] IToDomainConverter<Guid, DeleteItemCategoryCommand> domainConverter,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var command = _converters.ToDomain<Guid, DeleteItemCategoryCommand>(id);
-            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            var command = domainConverter.ToDomain(id);
+            await commandDispatcher.DispatchAsync(command, cancellationToken);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            var errorContract = errorContractConverter.ToContract(e.Reason);
 
             if (e.Reason.ErrorCode == ErrorReasonCode.ItemCategoryNotFound)
-                return NotFound(errorContract);
+                return Results.NotFound(errorContract);
 
-            return UnprocessableEntity(errorContract);
+            return Results.UnprocessableEntity(errorContract);
         }
 
-        return NoContent();
+        return Results.NoContent();
     }
 }
