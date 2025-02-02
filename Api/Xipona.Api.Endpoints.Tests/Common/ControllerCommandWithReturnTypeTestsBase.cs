@@ -92,8 +92,7 @@ public abstract class ControllerCommandWithReturnTypeTestsBase<TController, TCom
         createdEntityAttribute.Type.Should().Be(typeof(TReturnType));
     }
 
-    public abstract class ControllerCommandWithReturnTypeFixtureBase
-        : ControllerCommandTestsBase<TController, TCommand, TCommandReturnType, TFixture>.ControllerCommandFixtureBase
+    public abstract class ControllerCommandWithReturnTypeFixtureBase : ControllerCommandFixtureBase
     {
         public TReturnType? ExpectedResult { get; protected set; }
         public override Type OkResultReturnType => typeof(TReturnType);

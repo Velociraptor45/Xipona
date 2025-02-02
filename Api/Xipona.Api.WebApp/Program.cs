@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -127,7 +126,6 @@ if (!app.Environment.IsProduction())
     app.UseDeveloperExceptionPage();
 }
 
-
 app.MapOpenApi();
 app.MapScalarApiReference(); // TODO auth?
 
@@ -158,8 +156,6 @@ app.UseAuthorization();
 app.UseDiagnosticsMiddleware();
 
 app.RegisterItemCategoryEndpoints();
-app.MapGet("/test", () => "Moin!");
-app.MapGet("/v1/monitoring/alive", () => Task.FromResult(true));
 
 await app.RunAsync();
 

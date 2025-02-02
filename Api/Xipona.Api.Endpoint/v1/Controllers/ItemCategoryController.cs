@@ -86,6 +86,7 @@ public static class MinimalItemCategoryController
 
         return builder;
     }
+
     internal static async Task<IResult> SearchItemCategoriesByName(
         [FromQuery] string searchInput,
         [FromQuery] bool includeDeleted,
@@ -120,6 +121,7 @@ public static class MinimalItemCategoryController
 
         return builder;
     }
+
     internal static async Task<IResult> GetAllActiveItemCategories(
         [FromServices] IQueryDispatcher queryDispatcher,
         [FromServices] IToContractConverter<ItemCategoryReadModel, ItemCategoryContract> contractConverter,
@@ -147,6 +149,7 @@ public static class MinimalItemCategoryController
 
         return builder;
     }
+
     internal static async Task<IResult> ModifyItemCategory(
         [FromBody] ModifyItemCategoryContract contract,
         [FromServices] ICommandDispatcher commandDispatcher,

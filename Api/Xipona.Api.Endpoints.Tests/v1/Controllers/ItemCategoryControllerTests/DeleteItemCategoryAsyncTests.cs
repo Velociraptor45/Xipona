@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
 
-public class DeleteItemCategoryAsyncTests : ControllerCommandTestsBase<ItemCategoryController, DeleteItemCategoryCommand,
+public class DeleteItemCategoryAsyncTests : EndpointCommandTestsBase<Guid, DeleteItemCategoryCommand,
     bool, DeleteItemCategoryAsyncTests.DeleteItemCategoryAsyncFixture>
 {
     public DeleteItemCategoryAsyncTests() : base(new DeleteItemCategoryAsyncFixture())
@@ -29,18 +31,17 @@ public class DeleteItemCategoryAsyncTests : ControllerCommandTestsBase<ItemCateg
         Fixture.SetupDomainExceptionInCommandDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class DeleteItemCategoryAsyncFixture : ControllerCommandFixtureBase
+    public sealed class DeleteItemCategoryAsyncFixture : EndpointCommandFixtureBase
     {
         private Guid? _id;
 
@@ -54,21 +55,17 @@ public class DeleteItemCategoryAsyncTests : ControllerCommandTestsBase<ItemCateg
             PossibleResultsList.Add(new NoContentStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(ItemCategoryController).GetMethod(nameof(ItemCategoryController.DeleteItemCategoryAsync))!;
+        public override string RoutePattern => "/v1/item-categories/{id:guid}";
 
-        public override ItemCategoryController CreateSut()
-        {
-            return new ItemCategoryController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ItemCategoryController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_id);
-            return await sut.DeleteItemCategoryAsync(_id.Value);
+            return await MinimalItemCategoryController.DeleteItemCategory(
+                _id.Value,
+                CommandDispatcherMock.Object,
+                ErrorConverterMock.Object,
+                CommandConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
@@ -76,16 +73,20 @@ public class DeleteItemCategoryAsyncTests : ControllerCommandTestsBase<ItemCateg
             _id = new DomainTestBuilder<Guid>().Create();
         }
 
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterItemCategoryEndpoints();
+        }
+
         public override void SetupCommand()
         {
             Command = new DomainTestBuilder<DeleteItemCategoryCommand>().Create();
         }
 
-        public override void SetupCommandConverter()
+        public override Guid GetCommandConverterInput()
         {
             TestPropertyNotSetException.ThrowIfNull(_id);
-            TestPropertyNotSetException.ThrowIfNull(Command);
-            EndpointConvertersMock.SetupToDomain(_id, Command);
+            return _id.Value;
         }
     }
 }
