@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
@@ -29,7 +29,7 @@ public class GetAllActiveItemCategoriesTests : EndpointEnumerableQueryNoConverte
 
         public override async Task<IResult> ExecuteTestMethod()
         {
-            return await MinimalItemCategoryController.GetAllActiveItemCategories(
+            return await ItemCategoryEndpoints.GetAllActiveItemCategories(
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
                 default);

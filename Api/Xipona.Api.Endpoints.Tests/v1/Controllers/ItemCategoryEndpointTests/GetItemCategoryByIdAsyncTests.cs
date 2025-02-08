@@ -6,7 +6,7 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
@@ -59,7 +59,7 @@ public class GetItemCategoryByIdTests : EndpointQueryNoConverterTestsBase<
 
         public override async Task<IResult> ExecuteTestMethod()
         {
-            return await MinimalItemCategoryController.GetItemCategoryById(
+            return await ItemCategoryEndpoints.GetItemCategoryById(
                 _itemCategoryId,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,

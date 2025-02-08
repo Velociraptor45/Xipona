@@ -9,7 +9,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.Delet
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
@@ -80,7 +80,7 @@ public class ItemCategoryControllerIntegrationTests
             public async Task<IResult> ActAsync()
             {
                 var scope = CreateServiceScope();
-                return await MinimalItemCategoryController.DeleteItemCategory(
+                return await ItemCategoryEndpoints.DeleteItemCategory(
                     ItemCategoryId,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),

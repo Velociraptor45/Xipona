@@ -6,7 +6,7 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
@@ -63,7 +63,7 @@ public class ModifyItemCategoryTests : EndpointCommandTestsBase<ModifyItemCatego
         public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
-            return await MinimalItemCategoryController.ModifyItemCategory(_contract,
+            return await ItemCategoryEndpoints.ModifyItemCategory(_contract,
                 CommandDispatcherMock.Object,
                 ErrorConverterMock.Object,
                 CommandConverterMock.Object,

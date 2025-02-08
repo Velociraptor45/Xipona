@@ -22,9 +22,9 @@ using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
 using System.Threading;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 
-public static class MinimalItemCategoryController
+public static class ItemCategoryEndpoints
 {
     private const string _routeBase = "v1/item-categories";
 

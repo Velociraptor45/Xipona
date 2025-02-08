@@ -4,7 +4,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCa
 using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
@@ -37,7 +37,7 @@ public class SearchItemCategoriesByNameTests : EndpointEnumerableQueryNoConverte
         {
             TestPropertyNotSetException.ThrowIfNull(_searchInput);
             TestPropertyNotSetException.ThrowIfNull(_includeDeleted);
-            return await MinimalItemCategoryController.SearchItemCategoriesByName(
+            return await ItemCategoryEndpoints.SearchItemCategoriesByName(
                 _searchInput, _includeDeleted.Value,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,

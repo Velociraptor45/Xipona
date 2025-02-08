@@ -4,7 +4,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.Creat
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
@@ -35,7 +35,7 @@ public class CreateItemCategoryTests : EndpointCommandWithReturnTypeTestsBase<st
         public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_name);
-            return await MinimalItemCategoryController.CreateItemCategory(
+            return await ItemCategoryEndpoints.CreateItemCategory(
                 _name,
                 CommandDispatcherMock.Object,
                 ContractConverterMock.Object,

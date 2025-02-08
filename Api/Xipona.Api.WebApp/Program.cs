@@ -14,7 +14,7 @@ using ProjectHermes.Xipona.Api.Core.Files;
 using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
 using ProjectHermes.Xipona.Api.Endpoint.Middleware;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories;
 using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
