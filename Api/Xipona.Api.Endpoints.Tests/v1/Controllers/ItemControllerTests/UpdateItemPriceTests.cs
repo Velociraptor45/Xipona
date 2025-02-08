@@ -1,21 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
+using System.Net.Http;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
-public class UpdateItemPriceAsyncTests : ControllerCommandTestsBase<ItemController, UpdateItemPriceCommand, bool,
-    UpdateItemPriceAsyncTests.UpdateItemPriceAsyncFixture>
+public class UpdateItemPriceTests : EndpointCommandTestsBase<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand, bool,
+    UpdateItemPriceTests.UpdateItemPriceFixture>
 {
-    public UpdateItemPriceAsyncTests() : base(new UpdateItemPriceAsyncFixture())
+    public UpdateItemPriceTests() : base(new UpdateItemPriceFixture())
     {
     }
 
@@ -32,23 +35,22 @@ public class UpdateItemPriceAsyncTests : ControllerCommandTestsBase<ItemControll
         Fixture.SetupDomainExceptionInCommandDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class UpdateItemPriceAsyncFixture : ControllerCommandFixtureBase
+    public sealed class UpdateItemPriceFixture : EndpointCommandFixtureBase
     {
         private UpdateItemPriceContract? _contract;
         private readonly Guid _itemId = Guid.NewGuid();
 
-        public UpdateItemPriceAsyncFixture()
+        public UpdateItemPriceFixture()
         {
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(new List<ErrorReasonCode>
             {
@@ -59,22 +61,18 @@ public class UpdateItemPriceAsyncTests : ControllerCommandTestsBase<ItemControll
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(ItemController).GetMethod(nameof(ItemController.UpdateItemPriceAsync))!;
+        public override string RoutePattern => "/v1/items/{id:guid}/update-price";
+        public override HttpMethod HttpMethod => HttpMethod.Put;
 
-        public override ItemController CreateSut()
-        {
-            return new ItemController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ItemController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
 
-            return await sut.UpdateItemPriceAsync(_itemId, _contract);
+            return await ItemEndpoints.UpdateItemPrice(_itemId, _contract,
+                CommandDispatcherMock.Object,
+                ErrorConverterMock.Object,
+                CommandConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
@@ -82,17 +80,22 @@ public class UpdateItemPriceAsyncTests : ControllerCommandTestsBase<ItemControll
             _contract = new TestBuilder<UpdateItemPriceContract>().Create();
         }
 
-        public override void SetupCommand()
+        public override void RegisterEndpoints(WebApplication app)
         {
-            Command = new DomainTestBuilder<UpdateItemPriceCommand>().Create();
+            app.RegisterItemEndpoints();
         }
 
-        public override void SetupCommandConverter()
+        public override (Guid, UpdateItemPriceContract) GetCommandConverterInput()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
             TestPropertyNotSetException.ThrowIfNull(Command);
 
-            EndpointConvertersMock.SetupToDomain((_itemId, _contract), Command);
+            return (_itemId, _contract);
+        }
+
+        public override void SetupCommand()
+        {
+            Command = new DomainTestBuilder<UpdateItemPriceCommand>().Create();
         }
     }
 }

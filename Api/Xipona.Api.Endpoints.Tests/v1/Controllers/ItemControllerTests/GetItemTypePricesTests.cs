@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using System.Reflection;
-using static ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetItemTypePricesAsyncTests;
+using static ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetItemTypePricesTests;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
-public class GetItemTypePricesAsyncTests() :
-    ControllerQueryTestsBase<ItemController, GetItemTypePricesQuery, ItemTypePricesReadModel, ItemTypePricesContract,
-        GetItemTypePricesAsyncFixture>(new GetItemTypePricesAsyncFixture())
+public class GetItemTypePricesTests() :
+    EndpointQueryNoConverterTestsBase<GetItemTypePricesQuery, ItemTypePricesReadModel, ItemTypePricesContract,
+        GetItemTypePricesFixture>(new GetItemTypePricesFixture())
 {
     [Theory]
     [InlineData(ErrorReasonCode.ItemNotFound)]
@@ -27,44 +29,46 @@ public class GetItemTypePricesAsyncTests() :
         Fixture.SetupDomainExceptionInQueryDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class GetItemTypePricesAsyncFixture : ControllerQueryFixtureBase
+    public sealed class GetItemTypePricesFixture : EndpointQueryNoConverterFixtureBase
     {
         private readonly Guid _itemId = Guid.NewGuid();
         private readonly Guid _storeId = Guid.NewGuid();
 
-        public GetItemTypePricesAsyncFixture()
+        public GetItemTypePricesFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.ItemNotFound));
         }
 
-        public override MethodInfo Method => typeof(ItemController).GetMethod(nameof(ItemController.GetItemTypePricesAsync))!;
+        public override string RoutePattern => "/v1/items/{id:guid}/type-prices";
 
-        public override ItemController CreateSut()
+        public override Task<IResult> ExecuteTestMethod()
         {
-            return new ItemController(QueryDispatcherMock.Object, CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override Task<IActionResult> ExecuteTestMethod(ItemController sut)
-        {
-            return sut.GetItemTypePricesAsync(_itemId, _storeId);
+            return ItemEndpoints.GetItemTypePrices(_itemId, _storeId,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterItemEndpoints();
         }
 
         public override void SetupQuery()

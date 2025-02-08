@@ -156,6 +156,7 @@ app.UseAuthorization();
 app.UseDiagnosticsMiddleware();
 
 app.RegisterItemCategoryEndpoints();
+app.RegisterItemEndpoints();
 
 await app.RunAsync();
 

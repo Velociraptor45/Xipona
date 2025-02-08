@@ -1,57 +1,56 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
-public class SearchItemsAsyncTests :
-    ControllerEnumerableQueryTestsBase<ItemController, SearchItemQuery, SearchItemResultReadModel, SearchItemResultContract,
-    SearchItemsAsyncTests.SearchItemsAsyncFixture>
+public class SearchItemsTests :
+    EndpointEnumerableQueryNoConverterTestsBase<SearchItemQuery, SearchItemResultReadModel, SearchItemResultContract,
+        SearchItemsTests.SearchItemsFixture>
 {
-    public SearchItemsAsyncTests() : base(new SearchItemsAsyncFixture())
+    public SearchItemsTests() : base(new SearchItemsFixture())
     {
     }
 
-    public sealed class SearchItemsAsyncFixture : ControllerEnumerableQueryFixtureBase
+    public sealed class SearchItemsFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         private string? _searchString;
-        private readonly int _page = 1;
+        private const int _page = 1;
         private int _pageSize = 30;
 
-        public SearchItemsAsyncFixture()
+        public SearchItemsFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new BadRequestStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(ItemController).GetMethod(nameof(ItemController.SearchItemsAsync))!;
+        public override string RoutePattern => "/v1/items/search";
 
-        public override ItemController CreateSut()
-        {
-            return new ItemController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ItemController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
-            return await sut.SearchItemsAsync(_searchString, _page, _pageSize);
+            return await ItemEndpoints.SearchItems(_searchString, _page, _pageSize,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
             _searchString = new TestBuilder<string>().Create();
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterItemEndpoints();
         }
 
         public override void SetupQuery()

@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
 
-public class SearchItemsByItemCategoryAsyncTests : ControllerEnumerableQueryTestsBase<ItemController,
+public class SearchItemsByItemCategoryTests : EndpointEnumerableQueryNoConverterTestsBase<
     SearchItemsByItemCategoryQuery, SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract,
-    SearchItemsByItemCategoryAsyncTests.SearchItemsByItemCategoryAsyncFixture>
+    SearchItemsByItemCategoryTests.SearchItemsByItemCategoryFixture>
 {
-    public SearchItemsByItemCategoryAsyncTests() : base(new SearchItemsByItemCategoryAsyncFixture())
+    public SearchItemsByItemCategoryTests() : base(new SearchItemsByItemCategoryFixture())
     {
     }
 
@@ -31,22 +33,21 @@ public class SearchItemsByItemCategoryAsyncTests : ControllerEnumerableQueryTest
         Fixture.SetupDomainExceptionInQueryDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class SearchItemsByItemCategoryAsyncFixture : ControllerEnumerableQueryFixtureBase
+    public sealed class SearchItemsByItemCategoryFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         private readonly ItemCategoryId _itemCategoryId = ItemCategoryId.New;
 
-        public SearchItemsByItemCategoryAsyncFixture()
+        public SearchItemsByItemCategoryFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NoContentStatusResult());
@@ -55,24 +56,24 @@ public class SearchItemsByItemCategoryAsyncTests : ControllerEnumerableQueryTest
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(ItemController).GetMethod(nameof(ItemController.SearchItemsByItemCategoryAsync))!;
+        public override string RoutePattern => "/v1/items/search/by-item-category/{itemCategoryId:guid}";
 
-        public override ItemController CreateSut()
+        public override async Task<IResult> ExecuteTestMethod()
         {
-            return new ItemController(
+            return await ItemEndpoints.SearchItemsByItemCategory(_itemCategoryId,
                 QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ItemController sut)
-        {
-            return await sut.SearchItemsByItemCategoryAsync(_itemCategoryId);
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterItemEndpoints();
         }
 
         public override void SetupQuery()
