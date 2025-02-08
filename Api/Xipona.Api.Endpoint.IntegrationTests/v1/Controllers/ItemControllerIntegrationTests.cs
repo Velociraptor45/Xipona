@@ -2,9 +2,17 @@
 using FluentAssertions.Execution;
 using FluentAssertions.Extensions;
 using Force.DeepCloner;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.ModifyItem;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
 using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
@@ -22,14 +30,18 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.Common.Queries;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 using ProjectHermes.Xipona.Api.Core.Attributes;
+using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
+using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
+using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
 using ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
@@ -73,19 +85,15 @@ public class ItemControllerIntegrationTests
             // Arrange
             await _fixture.SetupDatabaseWithoutItemAsync();
 
-            var sut = _fixture.CreateSut();
-
             // Act
-            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NotFoundObjectResult>();
-            var notFoundResult = (NotFoundObjectResult)result;
-            notFoundResult.Value.Should().NotBeNull();
-            notFoundResult.Value.Should().BeOfType<ErrorContract>();
-            var error = (ErrorContract)notFoundResult.Value!;
-            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemNotFound);
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be((int)ErrorReasonCode.ItemNotFound);
         }
 
         [Fact]
@@ -95,19 +103,15 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemNotAvailableAtStore();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
             // Act
-            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().NotBeNull();
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var error = (ErrorContract)unprocessableEntityResult.Value!;
-            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemAtStoreNotAvailable);
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntity = (UnprocessableEntity<ErrorContract>)result;
+            unprocessableEntity.Value.Should().NotBeNull();
+            unprocessableEntity.Value.ErrorCode.Should().Be((int)ErrorReasonCode.ItemAtStoreNotAvailable);
         }
 
         [Fact]
@@ -117,19 +121,15 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemWithoutTypes();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
             // Act
-            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().NotBeNull();
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var error = (ErrorContract)unprocessableEntityResult.Value!;
-            error.ErrorCode.Should().Be((int)ErrorReasonCode.ItemHasNoItemTypes);
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntity = (UnprocessableEntity<ErrorContract>)result;
+            unprocessableEntity.Value.Should().NotBeNull();
+            unprocessableEntity.Value.ErrorCode.Should().Be((int)ErrorReasonCode.ItemHasNoItemTypes);
         }
 
         [Fact]
@@ -140,17 +140,15 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItem();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetItemTypePricesAsync(_fixture.ItemId, _fixture.StoreId);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = (OkObjectResult)result;
+            result.Should().BeOfType<Ok<ItemTypePricesContract>>();
+            var okResult = (Ok<ItemTypePricesContract>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
@@ -161,6 +159,20 @@ public class ItemControllerIntegrationTests
             public ItemTypePricesContract? ExpectedResult { get; private set; }
             public Guid ItemId { get; } = Guid.NewGuid();
             public Guid StoreId { get; } = Guid.NewGuid();
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+
+                return await ItemEndpoints.GetItemTypePrices(
+                    ItemId,
+                    StoreId,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<ItemTypePricesReadModel, ItemTypePricesContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -231,20 +243,16 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExpectedResultZero();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetTotalSearchResultCount(_fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = (OkObjectResult)result;
-            okResult.Value.Should().NotBeNull();
-            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            result.Should().BeOfType<Ok<int>>();
+            var okResult = (Ok<int>)result;
+            okResult.Value.Should().Be(_fixture.ExpectedResult);
         }
 
         [Fact]
@@ -256,20 +264,16 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExpectedResult();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetTotalSearchResultCount(_fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = (OkObjectResult)result;
-            okResult.Value.Should().NotBeNull();
-            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            result.Should().BeOfType<Ok<int>>();
+            var okResult = (Ok<int>)result;
+            okResult.Value.Should().Be(_fixture.ExpectedResult);
         }
 
         private sealed class GetTotalSearchResultCountFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
@@ -277,6 +281,17 @@ public class ItemControllerIntegrationTests
             private Item[]? _items;
             public string? SearchInput { get; private set; }
             public int? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.GetTotalSearchResultCount(
+                    SearchInput,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    default);
+            }
 
             public void SetupSearchInput()
             {
@@ -343,18 +358,15 @@ public class ItemControllerIntegrationTests
             _fixture.SetupManufacturerNameForItemWithNameMatching();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.SearchItemsAsync(_fixture.SearchInput);
+            var result = await _fixture.ActWithoutPageSetAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = (OkObjectResult)result;
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            var okResult = (Ok<List<SearchItemResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
@@ -364,22 +376,20 @@ public class ItemControllerIntegrationTests
         {
             // Arrange
             _fixture.SetupSearchInput();
+            _fixture.SetupPageAndPageSize();
             _fixture.SetupTenMatchingItems();
             _fixture.SetupExpectedResultForTenMatchingItems();
             await _fixture.SetupDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.SearchItemsAsync(_fixture.SearchInput, 2, 3);
+            var result = await _fixture.ActWithPageSetAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = (OkObjectResult)result;
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            var okResult = (Ok<List<SearchItemResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
@@ -391,7 +401,41 @@ public class ItemControllerIntegrationTests
             private readonly List<Manufacturer> _manufacturers = new(1);
 
             public string? SearchInput { get; private set; }
+            public int? Page { get; private set; }
+            public int? PageSize { get; private set; }
             public List<SearchItemResultContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActWithPageSetAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+                TestPropertyNotSetException.ThrowIfNull(Page);
+                TestPropertyNotSetException.ThrowIfNull(PageSize);
+
+                var scope = CreateServiceScope();
+
+                return await ItemEndpoints.SearchItems(
+                    SearchInput,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
+                    default,
+                    Page.Value,
+                    PageSize.Value);
+            }
+
+            public async Task<IResult> ActWithoutPageSetAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                var scope = CreateServiceScope();
+
+                return await ItemEndpoints.SearchItems(
+                    SearchInput,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
+                    default);
+            }
 
             public async Task SetupDatabaseAsync()
             {
@@ -432,6 +476,12 @@ public class ItemControllerIntegrationTests
             public void SetupSearchInput()
             {
                 SearchInput = new DomainTestBuilder<string>().Create();
+            }
+
+            public void SetupPageAndPageSize()
+            {
+                Page = 2;
+                PageSize = 3;
             }
 
             public void SetupTenMatchingItems()
@@ -531,14 +581,13 @@ public class ItemControllerIntegrationTests
             _fixture.SetupDeletedItemForCategory();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
         }
 
         [Fact]
@@ -549,20 +598,19 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemForCategory();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
 
-            var okResult = (OkObjectResult)result;
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
+            var contract = okResult.Value!.ToList();
             contract.Should().HaveCount(1);
         }
 
@@ -574,20 +622,19 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemWithTypeForCategory();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
 
-            var okResult = (OkObjectResult)result;
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
+            var contract = okResult.Value!.ToList();
             contract.Should().HaveCount(3); // three item types
         }
 
@@ -599,20 +646,19 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemWithTypeForCategoryExceedingLimit();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
 
-            var okResult = (OkObjectResult)result;
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
+            var contract = okResult.Value!.ToList();
             contract.Should().HaveCount(20);
             contract.Should().OnlyContain(c => c.TypeId != null);
         }
@@ -626,22 +672,21 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemWithTypesWhereItemAndTypeNameMatch();
             _fixture.SetupExpectedResultForItemAndTypeNameMatch();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
 
-            var okResult = (OkObjectResult)result;
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
+            var contract = okResult.Value!.ToList();
             contract.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -654,22 +699,21 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemWithTypesWhereOnlyTypeNameMatch();
             _fixture.SetupExpectedResultForOnlyTypeNameMatch();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
 
-            var okResult = (OkObjectResult)result;
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
+            var contract = okResult.Value!.ToList();
             contract.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -681,14 +725,13 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemAlreadyOnShoppingList();
             _fixture.SetupShoppingListContainingItem();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
         }
 
         [Fact]
@@ -699,14 +742,13 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemAlreadyOnShoppingListWithFindingViaItemCategory();
             _fixture.SetupShoppingListContainingItem();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
         }
 
         [Fact]
@@ -717,20 +759,19 @@ public class ItemControllerIntegrationTests
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupItemsAndItemCategoriesExceedingLimit();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.SearchItemsForShoppingListAsync(_fixture.StoreId, _fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
 
-            var okResult = (OkObjectResult)result;
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
             okResult.Value.Should().NotBeNull();
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
-            var contract = ((IEnumerable<SearchItemForShoppingListResultContract>)okResult.Value!).ToList();
+            var contract = okResult.Value!.ToList();
             contract.Should().HaveCount(20);
             contract.Should().OnlyContain(c => c.TypeId == null);
         }
@@ -746,6 +787,20 @@ public class ItemControllerIntegrationTests
             public string SearchInput { get; } = new DomainTestBuilder<string>().Create();
             public Guid StoreId { get; } = Guid.NewGuid();
             public IReadOnlyCollection<SearchItemForShoppingListResultContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.SearchItemsForShoppingList(
+                    StoreId,
+                    SearchInput,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<SearchItemForShoppingResultReadModel,
+                            SearchItemForShoppingListResultContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupStore()
             {
@@ -1059,18 +1114,16 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemsWithAndWithoutItemCategory();
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupExpectedResult();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemCategoryId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.SearchItemsByItemCategoryAsync(_fixture.ItemCategoryId.Value);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
-            var resultValue = (result as OkObjectResult)!.Value;
+            result.Should().BeOfType<Ok<List<SearchItemByItemCategoryResultContract>>>();
+            var resultValue = (result as Ok<List<SearchItemByItemCategoryResultContract>>)!.Value;
             resultValue.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -1086,6 +1139,20 @@ public class ItemControllerIntegrationTests
 
             public Guid? ItemCategoryId => _itemCategory?.Id;
             public IReadOnlyCollection<SearchItemByItemCategoryResultContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemCategoryId);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.SearchItemsByItemCategory(
+                    ItemCategoryId.Value,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupItemCategory()
             {
@@ -1213,21 +1280,18 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemCategory();
             _fixture.SetupManufacturer();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedDbResult);
 
             // Act
-            var result = await sut.CreateItemAsync(_fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<CreatedAtActionResult>();
-            var createdResult = (CreatedAtActionResult)result;
-            createdResult.Value.Should().BeOfType<ItemContract>();
-            var itemContract = (ItemContract)createdResult.Value!;
+            result.Should().BeOfType<CreatedAtRoute<ItemContract>>();
+            var createdResult = (CreatedAtRoute<ItemContract>)result;
+            var itemContract = createdResult.Value!;
 
             itemContract.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt
                 .Excluding(info => info.Path == "Id"));
@@ -1253,6 +1317,20 @@ public class ItemControllerIntegrationTests
             public CreateItemContract? Contract { get; private set; }
             public ItemContract? ExpectedResult { get; private set; }
             public Item? ExpectedDbResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.CreateItem(
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateItemContract, ItemCreation>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<ItemReadModel, ItemContract>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1416,21 +1494,18 @@ public class ItemControllerIntegrationTests
             _fixture.SetupItemCategory();
             _fixture.SetupManufacturer();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedDbResult);
 
             // Act
-            var result = await sut.CreateItemWithTypesAsync(_fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<CreatedAtActionResult>();
-            var createdResult = (CreatedAtActionResult)result;
-            createdResult.Value.Should().BeOfType<ItemContract>();
-            var itemContract = (ItemContract)createdResult.Value!;
+            result.Should().BeOfType<CreatedAtRoute<ItemContract>>();
+            var createdResult = (CreatedAtRoute<ItemContract>)result;
+            var itemContract = createdResult.Value!;
 
             itemContract.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt
                 .ExcludeItemTypeId()
@@ -1458,6 +1533,20 @@ public class ItemControllerIntegrationTests
             public CreateItemWithTypesContract? Contract { get; private set; }
             public ItemContract? ExpectedResult { get; private set; }
             public Item? ExpectedDbResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.CreateItemWithTypes(
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateItemWithTypesContract, IItem>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<ItemReadModel, ItemContract>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1646,18 +1735,15 @@ public class ItemControllerIntegrationTests
             _fixture.SetupContract();
             await _fixture.PrepareDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExistingItem);
 
             // Act
-            var result = await sut.ModifyItemAsync(_fixture.ExistingItem.Id, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertionScope = _fixture.CreateServiceScope();
 
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
             items.Should().HaveCount(1);
@@ -1685,6 +1771,21 @@ public class ItemControllerIntegrationTests
             public Item? ExpectedItem { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
             public ModifyItemContract? Contract { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.ModifyItem(
+                    ExistingItem.Id,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, ModifyItemContract), ModifyItemCommand>>(),
+                    default);
+            }
 
             public void SetupExistingItem()
             {
@@ -1791,18 +1892,15 @@ public class ItemControllerIntegrationTests
             _fixture.SetupContractWithLessItemTypes();
             await _fixture.PrepareDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExistingItem);
 
             // Act
-            var result = await sut.ModifyItemWithTypesAsync(_fixture.ExistingItem.Id, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertionScope = _fixture.CreateServiceScope();
 
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
             items.Should().HaveCount(1);
@@ -1833,6 +1931,21 @@ public class ItemControllerIntegrationTests
             public Recipe? ExpectedRecipe { get; private set; }
             public ModifyItemWithTypesContract? Contract { get; private set; }
 
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(ExistingItem);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.ModifyItemWithTypes(
+                    ExistingItem.Id,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToDomainConverter<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>>(),
+                    default);
+            }
             public void SetupExistingItem()
             {
                 _existingAvailability = new ItemTypeAvailableAtEntityBuilder().Create();
@@ -1968,18 +2081,16 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExistingRecipe();
             _fixture.SetupContract();
             await _fixture.ApplyMigrationsAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertionScope = _fixture.CreateServiceScope();
             var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
@@ -2029,19 +2140,16 @@ public class ItemControllerIntegrationTests
             _fixture.SetupContract();
             await _fixture.ApplyMigrationsAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.FirstLevelPredecessor);
             TestPropertyNotSetException.ThrowIfNull(_fixture.SecondLevelPredecessor);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentItem);
 
             // Act
-            var result = await sut.UpdateItemWithTypesAsync(_fixture.CurrentItem.Id, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
             var allEntities = (await _fixture.LoadAllItemsAsync(assertScope)).ToList();
@@ -2109,6 +2217,23 @@ public class ItemControllerIntegrationTests
             public UpdateItemWithTypesContract? Contract { get; private set; }
             public Item? ExpectedNewItem { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(CurrentItem);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+
+                return await ItemEndpoints.UpdateItemWithTypes(
+                    CurrentItem.Id,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToDomainConverter<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>>(),
+                    default);
+            }
 
             public void SetupCurrentItem()
             {
@@ -2280,18 +2405,16 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExpectedRecipe();
             _fixture.SetupExistingRecipe();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.UpdateItemAsync(_fixture.ItemId, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertionScope = _fixture.CreateServiceScope();
 
@@ -2330,6 +2453,21 @@ public class ItemControllerIntegrationTests
             public Item? ExpectedNewItem { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
             public UpdateItemContract? Contract { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.UpdateItem(
+                    ItemId,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<(Guid, UpdateItemContract), UpdateItemCommand>>(),
+                    default);
+            }
 
             public void SetupExpectedItems()
             {
@@ -2438,7 +2576,6 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExistingItemWithoutTypes();
             _fixture.SetupExpectedResultWithoutTypes();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
@@ -2446,7 +2583,7 @@ public class ItemControllerIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value, _fixture.Contract);
+            await _fixture.ActAsync();
 
             // Assert
             using var assertionServiceScope = _fixture.CreateServiceScope();
@@ -2483,15 +2620,12 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExistingItemWithTypes();
             _fixture.SetupExpectedResultWithTypes();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
 
             // Act
-            await sut.UpdateItemPriceAsync(_fixture.ItemId.Value, _fixture.Contract);
+            await _fixture.ActAsync();
 
             // Assert
             using var assertionServiceScope = _fixture.CreateServiceScope();
@@ -2529,6 +2663,23 @@ public class ItemControllerIntegrationTests
             public UpdateItemPriceContract? Contract { get; private set; }
             public Item? ExpectedNewItem { get; private set; }
             public Item? ExpectedOldItem { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+
+                return await ItemEndpoints.UpdateItemPrice(
+                    ItemId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>>(),
+                    default);
+            }
 
             public void SetupItemId()
             {
@@ -2703,19 +2854,17 @@ public class ItemControllerIntegrationTests
             _fixture.SetupExpectedItem();
             _fixture.SetupExpectedRecipe();
             _fixture.SetupExpectedShoppingList();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Item);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            var result = await sut.DeleteItemAsync(_fixture.Item.Id);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertionServiceScope = _fixture.CreateServiceScope();
             using var assertionScope = new AssertionScope();
@@ -2752,6 +2901,17 @@ public class ItemControllerIntegrationTests
             public Item? ExpectedItem { get; private set; }
             public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Item);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.DeleteItem(Item.Id,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupItem()
             {
@@ -2865,12 +3025,6 @@ public class ItemControllerIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
-        }
-
-        public ItemController CreateSut()
-        {
-            var scope = CreateServiceScope();
-            return scope.ServiceProvider.GetRequiredService<ItemController>();
         }
 
         protected override void Dispose(bool disposing)

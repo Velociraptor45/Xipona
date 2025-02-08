@@ -182,11 +182,11 @@ public static class ItemEndpoints
 
     internal static async Task<IResult> SearchItems(
         [FromQuery] string searchInput,
-        [FromQuery] int page,
-        [FromQuery] int pageSize,
         [FromServices] IQueryDispatcher queryDispatcher,
         [FromServices] IToContractConverter<SearchItemResultReadModel, SearchItemResultContract> contractConverter,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
     {
         if (pageSize > 100)
             return Results.BadRequest("Page size cannot be greater than 100");

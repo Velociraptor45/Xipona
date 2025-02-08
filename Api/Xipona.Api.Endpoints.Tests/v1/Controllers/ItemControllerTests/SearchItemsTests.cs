@@ -37,10 +37,12 @@ public class SearchItemsTests :
         public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_searchString);
-            return await ItemEndpoints.SearchItems(_searchString, _page, _pageSize,
+            return await ItemEndpoints.SearchItems(_searchString,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                default,
+                _page,
+                _pageSize);
         }
 
         public override void SetupParameters()

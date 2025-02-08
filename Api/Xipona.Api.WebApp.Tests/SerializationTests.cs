@@ -8,6 +8,7 @@ namespace ProjectHermes.Xipona.Api.WebApp;
 
 public class SerializationTests
 {
+    // todo: convert this to endpoints
     [Fact]
     public void Serialization_ShouldContainAllContracts()
     {
@@ -16,7 +17,6 @@ public class SerializationTests
             .Concat(GetTypesForController(typeof(ShoppingListController)))
             .Concat(GetTypesForController(typeof(RecipeController)))
             .Concat(GetTypesForController(typeof(ManufacturerController)))
-            .Concat(GetTypesForController(typeof(ItemController)))
             .Concat(GetTypesForController(typeof(RecipeTagController)))
             .Concat(GetTypesForController(typeof(MonitoringController)))
             .Distinct()
