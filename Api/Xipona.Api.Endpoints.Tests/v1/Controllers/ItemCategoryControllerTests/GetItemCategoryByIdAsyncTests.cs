@@ -1,81 +1,86 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
-//using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-//using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-//using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-//using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
-//using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-//using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-//using System.Reflection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
+using ProjectHermes.Xipona.Api.Contracts.Common;
+using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
+using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using System.Net.Http;
 
-//namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
 
-//public class GetItemCategoryByIdAsyncTests : ControllerQueryTestsBase<ItemCategoryController,
-//    ItemCategoryByIdQuery, IItemCategory, ItemCategoryContract,
-//    GetItemCategoryByIdAsyncTests.GetItemCategoryByIdAsyncFixture>
-//{
-//    public GetItemCategoryByIdAsyncTests() : base(new GetItemCategoryByIdAsyncFixture())
-//    {
-//    }
+public class GetItemCategoryByIdAsyncTests : EndpointQueryNoConverterTestsBase<
+    ItemCategoryByIdQuery, IItemCategory, ItemCategoryContract,
+    GetItemCategoryByIdAsyncTests.GetItemCategoryByIdAsyncFixture>
+{
+    public GetItemCategoryByIdAsyncTests() : base(new GetItemCategoryByIdAsyncFixture())
+    {
+    }
 
-//    [Theory]
-//    [InlineData(ErrorReasonCode.ItemCategoryNotFound)]
-//    public async Task EndpointCall_WithDomainException_ShouldReturnNotFound(ErrorReasonCode errorCode)
-//    {
-//        // Arrange
-//        Fixture.SetupQuery();
-//        Fixture.SetupDomainException(errorCode);
-//        Fixture.SetupDomainExceptionInQueryDispatcher();
-//        Fixture.SetupExpectedErrorContract();
-//        Fixture.SetupErrorConversion();
-//        var sut = Fixture.CreateSut();
+    [Theory]
+    [InlineData(ErrorReasonCode.ItemCategoryNotFound)]
+    public async Task EndpointCall_WithDomainException_ShouldReturnNotFound(ErrorReasonCode errorCode)
+    {
+        // Arrange
+        Fixture.SetupQuery();
+        Fixture.SetupQueryConverter();
+        Fixture.SetupDomainException(errorCode);
+        Fixture.SetupDomainExceptionInQueryDispatcher();
+        Fixture.SetupExpectedErrorContract();
+        Fixture.SetupErrorConversion();
 
-//        // Act
-//        var result = await Fixture.ExecuteTestMethod(sut);
+        // Act
+        var result = await Fixture.ExecuteTestMethod();
 
-//        // Assert
-//        result.Should().BeOfType<NotFoundObjectResult>();
-//        var unprocessableEntity = result as NotFoundObjectResult;
-//        unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
-//    }
+        // Assert
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var notFound = result as NotFound<ErrorContract>;
+        notFound!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
+    }
 
-//    public sealed class GetItemCategoryByIdAsyncFixture : ControllerQueryFixtureBase
-//    {
-//        public GetItemCategoryByIdAsyncFixture()
-//        {
-//            PossibleResultsList.Add(new OkStatusResult());
-//            PossibleResultsList.Add(new NotFoundStatusResult());
-//            PossibleResultsList.Add(new UnprocessableEntityStatusResult(new List<ErrorReasonCode>()
-//            {
-//                ErrorReasonCode.ItemCategoryNotFound
-//            }));
-//        }
+    public sealed class GetItemCategoryByIdAsyncFixture : EndpointQueryNoConverterFixtureBase
+    {
+        public GetItemCategoryByIdAsyncFixture()
+        {
+            PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NotFoundStatusResult());
+            PossibleResultsList.Add(new UnprocessableEntityStatusResult(new List<ErrorReasonCode>()
+            {
+                ErrorReasonCode.ItemCategoryNotFound
+            }));
+        }
 
-//        private readonly Guid _itemCategoryId = Guid.NewGuid();
+        private readonly Guid _itemCategoryId = Guid.NewGuid();
 
-//        public override MethodInfo Method =>
-//            typeof(ItemCategoryController).GetMethod(nameof(ItemCategoryController.GetItemCategoryByIdAsync))!;
+        public override string RoutePattern => "/v1/item-categories/{id:guid}";
+        public override HttpMethod HttpMethod => HttpMethod.Get;
 
-//        public override ItemCategoryController CreateSut()
-//        {
-//            return new ItemCategoryController(
-//                QueryDispatcherMock.Object,
-//                CommandDispatcherMock.Object,
-//                EndpointConvertersMock.Object);
-//        }
+        public override async Task<IResult> ExecuteTestMethod()
+        {
+            return await MinimalItemCategoryController.GetItemCategoryById(
+                _itemCategoryId,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
+        }
 
-//        public override async Task<IActionResult> ExecuteTestMethod(ItemCategoryController sut)
-//        {
-//            return await sut.GetItemCategoryByIdAsync(_itemCategoryId);
-//        }
+        public override void SetupParameters()
+        {
+        }
 
-//        public override void SetupParameters()
-//        {
-//        }
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterItemCategoryEndpoints();
+        }
 
-//        public override void SetupQuery()
-//        {
-//            Query = new ItemCategoryByIdQuery(new ItemCategoryId(_itemCategoryId));
-//        }
-//    }
-//}
+        public override void SetupQuery()
+        {
+            Query = new ItemCategoryByIdQuery(new ItemCategoryId(_itemCategoryId));
+        }
+    }
+}
