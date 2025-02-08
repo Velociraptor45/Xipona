@@ -1,58 +1,60 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
 using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ManufacturerControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
-public class GetManufacturerSearchResultsAsyncTests : ControllerEnumerableQueryTestsBase<ManufacturerController,
+public class GetManufacturerSearchResultsTests : EndpointEnumerableQueryNoConverterTestsBase<
     ManufacturerSearchQuery, ManufacturerSearchResultReadModel, ManufacturerSearchResultContract,
-    GetManufacturerSearchResultsAsyncTests.GetManufacturerSearchResultsAsyncFixture>
+    GetManufacturerSearchResultsTests.GetManufacturerSearchResultsFixture>
 {
-    public GetManufacturerSearchResultsAsyncTests() : base(new GetManufacturerSearchResultsAsyncFixture())
+    public GetManufacturerSearchResultsTests() : base(new GetManufacturerSearchResultsFixture())
     {
     }
 
-    public sealed class GetManufacturerSearchResultsAsyncFixture : ControllerEnumerableQueryFixtureBase
+    public sealed class GetManufacturerSearchResultsFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         private bool? _includeDeleted;
         private string? _searchInput;
 
-        public GetManufacturerSearchResultsAsyncFixture()
+        public GetManufacturerSearchResultsFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new BadRequestStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(ManufacturerController).GetMethod(nameof(ManufacturerController.GetManufacturerSearchResultsAsync))!;
+        public override string RoutePattern => "/v1/manufacturers";
 
-        public override ManufacturerController CreateSut()
-        {
-            return new ManufacturerController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ManufacturerController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_searchInput);
             TestPropertyNotSetException.ThrowIfNull(_includeDeleted);
-            return await sut.GetManufacturerSearchResultsAsync(_searchInput, _includeDeleted.Value);
+
+            return await ManufacturerEndpoints.SearchManufacturersByName(
+                _searchInput,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                default,
+                _includeDeleted.Value);
         }
 
         public override void SetupParameters()
         {
             _searchInput = new TestBuilder<string>().Create();
             _includeDeleted = new TestBuilder<bool>().Create();
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterManufacturerEndpoints();
         }
 
         public override void SetupParametersForBadRequest()

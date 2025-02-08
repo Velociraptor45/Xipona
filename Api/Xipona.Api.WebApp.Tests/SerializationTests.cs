@@ -16,7 +16,6 @@ public class SerializationTests
         var contractTypes = GetTypesForController(typeof(StoreController))
             .Concat(GetTypesForController(typeof(ShoppingListController)))
             .Concat(GetTypesForController(typeof(RecipeController)))
-            .Concat(GetTypesForController(typeof(ManufacturerController)))
             .Concat(GetTypesForController(typeof(RecipeTagController)))
             .Concat(GetTypesForController(typeof(MonitoringController)))
             .Distinct()

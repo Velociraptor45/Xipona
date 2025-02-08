@@ -1,20 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerById;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using System.Reflection;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ManufacturerControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
-public class GetManufacturerByIdAsyncTests : ControllerQueryTestsBase<ManufacturerController,
+public class GetManufacturerByIdTests : EndpointQueryNoConverterTestsBase<
     ManufacturerByIdQuery, IManufacturer, ManufacturerContract,
-    GetManufacturerByIdAsyncTests.GetManufacturerByIdAsyncFixture>
+    GetManufacturerByIdTests.GetManufacturerByIdFixture>
 {
-    public GetManufacturerByIdAsyncTests() : base(new GetManufacturerByIdAsyncFixture())
+    public GetManufacturerByIdTests() : base(new GetManufacturerByIdFixture())
     {
     }
 
@@ -28,20 +30,19 @@ public class GetManufacturerByIdAsyncTests : ControllerQueryTestsBase<Manufactur
         Fixture.SetupDomainExceptionInQueryDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class GetManufacturerByIdAsyncFixture : ControllerQueryFixtureBase
+    public sealed class GetManufacturerByIdFixture : EndpointQueryNoConverterFixtureBase
     {
-        public GetManufacturerByIdAsyncFixture()
+        public GetManufacturerByIdFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
@@ -53,24 +54,24 @@ public class GetManufacturerByIdAsyncTests : ControllerQueryTestsBase<Manufactur
 
         private readonly Guid _itemCategoryId = Guid.NewGuid();
 
-        public override MethodInfo Method =>
-            typeof(ManufacturerController).GetMethod(nameof(ManufacturerController.GetManufacturerByIdAsync))!;
+        public override string RoutePattern => "/v1/manufacturers/{id:guid}";
 
-        public override ManufacturerController CreateSut()
+        public override async Task<IResult> ExecuteTestMethod()
         {
-            return new ManufacturerController(
+            return await ManufacturerEndpoints.GetManufacturerById(_itemCategoryId,
                 QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ManufacturerController sut)
-        {
-            return await sut.GetManufacturerByIdAsync(_itemCategoryId);
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterManufacturerEndpoints();
         }
 
         public override void SetupQuery()

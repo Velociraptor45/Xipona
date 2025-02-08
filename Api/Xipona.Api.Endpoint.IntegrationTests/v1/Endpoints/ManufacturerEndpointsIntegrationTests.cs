@@ -1,13 +1,19 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
+using ProjectHermes.Xipona.Api.Contracts.Common;
+using ProjectHermes.Xipona.Api.Core.Converter;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Ports;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
@@ -17,9 +23,9 @@ using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
 using Manufacturer = ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
 using Models = ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class ManufacturerControllerIntegrationTests
+public class ManufacturerEndpointsIntegrationTests
 {
     public class DeleteManufacturerAsync : IAssemblyFixture<DockerFixture>
     {
@@ -36,13 +42,12 @@ public class ManufacturerControllerIntegrationTests
             // Arrange
             _fixture.SetupManufacturerId();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
+            var response = await _fixture.ActAsync();
 
             // Assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<NoContent>();
         }
 
         [Fact]
@@ -51,10 +56,9 @@ public class ManufacturerControllerIntegrationTests
             // Arrange
             _fixture.SetupManufacturerId();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
+            await _fixture.ActAsync();
 
             // Assert
             var manufacturers = await _fixture.LoadPersistedManufacturersAsync();
@@ -70,10 +74,9 @@ public class ManufacturerControllerIntegrationTests
             // Arrange
             _fixture.SetupManufacturerId();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
+            await _fixture.ActAsync();
 
             // Assert
             var items = await _fixture.LoadPersistedItemsAsync();
@@ -91,13 +94,12 @@ public class ManufacturerControllerIntegrationTests
             // Arrange
             _fixture.SetupManufacturerId();
             await _fixture.PrepareDatabaseForManufacturerNotExistingAsync();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var response = await sut.DeleteManufacturerAsync(_fixture.ManufacturerId!.Value);
+            var response = await _fixture.ActAsync();
 
             // Assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<NoContent>();
         }
 
         private class DeleteManufacturerAsyncFixture : ManufacturerControllerFixture
@@ -107,6 +109,19 @@ public class ManufacturerControllerIntegrationTests
             }
 
             public Models.ManufacturerId? ManufacturerId { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ManufacturerId);
+
+                var scope = CreateServiceScope();
+                return await ManufacturerEndpoints.DeleteManufacturer(
+                    ManufacturerId.Value,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<Guid, DeleteManufacturerCommand>>(),
+                    default);
+            }
 
             public void SetupManufacturerId()
             {
@@ -164,12 +179,6 @@ public class ManufacturerControllerIntegrationTests
         protected ManufacturerControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             SetupScope = CreateServiceScope();
-        }
-
-        public ManufacturerController CreateSut()
-        {
-            var scope = CreateServiceScope();
-            return scope.ServiceProvider.GetRequiredService<ManufacturerController>();
         }
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)

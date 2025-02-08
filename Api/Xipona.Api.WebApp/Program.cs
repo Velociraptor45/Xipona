@@ -157,6 +157,7 @@ app.UseDiagnosticsMiddleware();
 
 app.RegisterItemCategoryEndpoints();
 app.RegisterItemEndpoints();
+app.RegisterManufacturerEndpoints();
 
 await app.RunAsync();
 
