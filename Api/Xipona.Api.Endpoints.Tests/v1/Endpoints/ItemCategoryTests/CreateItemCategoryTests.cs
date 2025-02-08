@@ -10,7 +10,7 @@ using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryEndpointTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
 
 public class CreateItemCategoryTests : EndpointCommandWithReturnTypeTestsBase<string,
     CreateItemCategoryCommand, IItemCategory, ItemCategoryContract,

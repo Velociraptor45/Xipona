@@ -71,9 +71,9 @@ using ItemTypeAvailableAt = ProjectHermes.Xipona.Api.Repositories.Items.Entities
 using Section = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section;
 using Store = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class ItemControllerIntegrationTests
+public class ItemEndpointsIntegrationTests
 {
     public sealed class GetItemTypePricesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
@@ -1444,7 +1444,7 @@ public class ItemControllerIntegrationTests
                     .Select(av =>
                     {
                         var sections = new Section[av.Store.Sections.Count];
-                        for (int i = 0; i < av.Store.Sections.Count; i++)
+                        for (var i = 0; i < av.Store.Sections.Count; i++)
                         {
                             var section = av.Store.Sections.ElementAt(i);
                             var builder = i == 0 ? SectionEntityMother.Default() : SectionEntityMother.NotDefault();
@@ -1645,15 +1645,7 @@ public class ItemControllerIntegrationTests
                                     StoreId = av.Store.Id
                                 })
                         })
-                        .ToList(),
-                    //Availabilities = ExpectedResult.Availabilities
-                    //    .Select(av => new ItemWithTypesAvailabilityContract
-                    //    {
-                    //        DefaultSectionId = av.DefaultSection.Id,
-                    //        StoreId = av.Store.Id,
-                    //        Price = av.Price
-                    //    })
-                    //    .ToList()
+                        .ToList()
                 };
             }
 
@@ -1685,7 +1677,7 @@ public class ItemControllerIntegrationTests
                     .Select(av =>
                     {
                         var sections = new Section[av.Store.Sections.Count];
-                        for (int i = 0; i < av.Store.Sections.Count; i++)
+                        for (var i = 0; i < av.Store.Sections.Count; i++)
                         {
                             var section = av.Store.Sections.ElementAt(i);
                             var builder = i == 0 ? SectionEntityMother.Default() : SectionEntityMother.NotDefault();

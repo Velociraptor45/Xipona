@@ -11,7 +11,7 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemTests;
 
 public class GetItemByIdTests : EndpointQueryNoConverterTestsBase<ItemByIdQuery, ItemReadModel, ItemContract, GetItemByIdTests.GetItemByIdFixture>
 {

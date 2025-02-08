@@ -1,29 +1,33 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
+using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using static ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests.GetItemTypePricesTests;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemTests;
 
-public class GetItemTypePricesTests() :
-    EndpointQueryNoConverterTestsBase<GetItemTypePricesQuery, ItemTypePricesReadModel, ItemTypePricesContract,
-        GetItemTypePricesFixture>(new GetItemTypePricesFixture())
+public class SearchItemsByItemCategoryTests : EndpointEnumerableQueryNoConverterTestsBase<
+    SearchItemsByItemCategoryQuery, SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract,
+    SearchItemsByItemCategoryTests.SearchItemsByItemCategoryFixture>
 {
+    public SearchItemsByItemCategoryTests() : base(new SearchItemsByItemCategoryFixture())
+    {
+    }
+
     [Theory]
-    [InlineData(ErrorReasonCode.ItemNotFound)]
+    [InlineData(ErrorReasonCode.StoresNotFound)]
+    [InlineData(ErrorReasonCode.ItemCategoryNotFound)]
     public async Task EndpointCall_WithDomainException_ShouldReturnNotFound(ErrorReasonCode errorCode)
     {
         // Arrange
+        Fixture.SetupParameters();
         Fixture.SetupQuery();
         Fixture.SetupDomainException(errorCode);
         Fixture.SetupDomainExceptionInQueryDispatcher();
@@ -39,23 +43,24 @@ public class GetItemTypePricesTests() :
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class GetItemTypePricesFixture : EndpointQueryNoConverterFixtureBase
+    public sealed class SearchItemsByItemCategoryFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
-        private readonly Guid _itemId = Guid.NewGuid();
-        private readonly Guid _storeId = Guid.NewGuid();
+        private readonly ItemCategoryId _itemCategoryId = ItemCategoryId.New;
 
-        public GetItemTypePricesFixture()
+        public SearchItemsByItemCategoryFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
+            PossibleResultsList.Add(new NoContentStatusResult());
+            PossibleResultsList.Add(new UnprocessableEntityStatusResult(
+                ErrorReasonCode.ItemCategoryNotFound, ErrorReasonCode.StoresNotFound));
             PossibleResultsList.Add(new NotFoundStatusResult());
-            PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.ItemNotFound));
         }
 
-        public override string RoutePattern => "/v1/items/{id:guid}/type-prices";
+        public override string RoutePattern => "/v1/items/search/by-item-category/{itemCategoryId:guid}";
 
-        public override Task<IResult> ExecuteTestMethod()
+        public override async Task<IResult> ExecuteTestMethod()
         {
-            return ItemEndpoints.GetItemTypePrices(_itemId, _storeId,
+            return await ItemEndpoints.SearchItemsByItemCategory(_itemCategoryId,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
                 ErrorConverterMock.Object,
@@ -73,7 +78,7 @@ public class GetItemTypePricesTests() :
 
         public override void SetupQuery()
         {
-            Query = new GetItemTypePricesQuery(new ItemId(_itemId), new StoreId(_storeId));
+            Query = new SearchItemsByItemCategoryQuery(_itemCategoryId);
         }
     }
 }

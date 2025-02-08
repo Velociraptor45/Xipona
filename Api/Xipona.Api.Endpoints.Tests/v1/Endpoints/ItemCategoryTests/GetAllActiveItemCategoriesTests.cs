@@ -7,7 +7,7 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryEndpointTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
 
 public class GetAllActiveItemCategoriesTests : EndpointEnumerableQueryNoConverterTestsBase<
     AllActiveItemCategoriesQuery, ItemCategoryReadModel, ItemCategoryContract,

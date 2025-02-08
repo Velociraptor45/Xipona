@@ -22,9 +22,9 @@ using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System;
 using Xunit;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class ItemCategoryControllerIntegrationTests
+public class ItemCategoryEndpointsIntegrationTests
 {
     public sealed class DeleteItemCategoryAsync : IAssemblyFixture<DockerFixture>
     {
