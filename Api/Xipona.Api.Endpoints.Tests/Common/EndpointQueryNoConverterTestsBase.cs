@@ -23,6 +23,5 @@ public class EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturn
         {
             return false;
         }
-
     }
 }

@@ -37,7 +37,7 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         Fixture.SetupParameters();
         Fixture.SetupQuery();
         Fixture.SetupQueryConverter();
-        Fixture.SetupQueryResult();
+        Fixture.SetupQueryResult(HttpStatusCode.OK);
         Fixture.SetupDispatcherSuccess();
         Fixture.SetupExpectedResult();
         Fixture.SetupResultConverter();
@@ -292,9 +292,10 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
             ErrorConverterMock.Setup(x => x.ToContract(DomainException.Reason)).Returns(ExpectedErrorContract);
         }
 
-        public virtual void SetupQueryResult()
+        public virtual void SetupQueryResult(HttpStatusCode statusCode)
         {
-            ExpectedQueryResult = new DomainTestBuilder<TQueryReturnType>().Create();
+            if (statusCode == HttpStatusCode.OK)
+                ExpectedQueryResult = new DomainTestBuilder<TQueryReturnType>().Create();
         }
     }
 }
