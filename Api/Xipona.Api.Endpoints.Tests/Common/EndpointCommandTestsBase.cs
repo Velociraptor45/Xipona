@@ -13,6 +13,7 @@ using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
@@ -204,6 +205,7 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
 
         protected List<IStatusResult> PossibleResultsList = [];
         public abstract string RoutePattern { get; }
+        public abstract HttpMethod HttpMethod { get; }
 
         public TCommand? Command { get; protected set; }
         public DomainException? DomainException { get; private set; }
@@ -231,7 +233,10 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
             CommandDispatcherMock.SetupDispatchAsync(Command, result);
         }
 
-        public abstract void SetupCommand();
+        public void SetupCommand()
+        {
+            Command = new DomainTestBuilder<TCommand>().Create();
+        }
 
         public void SetupDomainExceptionInCommandDispatcher()
         {
@@ -255,8 +260,10 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
             var field = typeof(WebApplication).GetField("_dataSources", BindingFlags.Instance | BindingFlags.NonPublic)!;
             var value = (List<EndpointDataSource>)field.GetValue(app)!;
 
+            var httpMethod = HttpMethod.ToString().ToUpper();
+
             return value[0].Endpoints
-                .First(e => ((RouteEndpoint)e).RoutePattern.RawText == RoutePattern)
+                .First(e => ((RouteEndpoint)e).RoutePattern.RawText == RoutePattern && e.DisplayName!.Contains(httpMethod))
                 .Metadata
                 .Where(m => m is ProducesResponseTypeMetadata rtm && (rtm.StatusCode != 200 || rtm.Type != typeof(IResult)))
                 .Cast<ProducesResponseTypeMetadata>()

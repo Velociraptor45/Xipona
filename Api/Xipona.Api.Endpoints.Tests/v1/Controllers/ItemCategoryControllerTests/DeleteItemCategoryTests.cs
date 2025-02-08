@@ -9,13 +9,14 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using System.Net.Http;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
 
-public class DeleteItemCategoryAsyncTests : EndpointCommandTestsBase<Guid, DeleteItemCategoryCommand,
-    bool, DeleteItemCategoryAsyncTests.DeleteItemCategoryAsyncFixture>
+public class DeleteItemCategoryTests : EndpointCommandTestsBase<Guid, DeleteItemCategoryCommand,
+    bool, DeleteItemCategoryTests.DeleteItemCategoryFixture>
 {
-    public DeleteItemCategoryAsyncTests() : base(new DeleteItemCategoryAsyncFixture())
+    public DeleteItemCategoryTests() : base(new DeleteItemCategoryFixture())
     {
     }
 
@@ -37,15 +38,15 @@ public class DeleteItemCategoryAsyncTests : EndpointCommandTestsBase<Guid, Delet
 
         // Assert
         result.Should().BeOfType<NotFound<ErrorContract>>();
-        var unprocessableEntity = result as NotFound<ErrorContract>;
-        unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
+        var notFound = result as NotFound<ErrorContract>;
+        notFound!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class DeleteItemCategoryAsyncFixture : EndpointCommandFixtureBase
+    public sealed class DeleteItemCategoryFixture : EndpointCommandFixtureBase
     {
         private Guid? _id;
 
-        public DeleteItemCategoryAsyncFixture()
+        public DeleteItemCategoryFixture()
         {
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(new List<ErrorReasonCode>
             {
@@ -56,6 +57,7 @@ public class DeleteItemCategoryAsyncTests : EndpointCommandTestsBase<Guid, Delet
         }
 
         public override string RoutePattern => "/v1/item-categories/{id:guid}";
+        public override HttpMethod HttpMethod => HttpMethod.Delete;
 
         public override async Task<IResult> ExecuteTestMethod()
         {
@@ -76,11 +78,6 @@ public class DeleteItemCategoryAsyncTests : EndpointCommandTestsBase<Guid, Delet
         public override void RegisterEndpoints(WebApplication app)
         {
             app.RegisterItemCategoryEndpoints();
-        }
-
-        public override void SetupCommand()
-        {
-            Command = new DomainTestBuilder<DeleteItemCategoryCommand>().Create();
         }
 
         public override Guid GetCommandConverterInput()
