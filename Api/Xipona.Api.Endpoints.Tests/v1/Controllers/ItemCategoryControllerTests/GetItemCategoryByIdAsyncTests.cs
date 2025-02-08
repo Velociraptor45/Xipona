@@ -9,15 +9,14 @@ using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using System.Net.Http;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
 
-public class GetItemCategoryByIdAsyncTests : EndpointQueryNoConverterTestsBase<
+public class GetItemCategoryByIdTests : EndpointQueryNoConverterTestsBase<
     ItemCategoryByIdQuery, IItemCategory, ItemCategoryContract,
-    GetItemCategoryByIdAsyncTests.GetItemCategoryByIdAsyncFixture>
+    GetItemCategoryByIdTests.GetItemCategoryByIdFixture>
 {
-    public GetItemCategoryByIdAsyncTests() : base(new GetItemCategoryByIdAsyncFixture())
+    public GetItemCategoryByIdTests() : base(new GetItemCategoryByIdFixture())
     {
     }
 
@@ -42,9 +41,9 @@ public class GetItemCategoryByIdAsyncTests : EndpointQueryNoConverterTestsBase<
         notFound!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class GetItemCategoryByIdAsyncFixture : EndpointQueryNoConverterFixtureBase
+    public sealed class GetItemCategoryByIdFixture : EndpointQueryNoConverterFixtureBase
     {
-        public GetItemCategoryByIdAsyncFixture()
+        public GetItemCategoryByIdFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
@@ -57,7 +56,6 @@ public class GetItemCategoryByIdAsyncTests : EndpointQueryNoConverterTestsBase<
         private readonly Guid _itemCategoryId = Guid.NewGuid();
 
         public override string RoutePattern => "/v1/item-categories/{id:guid}";
-        public override HttpMethod HttpMethod => HttpMethod.Get;
 
         public override async Task<IResult> ExecuteTestMethod()
         {

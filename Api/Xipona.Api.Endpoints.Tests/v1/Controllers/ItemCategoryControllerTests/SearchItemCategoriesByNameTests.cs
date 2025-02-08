@@ -8,24 +8,23 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Net.Http;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
 
-public class SearchItemCategoriesByNameAsyncTests : EndpointEnumerableQueryNoConverterTestsBase<
+public class SearchItemCategoriesByNameTests : EndpointEnumerableQueryNoConverterTestsBase<
     ItemCategorySearchQuery, ItemCategorySearchResultReadModel, ItemCategorySearchResultContract,
-    SearchItemCategoriesByNameAsyncTests.SearchItemCategoriesByNameAsyncFixture>
+    SearchItemCategoriesByNameTests.SearchItemCategoriesByNameFixture>
 {
-    public SearchItemCategoriesByNameAsyncTests() : base(new SearchItemCategoriesByNameAsyncFixture())
+    public SearchItemCategoriesByNameTests() : base(new SearchItemCategoriesByNameFixture())
     {
     }
 
-    public sealed class SearchItemCategoriesByNameAsyncFixture : EndpointEnumerableQueryNoConverterFixtureBase
+    public sealed class SearchItemCategoriesByNameFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         private bool? _includeDeleted;
         private string? _searchInput;
 
-        public SearchItemCategoriesByNameAsyncFixture()
+        public SearchItemCategoriesByNameFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NoContentStatusResult());
@@ -33,7 +32,6 @@ public class SearchItemCategoriesByNameAsyncTests : EndpointEnumerableQueryNoCon
         }
 
         public override string RoutePattern => "/v1/item-categories";
-        public override HttpMethod HttpMethod => HttpMethod.Get;
 
         public override async Task<IResult> ExecuteTestMethod()
         {

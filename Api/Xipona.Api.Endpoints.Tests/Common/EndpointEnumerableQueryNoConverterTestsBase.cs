@@ -11,7 +11,8 @@ public class EndpointEnumerableQueryNoConverterTestsBase<TQuery, TQueryReturnTyp
     {
     }
 
-    public abstract class EndpointEnumerableQueryNoConverterFixtureBase : EndpointEnumerableQueryFixtureBase
+    public abstract class EndpointEnumerableQueryNoConverterFixtureBase :
+        EndpointEnumerableQueryTestsBase<bool, TQuery, TQueryReturnType, TReturnType, TFixture>.EndpointEnumerableQueryFixtureBase
     {
         public override void SetupQueryConverter()
         {

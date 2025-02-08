@@ -183,7 +183,7 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
 
         protected List<IStatusResult> PossibleResultsList = [];
         public abstract string RoutePattern { get; }
-        public abstract HttpMethod HttpMethod { get; }
+        public HttpMethod HttpMethod => HttpMethod.Get;
 
         public TQuery? Query { get; protected set; }
         public TQueryReturnType? ExpectedQueryResult { get; protected set; }
