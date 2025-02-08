@@ -9,7 +9,7 @@ using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryEndpointTests;
 
 public class SearchItemCategoriesByNameTests : EndpointEnumerableQueryNoConverterTestsBase<
     ItemCategorySearchQuery, ItemCategorySearchResultReadModel, ItemCategorySearchResultContract,
