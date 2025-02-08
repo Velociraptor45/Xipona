@@ -12,7 +12,7 @@ using System.Net.Http;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ItemCategoryControllerTests;
 
-public class SearchItemCategoriesByNameAsyncTests : EndpointEnumerableQueryTestsBase<bool,
+public class SearchItemCategoriesByNameAsyncTests : EndpointEnumerableQueryNoConverterTestsBase<
     ItemCategorySearchQuery, ItemCategorySearchResultReadModel, ItemCategorySearchResultContract,
     SearchItemCategoriesByNameAsyncTests.SearchItemCategoriesByNameAsyncFixture>
 {
@@ -20,7 +20,7 @@ public class SearchItemCategoriesByNameAsyncTests : EndpointEnumerableQueryTests
     {
     }
 
-    public sealed class SearchItemCategoriesByNameAsyncFixture : EndpointEnumerableQueryFixtureBase
+    public sealed class SearchItemCategoriesByNameAsyncFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         private bool? _includeDeleted;
         private string? _searchInput;
@@ -73,14 +73,6 @@ public class SearchItemCategoriesByNameAsyncTests : EndpointEnumerableQueryTests
         public override void SetupExpectedBadRequestMessage()
         {
             ExpectedBadRequestMessage = "Search input mustn't be null or empty";
-        }
-        public override void SetupQueryConverter()
-        {
-        }
-
-        public override bool GetQueryConverterInput()
-        {
-            return false;
         }
     }
 }

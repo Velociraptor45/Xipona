@@ -8,7 +8,6 @@ using System.Net;
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 
 public abstract class EndpointEnumerableQueryTestsBase<TQueryConverterInputType, TQuery, TQueryReturnType, TReturnType, TFixture>
-
     : EndpointQueryTestsBase<TQueryConverterInputType, TQuery, IEnumerable<TQueryReturnType>, List<TReturnType>, TFixture>
     where TQuery : IQuery<IEnumerable<TQueryReturnType>>
     where TFixture : EndpointEnumerableQueryTestsBase<TQueryConverterInputType, TQuery, TQueryReturnType, TReturnType, TFixture>

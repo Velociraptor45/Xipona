@@ -5,7 +5,7 @@ public class EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturn
     : EndpointQueryTestsBase<bool, TQuery, TQueryReturnType, TReturnType, TFixture>
     where TQuery : IQuery<TQueryReturnType>
     where TFixture : EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturnType, TFixture>
-    .EndpointQueryNoConverterFixtureBase
+        .EndpointQueryNoConverterFixtureBase
 
 {
     public EndpointQueryNoConverterTestsBase(TFixture fixture) : base(fixture)
