@@ -208,6 +208,7 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         public abstract HttpMethod HttpMethod { get; }
 
         public TCommand? Command { get; protected set; }
+        public TCommandReturnType? ExpectedCommandResult = new DomainTestBuilder<TCommandReturnType>().Create();
         public DomainException? DomainException { get; private set; }
         public ErrorContract? ExpectedErrorContract { get; private set; }
         public string ExpectedBadRequestMessage { get; protected set; } = string.Empty;
@@ -229,11 +230,10 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         public void SetupDispatcherSuccess()
         {
             TestPropertyNotSetException.ThrowIfNull(Command);
-            var result = new DomainTestBuilder<TCommandReturnType>().Create();
-            CommandDispatcherMock.SetupDispatchAsync(Command, result);
+            CommandDispatcherMock.SetupDispatchAsync(Command, ExpectedCommandResult);
         }
 
-        public void SetupCommand()
+        public virtual void SetupCommand()
         {
             Command = new DomainTestBuilder<TCommand>().Create();
         }
