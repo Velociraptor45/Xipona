@@ -1,19 +1,26 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
+using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
@@ -65,19 +72,16 @@ public class RecipeControllerIntegrationTests
             _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedEntity);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.CreateRecipeAsync(_fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertScope = _fixture.CreateServiceScope();
-            result.Should().BeOfType<CreatedAtActionResult>();
-            var createdResult = result as CreatedAtActionResult;
+            result.Should().BeOfType<CreatedAtRoute<RecipeContract>>();
+            var createdResult = result as CreatedAtRoute<RecipeContract>;
             createdResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.Excluding(info =>
                 info.Path.EndsWith(".Id") || info.Path == "Id"));
 
@@ -105,21 +109,18 @@ public class RecipeControllerIntegrationTests
             _fixture.SetupContract();
             await _fixture.PrepareDatabaseAsync();
 
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedEntity);
 
             // Act
-            var result = await sut.CreateRecipeAsync(_fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertScope = _fixture.CreateServiceScope();
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var ueResult = result as UnprocessableEntityObjectResult;
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var ueResult = result as UnprocessableEntity<ErrorContract>;
             ueResult!.Value.Should().NotBeNull();
             ueResult.Value.Should().BeOfType<ErrorContract>();
-            var error = (ErrorContract)ueResult.Value!;
+            var error = ueResult.Value!;
             error.ErrorCode.Should().Be((int)ErrorReasonCode.RecipeNotFound);
         }
 
@@ -137,6 +138,21 @@ public class RecipeControllerIntegrationTests
             public RecipeContract? ExpectedResult { get; private set; }
             public Recipe? ExpectedEntity { get; private set; }
             public Guid? ExistingSideDishId => _existingSideDish?.Id;
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await RecipeEndpoints.CreateRecipe(
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<CreateRecipeContract, CreateRecipeCommand>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<RecipeReadModel, RecipeContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public async Task PrepareDatabaseAsync()
             {
@@ -319,17 +335,15 @@ public class RecipeControllerIntegrationTests
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupSearchInput();
             _fixture.SetupExpectedResult();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.SearchInput);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.SearchRecipesByNameAsync(_fixture.SearchInput);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var collection = ((OkObjectResult)result).Value;
+            result.Should().BeOfType<Ok<List<RecipeSearchResultContract>>>();
+            var collection = ((Ok<List<RecipeSearchResultContract>>)result).Value;
             collection.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -344,6 +358,20 @@ public class RecipeControllerIntegrationTests
 
             public IReadOnlyCollection<RecipeSearchResultContract>? ExpectedResult { get; private set; }
             public string? SearchInput { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(SearchInput);
+
+                var scope = CreateServiceScope();
+                return await RecipeEndpoints.SearchRecipesByName(
+                    SearchInput,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToContractConverter<RecipeSearchResult, RecipeSearchResultContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public async Task PrepareDatabaseAsync()
             {
@@ -451,18 +479,15 @@ public class RecipeControllerIntegrationTests
             _fixture.SetupExpectedRecipe();
             _fixture.SetupContract();
             await _fixture.PrepareDatabase();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.RecipeId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.ModifyRecipeAsync(_fixture.RecipeId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertScope = _fixture.CreateServiceScope();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
             var entities = (await _fixture.LoadAllRecipesAsync(assertScope)).ToList();
             entities.Should().HaveCount(2);
             var entity = entities.First(r => r.Id == _fixture.ExpectedRecipe.Id);
@@ -539,6 +564,22 @@ public class RecipeControllerIntegrationTests
             public RecipeId? RecipeId { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
             public ModifyRecipeContract? Contract { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(RecipeId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await RecipeEndpoints.ModifyRecipe(
+                    RecipeId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToDomainConverter<(Guid, ModifyRecipeContract), ModifyRecipeCommand>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupRecipeId()
             {
@@ -737,18 +778,15 @@ public class RecipeControllerIntegrationTests
             _fixture.SetupItems();
             _fixture.SetupRecipe();
             await _fixture.SetupDatabase();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetItemAmountsForOneServingAsync(_fixture.RecipeId);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okObjectResult = (OkObjectResult)result;
-
-            okObjectResult.Value.Should().BeOfType<ItemAmountsForOneServingContract>();
+            result.Should().BeOfType<Ok<ItemAmountsForOneServingContract>>();
+            var okObjectResult = (Ok<ItemAmountsForOneServingContract>)result;
             okObjectResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -764,6 +802,18 @@ public class RecipeControllerIntegrationTests
 
             public Guid RecipeId { get; private set; }
             public ItemAmountsForOneServingContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await RecipeEndpoints.GetItemAmountsForOneServing(
+                    RecipeId,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupRecipeId()
             {
@@ -976,12 +1026,6 @@ public class RecipeControllerIntegrationTests
         protected RecipeControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
-        }
-
-        public RecipeController CreateSut()
-        {
-            var actScope = CreateServiceScope();
-            return actScope.ServiceProvider.GetRequiredService<RecipeController>();
         }
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)

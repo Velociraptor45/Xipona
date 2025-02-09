@@ -13,7 +13,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<ShoppingListController>();
         services.AddTransient<StoreController>();
-        services.AddTransient<RecipeController>();
         services.AddTransient<RecipeTagController>();
 
         var assembly = typeof(ServiceCollectionExtensions).Assembly;

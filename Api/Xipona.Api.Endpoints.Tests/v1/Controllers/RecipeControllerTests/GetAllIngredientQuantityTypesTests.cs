@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
-public class GetAllIngredientQuantityTypesTests : ControllerEnumerableQueryTestsBase<RecipeController,
+public class GetAllIngredientQuantityTypesTests : EndpointEnumerableQueryNoConverterTestsBase<
     AllIngredientQuantityTypesQuery, IngredientQuantityTypeReadModel, IngredientQuantityTypeContract,
     GetAllIngredientQuantityTypesTests.GetAllIngredientQuantityTypesFixture>
 {
@@ -17,7 +17,7 @@ public class GetAllIngredientQuantityTypesTests : ControllerEnumerableQueryTests
     {
     }
 
-    public sealed class GetAllIngredientQuantityTypesFixture : ControllerEnumerableQueryFixtureBase
+    public sealed class GetAllIngredientQuantityTypesFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         public GetAllIngredientQuantityTypesFixture()
         {
@@ -25,24 +25,23 @@ public class GetAllIngredientQuantityTypesTests : ControllerEnumerableQueryTests
             PossibleResultsList.Add(new NoContentStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(RecipeController).GetMethod(nameof(RecipeController.GetAllIngredientQuantityTypes))!;
+        public override string RoutePattern => "/v1/recipes/ingredient-quantity-types";
 
-        public override RecipeController CreateSut()
+        public override async Task<IResult> ExecuteTestMethod()
         {
-            return new RecipeController(
+            return await RecipeEndpoints.GetAllIngredientQuantityTypes(
                 QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(RecipeController sut)
-        {
-            return await sut.GetAllIngredientQuantityTypes();
+                ContractConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterRecipeEndpoints();
         }
 
         public override void SetupQuery()

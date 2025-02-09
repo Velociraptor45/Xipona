@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
+using System.Net.Http;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
-public class ModifyRecipeAsyncTests : ControllerCommandTestsBase<RecipeController, ModifyRecipeCommand, bool,
-        ModifyRecipeAsyncTests.ModifyRecipeAsyncFixture>
+public class ModifyRecipeTests : EndpointCommandTestsBase<(Guid, ModifyRecipeContract), ModifyRecipeCommand, bool,
+        ModifyRecipeTests.ModifyRecipeFixture>
 {
-    public ModifyRecipeAsyncTests() : base(new ModifyRecipeAsyncFixture())
+    public ModifyRecipeTests() : base(new ModifyRecipeFixture())
     {
     }
 
@@ -33,23 +35,22 @@ public class ModifyRecipeAsyncTests : ControllerCommandTestsBase<RecipeControlle
         Fixture.SetupDomainExceptionInCommandDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
-        unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var notFound = result as NotFound<ErrorContract>;
+        notFound!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class ModifyRecipeAsyncFixture : ControllerCommandFixtureBase
+    public sealed class ModifyRecipeFixture : EndpointCommandFixtureBase
     {
         private ModifyRecipeContract? _contract;
         private readonly Guid _recipeId = Guid.NewGuid();
 
-        public ModifyRecipeAsyncFixture()
+        public ModifyRecipeFixture()
         {
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(
                 ErrorReasonCode.RecipeNotFound,
@@ -59,21 +60,19 @@ public class ModifyRecipeAsyncTests : ControllerCommandTestsBase<RecipeControlle
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(RecipeController).GetMethod(nameof(RecipeController.ModifyRecipeAsync))!;
+        public override string RoutePattern => "/v1/recipes/{id:guid}/modify";
+        public override HttpMethod HttpMethod => HttpMethod.Put;
 
-        public override RecipeController CreateSut()
-        {
-            return new RecipeController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(RecipeController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
-            return await sut.ModifyRecipeAsync(_recipeId, _contract);
+            return await RecipeEndpoints.ModifyRecipe(
+                _recipeId,
+                _contract,
+                CommandDispatcherMock.Object,
+                CommandConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
@@ -81,17 +80,15 @@ public class ModifyRecipeAsyncTests : ControllerCommandTestsBase<RecipeControlle
             _contract = new TestBuilder<ModifyRecipeContract>().Create();
         }
 
-        public override void SetupCommand()
+        public override void RegisterEndpoints(WebApplication app)
         {
-            Command = new DomainTestBuilder<ModifyRecipeCommand>().Create();
+            app.RegisterRecipeEndpoints();
         }
 
-        public override void SetupCommandConverter()
+        public override (Guid, ModifyRecipeContract) GetCommandConverterInput()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
-            TestPropertyNotSetException.ThrowIfNull(Command);
-
-            EndpointConvertersMock.SetupToDomain((_recipeId, _contract), Command);
+            return (_recipeId, _contract);
         }
     }
 }

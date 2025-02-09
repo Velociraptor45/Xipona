@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
@@ -17,207 +18,280 @@ using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTy
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 
-[ApiController]
-[Authorize(Policy = "User")]
-[Route("v1/recipes")]
-public class RecipeController : ControllerBase
+public static class RecipeEndpoints
 {
-    private readonly IQueryDispatcher _queryDispatcher;
-    private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IEndpointConverters _converters;
+    private const string _routeBase = "v1/recipes";
 
-    public RecipeController(IQueryDispatcher queryDispatcher, ICommandDispatcher commandDispatcher,
-        IEndpointConverters converters)
+    public static void RegisterRecipeEndpoints(this IEndpointRouteBuilder builder)
     {
-        _queryDispatcher = queryDispatcher;
-        _commandDispatcher = commandDispatcher;
-        _converters = converters;
+        builder
+            .RegisterGetRecipeById()
+            .RegisterSearchRecipesByName()
+            .RegisterSearchRecipesByTags()
+            .RegisterGetAllIngredientQuantityTypes()
+            .RegisterGetItemAmountsForOneServing()
+            .RegisterCreateRecipe()
+            .RegisterModifyRecipe();
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(RecipeContract), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> GetAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterGetRecipeById(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/{{id:guid}}", GetRecipeById)
+            .WithName("GetRecipeById")
+            .Produces<RecipeContract>()
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> GetRecipeById(
+        [FromRoute] Guid id,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<RecipeReadModel, RecipeContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorConverter,
+        CancellationToken cancellationToken)
     {
         try
         {
             var query = new RecipeByIdQuery(new RecipeId(id));
-            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
-
-            var contract = _converters.ToContract<RecipeReadModel, RecipeContract>(result);
-
-            return Ok(contract);
+            var result = await queryDispatcher.DispatchAsync(query, cancellationToken);
+            var contract = contractConverter.ToContract(result);
+            return Results.Ok(contract);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            if (e.Reason.ErrorCode is ErrorReasonCode.RecipeNotFound)
-                return NotFound(errorContract);
-
-            return UnprocessableEntity(errorContract);
+            var errorContract = errorConverter.ToContract(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.RecipeNotFound)
+                return Results.NotFound(errorContract);
+            return Results.UnprocessableEntity(errorContract);
         }
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(List<RecipeSearchResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("search-by-name")]
-    public async Task<IActionResult> SearchRecipesByNameAsync([FromQuery] string searchInput,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterSearchRecipesByName(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/search-by-name", SearchRecipesByName)
+            .WithName("SearchRecipesByName")
+            .Produces<List<RecipeSearchResultContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<string>(StatusCodes.Status400BadRequest)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> SearchRecipesByName(
+        [FromQuery] string searchInput,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<RecipeSearchResult, RecipeSearchResultContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorConverter,
+        CancellationToken cancellationToken)
     {
         searchInput = searchInput.Trim();
         if (string.IsNullOrEmpty(searchInput))
         {
-            return BadRequest("Search input mustn't be null or empty");
+            return Results.BadRequest("Search input mustn't be null or empty");
         }
 
         try
         {
             var query = new SearchRecipesByNameQuery(searchInput);
-            var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+            var results = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
             if (results.Count == 0)
-                return NoContent();
+                return Results.NoContent();
 
-            var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results).ToList();
+            var contracts = contractConverter.ToContract(results).ToList();
 
-            return Ok(contracts);
+            return Results.Ok(contracts);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            return UnprocessableEntity(errorContract);
+            var errorContract = errorConverter.ToContract(e.Reason);
+            return Results.UnprocessableEntity(errorContract);
         }
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(List<RecipeSearchResultContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("search-by-tags")]
-    public async Task<IActionResult> SearchRecipesByTagsAsync([FromQuery] IEnumerable<Guid> tagIds,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterSearchRecipesByTags(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/search-by-tags", SearchRecipesByTags)
+            .WithName("SearchRecipesByTags")
+            .Produces<List<RecipeSearchResultContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> SearchRecipesByTags(
+        [FromQuery] Guid[] tagIds,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<RecipeSearchResult, RecipeSearchResultContract> contractConverter,
+        CancellationToken cancellationToken)
     {
         var query = new SearchRecipesByTagsQuery(tagIds.Select(t => new RecipeTagId(t)));
 
-        var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var results = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
         if (results.Count == 0)
-            return NoContent();
+            return Results.NoContent();
 
-        var contracts = _converters.ToContract<RecipeSearchResult, RecipeSearchResultContract>(results).ToList();
-        return Ok(contracts);
+        var contracts = contractConverter.ToContract(results).ToList();
+        return Results.Ok(contracts);
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(List<IngredientQuantityTypeContract>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Route("ingredient-quantity-types")]
-    public async Task<IActionResult> GetAllIngredientQuantityTypes(CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterGetAllIngredientQuantityTypes(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/ingredient-quantity-types", GetAllIngredientQuantityTypes)
+            .WithName("GetAllIngredientQuantityTypes")
+            .Produces<List<IngredientQuantityTypeContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> GetAllIngredientQuantityTypes(
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract> contractConverter,
+        CancellationToken cancellationToken)
     {
         var query = new AllIngredientQuantityTypesQuery();
-        var results = (await _queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var results = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
         if (results.Count == 0)
-            return NoContent();
+            return Results.NoContent();
 
-        var contracts = _converters.ToContract<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>(results)
+        var contracts = contractConverter.ToContract(results)
             .ToList();
 
-        return Ok(contracts);
+        return Results.Ok(contracts);
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(ItemAmountsForOneServingContract), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}/item-amounts-for-one-serving")]
-    public async Task<IActionResult> GetItemAmountsForOneServingAsync([FromRoute] Guid id,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterGetItemAmountsForOneServing(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/{{id:guid}}/item-amounts-for-one-serving", GetItemAmountsForOneServing)
+            .WithName("GetItemAmountsForOneServing")
+            .Produces<ItemAmountsForOneServingContract>()
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> GetItemAmountsForOneServing(
+        [FromRoute] Guid id,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorConverter,
+        CancellationToken cancellationToken)
     {
         try
         {
             var query = new ItemAmountsForOneServingQuery(new RecipeId(id));
-            var result = await _queryDispatcher.DispatchAsync(query, cancellationToken);
+            var result = await queryDispatcher.DispatchAsync(query, cancellationToken);
 
-            var contract = _converters
-                .ToContract<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>(result);
+            var contract = contractConverter.ToContract(result);
 
-            return Ok(contract);
+            return Results.Ok(contract);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            var errorContract = errorConverter.ToContract(e.Reason);
             if (e.Reason.ErrorCode is ErrorReasonCode.RecipeNotFound or ErrorReasonCode.ItemNotFound)
-                return NotFound(errorContract);
+                return Results.NotFound(errorContract);
 
-            return UnprocessableEntity(errorContract);
+            return Results.UnprocessableEntity(errorContract);
         }
     }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(RecipeContract), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("")]
-    public async Task<IActionResult> CreateRecipeAsync([FromBody] CreateRecipeContract createRecipeContract,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterCreateRecipe(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost($"/{_routeBase}", CreateRecipe)
+            .WithName("CreateRecipe")
+            .Produces<RecipeContract>(StatusCodes.Status201Created)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> CreateRecipe(
+        [FromBody] CreateRecipeContract createRecipeContract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToDomainConverter<CreateRecipeContract, CreateRecipeCommand> commandConverter,
+        [FromServices] IToContractConverter<RecipeReadModel, RecipeContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorConverter,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var command = _converters.ToDomain<CreateRecipeContract, CreateRecipeCommand>(createRecipeContract);
+            var command = commandConverter.ToDomain(createRecipeContract);
 
-            var model = await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            var model = await commandDispatcher.DispatchAsync(command, cancellationToken);
 
-            var contract = _converters.ToContract<RecipeReadModel, RecipeContract>(model);
+            var contract = contractConverter.ToContract(model);
 
-            return CreatedAtAction(nameof(GetAsync), new { id = contract.Id }, contract);
+            return Results.CreatedAtRoute("GetRecipeById", new { id = contract.Id }, contract);
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
-            return UnprocessableEntity(errorContract);
+            var errorContract = errorConverter.ToContract(e.Reason);
+            return Results.UnprocessableEntity(errorContract);
         }
     }
 
-    [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorContract), StatusCodes.Status422UnprocessableEntity)]
-    [Route("{id:guid}/modify")]
-    public async Task<IActionResult> ModifyRecipeAsync([FromRoute] Guid id, [FromBody] ModifyRecipeContract contract,
-        CancellationToken cancellationToken = default)
+    private static IEndpointRouteBuilder RegisterModifyRecipe(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPut($"/{_routeBase}/{{id:guid}}/modify", ModifyRecipe)
+            .WithName("ModifyRecipe")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> ModifyRecipe(
+        [FromRoute] Guid id,
+        [FromBody] ModifyRecipeContract contract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToDomainConverter<(Guid, ModifyRecipeContract), ModifyRecipeCommand> commandConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorConverter,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var command = _converters.ToDomain<(Guid, ModifyRecipeContract), ModifyRecipeCommand>((id, contract));
+            var command = commandConverter.ToDomain((id, contract));
 
-            await _commandDispatcher.DispatchAsync(command, cancellationToken);
+            await commandDispatcher.DispatchAsync(command, cancellationToken);
 
-            return NoContent();
+            return Results.NoContent();
         }
         catch (DomainException e)
         {
-            var errorContract = _converters.ToContract<IReason, ErrorContract>(e.Reason);
+            var errorContract = errorConverter.ToContract(e.Reason);
             if (e.Reason.ErrorCode
                 is ErrorReasonCode.RecipeNotFound
                 or ErrorReasonCode.IngredientNotFound
                 or ErrorReasonCode.PreparationStepNotFound)
-                return NotFound(errorContract);
+                return Results.NotFound(errorContract);
 
-            return UnprocessableEntity(errorContract);
+            return Results.UnprocessableEntity(errorContract);
         }
     }
 }

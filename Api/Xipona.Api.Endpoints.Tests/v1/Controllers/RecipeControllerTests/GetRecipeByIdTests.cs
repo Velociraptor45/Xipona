@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.RecipeById;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
@@ -8,14 +11,13 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
-public class GetAsyncTests : ControllerQueryTestsBase<RecipeController, RecipeByIdQuery,
-    RecipeReadModel, RecipeContract, GetAsyncTests.GetAsyncFixture>
+public class GetRecipeByIdTests : EndpointQueryNoConverterTestsBase<RecipeByIdQuery,
+    RecipeReadModel, RecipeContract, GetRecipeByIdTests.GetRecipeByIdFixture>
 {
-    public GetAsyncTests() : base(new GetAsyncFixture())
+    public GetRecipeByIdTests() : base(new GetRecipeByIdFixture())
     {
     }
 
@@ -30,43 +32,39 @@ public class GetAsyncTests : ControllerQueryTestsBase<RecipeController, RecipeBy
         Fixture.SetupDomainExceptionInQueryDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
-        unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var notFound = result as NotFound<ErrorContract>;
+        notFound!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class GetAsyncFixture : ControllerQueryFixtureBase
+    public sealed class GetRecipeByIdFixture : EndpointQueryNoConverterFixtureBase
     {
         private Guid? _recipeId;
 
-        public GetAsyncFixture()
+        public GetRecipeByIdFixture()
         {
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.RecipeNotFound));
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 
-        public override MethodInfo Method => typeof(RecipeController).GetMethod(nameof(RecipeController.GetAsync))!;
+        public override string RoutePattern => "/v1/recipes/{id:guid}";
 
-        public override RecipeController CreateSut()
-        {
-            return new RecipeController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(RecipeController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_recipeId);
 
-            return await sut.GetAsync(_recipeId.Value);
+            return await RecipeEndpoints.GetRecipeById(
+                _recipeId.Value,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
@@ -74,10 +72,14 @@ public class GetAsyncTests : ControllerQueryTestsBase<RecipeController, RecipeBy
             _recipeId = Guid.NewGuid();
         }
 
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterRecipeEndpoints();
+        }
+
         public override void SetupQuery()
         {
             TestPropertyNotSetException.ThrowIfNull(_recipeId);
-
             Query = new RecipeByIdQuery(new RecipeId(_recipeId.Value));
         }
     }

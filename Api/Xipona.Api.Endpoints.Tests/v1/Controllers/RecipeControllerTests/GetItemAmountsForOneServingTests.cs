@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.ItemAmountsForOneServing;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
@@ -8,15 +11,14 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
-public class GetItemAmountsForOneServingAsyncTests : ControllerQueryTestsBase<RecipeController, ItemAmountsForOneServingQuery,
+public class GetItemAmountsForOneServingTests : EndpointQueryNoConverterTestsBase<ItemAmountsForOneServingQuery,
     IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract,
-    GetItemAmountsForOneServingAsyncTests.GetItemAmountsForOneServingAsyncTestsFixture>
+    GetItemAmountsForOneServingTests.GetItemAmountsForOneServingTestsFixture>
 {
-    public GetItemAmountsForOneServingAsyncTests() : base(new GetItemAmountsForOneServingAsyncTestsFixture())
+    public GetItemAmountsForOneServingTests() : base(new GetItemAmountsForOneServingTestsFixture())
     {
     }
 
@@ -32,22 +34,21 @@ public class GetItemAmountsForOneServingAsyncTests : ControllerQueryTestsBase<Re
         Fixture.SetupDomainExceptionInQueryDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class GetItemAmountsForOneServingAsyncTestsFixture : ControllerQueryFixtureBase
+    public sealed class GetItemAmountsForOneServingTestsFixture : EndpointQueryNoConverterFixtureBase
     {
         private Guid? _recipeId;
 
-        public GetItemAmountsForOneServingAsyncTestsFixture()
+        public GetItemAmountsForOneServingTestsFixture()
         {
             PossibleResultsList.Add(new OkStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
@@ -55,26 +56,27 @@ public class GetItemAmountsForOneServingAsyncTests : ControllerQueryTestsBase<Re
                 ErrorReasonCode.ItemNotFound));
         }
 
-        public override MethodInfo Method =>
-            typeof(RecipeController).GetMethod(nameof(RecipeController.GetItemAmountsForOneServingAsync))!;
-
-        public override RecipeController CreateSut()
-        {
-            return new RecipeController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
+        public override string RoutePattern => "/v1/recipes/{id:guid}/item-amounts-for-one-serving";
 
         public override void SetupParameters()
         {
             _recipeId = Guid.NewGuid();
         }
 
-        public override async Task<IActionResult> ExecuteTestMethod(RecipeController sut)
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterRecipeEndpoints();
+        }
+
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_recipeId);
-            return await sut.GetItemAmountsForOneServingAsync(_recipeId.Value);
+            return await RecipeEndpoints.GetItemAmountsForOneServing(
+                _recipeId.Value,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupQuery()

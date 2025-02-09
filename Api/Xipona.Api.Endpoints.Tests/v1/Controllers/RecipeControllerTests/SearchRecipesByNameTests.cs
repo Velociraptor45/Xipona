@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Core.TestKit;
@@ -7,22 +8,21 @@ using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
 
-public class SearchRecipesByNameAsyncTests : ControllerEnumerableQueryTestsBase<RecipeController, SearchRecipesByNameQuery,
-    RecipeSearchResult, RecipeSearchResultContract, SearchRecipesByNameAsyncTests.SearchRecipesByNameAsyncFixture>
+public class SearchRecipesByNameTests : EndpointEnumerableQueryNoConverterTestsBase<SearchRecipesByNameQuery,
+    RecipeSearchResult, RecipeSearchResultContract, SearchRecipesByNameTests.SearchRecipesByNameFixture>
 {
-    public SearchRecipesByNameAsyncTests() : base(new SearchRecipesByNameAsyncFixture())
+    public SearchRecipesByNameTests() : base(new SearchRecipesByNameFixture())
     {
     }
 
-    public sealed class SearchRecipesByNameAsyncFixture : ControllerEnumerableQueryFixtureBase
+    public sealed class SearchRecipesByNameFixture : EndpointEnumerableQueryNoConverterFixtureBase
     {
         private string? _searchInput;
 
-        public SearchRecipesByNameAsyncFixture()
+        public SearchRecipesByNameFixture()
         {
             PossibleResultsList.Add(new UnprocessableEntityStatusResult());
             PossibleResultsList.Add(new OkStatusResult());
@@ -30,27 +30,28 @@ public class SearchRecipesByNameAsyncTests : ControllerEnumerableQueryTestsBase<
             PossibleResultsList.Add(new BadRequestStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(RecipeController).GetMethod(nameof(RecipeController.SearchRecipesByNameAsync))!;
+        public override string RoutePattern => "/v1/recipes/search-by-name";
 
-        public override RecipeController CreateSut()
-        {
-            return new RecipeController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(RecipeController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_searchInput);
 
-            return await sut.SearchRecipesByNameAsync(_searchInput);
+            return await RecipeEndpoints.SearchRecipesByName(
+                _searchInput,
+                QueryDispatcherMock.Object,
+                ContractConverterMock.Object,
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
             _searchInput = new TestBuilder<string>().Create();
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterRecipeEndpoints();
         }
 
         public override void SetupQuery()
