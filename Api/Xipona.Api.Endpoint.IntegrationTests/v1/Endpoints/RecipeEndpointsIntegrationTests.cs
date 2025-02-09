@@ -124,7 +124,7 @@ public class RecipeEndpointsIntegrationTests
             error.ErrorCode.Should().Be((int)ErrorReasonCode.RecipeNotFound);
         }
 
-        private sealed class CreateRecipeAsyncFixture : RecipeControllerFixture
+        private sealed class CreateRecipeAsyncFixture : RecipeEndpointFixture
         {
             private List<ItemCategory>? _itemCategories;
             private List<Item>? _items;
@@ -347,7 +347,7 @@ public class RecipeEndpointsIntegrationTests
             collection.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class SearchRecipesByNameAsyncFixture : RecipeControllerFixture
+        private sealed class SearchRecipesByNameAsyncFixture : RecipeEndpointFixture
         {
             private Recipe? _existingEntityToBeFound;
             private Recipe? _existingEntityNotToBeFound;
@@ -550,7 +550,7 @@ public class RecipeEndpointsIntegrationTests
                 opt => opt.Excluding(p => new[] { "Id", "Recipe" }.Contains(p.Path)));
         }
 
-        private class ModifyRecipeAsyncFixture : RecipeControllerFixture
+        private class ModifyRecipeAsyncFixture : RecipeEndpointFixture
         {
             private Recipe? _existingRecipe;
             private Recipe? _existingSideDish;
@@ -790,7 +790,7 @@ public class RecipeEndpointsIntegrationTests
             okObjectResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class GetItemAmountsForOneServingAsyncFixture : RecipeControllerFixture
+        private sealed class GetItemAmountsForOneServingAsyncFixture : RecipeEndpointFixture
         {
             private readonly List<Item> _items = new();
             private readonly List<Store> _stores = new();
@@ -1019,11 +1019,11 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public abstract class RecipeControllerFixture : DatabaseFixture
+    public abstract class RecipeEndpointFixture : DatabaseFixture
     {
         protected readonly IServiceScope ArrangeScope;
 
-        protected RecipeControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected RecipeEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }

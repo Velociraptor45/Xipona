@@ -57,19 +57,12 @@ builder.Services.AddSingleton(connectionStrings);
 
 await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLoadingService);
 
-//builder.Services
-//    .AddControllers(options =>
-//    {
-//        options.SuppressAsyncSuffixInActionNames = false;
-//    })
-//    .AddJsonOptions(opt => opt.JsonSerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
-
 builder.Services.Configure<JsonOptions>(opt =>
     opt.SerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
 
 builder.Services.AddCore();
 builder.Services.AddDomain();
-builder.Services.AddEndpointControllers();
+builder.Services.AddEndpointConverters();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();

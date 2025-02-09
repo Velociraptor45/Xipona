@@ -262,8 +262,8 @@ namespace ProjectHermes.Xipona.Api.Client
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(IEnumerable<Guid> storeIds,
-            IEnumerable<Guid> itemCategoryIds, IEnumerable<Guid> manufacturerIds,
+        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(Guid[] storeIds,
+            Guid[] itemCategoryIds, Guid[] manufacturerIds,
             CancellationToken cancellationToken = default)
         {
             return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds, cancellationToken);
@@ -456,7 +456,7 @@ namespace ProjectHermes.Xipona.Api.Client
 
         /// <inheritdoc/>
         public async Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync(
-            IEnumerable<Guid> tagIds, CancellationToken cancellationToken = default)
+            Guid[] tagIds, CancellationToken cancellationToken = default)
         {
             return await _apiClient.SearchRecipesByTagsAsync(tagIds, cancellationToken);
         }

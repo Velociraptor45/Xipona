@@ -102,7 +102,7 @@ public class ManufacturerEndpointsIntegrationTests
             response.Should().BeOfType<NoContent>();
         }
 
-        private class DeleteManufacturerAsyncFixture : ManufacturerControllerFixture
+        private class DeleteManufacturerAsyncFixture : ManufacturerEndpointFixture
         {
             public DeleteManufacturerAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -172,11 +172,11 @@ public class ManufacturerEndpointsIntegrationTests
         }
     }
 
-    private abstract class ManufacturerControllerFixture : DatabaseFixture
+    private abstract class ManufacturerEndpointFixture : DatabaseFixture
     {
         protected readonly IServiceScope SetupScope;
 
-        protected ManufacturerControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected ManufacturerEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             SetupScope = CreateServiceScope();
         }

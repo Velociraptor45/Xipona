@@ -8,7 +8,7 @@ namespace ProjectHermes.Xipona.Api.Endpoint;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddEndpointControllers(this IServiceCollection services)
+    public static void AddEndpointConverters(this IServiceCollection services)
     {
         var assembly = typeof(ServiceCollectionExtensions).Assembly;
         services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));

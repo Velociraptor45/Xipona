@@ -87,7 +87,7 @@ public class StoreEndpointsIntegrationTests
             result.Should().BeOfType<NotFound<ErrorContract>>();
         }
 
-        private sealed class GetStoreByIdAsyncFixture : LocalFixture
+        private sealed class GetStoreByIdAsyncFixture : StoreEndpointFixture
         {
             private Repositories.Stores.Entities.Store? _existingStore;
 
@@ -192,7 +192,7 @@ public class StoreEndpointsIntegrationTests
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class GetActiveStoresForShoppingAsyncFixture : LocalFixture
+        private sealed class GetActiveStoresForShoppingAsyncFixture : StoreEndpointFixture
         {
             private IList<Repositories.Stores.Entities.Store>? _existingStores;
 
@@ -288,7 +288,7 @@ public class StoreEndpointsIntegrationTests
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class GetActiveStoresForItemAsyncFixture : LocalFixture
+        private sealed class GetActiveStoresForItemAsyncFixture : StoreEndpointFixture
         {
             private IList<Repositories.Stores.Entities.Store>? _existingStores;
 
@@ -384,7 +384,7 @@ public class StoreEndpointsIntegrationTests
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class GetActiveStoresOverviewAsyncFixture : LocalFixture
+        private sealed class GetActiveStoresOverviewAsyncFixture : StoreEndpointFixture
         {
             private IList<Repositories.Stores.Entities.Store>? _existingStores;
 
@@ -495,7 +495,7 @@ public class StoreEndpointsIntegrationTests
             stores.First().CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(30));
         }
 
-        private class CreateStoreAsyncFixture : LocalFixture
+        private class CreateStoreAsyncFixture : StoreEndpointFixture
         {
             public CreateStoreAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -666,7 +666,7 @@ public class StoreEndpointsIntegrationTests
                 opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
         }
 
-        private class UpdateStoreAsyncFixture : LocalFixture
+        private class UpdateStoreAsyncFixture : StoreEndpointFixture
         {
             public UpdateStoreAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -865,11 +865,11 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    private abstract class LocalFixture : DatabaseFixture
+    private abstract class StoreEndpointFixture : DatabaseFixture
     {
         protected readonly IServiceScope SetupScope;
 
-        protected LocalFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected StoreEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             SetupScope = CreateServiceScope();
         }

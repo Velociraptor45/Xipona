@@ -65,7 +65,7 @@ public class ItemCategoryEndpointsIntegrationTests
             recipe.Ingredients.Should().BeEmpty();
         }
 
-        private sealed class DeleteItemCategoryAsyncFixture : ItemCategoryControllerFixture
+        private sealed class DeleteItemCategoryAsyncFixture : ItemCategoryEndpointFixture
         {
             private ItemCategory? _itemCategory;
             private Recipe? _recipe;
@@ -135,9 +135,9 @@ public class ItemCategoryEndpointsIntegrationTests
         }
     }
 
-    private abstract class ItemCategoryControllerFixture : DatabaseFixture
+    private abstract class ItemCategoryEndpointFixture : DatabaseFixture
     {
-        protected ItemCategoryControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected ItemCategoryEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }

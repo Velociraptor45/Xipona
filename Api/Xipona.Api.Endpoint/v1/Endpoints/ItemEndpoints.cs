@@ -18,6 +18,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.AllQuantityType
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
+using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
 using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
@@ -45,6 +46,7 @@ using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using System.Threading;
 
@@ -61,7 +63,7 @@ public static class ItemEndpoints
             .RegisterGetItemTypePrices()
             .RegisterGetTotalSearchResultCount()
             .RegisterSearchItems()
-            //.RegisterSearchItemsByFilter()
+            .RegisterSearchItemsByFilter()
             .RegisterSearchItemsForShoppingList()
             .RegisterSearchItemsByItemCategory()
             .RegisterGetAllQuantityTypes()
@@ -201,38 +203,38 @@ public static class ItemEndpoints
         return Results.Ok(contract);
     }
 
-    //private static IEndpointRouteBuilder RegisterSearchItemsByFilter(this IEndpointRouteBuilder builder)
-    //{
-    //    builder.MapGet($"/{_routeBase}/filter", SearchItemsByFilter)
-    //        .WithName("SearchItemsByFilter")
-    //        .Produces<List<SearchItemResultContract>>()
-    //        .Produces(StatusCodes.Status204NoContent)
-    //        .RequireAuthorization("User");
+    private static IEndpointRouteBuilder RegisterSearchItemsByFilter(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/filter", SearchItemsByFilter)
+            .WithName("SearchItemsByFilter")
+            .Produces<List<SearchItemResultContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .RequireAuthorization("User");
 
-    //    return builder;
-    //}
+        return builder;
+    }
 
-    //internal static async Task<IResult> SearchItemsByFilter(
-    //    [FromQuery] IEnumerable<Guid> storeIds,
-    //    [FromQuery] IEnumerable<Guid> itemCategoryIds,
-    //    [FromQuery] IEnumerable<Guid> manufacturerIds,
-    //    [FromServices] IQueryDispatcher queryDispatcher,
-    //    [FromServices] IToContractConverter<SearchItemResultReadModel, SearchItemResultContract> contractConverter,
-    //    CancellationToken cancellationToken)
-    //{
-    //    var query = new SearchItemsByFilterQuery(
-    //        storeIds.Select(id => new StoreId(id)),
-    //        itemCategoryIds.Select(id => new ItemCategoryId(id)),
-    //        manufacturerIds.Select(id => new ManufacturerId(id)));
+    internal static async Task<IResult> SearchItemsByFilter(
+        [FromQuery] Guid[] storeIds,
+        [FromQuery] Guid[] itemCategoryIds,
+        [FromQuery] Guid[] manufacturerIds,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<SearchItemResultReadModel, SearchItemResultContract> contractConverter,
+        CancellationToken cancellationToken)
+    {
+        var query = new SearchItemsByFilterQuery(
+            storeIds.Select(id => new StoreId(id)),
+            itemCategoryIds.Select(id => new ItemCategoryId(id)),
+            manufacturerIds.Select(id => new ManufacturerId(id)));
 
-    //    var result = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
+        var result = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 
-    //    if (result.Count == 0)
-    //        return Results.NoContent();
+        if (result.Count == 0)
+            return Results.NoContent();
 
-    //    var contract = contractConverter.ToContract(result).ToList();
-    //    return Results.Ok(contract);
-    //}
+        var contract = contractConverter.ToContract(result).ToList();
+        return Results.Ok(contract);
+    }
 
     private static IEndpointRouteBuilder RegisterSearchItemsForShoppingList(this IEndpointRouteBuilder builder)
     {

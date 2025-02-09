@@ -38,16 +38,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ContentWithTargetPath Include="v1\Controllers\docker-compose.yml">
+    <ContentWithTargetPath Include="v1\Endpoints\docker-compose.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>docker-compose.yml</TargetPath>
     </ContentWithTargetPath>
-    <None Include="v1\Controllers\docker-compose.yml" />
+    <None Include="v1\Endpoints\docker-compose.yml" />
   </ItemGroup>
 
   <ItemGroup>
       <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
   </ItemGroup>
-
 
 </Project>

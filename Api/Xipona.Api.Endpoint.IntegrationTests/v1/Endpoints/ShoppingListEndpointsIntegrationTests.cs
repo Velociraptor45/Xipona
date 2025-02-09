@@ -88,7 +88,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class GetActiveShoppingListByStoreIdFixture(DockerFixture dockerFixture) :
-            ShoppingListControllerFixture(dockerFixture)
+            ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private List<Item>? _items;
@@ -449,7 +449,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class RemoveItemFromShoppingListFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private Item? _item;
@@ -619,7 +619,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class AddTemporaryItemToShoppingListFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private Store? _store;
             private ShoppingList? _existingShoppingList;
@@ -810,7 +810,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class AddItemToShoppingListFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private Guid? _itemId;
@@ -1006,7 +1006,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class AddItemWithTypeToShoppingListFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private Item? _item;
@@ -1247,7 +1247,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class PutItemInBasketFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private Item? _item;
@@ -1464,7 +1464,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class RemoveItemFromBasketFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private Item? _item;
@@ -1681,7 +1681,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class ChangeItemQuantityOnShoppingListFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             private Item? _item;
@@ -1866,7 +1866,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
 
         private sealed class FinishListFixture(DockerFixture dockerFixture)
-            : ShoppingListControllerFixture(dockerFixture)
+            : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _existingShoppingList;
 
@@ -1958,7 +1958,7 @@ public class ShoppingListEndpointsIntegrationTests
                     .WithCreatedAtPrecision());
         }
 
-        private sealed class AddItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListControllerFixture(dockerFixture)
+        private sealed class AddItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             public AddItemDiscountContract? Contract { get; private set; }
@@ -2046,7 +2046,7 @@ public class ShoppingListEndpointsIntegrationTests
                     .WithCreatedAtPrecision());
         }
 
-        private sealed class RemoveItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListControllerFixture(dockerFixture)
+        private sealed class RemoveItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListEndpointFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
             public Guid ItemId { get; } = Domain.Items.Models.ItemId.New;
@@ -2105,9 +2105,9 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    private abstract class ShoppingListControllerFixture : DatabaseFixture
+    private abstract class ShoppingListEndpointFixture : DatabaseFixture
     {
-        protected ShoppingListControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected ShoppingListEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }

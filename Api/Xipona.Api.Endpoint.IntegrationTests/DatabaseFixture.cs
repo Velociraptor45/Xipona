@@ -59,7 +59,7 @@ public abstract class DatabaseFixture : IDisposable
         var services = new ServiceCollection();
         services.AddCore();
         services.AddDomain();
-        services.AddEndpointControllers();
+        services.AddEndpointConverters();
         services.AddRepositories(_connectionString);
         services.AddApplicationServices();
 

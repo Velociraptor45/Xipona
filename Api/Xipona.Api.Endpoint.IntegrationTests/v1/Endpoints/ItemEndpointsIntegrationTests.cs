@@ -153,7 +153,7 @@ public class ItemEndpointsIntegrationTests
             okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class GetItemTypePricesAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class GetItemTypePricesAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private Item? _item;
             public ItemTypePricesContract? ExpectedResult { get; private set; }
@@ -276,7 +276,7 @@ public class ItemEndpointsIntegrationTests
             okResult.Value.Should().Be(_fixture.ExpectedResult);
         }
 
-        private sealed class GetTotalSearchResultCountFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class GetTotalSearchResultCountFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private Item[]? _items;
             public string? SearchInput { get; private set; }
@@ -394,7 +394,7 @@ public class ItemEndpointsIntegrationTests
             okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class SearchItemsAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class SearchItemsAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private readonly List<Item> _items = new();
             private Item? _itemMatching;
@@ -777,7 +777,7 @@ public class ItemEndpointsIntegrationTests
         }
 
         private sealed class SearchItemsForShoppingListAsyncFixture(DockerFixture dockerFixture)
-            : ItemControllerFixture(dockerFixture)
+            : ItemEndpointFixture(dockerFixture)
         {
             private readonly List<Item> _items = new();
             private readonly List<ItemCategory> _itemCategories = new();
@@ -1128,7 +1128,7 @@ public class ItemEndpointsIntegrationTests
         }
 
         private sealed class SearchItemsByItemCategoryAsyncFixture(DockerFixture dockerFixture)
-            : ItemControllerFixture(dockerFixture)
+            : ItemEndpointFixture(dockerFixture)
         {
             private Item? _item;
             private Item? _itemWithoutManufacturer;
@@ -1309,7 +1309,7 @@ public class ItemEndpointsIntegrationTests
             item.Id.Should().Be(itemContract.Id);
         }
 
-        private sealed class CreateItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class CreateItemAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private IReadOnlyCollection<Store>? _stores;
             private ItemCategory? _itemCategory;
@@ -1525,7 +1525,7 @@ public class ItemEndpointsIntegrationTests
             item.Id.Should().Be(itemContract.Id);
         }
 
-        private sealed class CreateItemWithTypesAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class CreateItemWithTypesAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private IReadOnlyCollection<Store>? _stores;
             private ItemCategory? _itemCategory;
@@ -1753,7 +1753,7 @@ public class ItemEndpointsIntegrationTests
                 opt => opt.ExcludeRecipeCycleRef().ExcludeRowVersion().WithCreatedAtPrecision());
         }
 
-        private sealed class ModifyItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class ModifyItemAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private AvailableAt? _existingAvailability;
             private AvailableAt? _expectedAvailability;
@@ -1912,7 +1912,7 @@ public class ItemEndpointsIntegrationTests
         }
 
         private sealed class ModifyItemWithTypesAsyncFixture(DockerFixture dockerFixture)
-            : ItemControllerFixture(dockerFixture)
+            : ItemEndpointFixture(dockerFixture)
         {
             private ItemTypeAvailableAt? _existingAvailability;
             private ItemTypeAvailableAt? _expectedAvailability;
@@ -2190,7 +2190,7 @@ public class ItemEndpointsIntegrationTests
                     .WithCreatedAtPrecision());
         }
 
-        private sealed class UpdateItemWithTypesAsyncFixture : ItemControllerFixture
+        private sealed class UpdateItemWithTypesAsyncFixture : ItemEndpointFixture
         {
             private readonly ItemEntityDatabaseService _itemDatabaseService;
             private ItemTypeAvailableAt? _existingAvailability;
@@ -2433,7 +2433,7 @@ public class ItemEndpointsIntegrationTests
             recipes[0].Ingredients.First().DefaultItemId.Should().NotBe(_fixture.ExpectedOldItem.Id);
         }
 
-        private sealed class UpdateItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class UpdateItemAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private AvailableAt? _expectedAvailability;
             private AvailableAt? _existingAvailability;
@@ -2647,7 +2647,7 @@ public class ItemEndpointsIntegrationTests
         }
 
         private sealed class UpdateItemPriceAsyncFixture(DockerFixture dockerFixture)
-            : ItemControllerFixture(dockerFixture)
+            : ItemEndpointFixture(dockerFixture)
         {
             private Item? _existingItem;
 
@@ -2883,7 +2883,7 @@ public class ItemEndpointsIntegrationTests
                 opt => opt.ExcludeShoppingListCycleRef().WithCreatedAtPrecision());
         }
 
-        private sealed class DeleteItemAsyncFixture(DockerFixture dockerFixture) : ItemControllerFixture(dockerFixture)
+        private sealed class DeleteItemAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
             private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
             private Store? _store;
@@ -3000,9 +3000,9 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    private class ItemControllerFixture : DatabaseFixture
+    private class ItemEndpointFixture : DatabaseFixture
     {
-        protected ItemControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected ItemEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }

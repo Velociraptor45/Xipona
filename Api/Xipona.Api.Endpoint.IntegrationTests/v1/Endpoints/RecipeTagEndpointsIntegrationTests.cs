@@ -71,7 +71,7 @@ public class RecipeTagEndpointsIntegrationTests
             entity.CreatedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
         }
 
-        private sealed class CreateRecipeTagAsyncFixture : RecipeTagEndpointsFixture
+        private sealed class CreateRecipeTagAsyncFixture : RecipeTagEndpointFixture
         {
             public CreateRecipeTagAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -123,11 +123,11 @@ public class RecipeTagEndpointsIntegrationTests
         }
     }
 
-    private abstract class RecipeTagEndpointsFixture : DatabaseFixture
+    private abstract class RecipeTagEndpointFixture : DatabaseFixture
     {
         protected readonly IServiceScope ArrangeScope;
 
-        protected RecipeTagEndpointsFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected RecipeTagEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }

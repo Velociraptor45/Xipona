@@ -1,14 +1,14 @@
 ﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
 
 namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-public class EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturnType, TFixture>
+public abstract class EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturnType, TFixture>
     : EndpointQueryTestsBase<bool, TQuery, TQueryReturnType, TReturnType, TFixture>
     where TQuery : IQuery<TQueryReturnType>
     where TFixture : EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturnType, TFixture>
         .EndpointQueryNoConverterFixtureBase
 
 {
-    public EndpointQueryNoConverterTestsBase(TFixture fixture) : base(fixture)
+    protected EndpointQueryNoConverterTestsBase(TFixture fixture) : base(fixture)
     {
     }
 
