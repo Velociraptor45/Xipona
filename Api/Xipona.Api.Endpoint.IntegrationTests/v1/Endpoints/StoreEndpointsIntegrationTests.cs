@@ -1,8 +1,14 @@
 ﻿using FluentAssertions;
 using Force.DeepCloner;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
+using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
@@ -10,11 +16,13 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
+using ProjectHermes.Xipona.Api.Core.Converter;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
@@ -28,9 +36,9 @@ using System;
 using Xunit;
 using Section = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class StoreControllerIntegrationTests
+public class StoreEndpointsIntegrationTests
 {
     public class GetStoreByIdAsync : IAssemblyFixture<DockerFixture>
     {
@@ -49,19 +57,17 @@ public class StoreControllerIntegrationTests
             _fixture.SetupExistingStoreWithStoreId();
             _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetStoreByIdAsync(_fixture.StoreId.Value);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<StoreContract>>();
 
-            var okResult = result as OkObjectResult;
+            var okResult = result as Ok<StoreContract>;
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -72,16 +78,13 @@ public class StoreControllerIntegrationTests
             _fixture.SetupStoreId();
             _fixture.SetupExistingStoreWithRandomStoreId();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.StoreId);
 
             // Act
-            var result = await sut.GetStoreByIdAsync(_fixture.StoreId.Value);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NotFoundObjectResult>();
+            result.Should().BeOfType<NotFound<ErrorContract>>();
         }
 
         private sealed class GetStoreByIdAsyncFixture : LocalFixture
@@ -94,6 +97,19 @@ public class StoreControllerIntegrationTests
 
             public StoreId? StoreId { get; private set; }
             public StoreContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(StoreId);
+
+                var scope = CreateServiceScope();
+                return await StoreEndpoints.GetStoreById(
+                    StoreId.Value,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupStoreId()
             {
@@ -162,18 +178,17 @@ public class StoreControllerIntegrationTests
             _fixture.SetupExistingStores();
             _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetActiveStoresForShoppingAsync();
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<StoreForShoppingContract>>>();
 
-            var okResult = result as OkObjectResult;
+            var okResult = result as Ok<List<StoreForShoppingContract>>;
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -186,6 +201,15 @@ public class StoreControllerIntegrationTests
             }
 
             public IReadOnlyCollection<StoreForShoppingContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await StoreEndpoints.GetActiveStoresForShopping(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreForShoppingContract>>(),
+                    default);
+            }
 
             public void SetupExistingStores()
             {
@@ -207,7 +231,7 @@ public class StoreControllerIntegrationTests
                         s.Id,
                         s.Name,
                         s.Sections
-                            .Where(s => !s.IsDeleted)
+                            .Where(sc => !sc.IsDeleted)
                             .Select(sc =>
                                 new SectionForShoppingContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
                     .ToList();
@@ -250,18 +274,17 @@ public class StoreControllerIntegrationTests
             _fixture.SetupExistingStores();
             _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetActiveStoresForItemAsync();
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<StoreForItemContract>>>();
 
-            var okResult = result as OkObjectResult;
+            var okResult = result as Ok<List<StoreForItemContract>>;
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -274,6 +297,15 @@ public class StoreControllerIntegrationTests
             }
 
             public IReadOnlyCollection<StoreForItemContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await StoreEndpoints.GetActiveStoresForItem(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreForItemContract>>(),
+                    default);
+            }
 
             public void SetupExistingStores()
             {
@@ -295,7 +327,7 @@ public class StoreControllerIntegrationTests
                         s.Id,
                         s.Name,
                         s.Sections
-                            .Where(s => !s.IsDeleted)
+                            .Where(sc => !sc.IsDeleted)
                             .Select(sc =>
                                 new SectionForItemContract(sc.Id, sc.Name, sc.IsDefaultSection, sc.SortIndex))))
                     .ToList();
@@ -338,18 +370,17 @@ public class StoreControllerIntegrationTests
             _fixture.SetupExistingStores();
             _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetActiveStoresOverviewAsync();
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<OkObjectResult>();
+            result.Should().BeOfType<Ok<List<StoreSearchResultContract>>>();
 
-            var okResult = result as OkObjectResult;
+            var okResult = result as Ok<List<StoreSearchResultContract>>;
             okResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
@@ -362,6 +393,15 @@ public class StoreControllerIntegrationTests
             }
 
             public IReadOnlyCollection<StoreSearchResultContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await StoreEndpoints.GetActiveStoresOverview(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreSearchResultContract>>(),
+                    default);
+            }
 
             public void SetupExistingStores()
             {
@@ -420,16 +460,14 @@ public class StoreControllerIntegrationTests
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupContract();
             _fixture.SetupExpectedResultValue();
-            var sut = _fixture.CreateSut();
 
             // Act
-            var result = await sut.CreateStoreAsync(_fixture.Contract!);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<CreatedAtActionResult>();
-            var createdResult = result as CreatedAtActionResult;
-            createdResult!.Value.Should().BeOfType<StoreContract>();
-            createdResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
+            result.Should().BeOfType<CreatedAtRoute<StoreContract>>();
+            var createdResult = result as CreatedAtRoute<StoreContract>;
+            createdResult!.Value.Should().BeEquivalentTo(_fixture.ExpectedResultValue!,
                 opts => opts
                     .Excluding(x => x.Path.EndsWith("Id"))
                     .ExcludeRowVersion());
@@ -442,10 +480,9 @@ public class StoreControllerIntegrationTests
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupContract();
             _fixture.SetupExpectedPersistedStore();
-            var sut = _fixture.CreateSut();
 
             // Act
-            await sut.CreateStoreAsync(_fixture.Contract!);
+            await _fixture.ActAsync();
 
             // Assert
             var stores = await _fixture.LoadPersistedStoresAsync();
@@ -467,6 +504,19 @@ public class StoreControllerIntegrationTests
             public CreateStoreContract? Contract { get; private set; }
             public StoreContract? ExpectedResultValue { get; private set; }
             public Store? ExpectedPersistedStore { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await StoreEndpoints.CreateStore(
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateStoreContract, CreateStoreCommand>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreContract>>(),
+                    default);
+            }
 
             public void SetupContract()
             {
@@ -538,17 +588,16 @@ public class StoreControllerIntegrationTests
             _fixture.SetupExpectedPersistedStoreWithSameSectionIds();
             _fixture.SetupExpectedItem();
             _fixture.SetupExpectedShoppingList();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedPersistedStore);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            var response = await sut.ModifyStoreAsync(_fixture.Contract!);
+            var response = await _fixture.ActAsync();
 
             // Assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<NoContent>();
 
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
@@ -584,17 +633,16 @@ public class StoreControllerIntegrationTests
             _fixture.SetupExpectedPersistedStoreWithSameSectionIds();
             _fixture.SetupExpectedItemWithTypes();
             _fixture.SetupExpectedShoppingList();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedPersistedStore);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            var response = await sut.ModifyStoreAsync(_fixture.Contract!);
+            var response = await _fixture.ActAsync();
 
             // Assert
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<NoContent>();
 
             var stores = (await _fixture.LoadAllStoresAsync()).ToArray();
             stores.Should().HaveCount(1);
@@ -631,6 +679,19 @@ public class StoreControllerIntegrationTests
             public Item? ExpectedItem { get; private set; }
             public Repositories.ShoppingLists.Entities.ShoppingList? ExistingShoppingList { get; private set; }
             public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await StoreEndpoints.ModifyStore(
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<ModifyStoreContract, ModifyStoreCommand>>(),
+                    default);
+            }
 
             public void SetupContract()
             {
@@ -811,12 +872,6 @@ public class StoreControllerIntegrationTests
         protected LocalFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             SetupScope = CreateServiceScope();
-        }
-
-        public StoreController CreateSut()
-        {
-            var scope = CreateServiceScope();
-            return scope.ServiceProvider.GetRequiredService<StoreController>();
         }
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)

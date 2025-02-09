@@ -1,17 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.StoreControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.StoreTests;
 
-public class DeleteStoreAsyncTests : ControllerCommandTestsBase<StoreController,
-    DeleteStoreCommand, bool, DeleteStoreAsyncTests.DeleteStoreAsyncFixture>
+public class DeleteStoreTests : EndpointCommandTestsBase<bool,
+    DeleteStoreCommand, bool, DeleteStoreTests.DeleteStoreFixture>
 {
-    public DeleteStoreAsyncTests() : base(new DeleteStoreAsyncFixture())
+    public DeleteStoreTests() : base(new DeleteStoreFixture())
     {
     }
 
@@ -27,46 +31,51 @@ public class DeleteStoreAsyncTests : ControllerCommandTestsBase<StoreController,
         Fixture.SetupDomainExceptionInCommandDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class DeleteStoreAsyncFixture : ControllerCommandFixtureBase
+    public sealed class DeleteStoreFixture : EndpointCommandFixtureBase
     {
         private readonly Guid _storeId = Guid.NewGuid();
 
-        public DeleteStoreAsyncFixture()
+        public DeleteStoreFixture()
         {
             PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new NotFoundStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.StoreNotFound));
         }
 
-        public override System.Reflection.MethodInfo Method =>
-            typeof(StoreController).GetMethod(nameof(StoreController.DeleteStoreAsync))!;
+        public override string RoutePattern => "/v1/stores/{id:guid}";
+        public override HttpMethod HttpMethod => HttpMethod.Delete;
 
-        public override StoreController CreateSut()
+        public override Task<IResult> ExecuteTestMethod()
         {
-            return new StoreController(
-                QueryDispatcherMock.Object,
+            return StoreEndpoints.DeleteStore(
+                _storeId,
                 CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override Task<IActionResult> ExecuteTestMethod(StoreController sut)
-        {
-            return sut.DeleteStoreAsync(_storeId);
+                ErrorConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
         {
+        }
+
+        public override void RegisterEndpoints(WebApplication app)
+        {
+            app.RegisterStoreEndpoints();
+        }
+
+        public override bool GetCommandConverterInput()
+        {
+            return false;
         }
 
         public override void SetupCommand()

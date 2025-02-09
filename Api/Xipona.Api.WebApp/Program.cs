@@ -162,6 +162,7 @@ app.RegisterMonitoringEndpoints();
 app.RegisterRecipeEndpoints();
 app.RegisterShoppingListEndpoints();
 app.RegisterRecipeTagEndpoints();
+app.RegisterStoreEndpoints();
 
 await app.RunAsync();
 

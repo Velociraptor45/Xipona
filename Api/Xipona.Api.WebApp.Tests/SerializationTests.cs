@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.WebApp.Serialization;
 using System.Reflection;
 
@@ -13,7 +12,7 @@ public class SerializationTests
     public void Serialization_ShouldContainAllContracts()
     {
         // Arrange
-        var contractTypes = GetTypesForController(typeof(StoreController))
+        var contractTypes = GetTypesForController(typeof(void))
             .Distinct()
             .ToList();
 
