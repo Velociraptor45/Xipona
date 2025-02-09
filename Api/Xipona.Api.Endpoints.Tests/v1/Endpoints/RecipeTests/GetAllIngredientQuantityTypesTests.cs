@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Http;
 using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.RecipeTests;
 
 public class GetAllIngredientQuantityTypesTests : EndpointEnumerableQueryNoConverterTestsBase<
     AllIngredientQuantityTypesQuery, IngredientQuantityTypeReadModel, IngredientQuantityTypeContract,

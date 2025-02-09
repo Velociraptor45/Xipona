@@ -6,13 +6,13 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.RecipeTests;
 
 public class ModifyRecipeTests : EndpointCommandTestsBase<(Guid, ModifyRecipeContract), ModifyRecipeCommand, bool,
         ModifyRecipeTests.ModifyRecipeFixture>

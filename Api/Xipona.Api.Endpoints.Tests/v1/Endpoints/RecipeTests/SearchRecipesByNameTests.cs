@@ -4,12 +4,12 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.SearchRecipes
 using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.RecipeControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.RecipeTests;
 
 public class SearchRecipesByNameTests : EndpointEnumerableQueryNoConverterTestsBase<SearchRecipesByNameQuery,
     RecipeSearchResult, RecipeSearchResultContract, SearchRecipesByNameTests.SearchRecipesByNameFixture>

@@ -27,7 +27,7 @@ using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
 using System.Threading;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 
 public static class RecipeEndpoints
 {

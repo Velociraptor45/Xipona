@@ -23,7 +23,7 @@ using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
@@ -49,9 +49,9 @@ using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
 using PreparationStep = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
 using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class RecipeControllerIntegrationTests
+public class RecipeEndpointsIntegrationTests
 {
     public class CreateRecipeAsync : IAssemblyFixture<DockerFixture>
     {
