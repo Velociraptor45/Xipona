@@ -1,21 +1,28 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.RecipeTags.Commands.CreateRecipeTag;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
 using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using ProjectHermes.Xipona.Api.Core.Converter;
+using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
 using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System;
 using Xunit;
+using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class RecipeTagControllerIntegrationTests
+public class RecipeTagEndpointsIntegrationTests
 {
     public sealed class CreateRecipeTagAsync : IAssemblyFixture<DockerFixture>
     {
@@ -34,23 +41,20 @@ public class RecipeTagControllerIntegrationTests
             _fixture.SetupExpectedResult();
             _fixture.SetupContract();
             _fixture.SetupExpectedEntity();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedContract);
 
             // Act
-            var result = await sut.CreateRecipeTagAsync(_fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<CreatedAtActionResult>();
+            result.Should().BeOfType<CreatedAtRoute<RecipeTagContract>>();
 
-            var createdResult = (CreatedAtActionResult)result;
+            var createdResult = (CreatedAtRoute<RecipeTagContract>)result;
             createdResult.Value.Should().NotBeNull();
-            createdResult.Value.Should().BeOfType<RecipeTagContract>();
 
-            var createdContract = (RecipeTagContract)createdResult.Value!;
+            var createdContract = createdResult.Value!;
             createdContract.Should().BeEquivalentTo(_fixture.ExpectedContract,
                 opt => opt.Excluding(info => info.Path == "Id"));
 
@@ -67,7 +71,7 @@ public class RecipeTagControllerIntegrationTests
             entity.CreatedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
         }
 
-        private sealed class CreateRecipeTagAsyncFixture : RecipeTagControllerFixture
+        private sealed class CreateRecipeTagAsyncFixture : RecipeTagEndpointsFixture
         {
             public CreateRecipeTagAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -76,6 +80,20 @@ public class RecipeTagControllerIntegrationTests
             public CreateRecipeTagContract? Contract { get; private set; }
             public RecipeTagContract? ExpectedContract { get; private set; }
             public RecipeTag? ExpectedEntity { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await RecipeTagEndpoints.CreateRecipeTag(
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateRecipeTagContract, CreateRecipeTagCommand>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IRecipeTag, RecipeTagContract>>(),
+                    default);
+            }
 
             public void SetupContract()
             {
@@ -105,19 +123,13 @@ public class RecipeTagControllerIntegrationTests
         }
     }
 
-    private abstract class RecipeTagControllerFixture : DatabaseFixture
+    private abstract class RecipeTagEndpointsFixture : DatabaseFixture
     {
         protected readonly IServiceScope ArrangeScope;
 
-        protected RecipeTagControllerFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected RecipeTagEndpointsFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
-        }
-
-        public RecipeTagController CreateSut()
-        {
-            var scope = CreateServiceScope();
-            return scope.ServiceProvider.GetRequiredService<RecipeTagController>();
         }
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)

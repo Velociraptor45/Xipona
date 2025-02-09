@@ -1,8 +1,14 @@
 ﻿using FluentAssertions;
 using Force.DeepCloner;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemDiscount;
+using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
@@ -18,13 +24,17 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
 using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
@@ -47,13 +57,13 @@ using Xunit;
 using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
 using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Controllers;
+namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class ShoppingListControllerIntegrationTests
+public class ShoppingListEndpointsIntegrationTests
 {
-    public sealed class GetActiveShoppingListByStoreIdAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetActiveShoppingListByStoreId(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly GetActiveShoppingListByStoreIdAsyncFixture _fixture = new(dockerFixture);
+        private readonly GetActiveShoppingListByStoreIdFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task GetActiveShoppingListByStoreIdAsync_WithExistingShoppingList_ShouldReturnShoppingList()
@@ -63,22 +73,21 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupExistingShoppingListWithDiscount();
             _fixture.SetupExistingItems();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.GetActiveShoppingListByStoreIdAsync(_fixture.ExpectedResult.Store.Id);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = result as OkObjectResult;
+            result.Should().BeOfType<Ok<ShoppingListContract>>();
+            var okResult = result as Ok<ShoppingListContract>;
             okResult.Should().NotBeNull();
-            var contract = okResult!.Value as ShoppingListContract;
+            var contract = okResult.Value;
             contract!.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
-        private sealed class GetActiveShoppingListByStoreIdAsyncFixture(DockerFixture dockerFixture) :
+        private sealed class GetActiveShoppingListByStoreIdFixture(DockerFixture dockerFixture) :
             ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -93,6 +102,20 @@ public class ShoppingListControllerIntegrationTests
             private string[]? _itemNameParts;
             private string[]? _item2NameParts;
             public ShoppingListContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.GetActiveShoppingListByStoreId(
+                    ExpectedResult.Store.Id,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<ShoppingListReadModel, ShoppingListContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -310,9 +333,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class RemoveItemFromShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemFromShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly RemoveItemFromShoppingListAsyncFixture _fixture = new(dockerFixture);
+        private readonly RemoveItemFromShoppingListFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task RemoveItemFromShoppingListAsync_WithItemWithoutTypes_ShouldRemoveItemFromShoppingList()
@@ -322,17 +345,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemWithoutTypes();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.RemoveItemFromShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -351,17 +371,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemWithTypes();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.RemoveItemFromShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -380,17 +397,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemWithoutTypesForOfflineUse();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
-            var result = await sut.RemoveItemFromShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -409,18 +423,15 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupTemporaryItem();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
 
             // Act
-            var result = await sut.RemoveItemFromShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -437,7 +448,7 @@ public class ShoppingListControllerIntegrationTests
                     .ExcludeItemsOnListId());
         }
 
-        private sealed class RemoveItemFromShoppingListAsyncFixture(DockerFixture dockerFixture)
+        private sealed class RemoveItemFromShoppingListFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -449,6 +460,22 @@ public class ShoppingListControllerIntegrationTests
             public RemoveItemFromShoppingListContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
             public Item? ExpectedItem { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.RemoveItemFromShoppingList(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -536,10 +563,10 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class AddTemporaryItemToShoppingListAsync(DockerFixture dockerFixture)
+    public sealed class AddTemporaryItemToShoppingList(DockerFixture dockerFixture)
         : IAssemblyFixture<DockerFixture>
     {
-        private readonly AddTemporaryItemToShoppingListAsyncFixture _fixture = new(dockerFixture);
+        private readonly AddTemporaryItemToShoppingListFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task AddTemporaryItemToShoppingListAsync_WithValidData_ShouldCreateAndAddTemporaryItemToShoppingList()
@@ -552,22 +579,18 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupContract();
             _fixture.SetupExpectedResult();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
 
             // Act
-            var result = await sut.AddTemporaryItemToShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = result as OkObjectResult;
+            result.Should().BeOfType<Ok<TemporaryShoppingListItemContract>>();
+            var okResult = result as Ok<TemporaryShoppingListItemContract>;
             okResult.Should().NotBeNull();
-            var contract = okResult!.Value as TemporaryShoppingListItemContract;
+            var contract = okResult.Value;
             contract!.Should().BeEquivalentTo(_fixture.ExpectedResult,
                 opt => opt.Excluding(info => info.Path == "ItemId"));
 
@@ -592,10 +615,10 @@ public class ShoppingListControllerIntegrationTests
                     .Excluding(info => info.Path == "ItemsOnList[0].ItemId" || info.Path == "ItemsOnList[0].Id")
                     .WithCreatedAtPrecision());
             shoppingList.ItemsOnList.First().ItemId.Should().Be(itemId);
-            contract!.ItemId.Should().Be(itemId);
+            contract.ItemId.Should().Be(itemId);
         }
 
-        private sealed class AddTemporaryItemToShoppingListAsyncFixture(DockerFixture dockerFixture)
+        private sealed class AddTemporaryItemToShoppingListFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private Store? _store;
@@ -606,6 +629,24 @@ public class ShoppingListControllerIntegrationTests
             public ShoppingList? ExpectedShoppingList { get; private set; }
             public AddTemporaryItemToShoppingListContract? Contract { get; private set; }
             public TemporaryShoppingListItemContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.AddTemporaryItemToShoppingList(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToDomainConverter<(Guid, AddTemporaryItemToShoppingListContract), AddTemporaryItemToShoppingListCommand>>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToContractConverter<TemporaryShoppingListItemReadModel, TemporaryShoppingListItemContract>>(),
+                    default);
+            }
 
             public void SetupContract()
             {
@@ -707,9 +748,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class AddItemToShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemToShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly AddItemToShoppingListAsyncFixture _fixture = new(dockerFixture);
+        private readonly AddItemToShoppingListFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task AddItemToShoppingListAsync_WithNotAlreadyOnList_ShouldAddItemToShoppingList()
@@ -721,17 +762,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupStore();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.AddItemToShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -751,20 +789,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupStore();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.AddItemToShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntityResult = (UnprocessableEntity<ErrorContract>)result;
+            var errorContract = unprocessableEntityResult.Value!;
             errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemAlreadyOnShoppingList.ToInt());
 
             using var assertScope = _fixture.CreateServiceScope();
@@ -775,7 +809,7 @@ public class ShoppingListControllerIntegrationTests
                 opt => opt.ExcludeShoppingListCycleRef().ExcludeItemsOnListId().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
         }
 
-        private sealed class AddItemToShoppingListAsyncFixture(DockerFixture dockerFixture)
+        private sealed class AddItemToShoppingListFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -787,6 +821,20 @@ public class ShoppingListControllerIntegrationTests
             public Guid? ShoppingListId { get; private set; }
             public AddItemToShoppingListContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.AddItemToShoppingList(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -869,9 +917,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class AddItemWithTypeToShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemWithTypeToShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly AddItemWithTypeToShoppingListAsyncFixture _fixture = new(dockerFixture);
+        private readonly AddItemWithTypeToShoppingListFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task AddItemToShoppingListAsync_WithNotAlreadyOnList_ShouldAddItemToShoppingList()
@@ -883,20 +931,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupStore();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
 
             // Act
-            var result = await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListId.Value,
-                _fixture.ItemId.Value, _fixture.ItemTypeId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -916,20 +958,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupStore();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
 
             // Act
-            var result = await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListId.Value,
-                _fixture.ItemId.Value, _fixture.ItemTypeId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -949,23 +985,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupStore();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ItemTypeId);
 
             // Act
-            var result = await sut.AddItemWithTypeToShoppingListAsync(_fixture.ShoppingListId.Value,
-                _fixture.ItemId.Value, _fixture.ItemTypeId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntityResult = (UnprocessableEntity<ErrorContract>)result;
+            var errorContract = unprocessableEntityResult.Value!;
             errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemAlreadyOnShoppingList.ToInt());
 
             using var assertScope = _fixture.CreateServiceScope();
@@ -976,7 +1005,7 @@ public class ShoppingListControllerIntegrationTests
                 opt => opt.ExcludeShoppingListCycleRef().ExcludeItemsOnListId().UsingDateTimeOffsetWithPrecision().ExcludeRowVersion());
         }
 
-        private sealed class AddItemWithTypeToShoppingListAsyncFixture(DockerFixture dockerFixture)
+        private sealed class AddItemWithTypeToShoppingListFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -989,6 +1018,24 @@ public class ShoppingListControllerIntegrationTests
             public Guid? ItemTypeId { get; private set; }
             public AddItemWithTypeToShoppingListContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(ItemId);
+                TestPropertyNotSetException.ThrowIfNull(ItemTypeId);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.AddItemWithTypeToShoppingList(
+                    ShoppingListId.Value,
+                    ItemId.Value,
+                    ItemTypeId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1104,9 +1151,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class PutItemInBasketAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class PutItemInBasket(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly PutItemInBasketAsyncFixture _fixture = new(dockerFixture);
+        private readonly PutItemInBasketFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task PutItemInBasketAsync_WithActualItemId_ShouldPutItemInBasket()
@@ -1118,17 +1165,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdWithTypeId();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.PutItemInBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1149,17 +1195,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdForOfflineUse();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.PutItemInBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1180,20 +1225,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdWithoutTypeId();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.PutItemInBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntityResult = (UnprocessableEntity<ErrorContract>)result;
+            var errorContract = unprocessableEntityResult.Value!;
             errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemNotOnShoppingList.ToInt());
 
             using var assertScope = _fixture.CreateServiceScope();
@@ -1205,7 +1246,7 @@ public class ShoppingListControllerIntegrationTests
                     .ExcludeItemsOnListId());
         }
 
-        private sealed class PutItemInBasketAsyncFixture(DockerFixture dockerFixture)
+        private sealed class PutItemInBasketFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -1215,6 +1256,22 @@ public class ShoppingListControllerIntegrationTests
             public Guid? ShoppingListId { get; private set; }
             public PutItemInBasketContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.PutItemInBasket(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1315,9 +1372,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class RemoveItemFromBasketAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemFromBasket(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly RemoveItemFromBasketAsyncFixture _fixture = new(dockerFixture);
+        private readonly RemoveItemFromBasketFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task RemoveItemFromBasketAsync_WithActualItemId_ShouldRemoveItemFromBasket()
@@ -1329,17 +1386,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdWithTypeId();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1360,17 +1414,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdForOfflineUse();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1391,20 +1442,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdWithoutTypeId();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.RemoveItemFromBasketAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntityResult = (UnprocessableEntity<ErrorContract>)result;
+            var errorContract = unprocessableEntityResult.Value!;
             errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemNotOnShoppingList.ToInt());
 
             using var assertScope = _fixture.CreateServiceScope();
@@ -1416,7 +1463,7 @@ public class ShoppingListControllerIntegrationTests
                     .ExcludeItemsOnListId());
         }
 
-        private sealed class RemoveItemFromBasketAsyncFixture(DockerFixture dockerFixture)
+        private sealed class RemoveItemFromBasketFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -1426,6 +1473,22 @@ public class ShoppingListControllerIntegrationTests
             public Guid? ShoppingListId { get; private set; }
             public RemoveItemFromBasketContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.RemoveItemFromBasket(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1526,9 +1589,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class ChangeItemQuantityOnShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ChangeItemQuantityOnShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly ChangeItemQuantityOnShoppingListAsyncFixture _fixture = new(dockerFixture);
+        private readonly ChangeItemQuantityOnShoppingListFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task ChangeItemQuantityOnShoppingListAsync_WithActualItemId_ShouldChangeItemQuantityOnShoppingList()
@@ -1540,17 +1603,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdWithTypeId();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.ChangeItemQuantityOnShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1571,17 +1631,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdForOfflineUse();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.ChangeItemQuantityOnShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1602,20 +1659,16 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupItemIdWithoutTypeId();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.ChangeItemQuantityOnShoppingListAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<UnprocessableEntityObjectResult>();
-            var unprocessableEntityResult = (UnprocessableEntityObjectResult)result;
-            unprocessableEntityResult.Value.Should().BeOfType<ErrorContract>();
-            var errorContract = (ErrorContract)unprocessableEntityResult.Value!;
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntityResult = (UnprocessableEntity<ErrorContract>)result;
+            var errorContract = unprocessableEntityResult.Value!;
             errorContract.ErrorCode.Should().Be(ErrorReasonCode.ItemNotOnShoppingList.ToInt());
 
             using var assertScope = _fixture.CreateServiceScope();
@@ -1627,7 +1680,7 @@ public class ShoppingListControllerIntegrationTests
                     .ExcludeItemsOnListId());
         }
 
-        private sealed class ChangeItemQuantityOnShoppingListAsyncFixture(DockerFixture dockerFixture)
+        private sealed class ChangeItemQuantityOnShoppingListFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _shoppingList;
@@ -1637,6 +1690,22 @@ public class ShoppingListControllerIntegrationTests
             public Guid? ShoppingListId { get; private set; }
             public ChangeItemQuantityOnShoppingListContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.ChangeItemQuantityOnShoppingList(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider
+                        .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1736,9 +1805,9 @@ public class ShoppingListControllerIntegrationTests
         }
     }
 
-    public sealed class FinishListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class FinishList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly FinishListAsyncFixture _fixture = new(dockerFixture);
+        private readonly FinishListFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task FinishListAsync_WithUndefinedFinishedAt_ShouldSetCorrectFinishedAtDate()
@@ -1747,15 +1816,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupShoppingListId();
             _fixture.SetupExistingShoppingList();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
 
             // Act
-            var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, null);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1776,16 +1844,15 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupFinishedAt();
             _fixture.SetupExistingShoppingList();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.FinishedAt);
 
             // Act
-            var result = await sut.FinishListAsync(_fixture.ShoppingListId.Value, _fixture.FinishedAt);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1798,13 +1865,26 @@ public class ShoppingListControllerIntegrationTests
             finishedShoppingList.CompletionDate.Should().BeCloseTo(_fixture.FinishedAt.Value, TimeSpan.FromMilliseconds(10));
         }
 
-        private sealed class FinishListAsyncFixture(DockerFixture dockerFixture)
+        private sealed class FinishListFixture(DockerFixture dockerFixture)
             : ShoppingListControllerFixture(dockerFixture)
         {
             private ShoppingList? _existingShoppingList;
 
             public Guid? ShoppingListId { get; private set; }
             public DateTimeOffset? FinishedAt { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.FinishList(
+                    ShoppingListId.Value,
+                    FinishedAt,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    default);
+            }
 
             public void SetupShoppingListId()
             {
@@ -1850,7 +1930,7 @@ public class ShoppingListControllerIntegrationTests
 
     public sealed class AddItemDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
     {
-        private readonly AddItemDiscountFixture _fixture = new AddItemDiscountFixture(dockerFixture);
+        private readonly AddItemDiscountFixture _fixture = new(dockerFixture);
 
         [Fact]
         public async Task AddItemDiscountAsync_WithValidData_ShouldAddItemDiscount()
@@ -1860,16 +1940,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupExistingShoppingList();
             _fixture.SetupContract();
             await _fixture.SetupDatabase();
-            var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.AddItemDiscountAsync(_fixture.ExpectedResult.Id, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1885,6 +1963,21 @@ public class ShoppingListControllerIntegrationTests
             private ShoppingList? _shoppingList;
             public AddItemDiscountContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.AddItemDiscount(
+                    ExpectedResult.Id,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, AddItemDiscountContract), AddItemDiscountCommand>>(),
+                    default);
+            }
 
             public void SetupExpectedResult()
             {
@@ -1935,17 +2028,14 @@ public class ShoppingListControllerIntegrationTests
             _fixture.SetupShoppingListWithDiscount();
             _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
-            var sut = _fixture.CreateSut();
 
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
 
             // Act
-            var result = await sut.RemoveItemDiscountAsync(_fixture.ShoppingListId.Value, _fixture.Contract);
+            var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().BeOfType<NoContent>();
 
             using var assertScope = _fixture.CreateServiceScope();
 
@@ -1964,6 +2054,22 @@ public class ShoppingListControllerIntegrationTests
             public RemoveItemDiscountContract? Contract { get; private set; }
             public ShoppingList? ExpectedResult { get; private set; }
             public Guid? ShoppingListId { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ShoppingListId);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.RemoveItemDiscount(
+                    ShoppingListId.Value,
+                    Contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<
+                        IToDomainConverter<(Guid, RemoveItemDiscountContract), RemoveItemDiscountCommand>>(),
+                    default);
+            }
 
             public void SetupShoppingListWithDiscount()
             {
@@ -2007,12 +2113,6 @@ public class ShoppingListControllerIntegrationTests
         }
 
         protected readonly IServiceScope ArrangeScope;
-
-        public ShoppingListController CreateSut()
-        {
-            var scope = CreateServiceScope();
-            return scope.ServiceProvider.GetRequiredService<ShoppingListController>();
-        }
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {

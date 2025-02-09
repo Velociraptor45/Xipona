@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Converters;
 using System.Reflection;
 
@@ -11,10 +10,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddEndpointControllers(this IServiceCollection services)
     {
-        services.AddTransient<ShoppingListController>();
-        services.AddTransient<StoreController>();
-        services.AddTransient<RecipeTagController>();
-
         var assembly = typeof(ServiceCollectionExtensions).Assembly;
         services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
         services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));

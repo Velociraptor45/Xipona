@@ -82,7 +82,7 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.IsAlive();
         }
 
-        #region ShoppingListController
+        #region ShoppingList
 
         /// <inheritdoc/>
         public async Task<ShoppingListContract> GetActiveShoppingListByStoreIdAsync(Guid storeId,
@@ -168,9 +168,9 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.RemoveItemDiscountAsync(id, contract, cancellationToken);
         }
 
-        #endregion ShoppingListController
+        #endregion ShoppingList
 
-        #region ItemController
+        #region Item
 
         /// <inheritdoc/>
         public async Task<ItemTypePricesContract> GetItemTypePricesAsync(Guid itemId, Guid storeId,
@@ -296,9 +296,9 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.GetAllQuantityTypesInPacketAsync(cancellationToken);
         }
 
-        #endregion ItemController
+        #endregion Item
 
-        #region StoreController
+        #region Store
 
         /// <inheritdoc/>
         public async Task<StoreContract> GetStoreByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -347,9 +347,9 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.DeleteStoreAsync(id, cancellationToken);
         }
 
-        #endregion StoreController
+        #endregion Store
 
-        #region ManufacturerController
+        #region Manufacturer
 
         /// <inheritdoc/>
         public async Task<ManufacturerContract> GetManufacturerByIdAsync(Guid id,
@@ -392,9 +392,9 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.ModifyManufacturerAsync(contract, cancellationToken);
         }
 
-        #endregion ManufacturerController
+        #endregion Manufacturer
 
-        #region ItemCategoryController
+        #region ItemCategory
 
         /// <inheritdoc/>
         public async Task<ItemCategoryContract> GetItemCategoryByIdAsync(Guid id,
@@ -437,9 +437,9 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.ModifyItemCategoryAsync(contract, cancellationToken);
         }
 
-        #endregion ItemCategoryController
+        #endregion ItemCategory
 
-        #region RecipeController
+        #region Recipe
 
         /// <inheritdoc/>
         public async Task<RecipeContract> GetRecipeByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -489,9 +489,9 @@ namespace ProjectHermes.Xipona.Api.Client
             await _apiClient.ModifyRecipeAsync(id, contract, cancellationToken);
         }
 
-        #endregion RecipeController
+        #endregion Recipe
 
-        #region RecipeTagController
+        #region RecipeTag
 
         /// <inheritdoc/>
         public async Task<IEnumerable<RecipeTagContract>> GetAllRecipeTagsAsync(
@@ -507,6 +507,6 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.CreateRecipeTagAsync(contract, cancellationToken);
         }
 
-        #endregion RecipeTagController
+        #endregion RecipeTag
     }
 }

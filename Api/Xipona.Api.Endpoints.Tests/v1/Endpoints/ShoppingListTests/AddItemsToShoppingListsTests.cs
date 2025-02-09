@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
+using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Controllers;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
 using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using System.Reflection;
+using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Controllers.ShoppingListControllerTests;
+namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ShoppingListTests;
 
-public class AddItemsToShoppingListsAsyncTests : ControllerCommandTestsBase<ShoppingListController,
-    AddItemsToShoppingListsCommand, bool, AddItemsToShoppingListsAsyncTests.AddItemsToShoppingListsAsyncFixture>
+public class AddItemsToShoppingListsTests : EndpointCommandTestsBase<AddItemsToShoppingListsContract,
+    AddItemsToShoppingListsCommand, bool, AddItemsToShoppingListsTests.AddItemsToShoppingListsFixture>
 {
-    public AddItemsToShoppingListsAsyncTests() : base(new AddItemsToShoppingListsAsyncFixture())
+    public AddItemsToShoppingListsTests() : base(new AddItemsToShoppingListsFixture())
     {
     }
 
@@ -31,22 +34,21 @@ public class AddItemsToShoppingListsAsyncTests : ControllerCommandTestsBase<Shop
         Fixture.SetupDomainExceptionInCommandDispatcher();
         Fixture.SetupExpectedErrorContract();
         Fixture.SetupErrorConversion();
-        var sut = Fixture.CreateSut();
 
         // Act
-        var result = await Fixture.ExecuteTestMethod(sut);
+        var result = await Fixture.ExecuteTestMethod();
 
         // Assert
-        result.Should().BeOfType<NotFoundObjectResult>();
-        var unprocessableEntity = result as NotFoundObjectResult;
+        result.Should().BeOfType<NotFound<ErrorContract>>();
+        var unprocessableEntity = result as NotFound<ErrorContract>;
         unprocessableEntity!.Value.Should().BeEquivalentTo(Fixture.ExpectedErrorContract);
     }
 
-    public sealed class AddItemsToShoppingListsAsyncFixture : ControllerCommandFixtureBase
+    public sealed class AddItemsToShoppingListsFixture : EndpointCommandFixtureBase
     {
         private AddItemsToShoppingListsContract? _contract;
 
-        public AddItemsToShoppingListsAsyncFixture()
+        public AddItemsToShoppingListsFixture()
         {
             PossibleResultsList.Add(new NoContentStatusResult());
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.StoreNotFound,
@@ -54,22 +56,19 @@ public class AddItemsToShoppingListsAsyncTests : ControllerCommandTestsBase<Shop
             PossibleResultsList.Add(new NotFoundStatusResult());
         }
 
-        public override MethodInfo Method =>
-            typeof(ShoppingListController).GetMethod(nameof(ShoppingListController.AddItemsToShoppingListsAsync))!;
+        public override string RoutePattern => "/v1/shopping-lists/add-items-to-shopping-lists";
+        public override HttpMethod HttpMethod => HttpMethod.Put;
 
-        public override ShoppingListController CreateSut()
-        {
-            return new ShoppingListController(
-                QueryDispatcherMock.Object,
-                CommandDispatcherMock.Object,
-                EndpointConvertersMock.Object);
-        }
-
-        public override async Task<IActionResult> ExecuteTestMethod(ShoppingListController sut)
+        public override async Task<IResult> ExecuteTestMethod()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
 
-            return await sut.AddItemsToShoppingListsAsync(_contract);
+            return await ShoppingListEndpoints.AddItemsToShoppingLists(
+                _contract,
+                CommandDispatcherMock.Object,
+                ErrorConverterMock.Object,
+                CommandConverterMock.Object,
+                default);
         }
 
         public override void SetupParameters()
@@ -77,17 +76,15 @@ public class AddItemsToShoppingListsAsyncTests : ControllerCommandTestsBase<Shop
             _contract = new DomainTestBuilder<AddItemsToShoppingListsContract>().Create();
         }
 
-        public override void SetupCommand()
+        public override void RegisterEndpoints(WebApplication app)
         {
-            Command = new DomainTestBuilder<AddItemsToShoppingListsCommand>().Create();
+            app.RegisterShoppingListEndpoints();
         }
 
-        public override void SetupCommandConverter()
+        public override AddItemsToShoppingListsContract GetCommandConverterInput()
         {
             TestPropertyNotSetException.ThrowIfNull(_contract);
-            TestPropertyNotSetException.ThrowIfNull(Command);
-
-            EndpointConvertersMock.SetupToDomain(_contract, Command);
+            return _contract;
         }
     }
 }

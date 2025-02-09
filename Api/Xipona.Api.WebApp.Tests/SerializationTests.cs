@@ -14,8 +14,6 @@ public class SerializationTests
     {
         // Arrange
         var contractTypes = GetTypesForController(typeof(StoreController))
-            .Concat(GetTypesForController(typeof(ShoppingListController)))
-            .Concat(GetTypesForController(typeof(RecipeTagController)))
             .Distinct()
             .ToList();
 
