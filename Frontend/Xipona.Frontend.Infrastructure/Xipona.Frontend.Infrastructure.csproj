@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
-    <PackageReference Include="ProjectHermes.Xipona.Api.Client" Version="0.13.0-alpha.12" />
+    <PackageReference Include="ProjectHermes.Xipona.Api.Client" Version="0.13.0-alpha.13" />
     <PackageReference Include="RestEase" Version="1.6.4" />
     <PackageReference Include="WebAssembly.Bindings" Version="3.0.2" />
   </ItemGroup>
