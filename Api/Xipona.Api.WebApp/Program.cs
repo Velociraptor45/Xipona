@@ -71,37 +71,15 @@ builder.Services.AddCors();
 var authOptions = new AuthenticationOptions();
 configuration.GetSection("Auth").Bind(authOptions);
 
-builder.Services.AddOpenApi();
+builder.Services.AddSingleton(authOptions);
 
-//builder.Services.AddSwaggerGen(opt =>
-//{
-//    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Xipona API", Version = "v1" });
-//    opt.CustomSchemaIds(type => type.ToString());
+builder.Services.AddOpenApi("v1", opt =>
+{
+    if (!authOptions.Enabled)
+        return;
 
-//    if (!authOptions.Enabled)
-//        return;
-
-//    var securityScheme = new OpenApiSecurityScheme
-//    {
-//        Name = "Auth",
-//        In = ParameterLocation.Header,
-//        Type = SecuritySchemeType.OpenIdConnect,
-//        OpenIdConnectUrl = new Uri(authOptions.OidcUrl),
-//        Scheme = "bearer",
-//        BearerFormat = "JWT",
-//        Reference = new OpenApiReference
-//        {
-//            Id = "Bearer",
-//            Type = ReferenceType.SecurityScheme
-//        }
-//    };
-
-//    opt.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        { securityScheme, Array.Empty<string>() }
-//    });
-//});
+    opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
@@ -120,13 +98,7 @@ if (!app.Environment.IsProduction())
 }
 
 app.MapOpenApi();
-app.MapScalarApiReference(); // TODO auth?
-
-//app.UseSwagger();
-//app.UseSwaggerUI(c =>
-//{
-//    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xipona API v1");
-//});
+app.MapScalarApiReference(opt => opt.Title = "Xipona API");
 
 app.UseCors(policyBuilder =>
 {
