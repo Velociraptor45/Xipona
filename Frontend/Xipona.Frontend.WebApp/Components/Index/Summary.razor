@@ -126,14 +126,14 @@
                            {
                                <div class="d-flex summary-datetime-edit">
                                    <div class="summary-date-picker">
-                                       <DatePicker Size="@AntSizeLDSType.Small"
+                                       <DatePicker Size="@InputSize.Small"
                                                    AllowClear="false"
                                                    TValue="DateTime"
                                                    Format="dd.MM.yyyy" Value="State.Value.Summary.FinishedAt"
                                                    ValueChanged="OnDateChanged"></DatePicker>
                                    </div>
                                    <div class="summary-time-picker">
-                                       <TimePicker Size="@AntSizeLDSType.Small"
+                                       <TimePicker Size="@InputSize.Small"
                                                    AllowClear="false"
                                                    TValue="DateTime"
                                                    Format="HH:mm:ss"
@@ -142,7 +142,7 @@
                                    </div>
                                    <div>
                                        <Button Class="d-flex align-items-center"
-                                               Size="@AntSizeLDSType.Small"
+                                               Size="@ButtonSize.Small"
                                                OnClick="OnLeaveFinishedAtEditModeClicked">
                                             <i class="bi bi-check shopping-list-summary-finish-time-editing"></i>
                                        </Button>
