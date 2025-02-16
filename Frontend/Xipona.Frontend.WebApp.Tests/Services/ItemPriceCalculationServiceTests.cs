@@ -8,16 +8,11 @@ using ProjectHermes.Xipona.Frontend.TestTools.AutoFixture.Builder;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 using ProjectHermes.Xipona.Frontend.WebApp.Services;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests;
+namespace Xipona.Frontend.WebApp.Tests.Services;
 
 public class ItemPriceCalculationServiceTests
 {
-    private readonly ItemPriceCalculationServiceFixture _fixture;
-
-    public ItemPriceCalculationServiceTests()
-    {
-        _fixture = new ItemPriceCalculationServiceFixture();
-    }
+    private readonly ItemPriceCalculationServiceFixture _fixture = new();
 
     [Theory]
     [InlineData(1, 2, 2, 4)]
