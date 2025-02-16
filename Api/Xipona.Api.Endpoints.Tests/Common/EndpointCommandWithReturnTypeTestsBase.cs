@@ -84,7 +84,7 @@ public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterIn
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status201Created);
 
         var created = result.Single(attr => attr.StatusCode == StatusCodes.Status201Created);
-        created.Type.Should().Be(typeof(TReturnType));
+        created.Type.Should().Be<TReturnType>();
     }
 
     public abstract class EndpointCommandWithReturnTypeFixtureBase : EndpointCommandFixtureBase

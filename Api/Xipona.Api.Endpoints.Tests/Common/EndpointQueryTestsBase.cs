@@ -115,7 +115,7 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status422UnprocessableEntity);
 
         var unprocessableEntity = result.Single(attr => attr.StatusCode == StatusCodes.Status422UnprocessableEntity);
-        unprocessableEntity.Type.Should().Be(typeof(ErrorContract));
+        unprocessableEntity.Type.Should().Be<ErrorContract>();
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status200OK);
 
         var ok = result.Single(attr => attr.StatusCode == StatusCodes.Status200OK);
-        ok.Type.Should().Be(typeof(TReturnType));
+        ok.Type.Should().Be<TReturnType>();
     }
 
     [SkippableFact]
@@ -146,7 +146,7 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status404NotFound);
 
         var notFound = result.Single(attr => attr.StatusCode == StatusCodes.Status404NotFound);
-        notFound.Type.Should().Be(typeof(ErrorContract));
+        notFound.Type.Should().Be<ErrorContract>();
     }
 
     [SkippableFact]
@@ -164,7 +164,7 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         result.Should().ContainSingle(attr => attr.StatusCode == StatusCodes.Status400BadRequest);
 
         var badRequest = result.Single(attr => attr.StatusCode == StatusCodes.Status400BadRequest);
-        badRequest.Type.Should().Be(typeof(string));
+        badRequest.Type.Should().Be<string>();
     }
 
     #endregion ResponseTypes
