@@ -237,6 +237,7 @@ dotnet_naming_style.prefix_underscore.required_prefix = _
 dotnet_naming_style.prefix_underscore.required_suffix = 
 dotnet_naming_style.prefix_underscore.word_separator = 
 dotnet_naming_style.prefix_underscore.capitalization = camel_case
+csharp_prefer_system_threading_lock = true:suggestion
 
 [*.{cs,vb}]
 
@@ -262,9 +263,6 @@ dotnet_style_namespace_match_folder = true:suggestion
 
 
 ###### Analyzers ######
-
-# xUnit1041
-dotnet_diagnostic.xUnit1041.severity = suggestion
 
 # SYSLIB1045: Convert to 'GeneratedRegexAttribute'.
 dotnet_diagnostic.SYSLIB1045.severity = none
@@ -322,3 +320,11 @@ dotnet_diagnostic.S2094.severity = none
 
 # ReSharper
 resharper_convert_to_primary_constructor_highlighting=none
+
+[*Test*.cs]
+
+# xUnit1041
+dotnet_diagnostic.xUnit1041.severity = none
+
+# CA1861: Prefer 'static readonly' fields over constant array arguments 
+dotnet_diagnostic.CA1861.severity = none
