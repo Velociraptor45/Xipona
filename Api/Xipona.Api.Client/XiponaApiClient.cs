@@ -53,16 +53,16 @@ using ItemContract = ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get.ItemCo
 
 namespace ProjectHermes.Xipona.Api.Client
 {
-    /// <inheritdoc cref="IShoppingListApiClient"/>
-    public class ShoppingListApiClient : IShoppingListApiClient
+    /// <inheritdoc cref="IXiponaApiClient"/>
+    public class XiponaApiClient : IXiponaApiClient
     {
-        private readonly IShoppingListApiClient _apiClient;
+        private readonly IXiponaApiClient _apiClient;
 
         /// <summary>
         /// Sets up the API REST client and takes care of correct serialization.
         /// </summary>
         /// <param name="httpClient"></param>
-        public ShoppingListApiClient(HttpClient httpClient)
+        public XiponaApiClient(HttpClient httpClient)
         {
             _apiClient = new RestClient(httpClient)
             {
@@ -73,7 +73,7 @@ namespace ProjectHermes.Xipona.Api.Client
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
                     DateFormatHandling = DateFormatHandling.IsoDateFormat
                 }
-            }.For<IShoppingListApiClient>();
+            }.For<IXiponaApiClient>();
         }
 
         /// <inheritdoc/>
