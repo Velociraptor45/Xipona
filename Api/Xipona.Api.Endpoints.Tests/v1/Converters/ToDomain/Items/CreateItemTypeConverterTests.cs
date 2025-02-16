@@ -46,7 +46,7 @@ public class CreateItemTypeConverterTests
         _dateTimeServiceMock.SetupUtcNow(_createdAt);
     }
 
-    protected override void CustomizeAssertionOptions(EquivalencyAssertionOptions<IItemType> opt)
+    protected override void CustomizeAssertionOptions(EquivalencyOptions<IItemType> opt)
     {
         opt.Excluding(info => info.Path == "Id");
     }

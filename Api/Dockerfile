@@ -11,7 +11,7 @@ ARG APP_VERSION
 COPY --from=chisel /extract /
 
 ################## PUBLISH ################
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS publish
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim AS publish
 ARG TARGETARCH
 WORKDIR /src
 COPY . .

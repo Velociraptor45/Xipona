@@ -62,7 +62,7 @@ namespace ProjectHermes.Xipona.Api.Client
         [Get("monitoring/alive")]
         Task<bool> IsAlive();
 
-        #region ShoppingListController
+        #region ShoppingList
 
         /// <summary>
         /// Gets the active shopping list for the given store.
@@ -198,9 +198,9 @@ namespace ProjectHermes.Xipona.Api.Client
         Task RemoveItemDiscountAsync([Path] Guid id, [Body] RemoveItemDiscountContract contract,
             CancellationToken cancellationToken = default);
 
-        #endregion ShoppingListController
+        #endregion ShoppingList
 
-        #region ItemController
+        #region Item
 
         /// <summary>
         /// Gets the prices of an item's types that are available at a store.
@@ -296,8 +296,8 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("items/filter")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] IEnumerable<Guid> storeIds,
-            [Query] IEnumerable<Guid> itemCategoryIds, [Query] IEnumerable<Guid> manufacturerIds,
+        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] Guid[] storeIds,
+            [Query] Guid[] itemCategoryIds, [Query] Guid[] manufacturerIds,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -394,9 +394,9 @@ namespace ProjectHermes.Xipona.Api.Client
         [Delete("items/{id}")]
         Task DeleteItemAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        #endregion ItemController
+        #endregion Item
 
-        #region StoreController
+        #region Store
 
         /// <summary>
         /// Gets a store by its ID.
@@ -465,9 +465,9 @@ namespace ProjectHermes.Xipona.Api.Client
         [Delete("stores/{id}")]
         Task DeleteStoreAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        #endregion StoreController
+        #endregion Store
 
-        #region ManufacturerController
+        #region Manufacturer
 
         /// <summary>
         /// Gets a manufacturer by its ID.
@@ -528,9 +528,9 @@ namespace ProjectHermes.Xipona.Api.Client
         [Delete("manufacturers/{id}")]
         Task DeleteManufacturerAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        #endregion ManufacturerController
+        #endregion Manufacturer
 
-        #region ItemCategoryController
+        #region ItemCategory
 
         /// <summary>
         /// Gets an item category by its ID.
@@ -591,9 +591,9 @@ namespace ProjectHermes.Xipona.Api.Client
         [Delete("item-categories/{id}")]
         Task DeleteItemCategoryAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
-        #endregion ItemCategoryController
+        #endregion ItemCategory
 
-        #region RecipeController
+        #region Recipe
 
         /// <summary>
         /// Gets a recipe by its ID.
@@ -621,7 +621,7 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("recipes/search-by-tags")]
-        Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync([Query] IEnumerable<Guid> tagIds,
+        Task<IEnumerable<RecipeSearchResultContract>> SearchRecipesByTagsAsync([Query] Guid[] tagIds,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -664,9 +664,9 @@ namespace ProjectHermes.Xipona.Api.Client
         Task ModifyRecipeAsync([Path] Guid id, [Body] ModifyRecipeContract contract,
             CancellationToken cancellationToken = default);
 
-        #endregion RecipeController
+        #endregion Recipe
 
-        #region RecipeTagController
+        #region RecipeTag
 
         /// <summary>
         /// Gets all recipe tags.
@@ -686,6 +686,6 @@ namespace ProjectHermes.Xipona.Api.Client
         Task<RecipeTagContract> CreateRecipeTagAsync([Body] CreateRecipeTagContract contract,
             CancellationToken cancellationToken = default);
 
-        #endregion RecipeTagController
+        #endregion RecipeTag
     }
 }

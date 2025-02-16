@@ -416,7 +416,7 @@ public class ApiClient : IApiClient
 
     public async Task<IEnumerable<RecipeSearchResult>> SearchRecipesByTagsAsync(IEnumerable<Guid> tagIds)
     {
-        var results = await _client.SearchRecipesByTagsAsync(tagIds);
+        var results = await _client.SearchRecipesByTagsAsync(tagIds.ToArray());
         return results is null
             ? Enumerable.Empty<RecipeSearchResult>()
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);

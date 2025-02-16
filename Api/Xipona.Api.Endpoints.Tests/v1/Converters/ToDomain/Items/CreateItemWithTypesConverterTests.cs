@@ -154,7 +154,7 @@ public class CreateItemWithTypesConverterTests
             mapping.As<Item>();
         }
 
-        protected override void CustomizeAssertionOptions(EquivalencyAssertionOptions<IItem> opt)
+        protected override void CustomizeAssertionOptions(EquivalencyOptions<IItem> opt)
         {
             opt
                 .Excluding(x => x.Id)

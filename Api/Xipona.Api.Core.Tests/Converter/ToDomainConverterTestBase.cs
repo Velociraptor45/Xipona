@@ -68,7 +68,7 @@ public abstract class ToDomainConverterTestBase<TSource, TDest, TConverter> wher
     {
     }
 
-    protected virtual void CustomizeAssertionOptions(EquivalencyAssertionOptions<TDest> opt)
+    protected virtual void CustomizeAssertionOptions(EquivalencyOptions<TDest> opt)
     {
     }
 }
