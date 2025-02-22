@@ -53,7 +53,7 @@ namespace ProjectHermes.Xipona.Api.Client
     /// <summary>
     /// Client for the Xipona API.
     /// </summary>
-    public interface IShoppingListApiClient
+    public interface IXiponaApiClient
     {
         /// <summary>
         /// Used to check if the API is reachable. Always returns true.

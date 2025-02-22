@@ -69,10 +69,10 @@ namespace ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
 
 public class ApiClient : IApiClient
 {
-    private readonly IShoppingListApiClient _client;
+    private readonly IXiponaApiClient _client;
     private readonly IApiConverters _converters;
 
-    public ApiClient(IShoppingListApiClient client, IApiConverters converters)
+    public ApiClient(IXiponaApiClient client, IApiConverters converters)
     {
         _client = client;
         _converters = converters;

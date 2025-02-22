@@ -70,7 +70,7 @@ public static class Program
         if (!config.Enabled)
             return;
 
-        var endpointUrl = config.HostUri.EndsWith("/")
+        var endpointUrl = config.HostUri.EndsWith('/')
             ? $"{config.HostUri}ingest"
             : $"{config.HostUri}/ingest";
 
@@ -100,7 +100,7 @@ public static class Program
         };
         builder.Services.AddSingleton(commandQueueConfig);
 
-        builder.Services.AddTransient<IShoppingListApiClient, ShoppingListApiClient>();
+        builder.Services.AddTransient<IXiponaApiClient, XiponaApiClient>();
         builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
         builder.Services.AddTransient<IApiClient, ApiClient>();
         builder.Services.AddScoped<ICommandQueue, CommandQueue>();
