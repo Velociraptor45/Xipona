@@ -15,10 +15,10 @@
     <AntDesign.InputNumber Formatter="FormatUpdatePrice"
                            Parser="ParseUpdatePrice"
                            Class="price-update-input"
-                           TValue="float"
+                           TValue="decimal"
                            Value="State.Value.PriceUpdate.Price"
                            ValueChanged="OnPriceChanged"
-                           Min="0.01f"></AntDesign.InputNumber>
+                           Min="0.01m"></AntDesign.InputNumber>
     @if (State.Value.PriceUpdate.Item?.TypeId is not null)
     {
         <div class="pt-3">
@@ -27,16 +27,31 @@
             </Checkbox>
         </div>
     }
+    
+    @if (State.Value.PriceUpdate.OtherItemTypePrices.Count != 0)
+    {
+        <div class="other-type-prices-header">Other type prices:</div>
+
+        @foreach (var price in State.Value.PriceUpdate.OtherItemTypePrices)
+        {
+            <div class="other-type-price">
+                @if(State.Value.PriceUpdate.Item!.PricePerQuantity != price.Price)
+                {
+                    <span class="price-warning"><Icon Type="warning" Theme="@IconThemeType.Fill" Fill="#f7d80f" /></span>
+                }
+                <span>@price.Name</span>: <span>@FormatUpdatePrice(price.Price)</span>
+            </div>
+        }
+    }
 </Modal>
 
 @code {
-    
     private void OnCloseUpdatePriceModalButtonClicked()
     {
         Dispatcher.Dispatch(new ClosePriceUpdaterAction());
     }
 
-    private void OnPriceChanged(float price)
+    private void OnPriceChanged(decimal price)
     {
         Dispatcher.Dispatch(new PriceOnPriceUpdaterChangedAction(price));
     }
@@ -51,7 +66,7 @@
         Dispatcher.Dispatch(new SavePriceUpdateAction());
     }
 
-    private string FormatUpdatePrice(float value)
+    private string FormatUpdatePrice(decimal value)
     {
         return $"{value:n2} {State.Value.PriceUpdate.Item?.QuantityType.PriceLabel}";
     }

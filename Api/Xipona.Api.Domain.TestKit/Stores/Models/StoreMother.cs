@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
@@ -47,7 +46,7 @@ public static class StoreMother
     {
         return new StoreBuilder()
             .WithIsDeleted(false)
-            .WithSections(new Sections(section.ToMonoList(), new SectionFactoryMock(MockBehavior.Strict).Object));
+            .WithSections(new Sections([section], new SectionFactoryMock(MockBehavior.Strict).Object));
     }
 
     public static StoreBuilder Deleted(StoreBuilder? builder = null)

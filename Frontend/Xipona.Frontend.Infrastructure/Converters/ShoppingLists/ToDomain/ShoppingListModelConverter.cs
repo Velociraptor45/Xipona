@@ -5,25 +5,24 @@ using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain
+namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
+
+public class ShoppingListModelConverter : IToDomainConverter<ShoppingListContract, ShoppingListModel>
 {
-    public class ShoppingListModelConverter : IToDomainConverter<ShoppingListContract, ShoppingListModel>
+    private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> _sectionConverter;
+
+    public ShoppingListModelConverter(
+        IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter)
     {
-        private readonly IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> _sectionConverter;
+        _sectionConverter = sectionConverter;
+    }
 
-        public ShoppingListModelConverter(
-            IToDomainConverter<ShoppingListSectionContract, ShoppingListSection> sectionConverter)
-        {
-            _sectionConverter = sectionConverter;
-        }
+    public ShoppingListModel ToDomain(ShoppingListContract source)
+    {
+        var sections = source.Sections.Select(_sectionConverter.ToDomain);
 
-        public ShoppingListModel ToDomain(ShoppingListContract source)
-        {
-            var sections = source.Sections.Select(_sectionConverter.ToDomain);
-
-            return new ShoppingListModel(
-                source.Id,
-                new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer()));
-        }
+        return new ShoppingListModel(
+            source.Id,
+            new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer()));
     }
 }

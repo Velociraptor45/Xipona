@@ -6,7 +6,7 @@ public class SearchItemForShoppingListResult
 {
     private static readonly CultureInfo _culture = new("de-de");
 
-    public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, float price,
+    public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, decimal price,
         int defaultQuantity, string priceLabel, string itemCategoryName, string manufacturerName,
         Guid defaultSectionId)
     {
@@ -24,7 +24,7 @@ public class SearchItemForShoppingListResult
     public Guid ItemId { get; set; }
     public Guid? ItemTypeId { get; }
     public string Name { get; }
-    public float Price { get; }
+    public decimal Price { get; }
     public int DefaultQuantity { get; }
     public string PriceLabel { get; }
     public string ItemCategoryName { get; }

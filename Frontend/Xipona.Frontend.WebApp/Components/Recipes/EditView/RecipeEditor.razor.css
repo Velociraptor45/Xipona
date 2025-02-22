@@ -1,68 +1,41 @@
 ﻿@media (min-width: 769px) {
-  .editor-main {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .editor-content-split {
-    display: flex;
-  }
-  .editor-content-split .ingredients {
-    padding-right: 20px;
-    flex: 1 1 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .editor-content-split .preparation-steps {
-    flex: 1 1 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .editor-content-split .ingredients,
-  .editor-content-split .preparation-steps {
-    max-width: 392px;
-  }
-  .recipe-editor {
-    max-width: 800px;
-    margin: 0 auto;
-    padding-bottom: 8px;
-  }
-  .editor-content-general {
-    display: flex;
-  }
-  .editor-tags {
-    width: 50%;
-  }
-  .editor-number-of-servings {
-    width: 50%;
-  }
-  .ingredients {
-    padding-top: 24px;
-  }
-  .preparation-steps {
-    padding-top: 24px;
-  }
+    .editor-content-split {
+        display: flex;
+        padding-top: 16px;
+    }
+
+        .editor-content-split .ingredients {
+            margin-right: 20px;
+            width: 100%;
+        }
+
+        .editor-content-split .preparation-steps {
+            width: 100%;
+        }
+
+    .editor-footer {
+        bottom: 0;
+    }
 }
+
 @media (max-width: 768px) {
-  .recipe-editor {
-    padding-bottom: 79.15px;
-  }
-  .ingredients {
-    padding-top: 16px;
-  }
-  .preparation-steps {
-    padding-top: 24px;
-  }
-  .editor-number-of-servings {
-    padding-top: 8px;
-  }
+    .editor-content-split .ingredients {
+        padding-top: 16px;
+    }
+
+    .editor-content-split .preparation-steps {
+        padding-top: 24px;
+    }
+
+    .editor-footer {
+        bottom: var(--nav-mobile-height);
+    }
 }
-.number-of-servings {
-  margin-left: 16px;
-}
-.editor-number-of-servings {
-  width: 150px;
-}
-.preparation-step-number {
-  font-size: 1.5em;
-  border-right: 1px solid #ecf0f1;
+
+.editor-footer {
+    position: sticky;
+    background-color: white;
+    width: 100%;
+    height: 48px;
+    z-index: 200;
 }

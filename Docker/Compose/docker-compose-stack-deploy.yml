@@ -1,0 +1,96 @@
+version: "3.7"
+
+services:
+  Database:
+    image: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/ph-xipona-db-root-pwd
+      MYSQL_DATABASE: xipona
+      MYSQL_USER_FILE: /run/secrets/ph-xipona-db-username
+      MYSQL_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+    ports:
+      - "15909:3306"
+    networks: 
+      - ph-xipona
+    volumes:
+      - ph-xipona-database:/var/lib/mysql
+    secrets:
+      - ph-xipona-db-root-pwd
+      - /run/secrets/ph-xipona-db-username
+      - /run/secrets/ph-xipona-db-password
+
+  Api:
+    image: velocir4ptor/ph-xipona-api:0.13.0
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
+      PH_XIPONA_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+      #PH_XIPONA_OTEL_API_KEY_FILE: /run/secrets/ph-xipona-otel-api-key # uncomment this for backend OTEL API key support
+    ports:
+      - "12489:80"
+    depends_on:
+      - Database
+    volumes:
+      # - ph-xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
+      - ph-xipona-api-config:/app/config:ro
+    networks:
+      - ph-xipona
+    secrets:
+      - ph-xipona-db-username
+      - ph-xipona-db-password
+      # - ph-xipona-otel-api-key # uncomment this for backend OTEL API key support
+
+  # LogCollector: # uncomment this for frontend log support
+  #   image: velocir4ptor/web-assembly-log-collector:1.0.0
+  #   ports:
+  #     - "13880:80"
+  #   volumes:
+  #     - ph-xipona-log-collector-config:/app/config:ro
+  #     - ph-xipona-log-collector-logs:/app/logs
+  #   networks:
+  #     - ph-xipona
+
+  Frontend:
+    image: velocir4ptor/ph-xipona-frontend:0.13.0
+    ports:
+      - "14000:80"
+    depends_on:
+      - Api
+    volumes:
+      - ph-xipona-frontend-config:/etc/nginx/conf.d:ro
+      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
+      # - ph-xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
+    networks:
+      - ph-xipona
+
+volumes:
+  # ph-xipona-frontend-tls: # uncomment this for https support, see readme
+  #   external: true
+  # ph-xipona-api-tls:
+  #   external: true
+  ph-xipona-frontend-config:
+    external: true
+  ph-xipona-api-logs:
+    external: true
+  ph-xipona-api-config:
+    external: true
+  ph-xipona-database:
+    external: true
+  # ph-xipona-log-collector-config: # uncomment this for frontend log support
+  #   external: true
+  # ph-xipona-log-collector-logs:
+  #   external: true
+
+networks:
+  ph-xipona:
+    name: ph-xipona
+
+secrets:
+  ph-xipona-db-username:
+    external: true
+  ph-xipona-db-password:
+    external: true
+  ph-xipona-db-root-pwd:
+    external: true
+  # ph-xipona-otel-api-key: # uncomment this for backend OTEL API key support
+  #   external: true

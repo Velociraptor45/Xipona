@@ -15,6 +15,8 @@ public class ItemEntityBuilder : TestBuilder<Item>
         WithQuantityTypeInPacket(new DomainTestBuilder<QuantityTypeInPacket>().Create().ToInt());
         WithQuantityType(new DomainTestBuilder<QuantityType>().Create().ToInt());
         WithoutPredecessor();
+        WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
+        WithItemTypes(new ItemTypeEntityBuilder().CreateMany(3).ToList());
     }
 
     public ItemEntityBuilder WithId(Guid id)
@@ -132,7 +134,7 @@ public class ItemEntityBuilder : TestBuilder<Item>
 
     public ItemEntityBuilder WithItemType(ItemType itemType)
     {
-        return WithItemTypes(itemType.ToMonoList());
+        return WithItemTypes([itemType]);
     }
 
     public ItemEntityBuilder WithItemTypes(ICollection<ItemType> itemTypes)

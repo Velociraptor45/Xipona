@@ -8,16 +8,11 @@ using ProjectHermes.Xipona.Frontend.TestTools.AutoFixture.Builder;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 using ProjectHermes.Xipona.Frontend.WebApp.Services;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests;
+namespace Xipona.Frontend.WebApp.Tests.Services;
 
 public class ItemPriceCalculationServiceTests
 {
-    private readonly ItemPriceCalculationServiceFixture _fixture;
-
-    public ItemPriceCalculationServiceTests()
-    {
-        _fixture = new ItemPriceCalculationServiceFixture();
-    }
+    private readonly ItemPriceCalculationServiceFixture _fixture = new();
 
     [Theory]
     [InlineData(1, 2, 2, 4)]
@@ -26,7 +21,7 @@ public class ItemPriceCalculationServiceTests
     [InlineData(1000, 1.5f, 512, 0.77f)] // round up above .5
     [InlineData(1000, 1.5f, 470, 0.71f)] // round up at .5
     [InlineData(1000, 1.5f, 462, 0.69f)] // round down
-    public void CalculatePrice_ShouldReturnExpectedResult(int quantityNormalizer, float pricePerQuantity,
+    public void CalculatePrice_ShouldReturnExpectedResult(int quantityNormalizer, decimal pricePerQuantity,
         float quantity, float expectedResult)
     {
         // Arrange

@@ -7,7 +7,7 @@ public record ShoppingListItem(
     Guid? TypeId,
     string Name,
     bool IsTemporary,
-    float PricePerQuantity,
+    decimal PricePerQuantity,
     QuantityType QuantityType,
     float? QuantityInPacket,
     QuantityTypeInPacket? QuantityInPacketType,
@@ -15,4 +15,5 @@ public record ShoppingListItem(
     string Manufacturer,
     bool IsInBasket,
     float Quantity,
-    bool Hidden);
+    bool Hidden,
+    bool IsDiscounted);

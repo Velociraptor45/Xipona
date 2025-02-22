@@ -59,7 +59,7 @@ public abstract class DatabaseFixture : IDisposable
         var services = new ServiceCollection();
         services.AddCore();
         services.AddDomain();
-        services.AddEndpointControllers();
+        services.AddEndpointConverters();
         services.AddRepositories(_connectionString);
         services.AddApplicationServices();
 
@@ -90,7 +90,7 @@ public abstract class DatabaseFixture : IDisposable
         return scope.ServiceProvider.GetRequiredService<TContext>();
     }
 
-    public async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
+    public static async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
     {
         var generator = scope.ServiceProvider.GetRequiredService<ITransactionGenerator>();
         return await generator.GenerateAsync(default);
@@ -143,6 +143,7 @@ public abstract class DatabaseFixture : IDisposable
 
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
+            .Include(l => l.Discounts)
             .ToListAsync();
     }
 

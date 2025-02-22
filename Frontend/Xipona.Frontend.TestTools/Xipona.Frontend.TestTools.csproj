@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>ProjectHermes.Xipona.Frontend.TestTools</RootNamespace>
@@ -11,7 +11,9 @@
     <PackageReference Include="AutoFixture" Version="4.18.1" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.1" />
     <PackageReference Include="Castle.Core" Version="5.1.1" />
-    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="FluentAssertions" Version="8.0.1" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.2" />
     <PackageReference Include="ObjectsComparer" Version="1.4.1" />
   </ItemGroup>
 

@@ -30,6 +30,7 @@ public class EditedRecipeConverter : IToDomainConverter<RecipeContract, EditedRe
             source.NumberOfServings,
             _ingredientConverter.ToDomain(source.Ingredients).ToList(),
             new SortedSet<EditedPreparationStep>(preparationSteps, new SortingIndexComparer()),
-            source.RecipeTagIds.ToList());
+            source.RecipeTagIds.ToList(),
+            source.SideDish is null ? null : new SideDish(source.SideDish.Id, source.SideDish.Name));
     }
 }

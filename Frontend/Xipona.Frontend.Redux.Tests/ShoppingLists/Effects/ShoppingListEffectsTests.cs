@@ -4,12 +4,15 @@ using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Summary;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
@@ -60,7 +63,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadQuantityTypesAction_WithWithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        public async Task HandleLoadQuantityTypesAction_WithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
             _fixture.SetupStateContainingNoQuantityTypes();
@@ -79,7 +82,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadQuantityTypesAction_WithWithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
+        public async Task HandleLoadQuantityTypesAction_WithHttpException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
             _fixture.SetupStateContainingNoQuantityTypes();
@@ -296,7 +299,7 @@ public class ShoppingListEffectsTests
         }
 
         [Fact]
-        public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldDispatchFinishedAction()
+        public async Task HandleLoadAllActiveStoresAction_WithoutFindingStores_ShouldDispatchNoStoresFoundAction()
         {
             // Arrange
             _fixture.SetupStateContainingNoStores();
@@ -304,26 +307,7 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupExpectedStoresEmpty();
                 _fixture.SetupFindingStoresForShoppingList();
-                _fixture.SetupDispatchingLoadFinishedAction();
-            });
-            var sut = _fixture.CreateSut();
-
-            // Act
-            await sut.HandleLoadAllActiveStoresAction(_fixture.DispatcherMock.Object);
-
-            // Assert
-            queue.VerifyOrder();
-        }
-
-        [Fact]
-        public async Task HandleLoadAllActiveStoresAction_WithoutStores_ShouldNotDispatchChangeAction()
-        {
-            // Arrange
-            _fixture.SetupStateContainingNoStores();
-            var queue = CallQueue.Create(_ =>
-            {
-                _fixture.SetupExpectedStoresEmpty();
-                _fixture.SetupFindingStoresForShoppingList();
+                _fixture.SetupDispatchingNoStoresFoundAction();
                 _fixture.SetupDispatchingLoadFinishedAction();
             });
             var sut = _fixture.CreateSut();
@@ -405,12 +389,22 @@ public class ShoppingListEffectsTests
 
             public void SetupExpectedStoresEmpty()
             {
-                _expectedStoresForShoppingList = new List<ShoppingListStore>();
+                _expectedStoresForShoppingList = [];
             }
 
             public void SetupExpectedStores()
             {
-                _expectedStoresForShoppingList = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList();
+                _expectedStoresForShoppingList =
+                [
+                    new DomainTestBuilder<ShoppingListStore>().Create() with
+                    {
+                        Name = "Bstore" + new DomainTestBuilder<string>().Create()
+                    },
+                    new DomainTestBuilder<ShoppingListStore>().Create() with
+                    {
+                        Name = "Astore" + new DomainTestBuilder<string>().Create()
+                    }
+                ];
             }
 
             public void SetupFindingStoresForShoppingList()
@@ -434,7 +428,7 @@ public class ShoppingListEffectsTests
             public void SetupDispatchingChangeAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedStoresForShoppingList);
-                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.First().Id);
+                _expectedStoreChangeAction = new SelectedStoreChangedAction(_expectedStoresForShoppingList.Last().Id);
                 SetupDispatchingAction(_expectedStoreChangeAction);
             }
 
@@ -451,6 +445,11 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction(_expectedLoadFinishedAction);
             }
 
+            public void SetupDispatchingNoStoresFoundAction()
+            {
+                SetupDispatchingAction<NoStoresFoundAction>();
+            }
+
             public void SetupStateContainingNoStores()
             {
                 State = State with
@@ -471,74 +470,6 @@ public class ShoppingListEffectsTests
                         Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
                     }
                 };
-            }
-        }
-    }
-
-    public class HandleShoppingListEnteredAction
-    {
-        private readonly HandleShoppingListEnteredActionFixture _fixture = new();
-
-        [Fact]
-        public async Task HandleShoppingListEnteredAction_WithStateContainingNoStores_ShouldNotDoAnything()
-        {
-            // Arrange
-            _fixture.SetupStateContainingNoStores();
-            var queue = CallQueue.Create(_ => { });
-            var sut = _fixture.CreateSut();
-
-            // Act
-            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
-
-            // Assert
-            queue.VerifyOrder();
-        }
-
-        [Fact]
-        public async Task HandleShoppingListEnteredAction_WithStateContainingStores_ShouldDispatchStoreChangedAction()
-        {
-            // Arrange
-            _fixture.SetupStateContainingStores();
-            var queue = CallQueue.Create(_ =>
-            {
-                _fixture.SetupDispatchingStoreChangedAction();
-            });
-            var sut = _fixture.CreateSut();
-
-            // Act
-            await sut.HandleShoppingListEnteredAction(_fixture.DispatcherMock.Object);
-
-            // Assert
-            queue.VerifyOrder();
-        }
-
-        private sealed class HandleShoppingListEnteredActionFixture : ShoppingListEffectsFixture
-        {
-            public void SetupStateContainingNoStores()
-            {
-                State = State with
-                {
-                    Stores = State.Stores with
-                    {
-                        Stores = new List<ShoppingListStore>()
-                    }
-                };
-            }
-
-            public void SetupStateContainingStores()
-            {
-                State = State with
-                {
-                    Stores = State.Stores with
-                    {
-                        Stores = new DomainTestBuilder<ShoppingListStore>().CreateMany(2).ToList()
-                    }
-                };
-            }
-
-            public void SetupDispatchingStoreChangedAction()
-            {
-                SetupDispatchingAction(new SelectedStoreChangedAction(State.Stores.Stores.First().Id));
             }
         }
     }
@@ -793,6 +724,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupQuantityTypeUnitInTemporaryItemCreator();
                 _fixture.SetupItemForQuantityTypeUnit();
                 _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupDispatchingAddItemAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
@@ -816,6 +748,7 @@ public class ShoppingListEffectsTests
                 _fixture.SetupQuantityTypeWeightInTemporaryItemCreator();
                 _fixture.SetupItemForQuantityTypeWeight();
                 _fixture.SetupDispatchingStartedAction();
+                _fixture.SetupDispatchingAddItemAction();
                 _fixture.SetupEnqueuingRequest();
                 _fixture.SetupDispatchingFinishedAction();
                 _fixture.SetupDispatchingCloseAction();
@@ -831,7 +764,7 @@ public class ShoppingListEffectsTests
 
         private sealed class HandleSaveTemporaryItemActionFixture : ShoppingListEffectsFixture
         {
-            private SaveTemporaryItemFinishedAction? _expectedFinishedAction;
+            private AddTemporaryItemAction? _expectedFinishedAction;
             private ShoppingListItem? _item;
             private QuantityType? _quantityType;
 
@@ -889,6 +822,7 @@ public class ShoppingListEffectsTests
                     Manufacturer: "",
                     IsInBasket: false,
                     Quantity: _quantityType.DefaultQuantity,
+                    false,
                     false);
             }
 
@@ -909,6 +843,7 @@ public class ShoppingListEffectsTests
                     Manufacturer: "",
                     IsInBasket: false,
                     Quantity: _quantityType.DefaultQuantity,
+                    false,
                     false);
             }
 
@@ -933,13 +868,18 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<SaveTemporaryItemStartedAction>();
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingAddItemAction()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
-                _expectedFinishedAction = new SaveTemporaryItemFinishedAction(_item, State.TemporaryItemCreator.Section!);
-                SetupDispatchingAction<SaveTemporaryItemFinishedAction>(
+                _expectedFinishedAction = new AddTemporaryItemAction(_item, State.TemporaryItemCreator.Section!);
+                SetupDispatchingAction<AddTemporaryItemAction>(
                     action => action.IsEquivalentTo(_expectedFinishedAction, new List<string> { "Item.Id.OfflineId.Value" }));
+            }
+
+            public void SetupDispatchingFinishedAction()
+            {
+                SetupDispatchingAction<SaveTemporaryItemFinishedAction>();
             }
 
             public void SetupDispatchingCloseAction()
@@ -964,12 +904,12 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupUpdatingItemPrice();
-                _fixture.SetupDispatchingFinishActionForAllTypes();
+                _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -990,12 +930,12 @@ public class ShoppingListEffectsTests
             {
                 _fixture.SetupDispatchingStartAction();
                 _fixture.SetupUpdatingItemPrice();
-                _fixture.SetupDispatchingFinishActionForOneType();
+                _fixture.SetupDispatchingFinishAction();
                 _fixture.SetupDispatchingCloseAction();
+                _fixture.SetupDispatchingReloadShoppingListAction();
                 _fixture.SetupSuccessNotification();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -1019,7 +959,6 @@ public class ShoppingListEffectsTests
                 _fixture.SetupDispatchingExceptionNotificationAction();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -1043,7 +982,6 @@ public class ShoppingListEffectsTests
                 _fixture.SetupDispatchingErrorNotificationAction();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -1056,7 +994,6 @@ public class ShoppingListEffectsTests
         private sealed class HandleSavePriceUpdateActionFixture : ShoppingListEffectsFixture
         {
             private UpdateItemPriceRequest? _expectedRequest;
-            private SavePriceUpdateFinishedAction? _expectedFinishAction;
 
             public void SetupPriceUpdateForAllTypes()
             {
@@ -1116,22 +1053,14 @@ public class ShoppingListEffectsTests
                 SetupDispatchingAction<ClosePriceUpdaterAction>();
             }
 
-            public void SetupDispatchingFinishActionForAllTypes()
+            public void SetupDispatchingReloadShoppingListAction()
             {
-                _expectedFinishAction = new SavePriceUpdateFinishedAction(
-                    State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    null,
-                    State.PriceUpdate.Price);
-                SetupDispatchingAction(_expectedFinishAction);
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
             }
 
-            public void SetupDispatchingFinishActionForOneType()
+            public void SetupDispatchingFinishAction()
             {
-                _expectedFinishAction = new SavePriceUpdateFinishedAction(
-                    State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    State.PriceUpdate.Item.TypeId,
-                    State.PriceUpdate.Price);
-                SetupDispatchingAction(_expectedFinishAction);
+                SetupDispatchingAction<SavePriceUpdateFinishedAction>();
             }
 
             public void SetupUpdatingItemPrice()
@@ -1192,7 +1121,6 @@ public class ShoppingListEffectsTests
                 _fixture.SetupSuccessNotification();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -1215,7 +1143,6 @@ public class ShoppingListEffectsTests
                 _fixture.SetupDispatchingFinishAction();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -1238,7 +1165,6 @@ public class ShoppingListEffectsTests
                 _fixture.SetupDispatchingFinishAction();
             });
 
-            _fixture.SetupStateReturningState();
             var sut = _fixture.CreateSut();
 
             // Act
@@ -1319,6 +1245,136 @@ public class ShoppingListEffectsTests
             public void SetupSuccessNotification()
             {
                 ShoppingListNotificationServiceMock.SetupNotifySuccess("Finished shopping list");
+            }
+        }
+    }
+
+    public class HandleCreateInitialStoreAction
+    {
+        private readonly HandleCreateInitialStoreActionFixture _fixture = new();
+
+        [Fact]
+        public async Task HandleCreateInitialStoreAction_WithValidName_ShouldCallEndpointAndDispatchActionsInCorrectOrder()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupStoreName();
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupCreatingStoreSucceeded();
+                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingLoadAllActiveStoresAction();
+            });
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateInitialStoreAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateInitialStoreAction_WithApiException_ShouldDispatchExceptionNotificationAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupStoreName();
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupCreatingStoreThrowsApiException();
+                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingFinishAction();
+            });
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateInitialStoreAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        [Fact]
+        public async Task HandleCreateInitialStoreAction_WithHttpRequestException_ShouldDispatchErrorNotificationAction()
+        {
+            // Arrange
+            var queue = CallQueue.Create(_ =>
+            {
+                _fixture.SetupStoreName();
+                _fixture.SetupDispatchingStartAction();
+                _fixture.SetupCreatingStoreThrowsHttpRequestException();
+                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingFinishAction();
+            });
+
+            var sut = _fixture.CreateSut();
+
+            // Act
+            await sut.HandleCreateInitialStoreAction(_fixture.DispatcherMock.Object);
+
+            // Assert
+            queue.VerifyOrder();
+        }
+
+        private sealed class HandleCreateInitialStoreActionFixture : ShoppingListEffectsFixture
+        {
+            private EditedStore? _expectedStore;
+
+            public void SetupStoreName()
+            {
+                var name = new DomainTestBuilder<string>().Create();
+                State = State with
+                {
+                    InitialStoreCreator = State.InitialStoreCreator with
+                    {
+                        Name = name
+                    }
+                };
+                _expectedStore = new EditedStore(
+                    Guid.Empty,
+                    name,
+                    new SortedSet<EditedSection>(new SortingIndexComparer())
+                    {
+                        new(Guid.Empty, Guid.Empty, "Default", true, 0)
+                    });
+            }
+
+            public void SetupCreatingStoreSucceeded()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedStore);
+                ApiClientMock.SetupCreateStoreAsync(_expectedStore);
+            }
+
+            public void SetupCreatingStoreThrowsApiException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedStore);
+                ApiClientMock.SetupCreateStoreAsyncThrowing(_expectedStore,
+                    new DomainTestBuilder<ApiException>().Create());
+            }
+
+            public void SetupCreatingStoreThrowsHttpRequestException()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedStore);
+                ApiClientMock.SetupCreateStoreAsyncThrowing(_expectedStore,
+                    new DomainTestBuilder<HttpRequestException>().Create());
+            }
+
+            public void SetupDispatchingStartAction()
+            {
+                SetupDispatchingAction<CreateInitialStoreStartedAction>();
+            }
+
+            public void SetupDispatchingFinishAction()
+            {
+                SetupDispatchingAction<CreateInitialStoreFinishedAction>();
+            }
+
+            public void SetupDispatchingLoadAllActiveStoresAction()
+            {
+                SetupDispatchingAction<LoadAllActiveStoresAction>();
             }
         }
     }

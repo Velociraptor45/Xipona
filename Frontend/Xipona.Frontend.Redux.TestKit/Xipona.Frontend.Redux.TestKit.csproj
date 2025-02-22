@@ -1,16 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>ProjectHermes.Xipona.Frontend.Redux.TestKit</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="5.1.1" />
-    <PackageReference Include="Moq.Contrib.InOrder" Version="1.0.2" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Frontend.Redux\Xipona.Frontend.Redux.csproj" />

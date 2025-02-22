@@ -9,5 +9,5 @@ public interface IRecipeFactory
 
     IRecipe Create(RecipeId id, RecipeName name, NumberOfServings numberOfServings,
         IEnumerable<IIngredient> ingredients, IEnumerable<IPreparationStep> steps,
-        IEnumerable<RecipeTagId> recipeTagIds, DateTimeOffset createdAt);
+        IEnumerable<RecipeTagId> recipeTagIds, RecipeId? sideDishId, DateTimeOffset createdAt);
 }

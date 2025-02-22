@@ -4,41 +4,40 @@ using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.Xipona.Frontend.Redux.Items.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToContract
+namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
+
+public class CreateItemWithTypesContractConverter :
+    IToContractConverter<EditedItem, CreateItemWithTypesContract>
 {
-    public class CreateItemWithTypesContractConverter :
-        IToContractConverter<EditedItem, CreateItemWithTypesContract>
+    private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+
+    public CreateItemWithTypesContractConverter(
+        IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
     {
-        private readonly IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> _availabilityConverter;
+        _availabilityConverter = availabilityConverter;
+    }
 
-        public CreateItemWithTypesContractConverter(
-            IToContractConverter<EditedItemAvailability, ItemAvailabilityContract> availabilityConverter)
+    public CreateItemWithTypesContract ToContract(EditedItem source)
+    {
+        return new CreateItemWithTypesContract
         {
-            _availabilityConverter = availabilityConverter;
-        }
+            Name = source.Name,
+            Comment = source.Comment,
+            QuantityType = source.QuantityType.Id,
+            QuantityInPacket = source.QuantityInPacket,
+            QuantityTypeInPacket = source.QuantityInPacketType?.Id,
+            ItemCategoryId = source.ItemCategoryId.Value,
+            ManufacturerId = source.ManufacturerId,
+            ItemTypes = source.ItemTypes.Select(ToCreateItemTypeContract)
+        };
+    }
 
-        public CreateItemWithTypesContract ToContract(EditedItem source)
+    private CreateItemTypeContract ToCreateItemTypeContract(EditedItemType itemType)
+    {
+        return new CreateItemTypeContract
         {
-            return new CreateItemWithTypesContract
-            {
-                Name = source.Name,
-                Comment = source.Comment,
-                QuantityType = source.QuantityType.Id,
-                QuantityInPacket = source.QuantityInPacket,
-                QuantityTypeInPacket = source.QuantityInPacketType?.Id,
-                ItemCategoryId = source.ItemCategoryId.Value,
-                ManufacturerId = source.ManufacturerId,
-                ItemTypes = source.ItemTypes.Select(ToCreateItemTypeContract)
-            };
-        }
-
-        private CreateItemTypeContract ToCreateItemTypeContract(EditedItemType itemType)
-        {
-            return new CreateItemTypeContract
-            {
-                Name = itemType.Name,
-                Availabilities = itemType.Availabilities.Select(_availabilityConverter.ToContract)
-            };
-        }
+            Name = itemType.Name,
+            Availabilities = itemType.Availabilities.Select(_availabilityConverter.ToContract)
+        };
     }
 }

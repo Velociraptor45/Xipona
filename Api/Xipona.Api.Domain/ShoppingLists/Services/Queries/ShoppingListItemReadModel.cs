@@ -11,7 +11,7 @@ public class ShoppingListItemReadModel
     public ShoppingListItemReadModel(ItemId id, ItemTypeId? typeId, string name, bool isDeleted, Comment comment,
         bool isTemporary, Price pricePerQuantity, QuantityTypeReadModel quantityType, Quantity? quantityInPacket,
         QuantityTypeInPacketReadModel? quantityTypeInPacket, ItemCategoryReadModel? itemCategory,
-        ManufacturerReadModel? manufacturer, bool isInBasket, QuantityInBasket quantity)
+        ManufacturerReadModel? manufacturer, bool isInBasket, QuantityInBasket quantity, bool isDiscounted)
     {
         Id = id;
         TypeId = typeId;
@@ -27,6 +27,7 @@ public class ShoppingListItemReadModel
         Manufacturer = manufacturer;
         IsInBasket = isInBasket;
         Quantity = quantity;
+        IsDiscounted = isDiscounted;
     }
 
     public ItemId Id { get; }
@@ -43,4 +44,5 @@ public class ShoppingListItemReadModel
     public ManufacturerReadModel? Manufacturer { get; }
     public bool IsInBasket { get; }
     public QuantityInBasket Quantity { get; }
+    public bool IsDiscounted { get; }
 }

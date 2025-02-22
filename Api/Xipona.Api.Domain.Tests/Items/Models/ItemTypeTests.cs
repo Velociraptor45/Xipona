@@ -1,6 +1,5 @@
 ﻿using Force.DeepCloner;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -126,8 +125,6 @@ public class ItemTypeTests
 
     public class GetDefaultSectionIdForStore
     {
-        private readonly CommonFixture _commonFixture = new();
-
         [Fact]
         public void GetDefaultSectionIdForStore_WithInvalidStoreId_ShouldThrowDomainException()
         {
@@ -147,7 +144,7 @@ public class ItemTypeTests
         {
             // Arrange
             var sut = ItemTypeMother.Initial().Create();
-            var chosenAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+            var chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
 
             // Act
             var result = sut.GetDefaultSectionIdForStore(chosenAvailability.StoreId);
@@ -545,7 +542,6 @@ public class ItemTypeTests
 
         private sealed class UpdateFixture : ItemTypeFixture
         {
-            private readonly CommonFixture _fixture = new();
             private ItemAvailability? _chosenAvailability;
 
             public Price? Price { get; private set; }
@@ -564,7 +560,7 @@ public class ItemTypeTests
 
             public void SetupStoreId(IItemType sut)
             {
-                _chosenAvailability = _fixture.ChooseRandom(sut.Availabilities);
+                _chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
                 StoreId = _chosenAvailability.StoreId;
             }
 
@@ -573,7 +569,7 @@ public class ItemTypeTests
                 TestPropertyNotSetException.ThrowIfNull(_chosenAvailability);
                 TestPropertyNotSetException.ThrowIfNull(Price);
 
-                var availabilities = sut.Availabilities.Except(_chosenAvailability.ToMonoList()).ToList();
+                var availabilities = sut.Availabilities.Except([_chosenAvailability]).ToList();
                 availabilities.Add(_chosenAvailability with { Price = Price.Value });
 
                 ExpectedResult = new ItemTypeBuilder()
@@ -712,7 +708,6 @@ public class ItemTypeTests
 
         private sealed class TransferToDefaultSectionFixture : ItemTypeFixture
         {
-            private readonly CommonFixture _commonFixture = new();
             private ItemAvailability? _choseAvailability;
 
             public SectionId? OldSectionId { get; private set; }
@@ -726,7 +721,7 @@ public class ItemTypeTests
 
             public void SetupOldSectionId(IItemType sut)
             {
-                _choseAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+                _choseAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
                 OldSectionId = _choseAvailability.DefaultSectionId;
             }
 
@@ -740,7 +735,7 @@ public class ItemTypeTests
                 TestPropertyNotSetException.ThrowIfNull(_choseAvailability);
                 TestPropertyNotSetException.ThrowIfNull(NewSectionId);
 
-                var availabilities = sut.Availabilities.Except(_choseAvailability.ToMonoList()).ToList();
+                var availabilities = sut.Availabilities.Except([_choseAvailability]).ToList();
                 availabilities.Add(_choseAvailability with { DefaultSectionId = NewSectionId.Value });
 
                 ExpectedResult = new ItemTypeBuilder()
@@ -897,7 +892,6 @@ public class ItemTypeTests
 
         private sealed class RemoveAvailabilitiesForFixture : ItemTypeFixture
         {
-            private readonly CommonFixture _commonFixture = new();
             private ItemAvailability? _chosenAvailability;
 
             public StoreId? StoreId { get; private set; }
@@ -911,21 +905,21 @@ public class ItemTypeTests
 
             public void SetupStoreId(IItemType sut)
             {
-                _chosenAvailability = _commonFixture.ChooseRandom(sut.Availabilities);
+                _chosenAvailability = CommonFixture.ChooseRandom(sut.Availabilities);
                 StoreId = _chosenAvailability.StoreId;
             }
 
             public void SetupOneAvailability()
             {
                 var availability = new ItemAvailabilityBuilder().Create();
-                Builder.WithAvailabilities(availability.ToMonoList());
+                Builder.WithAvailabilities([availability]);
             }
 
             public void SetupExpectedResultWithMultipleAvailabilities(IItemType sut)
             {
                 TestPropertyNotSetException.ThrowIfNull(_chosenAvailability);
 
-                var availabilities = sut.Availabilities.Except(_chosenAvailability.ToMonoList()).ToList();
+                var availabilities = sut.Availabilities.Except([_chosenAvailability]).ToList();
 
                 ExpectedResult = new ItemTypeBuilder()
                     .WithId(sut.Id)

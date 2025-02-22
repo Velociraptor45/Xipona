@@ -56,7 +56,8 @@ public class ModifyRecipeCommandConverter : IToDomainConverter<(Guid, ModifyReci
             new NumberOfServings(contract.NumberOfServings),
             ingredients,
             steps,
-            tags);
+            tags,
+            contract.SideDishId is null ? null : new RecipeId(contract.SideDishId.Value));
 
         return new ModifyRecipeCommand(model);
     }

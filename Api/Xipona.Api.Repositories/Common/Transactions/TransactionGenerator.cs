@@ -34,7 +34,7 @@ public class TransactionGenerator : ITransactionGenerator
             {
                 if (database.CurrentTransaction != null)
                 {
-                    _logger.LogError(() => "Transaction is already open");
+                    _logger.LogError("Transaction is already open");
                     throw new InvalidOperationException("Transaction is already open");
                 }
 
@@ -48,7 +48,7 @@ public class TransactionGenerator : ITransactionGenerator
         }
         catch (Exception e)
         {
-            _logger.LogError(e, () => "An exception occurred while creating a transaction");
+            _logger.LogError(e, "An exception occurred while creating a transaction");
             throw;
         }
         finally

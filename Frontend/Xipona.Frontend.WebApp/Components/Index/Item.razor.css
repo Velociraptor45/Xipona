@@ -1,20 +1,20 @@
 ﻿.item {
     list-style-type: none;
-    color: #ffffff;
+    color: var(--secondary-color);
     cursor: pointer;
 }
 
 .item-editing {
     list-style-type: none;
-    color: #ffffff;
+    color: var(--secondary-color);
 }
 
 .in-basket {
-    background-color: #3498db;
+    background-color: var(--primary-color);
 }
 
 .not-in-basket {
-    background-color: #e74c3c;
+    background-color: var(--color-red);
 }
 
 .price-currency {
@@ -23,4 +23,8 @@
 
 .quantity {
     width: 44px;
+}
+
+.discount-symbol {
+    font-size: 60%;
 }

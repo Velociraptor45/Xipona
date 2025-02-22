@@ -44,7 +44,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .WithoutItemCategoryId()
             .WithManufacturerId(manufacturer.Id)
             .WithId(list.Sections.First().Items.First().Id)
-            .WithAvailabilities(availability.ToMonoList())
+            .WithAvailabilities([availability])
             .AsItem()
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
@@ -70,7 +70,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItem item = new ItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithoutManufacturerId()
-            .WithAvailabilities(availability.ToMonoList())
+            .WithAvailabilities([availability])
             .WithId(list.Sections.First().Items.First().Id)
             .AsItem()
             .Create();
@@ -95,7 +95,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
         var availability = GetAvailabilityFrom(store);
         IItem item = ItemMother.InitialTemporary()
-            .WithAvailabilities(availability.ToMonoList())
+            .WithAvailabilities([availability])
             .WithId(list.Sections.First().Items.First().Id)
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, null, null);
@@ -122,7 +122,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         IItem item = new ItemBuilder()
             .WithItemCategoryId(itemCategory.Id)
             .WithManufacturerId(manufacturer.Id)
-            .WithAvailabilities(availability.ToMonoList())
+            .WithAvailabilities([availability])
             .WithId(list.Sections.First().Items.First().Id)
             .AsItem()
             .Create();
@@ -214,7 +214,8 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
                 itemCategoryReadModel,
                 manufacturerReadModel,
                 list.Sections.First().Items.First().IsInBasket,
-                list.Sections.First().Items.First().Quantity);
+                list.Sections.First().Items.First().Quantity,
+                false);
             listItemReadModels.Add(listItem);
         }
 
@@ -233,6 +234,6 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             new ShoppingListStoreReadModel(
                 store.Id,
                 store.Name),
-            sectionReadModels?.ToMonoList() ?? Enumerable.Empty<ShoppingListSectionReadModel>());
+            sectionReadModels is null ? Enumerable.Empty<ShoppingListSectionReadModel>() : [sectionReadModels]);
     }
 }

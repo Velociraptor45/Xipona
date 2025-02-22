@@ -1,5 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 
@@ -32,7 +31,7 @@ public class ShoppingListSectionBuilder : DomainTestBuilderBase<ShoppingListSect
 
     public ShoppingListSectionBuilder WithItem(ShoppingListItem item)
     {
-        return WithItems(item.ToMonoList());
+        return WithItems([item]);
     }
 
     public ShoppingListSectionBuilder WithoutItems()

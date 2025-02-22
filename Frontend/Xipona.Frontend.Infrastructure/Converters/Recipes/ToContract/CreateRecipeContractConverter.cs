@@ -23,6 +23,7 @@ public class CreateRecipeContractConverter : IToContractConverter<EditedRecipe, 
             source.PreparationSteps.Select(p => new CreatePreparationStepContract(
                 p.Name,
                 p.SortingIndex)),
-            source.RecipeTagIds);
+            source.RecipeTagIds,
+            source.SideDish?.Id);
     }
 }

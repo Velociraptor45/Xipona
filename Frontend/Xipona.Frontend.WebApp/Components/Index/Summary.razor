@@ -16,7 +16,7 @@
 
 @if (State.Value.ShoppingList != null)
 {
-    <div class="d-flex flex-column mt-2 summary">
+    <div class="d-flex flex-column mt-2 summary @(SharedState.Value.IsOnline ? "" : "summary-retry")">
         <div class="pb-1 d-flex align-items-end flex-column">
             <div class="d-flex border-top pt-1 price-sum">
                 <div class="d-flex">
@@ -126,14 +126,14 @@
                            {
                                <div class="d-flex summary-datetime-edit">
                                    <div class="summary-date-picker">
-                                       <DatePicker Size="@AntSizeLDSType.Small"
+                                       <DatePicker Size="@InputSize.Small"
                                                    AllowClear="false"
                                                    TValue="DateTime"
                                                    Format="dd.MM.yyyy" Value="State.Value.Summary.FinishedAt"
                                                    ValueChanged="OnDateChanged"></DatePicker>
                                    </div>
                                    <div class="summary-time-picker">
-                                       <TimePicker Size="@AntSizeLDSType.Small"
+                                       <TimePicker Size="@InputSize.Small"
                                                    AllowClear="false"
                                                    TValue="DateTime"
                                                    Format="HH:mm:ss"
@@ -142,7 +142,7 @@
                                    </div>
                                    <div>
                                        <Button Class="d-flex align-items-center"
-                                               Size="@AntSizeLDSType.Small"
+                                               Size="@ButtonSize.Small"
                                                OnClick="OnLeaveFinishedAtEditModeClicked">
                                             <i class="bi bi-check shopping-list-summary-finish-time-editing"></i>
                                        </Button>

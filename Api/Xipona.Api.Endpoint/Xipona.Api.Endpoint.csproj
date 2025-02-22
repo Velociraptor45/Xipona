@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>ProjectHermes.Xipona.Api.Endpoint</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -10,6 +10,12 @@
     <ProjectReference Include="..\Xipona.Api.ApplicationServices\Xipona.Api.ApplicationServices.csproj" />
     <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <InternalsVisibleTo Include="$(AssemblyName)s.Tests" />
+    <InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
   </ItemGroup>
   
   <ItemGroup>

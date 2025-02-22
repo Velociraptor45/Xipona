@@ -322,9 +322,11 @@ public class RecipeEditorReducerTests
                             {
                                 new(Guid.NewGuid(), Guid.Empty, string.Empty, 0)
                             },
-                            new List<Guid>(0)),
+                            new List<Guid>(0),
+                            null),
                         IsInEditMode = true,
-                        ValidationResult = new()
+                        ValidationResult = new(),
+                        SideDishSelector = new SideDishSelector([], string.Empty)
                     }
                 };
             }
@@ -336,11 +338,28 @@ public class RecipeEditorReducerTests
         private readonly OnLoadRecipeForEditingFinishedFixture _fixture = new();
 
         [Fact]
-        public void OnLoadRecipeForEditingFinished_WithValidData_ShouldSetRecipeAndLeaveEditMode()
+        public void OnLoadRecipeForEditingFinished_WithSideDish_ShouldSetRecipeAndSideDish()
         {
             // Arrange
             _fixture.SetupInitialState();
-            _fixture.SetupExpectedState();
+            _fixture.SetupExpectedStateWithSideDish();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = RecipeEditorReducer.OnLoadRecipeForEditingFinished(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnLoadRecipeForEditingFinished_WithoutSideDish_ShouldSetRecipeAndNotSideDish()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedStateWithoutSideDish();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -364,19 +383,46 @@ public class RecipeEditorReducerTests
                     {
                         Recipe = new DomainTestBuilder<EditedRecipe>().Create(),
                         IsInEditMode = true,
-                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
+                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create(),
+                        SideDishSelector = new DomainTestBuilder<SideDishSelector>().Create()
                     }
                 };
             }
 
-            public void SetupExpectedState()
+            public void SetupExpectedStateWithoutSideDish()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Recipe = ExpectedState.Editor.Recipe! with
+                        {
+                            SideDish = null
+                        },
+                        IsInEditMode = false,
+                        ValidationResult = new(),
+                        SideDishSelector = ExpectedState.Editor.SideDishSelector with
+                        {
+                            SideDishes = [],
+                            Input = string.Empty
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedStateWithSideDish()
             {
                 ExpectedState = ExpectedState with
                 {
                     Editor = ExpectedState.Editor with
                     {
                         IsInEditMode = false,
-                        ValidationResult = new()
+                        ValidationResult = new(),
+                        SideDishSelector = ExpectedState.Editor.SideDishSelector with
+                        {
+                            SideDishes = [ExpectedState.Editor.Recipe!.SideDish!],
+                            Input = string.Empty
+                        }
                     }
                 };
             }

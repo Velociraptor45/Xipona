@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Fluxor.Blazor.Web.ReduxDevTools;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

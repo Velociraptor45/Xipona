@@ -21,7 +21,7 @@ public class AvailableAtEntityBuilder : TestBuilderBase<AvailableAt>
         return this;
     }
 
-    public AvailableAtEntityBuilder WithPrice(float price)
+    public AvailableAtEntityBuilder WithPrice(decimal price)
     {
         FillPropertyWith(p => p.Price, price);
         return this;

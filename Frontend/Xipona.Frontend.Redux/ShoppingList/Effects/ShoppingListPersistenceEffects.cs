@@ -101,7 +101,7 @@ public class ShoppingListPersistenceEffects
 
         var base64 = await _localStorageService.GetItemAsStringAsync(key);
 
-        var serialized = Encoding.UTF8.GetString(Convert.FromBase64String(base64));
+        var serialized = Encoding.UTF8.GetString(Convert.FromBase64String(base64!));
         return JsonSerializer.Deserialize<ShoppingListModel>(serialized, _options)!;
     }
 }

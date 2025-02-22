@@ -42,7 +42,7 @@ public class ItemCategoryEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleSearchItemCategoriesAction_WithWithApiException_ShouldDispatchExceptionNotification()
+        public async Task HandleSearchItemCategoriesAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -65,7 +65,7 @@ public class ItemCategoryEditorEffectsTests
         }
 
         [Fact]
-        public async Task HandleSearchItemCategoriesAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
+        public async Task HandleSearchItemCategoriesAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
             var queue = CallQueue.Create(_ =>
@@ -90,7 +90,7 @@ public class ItemCategoryEditorEffectsTests
         private sealed class HandleLoadItemCategoryForEditingActionFixture : ItemCategoryEditorEffectsFixture
         {
             private Guid? _id;
-            private EditedItemCategory? _manufacturer;
+            private EditedItemCategory? _itemCategory;
             public LoadItemCategoryForEditingAction? Action { get; private set; }
 
             public void SetupId()
@@ -100,15 +100,15 @@ public class ItemCategoryEditorEffectsTests
 
             public void SetupItemCategory()
             {
-                _manufacturer = new DomainTestBuilder<EditedItemCategory>().Create();
+                _itemCategory = new DomainTestBuilder<EditedItemCategory>().Create();
             }
 
             public void SetupGettingItemCategorySucceeded()
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
-                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
 
-                ApiClientMock.SetupGetItemCategoryByIdAsync(_id.Value, _manufacturer);
+                ApiClientMock.SetupGetItemCategoryByIdAsync(_id.Value, _itemCategory);
             }
 
             public void SetupGettingItemCategoryFailedWithErrorInApi()
@@ -136,9 +136,9 @@ public class ItemCategoryEditorEffectsTests
 
             public void SetupDispatchingFinishedAction()
             {
-                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
 
-                SetupDispatchingAction(new LoadItemCategoryForEditingFinishedAction(_manufacturer));
+                SetupDispatchingAction(new LoadItemCategoryForEditingFinishedAction(_itemCategory));
             }
 
             public void SetupDispatchingStartedAction()

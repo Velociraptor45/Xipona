@@ -36,6 +36,6 @@ public class DatabaseMigrationBackgroundService : BackgroundService
         }
 
         sw.Stop();
-        _logger.LogInformation(() => "Finished database migration in {Elapsed}", sw.Elapsed);
+        _logger.LogInformation("Finished database migration in {Elapsed}", sw.Elapsed);
     }
 }

@@ -111,8 +111,8 @@ public static class TemporaryItemCreatorReducer
     }
 
     [ReducerMethod]
-    public static ShoppingListState OnSaveTemporaryItemFinished(ShoppingListState state,
-        SaveTemporaryItemFinishedAction action)
+    public static ShoppingListState OnAddTemporaryItem(ShoppingListState state,
+        AddTemporaryItemAction action)
     {
         var sections = state.ShoppingList!.Sections.ToList();
         var section = sections.FirstOrDefault(s => s.Id == action.Section.Id);
@@ -145,5 +145,63 @@ public static class TemporaryItemCreatorReducer
                 IsSaving = false
             }
         };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnTemporaryItemCreated(ShoppingListState state, TemporaryItemCreatedAction action)
+    {
+        var sections = state.ShoppingList!.Sections.ToList();
+
+        if (!TryFindItem(sections, action.ItemTempId, out var indexes))
+        {
+            return state;
+        }
+
+        var (sectionIndex, itemIndex) = indexes;
+
+        var existingSection = sections[sectionIndex];
+        var existingItem = existingSection.Items.ElementAt(itemIndex);
+        var items = existingSection.Items.ToList();
+        items[itemIndex] = existingItem with
+        {
+            Id = new(existingItem.Id.OfflineId, action.ItemId)
+        };
+
+        var newSection = existingSection with
+        {
+            Items = items
+        };
+
+        sections[sectionIndex] = newSection;
+
+        return state with
+        {
+            ShoppingList = state.ShoppingList with
+            {
+                Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
+            }
+        };
+    }
+
+    private static bool TryFindItem(IList<ShoppingListSection> sections, Guid itemTempId,
+        out (int SectionIndex, int ItemIndex) indexes)
+    {
+        for (var i = 0; i < sections.Count; i++)
+        {
+            var section = sections[i];
+
+            for (var j = 0; j < section.Items.Count; j++)
+            {
+                var item = section.Items.ElementAt(j);
+                if (item.Id.OfflineId == itemTempId)
+                {
+                    indexes = (i, j);
+                    return true;
+                }
+            }
+        }
+
+        indexes = (0, 0);
+        return false;
     }
 }

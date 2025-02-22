@@ -41,9 +41,13 @@ Because not everyone wants to have certain items permanently show up for shoppin
 
 <img src="./Documentation/img/ShoppingListTemporaryItem.jpg" width="700px" alt="The price change dialog that's opend directly on the shopping list"/>
 
-Depending on the prices you saved for the items, the shopping lists predicts the estimated costs of your shopping errand. But because prices change, you can quickly adjust them from the shopping list without having to laboriously search for & open the item in the item editor.
+Depending on the prices you saved for the items, the shopping lists calculates the estimated costs of your shopping errand. But because prices change, you can quickly adjust them from the shopping list without having to laboriously search for & open the item in the item editor.
 
 <img src="./Documentation/img/ShoppingListPriceAdjustment.jpg" width="700px" alt="The price change dialog that's opend directly on the shopping list"/>
+
+If the item is discounted for a short time, you can also register this - without having to changing the normal price.
+
+<img src="./Documentation/img/DiscountItemOnSl.jpg" width="700px" alt="The item discount dialog that's opend directly on the shopping list"/>
 
 **Search for recipes** not only by their name, but also by their tag. You'd like to eat vegetarian? Great! Search by the tag select the recipe you want to cook.
 
@@ -56,19 +60,18 @@ But what if you're missing some ingredients? It's tedious to add all of them to 
 And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/ProjectHermes-ShoppingList/milestones) to get a glimps at what's coming soon 👀
 
 ## Setup in Docker
-To run all required services in containers, Dockerfiles and docker-compose files are provided. Since v0.7.0 Docker Secrets are being used and thus the services must be started via a stack deploy on a Docker Swarm. Starting via docker-compose is not supported anymore.
+To run all required services in containers, Dockerfiles and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
 
 ### Prerequisits
 Prepare the following things:
 - Docker Volumes
   - Api
-    - ph-xipona-api-logs
     - ph-xipona-api-config
   - Frontend
     - ph-xipona-frontend-config
   - Database
     - ph-xipona-database
-- Docker Secrets
+- Docker Secrets (if you're using stack deploy)
   - ph-xipona-db-username
   - ph-xipona-db-password
   - ph-xipona-db-root-pwd
@@ -79,12 +82,12 @@ Prepare the following things:
   - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
 
 ### Frontend
-- Configure the webserver address & the frontend's environment in xipona.conf under *Frontend/Docker* and copy it into the root directory of the ph-xipona-frontend-**config**.
+- Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the ph-xipona-frontend-**config**.
 - Set the api's address in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) and copy it into a directory of your choice on your host.
 
 ### yml files
 - Under *Docker/Compose/* is a compose yml file. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings file is
-- Start the containers via e.g. `docker stack deploy --compose-file docker-compose.yml ph-xipona`
+- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml ph-xipona` or `docker compose -f docker-compose.yml -p ph-xipona up -d`
 
 And now you're done. Happy shopping!
 
@@ -96,7 +99,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 #### Api
 1. Create the docker volume ph-xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the ph-xipona-api-**tls** volume.
-3. Replace the existing kestrel http endpoint in your `appsettings.{env}.json` with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
+3. Replace the existing kestrel http endpoint in your *appsettings.{env}.json* with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
     ```
     "Kestrel": {
       "Endpoints": {
@@ -115,7 +118,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 1. Create the docker volume ph-xipona-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the ph-xipona-frontend-**tls** volume.
-3. Replace the `xipona.conf` (under *Frontend/Docker*) with:
+3. Replace the *xipona.conf* (under *Frontend/Docker*) with:
     ```
     server {
         listen 80 default_server;
@@ -139,9 +142,23 @@ If you don't want to run the application behind a reverse proxy that handles the
     }
     ```
 
+### Backend Logging
+
+The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the ph-xipona-api-**config** volume.<br/>
+In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable PH_XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
+An example for a local seq instance with API key requirement could be
+
+```json
+"OpenTelemetry": {
+  "LogsEndpoint": "http://localhost:5341/ingest/otlp/v1/logs",
+  "TracesEndpoint": "http://localhost:5341/ingest/otlp/v1/traces",
+  "ApiKeyHeaderPrefix": "X-Seq-ApiKey="
+}
+```
+
 ### Frontend Logging
 
-It is possible to collect client-side logs (e.g. exceptions). The compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
+It is possible to collect client-side logs (e.g. exceptions). The docker compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
 
 ### Authentication & Authorization
 
@@ -157,9 +174,11 @@ Set the `Auth` section in the respective appsettings file (*Frontend/Xipona.Fron
 Set the `Auth` section in the respective appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) to `"Enabled": true` and fill the remaining properties.
 
 ### Key Vault
-Instead of providing the database credentials via docker secrets, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
+Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault. If you're using the docker compose, remove the _FILE suffix from all capitalized env variables and provide the values directly in the compose file instead of using secrets):
 
-- Remove the api's two DB environment variables (PH_XIPONA_DB_USERNAME_FILE & PH_XIPONA_DB_PASSWORD_FILE) and both username/password docker secrets from the docker compose file
+> If the Vault is configured, all other secret configurations (DB credentials, ...) that are supplied via env variables are ignored
+
+- (optional, but recommended) Remove all environment variables starting with PH_XIPONA and their respective docker secrets from the Api service in the compose file
 - Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
   - ph-xipona-vault-api-username 
   - ph-xipona-vault-api-password
@@ -167,7 +186,12 @@ Instead of providing the database credentials via docker secrets, it's also poss
   - PH_XIPONA_VAULT_USERNAME_FILE: /run/secrets/ph-xipona-vault-api-username
   - PH_XIPONA_VAULT_PASSWORD_FILE: /run/secrets/ph-xipona-vault-api-password
 - Set the vault's URI in the api's appsettings files (*Api/Xipona.Api.WebApp/appsettings.\*.json*)
-- The default mount point (ph-xipona) & secret name (database) are defined in the same appsettings file and can be changed at will. But the key names inside the secret must be "username" and "password" (all lowercase) and can not be changed. Define the username and password of the user with which you want to authenticate against the database.
+- The default mount point (xipona) & secret names (database, logging) are defined in the same appsettings file and can be changed at will. But the key names inside the respective secrets must be as follows
+  - Secret "database"
+    - `username`: the username with which you want to log in to the database
+    - `password`: the password for the database user
+  - Secret "logging"
+    - `apiKey`: the api key for the OTEL collector platform
 
 ## Local Development Setup
 To get everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the dev database.
@@ -177,4 +201,4 @@ To get everything running at your dev machine, at least a running dev DB is nece
 #### Database connection
 To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: PH_XIPONA_DB_USERNAME_FILE & PH_XIPONA_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create PH_XIPONA_VAULT_USERNAME_FILE & PH_XIPONA_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
 
-Also, set the DB's address and port in your *Api/Xipona.Api.WebApp/appsettings.Local.json*.
+Also, set the DB's address and port in your *Api/Xipona.Api.WebApp/appsettings.Local.json* or use the environment secrets of the WebApi project (recommended).

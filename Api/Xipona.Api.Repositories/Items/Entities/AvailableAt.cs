@@ -13,13 +13,9 @@ public class AvailableAt
     [Column(Order = 2)]
     public Guid StoreId { get; set; }
 
-    public float Price { get; set; }
+    public decimal Price { get; set; }
     public Guid DefaultSectionId { get; set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
     [ForeignKey("ItemId")]
-    public Item Item { get; set; }
-
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public Item? Item { get; set; } = null;
 }

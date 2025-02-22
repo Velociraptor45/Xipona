@@ -1,0 +1,58 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients
+@using ProjectHermes.Xipona.Frontend.Redux.Recipes.States
+
+@inject IState<RecipeState> State
+@inject IDispatcher Dispatcher
+
+<div class="ingredients">
+    <div class="d-flex align-items-center pb-2 pt-2 top-bar">
+        <div class="mr-1 collapse-arrow" @onclick="OnHeadlineClicked">
+            @if (_isCollapsed)
+            {
+                <i class="bi bi-chevron-right"></i>
+            }
+            else
+            {
+                <i class="bi bi-chevron-down"></i>
+            }
+        </div>
+        <h4 class="mb-0 pr-2 headline" @onclick="OnHeadlineClicked">Ingredients</h4>
+        <Button class="d-flex align-items-center"
+                Size="@ButtonSize.Small"
+                OnClick="OnAddIngredientButtonClicked">
+            <i class="bi bi-plus-lg"></i>
+        </Button>
+    </div>
+    <div class="mt-1">
+        @if (!_isCollapsed)
+        {
+            @for (int i = 0; i < State.Value.Editor.Recipe!.Ingredients.Count; i++)
+            {
+                <IngredientEditor Model="@State.Value.Editor.Recipe.Ingredients.ElementAt(i)"></IngredientEditor>
+                @if (i < State.Value.Editor.Recipe.Ingredients.Count - 1)
+                {
+                    <hr class="my-3"/>
+                }
+            }
+        }
+    </div>
+</div>
+
+@code
+{
+    private bool _isCollapsed = false;
+
+    private void OnAddIngredientButtonClicked()
+    {
+        Dispatcher.Dispatch(new IngredientAddedAction());
+    }
+
+    private void OnHeadlineClicked()
+    {
+        _isCollapsed = !_isCollapsed;
+        StateHasChanged();
+    }
+}

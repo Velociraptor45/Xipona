@@ -1,0 +1,18 @@
+﻿@media (min-width: 769px) {
+    .preparation-steps {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .collapse-arrow, .headline {
+        cursor: pointer;
+    }
+}
+
+.top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 150;
+    background-color: white;
+}

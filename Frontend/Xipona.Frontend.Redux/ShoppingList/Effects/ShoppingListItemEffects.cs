@@ -1,31 +1,62 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
+using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Configurations;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using RestEase;
 using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 
-public sealed class ShoppingListItemEffects : IDisposable
+public sealed class ShoppingListItemEffects : IAsyncDisposable
 {
     private readonly ICommandQueue _commandQueue;
     private readonly IState<ShoppingListState> _state;
+    private readonly IApiClient _apiClient;
     private readonly NavigationManager _navigationManager;
     private readonly ShoppingListConfiguration _config;
 
     private Timer? _hideItemsTimer;
 
-    public ShoppingListItemEffects(ICommandQueue commandQueue, IState<ShoppingListState> state,
+    public ShoppingListItemEffects(ICommandQueue commandQueue, IState<ShoppingListState> state, IApiClient apiClient,
         NavigationManager navigationManager, ShoppingListConfiguration config)
     {
         _commandQueue = commandQueue;
         _state = state;
+        _apiClient = apiClient;
         _navigationManager = navigationManager;
         _config = config;
+    }
+
+    [EffectMethod]
+    public async Task HandleOpenPriceUpdaterAction(OpenPriceUpdaterAction action, IDispatcher dispatcher)
+    {
+        if (action.Item.TypeId is null)
+            return;
+
+        List<ItemTypePrice> prices;
+        try
+        {
+            prices = (await _apiClient.GetItemTypePricesAsync(action.Item.Id.ActualId!.Value,
+                _state.Value.SelectedStoreId)).ToList();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item type prices failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item type prices failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new LoadingPriceUpdaterPricesFinishedAction(prices));
     }
 
     [EffectMethod]
@@ -106,8 +137,9 @@ public sealed class ShoppingListItemEffects : IDisposable
         _hideItemsTimer.Start();
     }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _hideItemsTimer?.Dispose();
+        return ValueTask.CompletedTask;
     }
 }

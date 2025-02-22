@@ -359,12 +359,14 @@ public class ApiClientMock : Mock<IApiClient>
 
     public void SetupCreateStoreAsync(EditedStore store)
     {
-        this.SetupInOrder(m => m.CreateStoreAsync(store)).Returns(Task.CompletedTask);
+        this.SetupInOrder(m => m.CreateStoreAsync(It.Is<EditedStore>(s => s.IsEquivalentTo(store))))
+            .Returns(Task.CompletedTask);
     }
 
     public void SetupCreateStoreAsyncThrowing(EditedStore store, Exception ex)
     {
-        this.SetupInOrder(m => m.CreateStoreAsync(store)).ThrowsAsync(ex);
+        this.SetupInOrder(m => m.CreateStoreAsync(It.Is<EditedStore>(s => s.IsEquivalentTo(store))))
+            .ThrowsAsync(ex);
     }
 
     public void SetupModifyStoreAsync(EditedStore store)
@@ -466,15 +468,15 @@ public class ApiClientMock : Mock<IApiClient>
         this.SetupInOrder(m => m.GetItemCategorySearchResultsAsync(searchInput)).ThrowsAsync(ex);
     }
 
-    public void SetupGetItemCategoryByIdAsync(Guid manufacturerId, EditedItemCategory returnValue)
+    public void SetupGetItemCategoryByIdAsync(Guid itemCategoryId, EditedItemCategory returnValue)
     {
-        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(manufacturerId))
+        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(itemCategoryId))
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupGetItemCategoryByIdAsyncThrowing(Guid manufacturerId, Exception ex)
+    public void SetupGetItemCategoryByIdAsyncThrowing(Guid itemCategoryId, Exception ex)
     {
-        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(manufacturerId)).ThrowsAsync(ex);
+        this.SetupInOrder(m => m.GetItemCategoryByIdAsync(itemCategoryId)).ThrowsAsync(ex);
     }
 
     public void SetupCreateItemCategoryAsync(string name, EditedItemCategory returnValue)
@@ -511,15 +513,16 @@ public class ApiClientMock : Mock<IApiClient>
         this.SetupInOrder(m => m.DeleteItemCategoryAsync(manufacturerId)).ThrowsAsync(ex);
     }
 
-    public void SetupSearchItemsAsync(string searchInput, IEnumerable<ItemSearchResult> returnValue)
+    public void SetupSearchItemsAsync(string searchInput, int page, int pageSize,
+        IEnumerable<ItemSearchResult> returnValue)
     {
-        this.SetupInOrder(m => m.SearchItemsAsync(searchInput))
+        this.SetupInOrder(m => m.SearchItemsAsync(searchInput, page, pageSize))
             .ReturnsAsync(returnValue);
     }
 
-    public void SetupSearchItemsAsyncThrowing(string searchInput, Exception ex)
+    public void SetupSearchItemsAsyncThrowing(string searchInput, int page, int pageSize, Exception ex)
     {
-        this.SetupInOrder(m => m.SearchItemsAsync(searchInput)).ThrowsAsync(ex);
+        this.SetupInOrder(m => m.SearchItemsAsync(searchInput, page, pageSize)).ThrowsAsync(ex);
     }
 
     public void SetupGetAllActiveStoresForItemAsync(IEnumerable<ItemStore> returnValue)
@@ -531,5 +534,63 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupGetAllActiveStoresForItemAsyncThrowing(Exception ex)
     {
         this.SetupInOrder(m => m.GetAllActiveStoresForItemAsync()).ThrowsAsync(ex);
+    }
+
+    public void SetupGetTotalSearchResultCountAsync(string searchInput, int returnValue)
+    {
+        this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetTotalSearchResultCountAsyncThrowing(string searchInput, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetTotalSearchResultCountAsync(searchInput)).ThrowsAsync(ex);
+    }
+
+    public void SetupSearchItemByItemCategoryAsync(Guid itemCategoryId, IEnumerable<SearchItemByItemCategoryResult> returnValue)
+    {
+        this.SetupInOrder(m => m.SearchItemByItemCategoryAsync(itemCategoryId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupSearchItemByItemCategoryAsyncThrowing(Guid itemCategoryId, Exception ex)
+    {
+        this.SetupInOrder(m => m.SearchItemByItemCategoryAsync(itemCategoryId)).ThrowsAsync(ex);
+    }
+
+    public void SetupGetItemTypePricesAsync(Guid itemId, Guid storeId, IEnumerable<ItemTypePrice> returnValue)
+    {
+        this.SetupInOrder(m => m.GetItemTypePricesAsync(itemId, storeId))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetItemTypePricesAsyncThrowing(Guid itemId, Guid storeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.GetItemTypePricesAsync(itemId, storeId)).ThrowsAsync(ex);
+    }
+
+    public void SetupAddItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount)
+    {
+        this.SetupInOrder(m => m.AddItemDiscountAsync(shoppingListId, itemId, itemTypeId, discount))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupAddItemDiscountAsyncThrowing(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount,
+        Exception ex)
+    {
+        this.SetupInOrder(m => m.AddItemDiscountAsync(shoppingListId, itemId, itemTypeId, discount))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupRemoveItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId)
+    {
+        this.SetupInOrder(m => m.RemoveItemDiscountAsync(shoppingListId, itemId, itemTypeId))
+            .Returns(Task.CompletedTask);
+    }
+
+    public void SetupRemoveItemDiscountAsyncThrowing(Guid shoppingListId, Guid itemId, Guid? itemTypeId, Exception ex)
+    {
+        this.SetupInOrder(m => m.RemoveItemDiscountAsync(shoppingListId, itemId, itemTypeId))
+            .ThrowsAsync(ex);
     }
 }

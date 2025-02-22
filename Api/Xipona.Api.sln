@@ -24,6 +24,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{11C72102-01D3-4BD4-A535-83EBF393AE71}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Domain.TestKit", "Xipona.Api.Domain.TestKit\Xipona.Api.Domain.TestKit.csproj", "{0846E205-91FE-4B43-B3A4-F6651E17604F}"
@@ -58,9 +59,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.TestTools", "Xip
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Endpoints", "03_Endpoints", "{6C4F18D9-BC6B-4F05-9B65-7A5294E5E245}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Vault", "Xipona.Api.Vault\Xipona.Api.Vault.csproj", "{E7892CA9-5FEE-4A39-941A-7F844AB0101C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Secrets", "Xipona.Api.Secrets\Xipona.Api.Secrets.csproj", "{E7892CA9-5FEE-4A39-941A-7F844AB0101C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Vault.TestKit", "Xipona.Api.Vault.TestKit\Xipona.Api.Vault.TestKit.csproj", "{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Secrets.TestKit", "Xipona.Api.Secrets.TestKit\Xipona.Api.Secrets.TestKit.csproj", "{512CE5B7-C2AA-44F8-ACAF-5C56A5FA5AE3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06_ApplicationServices", "06_ApplicationServices", "{D2DA4BE0-E274-4058-A85A-A985C24D4AF5}"
 EndProject
@@ -69,8 +70,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Endpoints.Tests", "Xipona.Api.Endpoints.Tests\Xipona.Api.Endpoints.Tests.csproj", "{F6CD4608-2070-4E92-BDAC-30B8FB95A211}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.ApplicationServices.TestKit", "Xipona.Api.ApplicationServices.TestKit\Xipona.Api.ApplicationServices.TestKit.csproj", "{86B831E3-FF48-4345-AE09-AFA2026DA95D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Endpoints.TestKit", "Xipona.Api.Endpoints.TestKit\Xipona.Api.Endpoints.TestKit.csproj", "{213E291D-55FC-4197-96FD-7B419D209658}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Endpoint.IntegrationTests", "Xipona.Api.Endpoint.IntegrationTests\Xipona.Api.Endpoint.IntegrationTests.csproj", "{21BE2724-51EB-4CAB-ACC7-6D4BACCC0F44}"
 EndProject
@@ -81,6 +80,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Repositories.TestKit", "Xipona.Api.Repositories.TestKit\Xipona.Api.Repositories.TestKit.csproj", "{CC1E9FA6-84CD-4E74-B06B-70148BF3B2FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xipona.Api.Repositories.Tests", "Xipona.Api.Repositories.Tests\Xipona.Api.Repositories.Tests.csproj", "{1FA93FBF-7380-47E9-9C0B-8E166C280510}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05_Contracts", "05_Contracts", "{17C792D7-4FC9-4F36-ABE9-91125186ADC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xipona.Api.Contracts.TestKit", "Xipona.Api.Contracts.TestKit\Xipona.Api.Contracts.TestKit.csproj", "{EE31A615-3292-4EF1-A41F-9DC35DB1548E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Execution", "01_Execution", "{B2621D15-8DA3-4D0E-9D3E-0B4385B1C301}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xipona.Api.WebApp.Tests", "Xipona.Api.WebApp.Tests\Xipona.Api.WebApp.Tests.csproj", "{FF8A857D-7E0E-4767-810A-C88BFEA5CF2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xipona.Api.Secrets.Tests", "Xipona.Api.Secrets.Tests\Xipona.Api.Secrets.Tests.csproj", "{6D6A5B3E-AFBD-4D82-B784-00D9512096EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -156,10 +165,6 @@ Global
 		{86B831E3-FF48-4345-AE09-AFA2026DA95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86B831E3-FF48-4345-AE09-AFA2026DA95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86B831E3-FF48-4345-AE09-AFA2026DA95D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{213E291D-55FC-4197-96FD-7B419D209658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{213E291D-55FC-4197-96FD-7B419D209658}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{213E291D-55FC-4197-96FD-7B419D209658}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{213E291D-55FC-4197-96FD-7B419D209658}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21BE2724-51EB-4CAB-ACC7-6D4BACCC0F44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21BE2724-51EB-4CAB-ACC7-6D4BACCC0F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21BE2724-51EB-4CAB-ACC7-6D4BACCC0F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -180,6 +185,18 @@ Global
 		{1FA93FBF-7380-47E9-9C0B-8E166C280510}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FA93FBF-7380-47E9-9C0B-8E166C280510}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FA93FBF-7380-47E9-9C0B-8E166C280510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE31A615-3292-4EF1-A41F-9DC35DB1548E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE31A615-3292-4EF1-A41F-9DC35DB1548E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE31A615-3292-4EF1-A41F-9DC35DB1548E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE31A615-3292-4EF1-A41F-9DC35DB1548E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8A857D-7E0E-4767-810A-C88BFEA5CF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8A857D-7E0E-4767-810A-C88BFEA5CF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF8A857D-7E0E-4767-810A-C88BFEA5CF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF8A857D-7E0E-4767-810A-C88BFEA5CF2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D6A5B3E-AFBD-4D82-B784-00D9512096EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D6A5B3E-AFBD-4D82-B784-00D9512096EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D6A5B3E-AFBD-4D82-B784-00D9512096EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D6A5B3E-AFBD-4D82-B784-00D9512096EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -207,12 +224,16 @@ Global
 		{1FB9B928-A079-458A-B067-DCD52F77BD46} = {D2DA4BE0-E274-4058-A85A-A985C24D4AF5}
 		{F6CD4608-2070-4E92-BDAC-30B8FB95A211} = {6C4F18D9-BC6B-4F05-9B65-7A5294E5E245}
 		{86B831E3-FF48-4345-AE09-AFA2026DA95D} = {D2DA4BE0-E274-4058-A85A-A985C24D4AF5}
-		{213E291D-55FC-4197-96FD-7B419D209658} = {6C4F18D9-BC6B-4F05-9B65-7A5294E5E245}
 		{21BE2724-51EB-4CAB-ACC7-6D4BACCC0F44} = {6C4F18D9-BC6B-4F05-9B65-7A5294E5E245}
 		{F7F889BF-AFBB-4478-BACA-ADF14BD16350} = {76C4349A-E0C0-4209-B812-93E101D703F9}
 		{1FAD9C5B-9C41-4BED-991C-659B97D6D69C} = {8C98078F-50C7-4CBE-8BA2-8A090D34857F}
 		{CC1E9FA6-84CD-4E74-B06B-70148BF3B2FE} = {33CDCDF6-D82E-446B-8F31-B2B0E48F0314}
 		{1FA93FBF-7380-47E9-9C0B-8E166C280510} = {33CDCDF6-D82E-446B-8F31-B2B0E48F0314}
+		{17C792D7-4FC9-4F36-ABE9-91125186ADC0} = {76C4349A-E0C0-4209-B812-93E101D703F9}
+		{EE31A615-3292-4EF1-A41F-9DC35DB1548E} = {17C792D7-4FC9-4F36-ABE9-91125186ADC0}
+		{B2621D15-8DA3-4D0E-9D3E-0B4385B1C301} = {76C4349A-E0C0-4209-B812-93E101D703F9}
+		{FF8A857D-7E0E-4767-810A-C88BFEA5CF2F} = {B2621D15-8DA3-4D0E-9D3E-0B4385B1C301}
+		{6D6A5B3E-AFBD-4D82-B784-00D9512096EA} = {33CDCDF6-D82E-446B-8F31-B2B0E48F0314}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {56C5C54B-6642-4A35-9038-FE0D314E6780}

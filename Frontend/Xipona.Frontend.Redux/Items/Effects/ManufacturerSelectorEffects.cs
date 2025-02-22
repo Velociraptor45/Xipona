@@ -9,7 +9,7 @@ using Timer = System.Timers.Timer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
 
-public sealed class ManufacturerSelectorEffects : IDisposable
+public sealed class ManufacturerSelectorEffects : IAsyncDisposable
 {
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
@@ -48,8 +48,8 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         dispatcher.Dispatch(new LoadInitialManufacturerFinishedAction(result));
     }
 
-    [EffectMethod]
-    public async Task HandleCreateNewManufacturerAction(CreateNewManufacturerAction action, IDispatcher dispatcher)
+    [EffectMethod(typeof(CreateNewManufacturerAction))]
+    public async Task HandleCreateNewManufacturerAction(IDispatcher dispatcher)
     {
         EditedManufacturer result;
         try
@@ -134,8 +134,9 @@ public sealed class ManufacturerSelectorEffects : IDisposable
         return Task.CompletedTask;
     }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _startSearchTimer?.Dispose();
+        return ValueTask.CompletedTask;
     }
 }

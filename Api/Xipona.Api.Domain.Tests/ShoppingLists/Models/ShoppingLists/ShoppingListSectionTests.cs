@@ -1,5 +1,4 @@
 ﻿using Force.DeepCloner;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
@@ -233,7 +232,7 @@ public class ShoppingListSectionTests
                 _fixture.SetupItemWithoutTypes();
                 var sut = _fixture.CreateSut();
 
-                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId, null);
+                TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
 
                 // Act
                 var result = sut.ContainsItem(_fixture.ItemId.Value);
@@ -297,22 +296,20 @@ public class ShoppingListSectionTests
 
         private sealed class ContainsItemFixture : ShoppingListSectionFixture
         {
-            private readonly CommonFixture _commonFixture = new();
-
             public ItemId? ItemId { get; private set; }
             public ItemTypeId? ItemTypeId { get; private set; }
 
             public void SetupItemWithoutTypes()
             {
                 var items = new ShoppingListItemBuilder().WithoutTypeId().CreateMany(3).ToList();
-                ItemId = _commonFixture.ChooseRandom(items).Id;
+                ItemId = CommonFixture.ChooseRandom(items).Id;
                 SetupItems(items);
             }
 
             public void SetupItemWithTypes()
             {
                 var items = new ShoppingListItemBuilder().CreateMany(3).ToList();
-                var item = _commonFixture.ChooseRandom(items);
+                var item = CommonFixture.ChooseRandom(items);
                 ItemId = item.Id;
                 ItemTypeId = item.TypeId;
                 SetupItems(items);
@@ -614,7 +611,7 @@ public class ShoppingListSectionTests
                 var item = sut.Items.First();
                 var newItem = new ShoppingListItem(item.Id, item.TypeId, true, item.Quantity);
 
-                ExpectedResult = new ShoppingListSection(sut.Id, newItem.ToMonoList());
+                ExpectedResult = new ShoppingListSection(sut.Id, [newItem]);
             }
         }
     }
@@ -733,7 +730,7 @@ public class ShoppingListSectionTests
                 var item = sut.Items.First();
                 var newItem = new ShoppingListItem(item.Id, item.TypeId, false, item.Quantity);
 
-                ExpectedResult = new ShoppingListSection(sut.Id, newItem.ToMonoList());
+                ExpectedResult = new ShoppingListSection(sut.Id, [newItem]);
             }
         }
     }
@@ -845,7 +842,7 @@ public class ShoppingListSectionTests
                 var item = sut.Items.First();
                 var newItem = new ShoppingListItem(item.Id, item.TypeId, item.IsInBasket, Quantity.Value);
 
-                ExpectedResult = new ShoppingListSection(sut.Id, newItem.ToMonoList());
+                ExpectedResult = new ShoppingListSection(sut.Id, [newItem]);
             }
         }
     }

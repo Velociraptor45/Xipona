@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
 
@@ -32,7 +31,8 @@ public static class PriceUpdaterReducer
             {
                 Item = null,
                 IsOpen = false,
-                IsSaving = false
+                IsSaving = false,
+                OtherItemTypePrices = []
             }
         };
     }
@@ -75,39 +75,11 @@ public static class PriceUpdaterReducer
         };
     }
 
-    [ReducerMethod]
-    public static ShoppingListState OnSavePriceUpdateFinished(ShoppingListState state,
-        SavePriceUpdateFinishedAction action)
+    [ReducerMethod(typeof(SavePriceUpdateFinishedAction))]
+    public static ShoppingListState OnSavePriceUpdateFinished(ShoppingListState state)
     {
-        var sections = state.ShoppingList!.Sections.ToList();
-        for (int i = 0; i < sections.Count; i++)
-        {
-            var section = sections[i];
-            var items = section.Items.ToList();
-            for (int ii = 0; ii < items.Count; ii++)
-            {
-                var item = items[ii];
-                if (item.Id.ActualId == action.ItemId && (action.ItemTypeId is null || item.TypeId == action.ItemTypeId))
-                {
-                    items[ii] = item with
-                    {
-                        PricePerQuantity = action.Price
-                    };
-                }
-            }
-
-            sections[i] = section with
-            {
-                Items = items
-            };
-        }
-
         return state with
         {
-            ShoppingList = state.ShoppingList with
-            {
-                Sections = new SortedSet<ShoppingListSection>(sections, new SortingIndexComparer())
-            },
             PriceUpdate = state.PriceUpdate with
             {
                 IsSaving = false

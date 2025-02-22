@@ -1,18 +1,22 @@
 ﻿.section:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
+
 .name {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
 }
+
 .all-in-basket {
-  background-color: #3498db;
-  color: white;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
 }
+
 .some-in-basket {
-  background-color: #F7D80F;
-  color: #496684;
+    background-color: var(--color-yellow);
+    color: var(--contrast-color);
 }
+
 .none-in-basket {
-  background-color: #e74c3c;
-  color: white;
+    background-color: var(--color-red);
+    color: var(--secondary-color);
 }

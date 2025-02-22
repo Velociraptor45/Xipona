@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common
+namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
+
+public interface IToContractConverter : IConverter
+{ }
+
+public interface IToContractConverter<in TSource, out TDestination> : IToContractConverter
 {
-    public interface IToContractConverter : IConverter
-    { }
+    TDestination ToContract(TSource source);
 
-    public interface IToContractConverter<in TSource, out TDestination> : IToContractConverter
+    IEnumerable<TDestination> ToContract(IEnumerable<TSource> sources)
     {
-        TDestination ToContract(TSource source);
+        var sourcesList = sources.ToList();
 
-        IEnumerable<TDestination> ToContract(IEnumerable<TSource> sources)
+        foreach (var source in sourcesList)
         {
-            var sourcesList = sources.ToList();
-
-            foreach (var source in sourcesList)
-            {
-                yield return ToContract(source);
-            }
+            yield return ToContract(source);
         }
     }
 }

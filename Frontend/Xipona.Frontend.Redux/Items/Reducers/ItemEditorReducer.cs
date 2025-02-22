@@ -303,7 +303,7 @@ public static class ItemEditorReducer
             return state;
 
         var store = availableStores.First();
-        availabilities.Add(new EditedItemAvailability(store.Id, store.DefaultSectionId, 1f));
+        availabilities.Add(new EditedItemAvailability(store.Id, store.DefaultSectionId, 1m));
 
         return state with
         {
@@ -340,7 +340,7 @@ public static class ItemEditorReducer
             return state;
 
         var store = availableStores.First();
-        availabilities.Add(new EditedItemAvailability(store.Id, store.DefaultSectionId, 1f));
+        availabilities.Add(new EditedItemAvailability(store.Id, store.DefaultSectionId, 1m));
 
         var itemType = type with { Availabilities = availabilities };
         types[typeIndex] = itemType;

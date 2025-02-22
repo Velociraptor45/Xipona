@@ -22,10 +22,10 @@
         </Select>
         <div class="d-flex pt-1">
             <div class="price-input">
-                <AntDesign.InputNumber TValue="float" Value="@Model.PricePerQuantity" 
+                <AntDesign.InputNumber TValue="decimal" Value="@Model.PricePerQuantity" 
                                        Formatter="FormatPriceInput"
                                        Parser="ParsePriceInput"
-                                       Min="0.01f"
+                                       Min="0.01m"
                                        ValueChanged="OnPriceChanged"/>
             </div>
             <Select DataSource="State.Value.Stores.GetSections(Model.StoreId)"
@@ -64,12 +64,12 @@
         Dispatcher.Dispatch(new ChangeDefaultSectionAction(Available, Model, section.Id));
     }
 
-    private void OnPriceChanged(float price)
+    private void OnPriceChanged(decimal price)
     {
         Dispatcher.Dispatch(new ChangePriceAction(Available, Model, price));
     }
 
-    private string FormatPriceInput(float price)
+    private string FormatPriceInput(decimal price)
     {
         return $"{price:0.00} {State.Value.Editor.Item!.QuantityType.PriceLabel}";
     }

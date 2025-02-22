@@ -2,6 +2,7 @@
 
 @using Fluxor
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.States
+@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Discounts
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
@@ -63,8 +64,14 @@
                     }
                     else
                     {
-                        <!-- update item price -->
                         <div class="px-2 m-0 ml-auto">
+                            <!-- open discount dialog -->
+                            <Button Class="px-2" OnClick="OnOpenDiscountClicked"
+                                    Type="@(Model.IsDiscounted ? ButtonType.Primary : ButtonType.Default)"
+                                    Disabled="@(!SharedState.Value.IsOnline)">
+                                <i class="bi bi-percent"></i>
+                            </Button>
+                            <!-- update item price -->
                             <Button Class="px-2" OnClick="OnOpenUpdatePriceClicked"
                                     Disabled="@(!SharedState.Value.IsOnline)">
                                 <i class="bi bi-currency-dollar"></i>
@@ -87,13 +94,17 @@
                 @Model.Name
             </div>
             <div class="px-2 m-0 align-self-center ml-auto price">
+                @if (@Model.IsDiscounted)
+                {
+                    <span class="pr-1"><i class="bi bi-percent discount-symbol"></i></span>
+                }
                 <span>@($"{CalculatePrice():0.00}")</span><span class="price-currency">€</span>
             </div>
         </div>
     }
 </li>
 
-@code{
+@code {
     [Parameter] public ShoppingListItem Model { get; set; }
 
     private void OnItemClicked()
@@ -147,6 +158,11 @@
     private void OnOpenUpdatePriceClicked()
     {
         Dispatcher.Dispatch(new OpenPriceUpdaterAction(Model));
+    }
+
+    private void OnOpenDiscountClicked()
+    {
+        Dispatcher.Dispatch(new OpenDiscountDialogAction(Model));
     }
 
     private string FormatQuantityInput(float quantity)

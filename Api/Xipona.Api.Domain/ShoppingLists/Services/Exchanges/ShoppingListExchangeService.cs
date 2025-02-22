@@ -48,7 +48,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
                 throw new DomainException(new ShoppingListItemHasTypeReason(list.Id, oldListItem.Id));
 
             list.RemoveItem(oldListItem.Id);
-            _logger.LogInformation(() => "Removed item {OldItemId} from list {ShoppingListId}", oldListItem.Id.Value,
+            _logger.LogInformation("Removed item {OldItemId} from list {ShoppingListId}", oldListItem.Id.Value,
                 list.Id.Value);
             if (newItem.IsAvailableInStore(list.StoreId))
             {

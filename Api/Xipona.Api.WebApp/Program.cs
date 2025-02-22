@@ -2,85 +2,83 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Core.Files;
 using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Endpoint;
+using ProjectHermes.Xipona.Api.Endpoint.Middleware;
+using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Repositories.Common.Services;
-using ProjectHermes.Xipona.Api.Vault;
+using ProjectHermes.Xipona.Api.Secrets;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
 using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
 using ProjectHermes.Xipona.Api.WebApp.Configs;
 using ProjectHermes.Xipona.Api.WebApp.Extensions;
-using Serilog;
+using ProjectHermes.Xipona.Api.WebApp.Serialization;
+using Scalar.AspNetCore;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
-builder.Logging.AddConsole();
-builder.Logging.AddSerilog();
+
+if (builder.Environment.IsEnvironment("Local"))
+{
+    builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
+}
 
 AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .CreateLogger();
+var secretServices = new ServiceCollection();
+secretServices.AddSingleton<IConfiguration>(configuration);
+secretServices.AddTransient<IFileLoadingService, FileLoadingService>();
+SecretStoreRegister.RegisterSecretStore(configuration, new FileLoadingService(), secretServices);
+secretServices.AddTransient<ISecretLoadingService, SecretLoadingService>();
 
-var fileLoadingService = new FileLoadingService();
-var vaultService = new VaultService(configuration, fileLoadingService);
-var configurationLoadingService = new DatabaseConfigurationLoadingService(fileLoadingService, vaultService);
-var connectionStrings = await configurationLoadingService.LoadAsync(configuration);
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+var secretProvider = secretServices.BuildServiceProvider();
+#pragma warning restore ASP0000
+
+var secretLoadingService = secretProvider.GetRequiredService<ISecretLoadingService>();
+var connectionStrings = await secretLoadingService.LoadConnectionStringsAsync();
 builder.Services.AddSingleton(connectionStrings);
 
-builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLoadingService);
+
+builder.Services.Configure<JsonOptions>(opt =>
+    opt.SerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
+
 builder.Services.AddCore();
 builder.Services.AddDomain();
-builder.Services.AddEndpointControllers();
+builder.Services.AddEndpointConverters();
 
-var authOptions = configuration.GetSection("Auth").Get<AuthenticationOptions>();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+builder.Services.AddCors();
 
-builder.Services.AddSwaggerGen(opt =>
+var authOptions = new AuthenticationOptions();
+configuration.GetSection("Auth").Bind(authOptions);
+
+builder.Services.AddSingleton(authOptions);
+
+builder.Services.AddOpenApi("v1", opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Xipona API", Version = "v1" });
-    opt.CustomSchemaIds(type => type.ToString());
-
     if (!authOptions.Enabled)
         return;
 
-    var securityScheme = new OpenApiSecurityScheme
-    {
-        Name = "Auth",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.OpenIdConnect,
-        OpenIdConnectUrl = new Uri(authOptions.OidcUrl),
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        Reference = new OpenApiReference
-        {
-            Id = "Bearer",
-            Type = ReferenceType.SecurityScheme
-        }
-    };
-
-    opt.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { securityScheme, Array.Empty<string>() }
-    });
+    opt.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 builder.Services.AddRepositories();
@@ -91,21 +89,22 @@ SetupSecurity();
 
 var app = builder.Build();
 
+app.Lifetime.ApplicationStopping.Register(Diagnostics.DisposeInstance);
+
 app.UseExceptionHandling();
 if (!app.Environment.IsProduction())
 {
     app.UseDeveloperExceptionPage();
 }
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xipona API v1");
-});
+app.MapOpenApi();
+app.MapScalarApiReference(opt => opt.Title = "Xipona API");
 
 app.UseCors(policyBuilder =>
 {
-    var corsConfig = app.Configuration.GetSection("Cors").Get<CorsConfig>();
+    var corsConfig = new CorsConfig();
+    // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
+    app.Configuration.GetSection("Cors").Bind(corsConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
     policyBuilder
         .WithOrigins(corsConfig.AllowedOrigins)
@@ -119,7 +118,16 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseDiagnosticsMiddleware();
+
+app.RegisterItemCategoryEndpoints();
+app.RegisterItemEndpoints();
+app.RegisterManufacturerEndpoints();
+app.RegisterMonitoringEndpoints();
+app.RegisterRecipeEndpoints();
+app.RegisterShoppingListEndpoints();
+app.RegisterRecipeTagEndpoints();
+app.RegisterStoreEndpoints();
 
 await app.RunAsync();
 

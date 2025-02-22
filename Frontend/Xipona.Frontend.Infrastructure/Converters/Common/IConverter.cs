@@ -1,6 +1,5 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common
+﻿namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
+
+public interface IConverter
 {
-    public interface IConverter
-    {
-    }
 }

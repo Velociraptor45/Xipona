@@ -12,14 +12,17 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
     private readonly IShoppingListFactory _shoppingListFactory;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
     private readonly IToDomainConverter<ItemsOnList, ShoppingListItem> _shoppingListItemConverter;
+    private readonly IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.Discount> _discountConverter;
 
     public ShoppingListConverter(IShoppingListFactory shoppingListFactory,
         IShoppingListSectionFactory shoppingListSectionFactory,
-        IToDomainConverter<ItemsOnList, ShoppingListItem> shoppingListItemConverter)
+        IToDomainConverter<ItemsOnList, ShoppingListItem> shoppingListItemConverter,
+        IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.Discount> discountConverter)
     {
         _shoppingListFactory = shoppingListFactory;
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _shoppingListItemConverter = shoppingListItemConverter;
+        _discountConverter = discountConverter;
     }
 
     public IShoppingList ToDomain(Entities.ShoppingList source)
@@ -43,12 +46,15 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
             sectionModels.Add(sectionModel);
         }
 
+        var discounts = _discountConverter.ToDomain(source.Discounts);
+
         var list = (AggregateRoot)_shoppingListFactory.Create(
             new ShoppingListId(source.Id),
             new StoreId(source.StoreId),
             source.CompletionDate,
             sectionModels,
-            source.CreatedAt);
+            source.CreatedAt,
+            discounts);
 
         list.EnrichWithRowVersion(source.RowVersion);
         return (list as IShoppingList)!;
