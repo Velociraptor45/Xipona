@@ -41,9 +41,13 @@ Because not everyone wants to have certain items permanently show up for shoppin
 
 <img src="./Documentation/img/ShoppingListTemporaryItem.jpg" width="700px" alt="The price change dialog that's opend directly on the shopping list"/>
 
-Depending on the prices you saved for the items, the shopping lists predicts the estimated costs of your shopping errand. But because prices change, you can quickly adjust them from the shopping list without having to laboriously search for & open the item in the item editor.
+Depending on the prices you saved for the items, the shopping lists calculates the estimated costs of your shopping errand. But because prices change, you can quickly adjust them from the shopping list without having to laboriously search for & open the item in the item editor.
 
 <img src="./Documentation/img/ShoppingListPriceAdjustment.jpg" width="700px" alt="The price change dialog that's opend directly on the shopping list"/>
+
+If the item is discounted for a short time, you can also register this - without having to changing the normal price.
+
+<img src="./Documentation/img/DiscountItemOnSl.jpg" width="700px" alt="The item discount dialog that's opend directly on the shopping list"/>
 
 **Search for recipes** not only by their name, but also by their tag. You'd like to eat vegetarian? Great! Search by the tag select the recipe you want to cook.
 
