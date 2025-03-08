@@ -45,6 +45,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
                 throw new DomainException(new ShoppingListItemHasTypeReason(list.Id, oldListItem.Id));
 
             list.RemoveItem(oldListItem.Id);
+            list.RemoveDiscount(oldItemId, null);
             _logger.LogInformation("Removed item {OldItemId} from list {ShoppingListId}", oldListItem.Id.Value,
                 list.Id.Value);
             if (newItem.IsAvailableInStore(list.StoreId))
@@ -77,6 +78,8 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
             foreach (var oldListItem in oldListItems)
             {
                 list.RemoveItem(oldItemId, oldListItem.TypeId);
+                list.RemoveDiscount(oldItemId, oldListItem.TypeId);
+
                 if (!newItem.TryGetTypeWithPredecessor(oldListItem.TypeId!.Value, out var itemType)
                     || !itemType!.IsAvailableAt(list.StoreId))
                     continue;
@@ -89,6 +92,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
                 if (oldListItem.IsInBasket)
                     list.PutItemInBasket(newItem.Id, itemType.Id);
             }
+
 
             await _shoppingListRepository.StoreAsync(list);
         }
