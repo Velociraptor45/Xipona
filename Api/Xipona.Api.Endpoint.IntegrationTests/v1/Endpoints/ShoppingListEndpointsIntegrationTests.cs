@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using Force.DeepCloner;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -1815,9 +1813,11 @@ public class ShoppingListEndpointsIntegrationTests
             // Arrange
             _fixture.SetupShoppingListId();
             _fixture.SetupExistingShoppingList();
+            _fixture.SetupExpectedShoppingList();
             await _fixture.SetupDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
             var result = await _fixture.ActAsync();
@@ -1834,6 +1834,14 @@ public class ShoppingListEndpointsIntegrationTests
             var finishedShoppingList = allShoppingLists.Single(sl => sl.Id == _fixture.ShoppingListId.Value);
             finishedShoppingList.CompletionDate.Should().NotBeNull();
             finishedShoppingList.CompletionDate.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(10));
+
+            var newShoppingList = allShoppingLists.Single(sl => sl.Id != _fixture.ShoppingListId.Value);
+            newShoppingList.Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.ExcludeRowVersion()
+                    .Excluding(info => info.Path == "Id")
+                    .WithCreatedAtPrecision(TimeSpan.FromSeconds(20))
+                    .ExcludeShoppingListCycleRef()
+                    .ExcludeItemsOnListId());
         }
 
         [Fact]
@@ -1843,10 +1851,12 @@ public class ShoppingListEndpointsIntegrationTests
             _fixture.SetupShoppingListId();
             _fixture.SetupFinishedAt();
             _fixture.SetupExistingShoppingList();
+            _fixture.SetupExpectedShoppingList();
             await _fixture.SetupDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ShoppingListId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.FinishedAt);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
             var result = await _fixture.ActAsync();
@@ -1863,6 +1873,14 @@ public class ShoppingListEndpointsIntegrationTests
             var finishedShoppingList = allShoppingLists.Single(sl => sl.Id == _fixture.ShoppingListId.Value);
             finishedShoppingList.CompletionDate.Should().NotBeNull();
             finishedShoppingList.CompletionDate.Should().BeCloseTo(_fixture.FinishedAt.Value, TimeSpan.FromMilliseconds(10));
+
+            var newShoppingList = allShoppingLists.Single(sl => sl.Id != _fixture.ShoppingListId.Value);
+            newShoppingList.Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.ExcludeRowVersion()
+                    .Excluding(info => info.Path == "Id")
+                    .WithCreatedAtPrecision(TimeSpan.FromSeconds(20))
+                    .ExcludeShoppingListCycleRef()
+                    .ExcludeItemsOnListId());
         }
 
         private sealed class FinishListFixture(DockerFixture dockerFixture)
@@ -1872,6 +1890,7 @@ public class ShoppingListEndpointsIntegrationTests
 
             public Guid? ShoppingListId { get; private set; }
             public DateTimeOffset? FinishedAt { get; private set; }
+            public ShoppingList? ExpectedShoppingList { get; private set; }
 
             public async Task<IResult> ActAsync()
             {
@@ -1910,6 +1929,16 @@ public class ShoppingListEndpointsIntegrationTests
                     .WithoutCompletionDate()
                     .WithId(ShoppingListId.Value)
                     .WithItemsOnList(items)
+                    .Create();
+            }
+
+            public void SetupExpectedShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingShoppingList);
+                ExpectedShoppingList = ShoppingListEntityMother.Empty()
+                    .WithItemsOnList(_existingShoppingList.ItemsOnList.Where(i => !i.InBasket).ToList())
+                    .WithStoreId(_existingShoppingList.StoreId)
+                    .WithCreatedAt(DateTimeOffset.UtcNow)
                     .Create();
             }
 

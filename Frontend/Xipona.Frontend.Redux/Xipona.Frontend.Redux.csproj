@@ -12,7 +12,7 @@
     <PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
     <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
-    <PackageReference Include="ProjectHermes.Xipona.Api.Contracts" Version="0.13.0" />
+    <PackageReference Include="ProjectHermes.Xipona.Api.Contracts" Version="0.13.1" />
     <PackageReference Include="RestEase" Version="1.6.4" />
   </ItemGroup>
 
