@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>ProjectHermes.Xipona.Api.WebApp</RootNamespace>
-    <Version>0.13.0</Version>
+    <Version>0.13.1</Version>
     <UserSecretsId>fa7d8437-775b-44ff-a217-06a4efe92f94</UserSecretsId>
     <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
