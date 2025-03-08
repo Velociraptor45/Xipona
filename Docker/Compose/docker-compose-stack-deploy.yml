@@ -20,7 +20,7 @@ services:
       - /run/secrets/ph-xipona-db-password
 
   Api:
-    image: velocir4ptor/ph-xipona-api:0.13.0
+    image: velocir4ptor/ph-xipona-api:0.13.1
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
@@ -51,7 +51,7 @@ services:
   #     - ph-xipona
 
   Frontend:
-    image: velocir4ptor/ph-xipona-frontend:0.13.0
+    image: velocir4ptor/ph-xipona-frontend:0.13.1
     ports:
       - "14000:80"
     depends_on:

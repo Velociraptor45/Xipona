@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
-using FluentAssertions.Extensions;
-using Force.DeepCloner;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +46,7 @@ using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities;
 using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
 using ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
@@ -2560,25 +2557,31 @@ public class ItemEndpointsIntegrationTests
         private readonly UpdateItemPriceAsyncFixture _fixture = new(dockerFixture);
 
         [Fact]
-        public async Task UpdateItemPriceAsync_WithoutTypes_ShouldUpdateItem()
+        public async Task UpdateItemPriceAsync_WithoutTypes_ShouldUpdateItemAndRemoveDiscountFromShoppingList()
         {
             // Arrange
             _fixture.SetupItemId();
             _fixture.SetupContractWithoutItemType();
             _fixture.SetupExistingItemWithoutTypes();
             _fixture.SetupExpectedResultWithoutTypes();
+            _fixture.SetupShoppingListWithDiscountedItem();
+            _fixture.SetupStore();
+            _fixture.SetupExpectedShoppingList();
             await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ItemId);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Contract);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            await _fixture.ActAsync();
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            result.Should().BeOfType<NoContent>();
 
             var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
@@ -2601,26 +2604,43 @@ public class ItemEndpointsIntegrationTests
                     .ExcludeRowVersion()
                     .Excluding(info => info.Path == "Id")
                     .WithCreatedAtPrecision());
+
+            var allShoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToList();
+            allShoppingLists.Should().HaveCount(1);
+            var shoppingList = allShoppingLists.First();
+            shoppingList.Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.ExcludeItemsOnListId()
+                    .Excluding(info => new Regex(@"ItemsOnList\[\d+\].ItemId").IsMatch(info.Path))
+                    .Excluding(info => new Regex(@"ItemsOnList\[\d+\].ItemTypeId").IsMatch(info.Path))
+                    .ExcludeShoppingListCycleRef()
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
         }
 
         [Fact]
-        public async Task UpdateItemPriceAsync_WithItemTypes_ShouldUpdateItem()
+        public async Task UpdateItemPriceAsync_WithItemTypes_ShouldUpdateAllItemTypesAndRemoveDiscountFromShoppingList()
         {
             // Arrange
             _fixture.SetupItemId();
             _fixture.SetupContractWithoutItemType();
             _fixture.SetupExistingItemWithTypes();
             _fixture.SetupExpectedResultWithTypes();
+            _fixture.SetupShoppingListWithDiscountedItemType();
+            _fixture.SetupStore();
+            _fixture.SetupExpectedShoppingList();
             await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedShoppingList);
 
             // Act
-            await _fixture.ActAsync();
+            var result = await _fixture.ActAsync();
 
             // Assert
             using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            result.Should().BeOfType<NoContent>();
 
             var allStoredItems = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToList();
             allStoredItems.Should().HaveCount(2);
@@ -2644,17 +2664,31 @@ public class ItemEndpointsIntegrationTests
                     .WithCreatedAtPrecision()
                     .Excluding(info => info.Path == "Id"
                                        || Regex.IsMatch(info.Path, @"ItemTypes\[\d+\].Id")));
+
+            var allShoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToList();
+            allShoppingLists.Should().HaveCount(1);
+            var shoppingList = allShoppingLists.First();
+            shoppingList.Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
+                opt => opt.ExcludeItemsOnListId()
+                    .Excluding(info => new Regex(@"ItemsOnList\[\d+\].ItemId").IsMatch(info.Path))
+                    .Excluding(info => new Regex(@"ItemsOnList\[\d+\].ItemTypeId").IsMatch(info.Path))
+                    .ExcludeShoppingListCycleRef()
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
         }
 
         private sealed class UpdateItemPriceAsyncFixture(DockerFixture dockerFixture)
             : ItemEndpointFixture(dockerFixture)
         {
             private Item? _existingItem;
+            private ShoppingList? _shoppingList;
+            private Store? _store;
 
             public ItemId? ItemId { get; private set; }
             public UpdateItemPriceContract? Contract { get; private set; }
             public Item? ExpectedNewItem { get; private set; }
             public Item? ExpectedOldItem { get; private set; }
+            public ShoppingList? ExpectedShoppingList { get; private set; }
 
             public async Task<IResult> ActAsync()
             {
@@ -2711,18 +2745,92 @@ public class ItemEndpointsIntegrationTests
                     .Create();
             }
 
+            public void SetupShoppingListWithDiscountedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingItem);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var id = Guid.NewGuid();
+                _shoppingList = ShoppingListEntityMother.Empty()
+                    .WithId(id)
+                    .WithStoreId(Contract.StoreId)
+                    .WithItemsOnList([
+                        new ItemsOnListEntityBuilder()
+                            .WithShoppingListId(id)
+                            .WithItemId(_existingItem.Id)
+                            .WithItemTypeId(null)
+                            .WithSectionId(_existingItem.AvailableAt.First().DefaultSectionId)
+                            .Create()])
+                    .WithDiscounts([
+                        new DiscountEntityBuilder()
+                            .WithItemId(_existingItem.Id)
+                            .WithItemTypeId(null)
+                            .Create()])
+                    .Create();
+            }
+
+            public void SetupShoppingListWithDiscountedItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingItem);
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+
+                var id = Guid.NewGuid();
+                _shoppingList = ShoppingListEntityMother.Empty()
+                    .WithId(id)
+                    .WithStoreId(Contract.StoreId)
+                    .WithItemsOnList([
+                        new ItemsOnListEntityBuilder()
+                            .WithShoppingListId(id)
+                            .WithItemId(_existingItem.Id)
+                            .WithItemTypeId(_existingItem.ItemTypes.First().Id)
+                            .WithSectionId(_existingItem.ItemTypes.First().AvailableAt.First().DefaultSectionId)
+                            .Create()])
+                    .WithDiscounts([
+                        new DiscountEntityBuilder()
+                            .WithItemId(_existingItem.Id)
+                            .WithItemTypeId(_existingItem.ItemTypes.First().Id)
+                            .Create()])
+                    .Create();
+            }
+
+            public void SetupStore()
+            {
+                TestPropertyNotSetException.ThrowIfNull(Contract);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
+
+                var sectionIds = ExpectedNewItem.ItemTypes
+                    .SelectMany(t => t.AvailableAt.Select(av => av.DefaultSectionId))
+                    .Union(ExpectedNewItem.AvailableAt.Select(av => av.DefaultSectionId));
+
+                _store = StoreEntityMother.ValidSections(sectionIds).WithId(Contract.StoreId).Create();
+            }
+
+            public void SetupExpectedShoppingList()
+            {
+                ExpectedShoppingList = _shoppingList.DeepClone()!;
+                ExpectedShoppingList.Discounts.Clear();
+            }
+
             public async Task PrepareDatabaseAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
 
                 TestPropertyNotSetException.ThrowIfNull(_existingItem);
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_store);
 
                 using var scope = CreateServiceScope();
                 await using var context = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+                await using var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
 
                 context.Add(_existingItem);
+                shoppingListContext.Add(_shoppingList);
+                storeContext.Add(_store);
 
                 await context.SaveChangesAsync();
+                await shoppingListContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
             }
 
             public void SetupExpectedResultWithoutTypes()

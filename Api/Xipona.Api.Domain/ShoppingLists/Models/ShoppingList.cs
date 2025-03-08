@@ -128,7 +128,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
         }
 
         return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values, dateTimeService.UtcNow,
-            Discounts);
+            []);
     }
 
     public void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId)
