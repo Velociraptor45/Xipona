@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
@@ -27,9 +26,7 @@ public class ShoppingListExchangeService : IShoppingListExchangeService
 
     public async Task ExchangeItemAsync(ItemId oldItemId, IItem newItem)
     {
-        var shoppingListsWithOldItem = (await _shoppingListRepository
-                .FindActiveByAsync(oldItemId))
-            .ToList();
+        var shoppingListsWithOldItem = (await _shoppingListRepository.FindActiveByAsync(oldItemId)).ToList();
 
         if (newItem.HasItemTypes)
             await ExchangeItemWithTypesAsync(shoppingListsWithOldItem, oldItemId, newItem);
