@@ -709,6 +709,7 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
+                ItemId = null,
                 Item = null
             }
         };
