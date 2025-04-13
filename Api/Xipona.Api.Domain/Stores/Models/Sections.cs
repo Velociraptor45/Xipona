@@ -20,7 +20,7 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
         _sections = sections.ToDictionary(s => s.Id);
         _sectionFactory = sectionFactory;
 
-        AsSortableCollection.ValidateSortingIndexes(_sections.Values);
+        AsSortableCollection.ValidateSortingIndexes(GetActive());
         ValidateDefaultSection();
     }
 

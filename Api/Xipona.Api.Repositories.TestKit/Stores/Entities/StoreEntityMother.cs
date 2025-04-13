@@ -69,12 +69,12 @@ public static class StoreEntityMother
         var sections = new List<Section>()
         {
             new SectionEntityBuilder()
-                .WithIsDefaultSection(false)
+                .WithIsDefaultSection(true)
                 .WithSortIndex(0)
                 .WithIsDeleted(false)
                 .Create(),
             new SectionEntityBuilder()
-                .WithIsDefaultSection(true)
+                .WithIsDefaultSection(false)
                 .WithSortIndex(1)
                 .WithIsDeleted(true)
                 .Create(),
