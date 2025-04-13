@@ -1,4 +1,5 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
@@ -26,6 +27,16 @@ public class Store : AggregateRoot, IStore
     public bool IsDeleted { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     public IReadOnlyCollection<ISection> Sections => _sections.AsReadOnly();
+
+    protected override IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
+    {
+        if (domainEvent is StoreDomainEvent storeDomainEvent)
+        {
+            return storeDomainEvent with { StoreId = Id };
+        }
+
+        return domainEvent;
+    }
 
     public ISection GetDefaultSection()
     {
@@ -61,6 +72,6 @@ public class Store : AggregateRoot, IStore
             return;
 
         IsDeleted = true;
-        PublishDomainEvent(new StoreDeletedDomainEvent(Id));
+        PublishDomainEvent(new StoreDeletedDomainEvent());
     }
 }
