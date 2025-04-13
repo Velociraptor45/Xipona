@@ -8,7 +8,7 @@ public interface IItemModificationService
 
     Task Modify(ItemModification modification);
 
-    Task TransferToSectionAsync(SectionId oldSectionId, SectionId newSectionId);
+    Task TransferToSectionAsync(SectionId oldSectionId);
 
     Task RemoveAvailabilitiesForAsync(StoreId storeId);
 }

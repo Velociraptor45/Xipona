@@ -5,8 +5,6 @@ using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
@@ -68,7 +66,7 @@ public class StoreTests
         private readonly ModifySectionsAsyncFixture _fixture = new();
 
         [Fact]
-        public async Task ModifySectionsAsync_WithDeleted_ShouldThrow()
+        public void ModifySectionsAsync_WithDeleted_ShouldThrow()
         {
             // Arrange
             _fixture.SetupDeleted();
@@ -78,23 +76,14 @@ public class StoreTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.SectionModifications);
 
             // Act
-            var func = () => sut.ModifySectionsAsync(
-                _fixture.SectionModifications,
-                _fixture.ItemModificationServiceMock.Object,
-                _fixture.ShoppingListModificationServiceMock.Object);
+            var act = () => sut.ModifySectionsAsync(_fixture.SectionModifications);
 
             // Assert
-            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.CannotModifyDeletedStore);
+            act.Should().ThrowDomainException(ErrorReasonCode.CannotModifyDeletedStore);
         }
 
         private sealed class ModifySectionsAsyncFixture : StoreFixture
         {
-            public ItemModificationServiceMock ItemModificationServiceMock { get; } =
-                new(MockBehavior.Strict);
-
-            public ShoppingListModificationServiceMock ShoppingListModificationServiceMock { get; } =
-                new(MockBehavior.Strict);
-
             public IReadOnlyCollection<SectionModification>? SectionModifications { get; private set; }
 
             public void SetupSectionModifications()
@@ -165,7 +154,10 @@ public class StoreTests
 
             public void SetupExpectedDomainEvent(Store sut)
             {
-                ExpectedDomainEvent = new StoreDeletedDomainEvent(sut.Id);
+                ExpectedDomainEvent = new StoreDeletedDomainEvent()
+                {
+                    StoreId = sut.Id
+                };
             }
         }
     }

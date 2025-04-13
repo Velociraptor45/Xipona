@@ -108,6 +108,14 @@ public static partial class EquivalencyOptionsExtensions
                                          || RecipeTagRecipeCycle().IsMatch(info.Path));
     }
 
+    [GeneratedRegex(@"Sections\[\d+\].Id")]
+    private static partial Regex SectiondIds();
+
+    public static EquivalencyOptions<T> ExcludeSectionIds<T>(this EquivalencyOptions<T> options)
+    {
+        return options.Excluding(info => SectiondIds().IsMatch(info.Path));
+    }
+
     public static EquivalencyOptions<T> UsingDateTimeOffsetWithPrecision<T>(
         this EquivalencyOptions<T> options, TimeSpan? precision = null)
     {

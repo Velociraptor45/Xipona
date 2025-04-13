@@ -1,6 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
+﻿using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.Xipona.Api.Domain.Stores.Models;
 
@@ -18,9 +16,7 @@ public interface IStore
 
     ISection GetDefaultSection();
 
-    Task ModifySectionsAsync(IEnumerable<SectionModification> sectionModifications,
-        IItemModificationService itemModificationService,
-        IShoppingListModificationService shoppingListModificationService);
+    void ModifySectionsAsync(IEnumerable<SectionModification> sectionModifications);
 
     void Delete();
 }

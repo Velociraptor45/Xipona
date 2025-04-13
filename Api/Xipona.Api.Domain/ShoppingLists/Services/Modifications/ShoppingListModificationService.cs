@@ -228,23 +228,16 @@ public class ShoppingListModificationService : IShoppingListModificationService
         if (section is null)
             return;
 
-        var itemIds = section.Items.Select(i => i.Id);
-        var items = (await _itemRepository.FindActiveByAsync(itemIds)).ToDictionary(i => i.Id);
+        SectionId defaultSectionId = store.GetDefaultSection().Id;
+
+        if (shoppingList.Sections.All(s => s.Id != defaultSectionId))
+        {
+            var newSection = _shoppingListSectionFactory.CreateEmpty(defaultSectionId);
+            shoppingList.AddSection(newSection);
+        }
 
         foreach (var listItem in section.Items)
         {
-            if (!items.TryGetValue(listItem.Id, out var item))
-                throw new DomainException(new ItemNotFoundReason(listItem.Id));
-
-            SectionId defaultSectionId = listItem.TypeId.HasValue
-                ? item.GetDefaultSectionIdForStore(shoppingList.StoreId, listItem.TypeId.Value)
-                : item.GetDefaultSectionIdForStore(shoppingList.StoreId);
-
-            if (shoppingList.Sections.All(s => s.Id != defaultSectionId))
-            {
-                var newSection = _shoppingListSectionFactory.CreateEmpty(defaultSectionId);
-                shoppingList.AddSection(newSection);
-            }
 
             shoppingList.TransferItem(defaultSectionId, listItem.Id, listItem.TypeId);
         }

@@ -650,6 +650,7 @@ public partial class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
+                        ItemId = null,
                         Item = null
                     }
                 };
@@ -661,6 +662,7 @@ public partial class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
+                        ItemId = null,
                         Item = null
                     }
                 };

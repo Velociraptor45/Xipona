@@ -1,6 +1,4 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
@@ -40,17 +38,19 @@ public class StoreMock : Mock<IStore>
         Setup(m => m.ChangeName(name));
     }
 
+    public void SetupGetDefaultSection(ISection returnValue)
+    {
+        Setup(m => m.GetDefaultSection()).Returns(returnValue);
+    }
+
     public void SetupContainsSection(SectionId sectionId, bool returnValue)
     {
         Setup(m => m.ContainsSection(sectionId)).Returns(returnValue);
     }
 
-    public void SetupModifySectionsAsync(IEnumerable<SectionModification> sectionUpdates,
-        IItemModificationService itemModificationService,
-        IShoppingListModificationService shoppingListModificationService)
+    public void SetupModifySectionsAsync(IEnumerable<SectionModification> sectionUpdates)
     {
-        Setup(m => m.ModifySectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService))
-            .Returns(Task.CompletedTask);
+        Setup(m => m.ModifySectionsAsync(sectionUpdates));
     }
 
     public void VerifyChangeName(StoreName name, Func<Times> times)
@@ -58,12 +58,9 @@ public class StoreMock : Mock<IStore>
         Verify(m => m.ChangeName(name), times);
     }
 
-    public void VerifyModifySectionsAsync(IEnumerable<SectionModification> sectionUpdates,
-        IItemModificationService itemModificationService,
-        IShoppingListModificationService shoppingListModificationService, Func<Times> times)
+    public void VerifyModifySectionsAsync(IEnumerable<SectionModification> sectionUpdates, Func<Times> times)
     {
-        Verify(m => m.ModifySectionsAsync(sectionUpdates, itemModificationService, shoppingListModificationService),
-            times);
+        Verify(m => m.ModifySectionsAsync(sectionUpdates), times);
     }
 
     public void SetupDelete()

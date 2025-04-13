@@ -1,7 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Stores.DomainEvents;
 using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
@@ -27,6 +26,16 @@ public class Store : AggregateRoot, IStore
     public DateTimeOffset CreatedAt { get; }
     public IReadOnlyCollection<ISection> Sections => _sections.AsReadOnly();
 
+    protected override IDomainEvent OnBeforeAddingDomainEvent(IDomainEvent domainEvent)
+    {
+        if (domainEvent is StoreDomainEvent storeDomainEvent)
+        {
+            return storeDomainEvent with { StoreId = Id };
+        }
+
+        return domainEvent;
+    }
+
     public ISection GetDefaultSection()
     {
         return _sections.GetDefaultSection();
@@ -45,14 +54,13 @@ public class Store : AggregateRoot, IStore
         Name = name;
     }
 
-    public async Task ModifySectionsAsync(IEnumerable<SectionModification> sectionModifications,
-        IItemModificationService itemModificationService,
-        IShoppingListModificationService shoppingListModificationService)
+    public void ModifySectionsAsync(IEnumerable<SectionModification> sectionModifications)
     {
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedStoreReason(Id));
 
-        await _sections.ModifyManyAsync(sectionModifications, itemModificationService, shoppingListModificationService);
+        var events = _sections.ModifyManyAsync(sectionModifications);
+        PublishDomainEvents(events);
     }
 
     public void Delete()
@@ -61,6 +69,6 @@ public class Store : AggregateRoot, IStore
             return;
 
         IsDeleted = true;
-        PublishDomainEvent(new StoreDeletedDomainEvent(Id));
+        PublishDomainEvent(new StoreDeletedDomainEvent());
     }
 }
