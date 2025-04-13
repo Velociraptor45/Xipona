@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
@@ -33,12 +31,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IStoreModificationService>>(provider =>
         {
             var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
-            var itemModificationServiceDelegate =
-                provider.GetRequiredService<Func<CancellationToken, IItemModificationService>>();
-            var shoppingListModificationServiceDelegate =
-                provider.GetRequiredService<Func<CancellationToken, IShoppingListModificationService>>();
-            return ct => new StoreModificationService(storeRepositoryDelegate(ct), itemModificationServiceDelegate(ct),
-                    shoppingListModificationServiceDelegate(ct));
+            return ct => new StoreModificationService(storeRepositoryDelegate(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IStoreQueryService>>(provider =>

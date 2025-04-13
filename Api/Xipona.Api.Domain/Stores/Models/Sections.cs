@@ -1,8 +1,6 @@
 ﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Shared.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Stores.DomainEvents;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
@@ -26,9 +24,7 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private ISortableCollection<ISection> AsSortableCollection => this;
 
-    public async Task<IEnumerable<IDomainEvent>> ModifyManyAsync(IEnumerable<SectionModification> modifications,
-        IItemModificationService itemModificationService,
-        IShoppingListModificationService shoppingListModificationService)
+    public IEnumerable<IDomainEvent> ModifyManyAsync(IEnumerable<SectionModification> modifications)
     {
         var modificationsList = modifications.ToList();
 
@@ -56,12 +52,6 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
         ValidateDefaultSection();
         AsSortableCollection.ValidateSortingIndexes(GetActive());
-
-        foreach (var sectionId in sectionIdsToDelete)
-        {
-            await itemModificationService.TransferToSectionAsync(sectionId, GetDefaultSection().Id);
-            await shoppingListModificationService.RemoveSectionAsync(sectionId);
-        }
 
         return events;
     }

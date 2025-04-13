@@ -3,8 +3,6 @@ using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
@@ -115,8 +113,7 @@ public class StoreModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(_storeMock);
 
                 _storeMock.SetupChangeName(Modify.Name);
-                _storeMock.SetupModifySectionsAsync(Modify.Sections, ItemModificationServiceMock.Object,
-                    ShoppingListModificationServiceMock.Object);
+                _storeMock.SetupModifySectionsAsync(Modify.Sections);
             }
 
             public void SetupStoringStore()
@@ -132,8 +129,7 @@ public class StoreModificationServiceTests
                 TestPropertyNotSetException.ThrowIfNull(_storeMock);
 
                 _storeMock.VerifyChangeName(Modify.Name, Times.Once);
-                _storeMock.VerifyModifySectionsAsync(Modify.Sections, ItemModificationServiceMock.Object,
-                    ShoppingListModificationServiceMock.Object, Times.Once);
+                _storeMock.VerifyModifySectionsAsync(Modify.Sections, Times.Once);
             }
 
             public void VerifyStoringStore()
@@ -148,17 +144,10 @@ public class StoreModificationServiceTests
     private abstract class StoreModificationServiceFixture
     {
         private readonly StoreRepositoryMock _storeRepositoryMock = new(MockBehavior.Strict);
-        protected readonly ItemModificationServiceMock ItemModificationServiceMock = new(MockBehavior.Strict);
-
-        protected readonly ShoppingListModificationServiceMock ShoppingListModificationServiceMock =
-            new(MockBehavior.Strict);
 
         public StoreModificationService CreateSut()
         {
-            return new StoreModificationService(
-                _storeRepositoryMock.Object,
-                ItemModificationServiceMock.Object,
-                ShoppingListModificationServiceMock.Object);
+            return new StoreModificationService(_storeRepositoryMock.Object);
         }
 
         protected void SetupFindingStore(StoreId storeId, IStore store)

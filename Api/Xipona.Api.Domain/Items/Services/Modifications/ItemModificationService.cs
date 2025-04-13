@@ -101,19 +101,17 @@ public class ItemModificationService : IItemModificationService
         }
     }
 
-    public async Task TransferToSectionAsync(SectionId oldSectionId, SectionId newSectionId)
+    public async Task TransferToSectionAsync(SectionId oldSectionId)
     {
         var store = await _storeRepository.FindActiveByAsync(oldSectionId);
         if (store is null)
             throw new DomainException(new StoreNotFoundReason(oldSectionId));
-        if (!store.ContainsSection(newSectionId))
-            throw new DomainException(new OldAndNewSectionNotInSameStoreReason(oldSectionId, newSectionId));
 
         var items = await _itemRepository.FindActiveByAsync(oldSectionId);
 
         foreach (var item in items)
         {
-            item.TransferToDefaultSection(oldSectionId, newSectionId);
+            item.TransferToDefaultSection(oldSectionId, store.GetDefaultSection().Id);
             await _itemRepository.StoreAsync(item);
         }
     }
