@@ -165,7 +165,10 @@ public class StoreTests
 
             public void SetupExpectedDomainEvent(Store sut)
             {
-                ExpectedDomainEvent = new StoreDeletedDomainEvent(sut.Id);
+                ExpectedDomainEvent = new StoreDeletedDomainEvent()
+                {
+                    StoreId = sut.Id
+                };
             }
         }
     }

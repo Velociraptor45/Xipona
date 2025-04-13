@@ -1,7 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
+﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
 using ProjectHermes.Xipona.Api.Domain.Shared.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using ProjectHermes.Xipona.Api.Domain.Stores.DomainEvents;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
@@ -24,7 +26,7 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
 
     private ISortableCollection<ISection> AsSortableCollection => this;
 
-    public async Task ModifyManyAsync(IEnumerable<SectionModification> modifications,
+    public async Task<IEnumerable<IDomainEvent>> ModifyManyAsync(IEnumerable<SectionModification> modifications,
         IItemModificationService itemModificationService,
         IShoppingListModificationService shoppingListModificationService)
     {
@@ -37,9 +39,12 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
             .Select(section => _sectionFactory.CreateNew(section.Name, section.SortingIndex, section.IsDefaultSection))
             .ToList();
 
+        var events = new List<IDomainEvent>();
         foreach (var sectionId in sectionIdsToDelete)
         {
-            Delete(sectionId);
+            var deleteEvent = Delete(sectionId);
+            if (deleteEvent != null)
+                events.Add(deleteEvent);
         }
 
         foreach (var section in sectionsToModify.Values)
@@ -57,6 +62,8 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
             await itemModificationService.TransferToSectionAsync(sectionId, GetDefaultSection().Id);
             await shoppingListModificationService.RemoveSectionAsync(sectionId);
         }
+
+        return events;
     }
 
     public ISection GetDefaultSection()
@@ -91,12 +98,13 @@ public class Sections : IEnumerable<ISection>, ISortableCollection<ISection>
             throw new DomainException(new MultipleDefaultSectionsReason());
     }
 
-    private void Delete(SectionId id)
+    private IDomainEvent? Delete(SectionId id)
     {
         if (!_sections.TryGetValue(id, out var section))
-            return;
+            return null;
 
         _sections[id] = section.Delete();
+        return new SectionDeletedDomainEvent(section.Id);
     }
 
     private void Modify(SectionModification modification)

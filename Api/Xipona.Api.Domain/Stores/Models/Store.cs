@@ -63,7 +63,9 @@ public class Store : AggregateRoot, IStore
         if (IsDeleted)
             throw new DomainException(new CannotModifyDeletedStoreReason(Id));
 
-        await _sections.ModifyManyAsync(sectionModifications, itemModificationService, shoppingListModificationService);
+        var events = await _sections.ModifyManyAsync(sectionModifications, itemModificationService,
+            shoppingListModificationService);
+        PublishDomainEvents(events);
     }
 
     public void Delete()
