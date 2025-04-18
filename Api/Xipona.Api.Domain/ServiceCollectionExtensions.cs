@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
 using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Domain.Accounts;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories;
 using ProjectHermes.Xipona.Api.Domain.Items;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDomain(this IServiceCollection services)
     {
+        services.AddAccounts();
         services.AddItemCategories();
         services.AddManufacturers();
         services.AddShared();
@@ -28,5 +30,7 @@ public static class ServiceCollectionExtensions
 
         var assembly = Assembly.GetExecutingAssembly();
         services.AddImplementationOfGenericType(assembly, typeof(IDomainEventHandler<>));
+
+        services.AddSingleton(TimeProvider.System);
     }
 }

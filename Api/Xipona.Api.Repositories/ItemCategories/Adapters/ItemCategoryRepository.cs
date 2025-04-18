@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;

@@ -1,0 +1,3 @@
+﻿dotnet ef migrations add <> --context UserContext --output-dir ./Migrations/Users
+
+dotnet ef database update

@@ -7,6 +7,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Repositories;
+using ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
@@ -144,6 +145,14 @@ public abstract class DatabaseFixture : IDisposable
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
             .Include(l => l.Discounts)
+            .ToListAsync();
+    }
+
+    public async Task<List<Repositories.Accounts.Entities.User>> LoadAllUsersAsync(IServiceScope assertionScope)
+    {
+        await using var userContext = GetContextInstance<UserContext>(assertionScope);
+
+        return await userContext.Users.AsNoTracking()
             .ToListAsync();
     }
 

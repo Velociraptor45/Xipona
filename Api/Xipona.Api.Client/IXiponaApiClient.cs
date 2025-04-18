@@ -62,6 +62,19 @@ namespace ProjectHermes.Xipona.Api.Client
         [Get("monitoring/alive")]
         Task<bool> IsAlive();
 
+        #region Account
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Post("accounts/login")]
+        Task LoginAsync(CancellationToken cancellationToken = default);
+
+        #endregion
+
+
         #region ShoppingList
 
         /// <summary>

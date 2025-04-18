@@ -82,6 +82,16 @@ namespace ProjectHermes.Xipona.Api.Client
             return await _apiClient.IsAlive();
         }
 
+        #region Account
+
+        /// <inheritdoc/>
+        public async Task LoginAsync(CancellationToken cancellationToken = default)
+        {
+            await _apiClient.LoginAsync(cancellationToken);
+        }
+
+        #endregion
+
         #region ShoppingList
 
         /// <inheritdoc/>
