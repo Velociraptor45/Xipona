@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Accounts.Models;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Ports;
+﻿using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models.Factories;
+using ProjectHermes.Xipona.Api.Domain.Users.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Accounts.Services.Creations;
+namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Creations;
 
 public class UserCreationService : IUserCreationService
 {

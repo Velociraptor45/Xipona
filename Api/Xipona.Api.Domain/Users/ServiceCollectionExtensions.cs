@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Ports;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Services.Creations;
+using ProjectHermes.Xipona.Api.Domain.Users.Models.Factories;
+using ProjectHermes.Xipona.Api.Domain.Users.Ports;
+using ProjectHermes.Xipona.Api.Domain.Users.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Accounts;
+namespace ProjectHermes.Xipona.Api.Domain.Users;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddAccounts(this IServiceCollection services)
+    public static void AddUsers(this IServiceCollection services)
     {
         services.AddTransient<IUserFactory, UserFactory>();
         services.AddTransient<Func<CancellationToken, IUserCreationService>>(provider =>

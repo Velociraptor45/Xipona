@@ -2,23 +2,23 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Accounts.Commands.Login;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.Login;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Models;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 
-public static class AccountEndpoints
+public static class UserEndpoints
 {
-    private const string _routeBase = "v1/accounts";
+    private const string _routeBase = "v1/users";
 
-    public static void RegisterAccountEndpoints(this IEndpointRouteBuilder builder)
+    public static void RegisterUserEndpoints(this IEndpointRouteBuilder builder)
     {
         builder
             .RegisterLogin();

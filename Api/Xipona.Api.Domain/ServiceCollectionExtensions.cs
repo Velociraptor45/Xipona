@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
 using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Accounts;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories;
 using ProjectHermes.Xipona.Api.Domain.Items;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers;
@@ -10,6 +9,7 @@ using ProjectHermes.Xipona.Api.Domain.RecipeTags;
 using ProjectHermes.Xipona.Api.Domain.Shared;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists;
 using ProjectHermes.Xipona.Api.Domain.Stores;
+using ProjectHermes.Xipona.Api.Domain.Users;
 using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Domain;
@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDomain(this IServiceCollection services)
     {
-        services.AddAccounts();
+        services.AddUsers();
         services.AddItemCategories();
         services.AddManufacturers();
         services.AddShared();

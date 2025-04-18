@@ -1,7 +1,7 @@
 ﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Models;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models.Factories;
 using Entities_User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Accounts.Models;
+﻿using ProjectHermes.Xipona.Api.Domain.Users.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Accounts.Ports;
+namespace ProjectHermes.Xipona.Api.Domain.Users.Ports;
 
 public interface IUserRepository
 {

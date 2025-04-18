@@ -17,7 +17,7 @@ using Xunit;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
-public class AccountEndpointIntegrationTests
+public class UserEndpointIntegrationTests
 {
     public sealed class Login : IAssemblyFixture<DockerFixture>
     {
@@ -52,7 +52,7 @@ public class AccountEndpointIntegrationTests
                 opt => opt.ExcludeRowVersion().WithCreatedAtPrecision(TimeSpan.FromSeconds(30)));
         }
 
-        private sealed class LoginFixture : AccountEndpointFixture
+        private sealed class LoginFixture : UserEndpointFixture
         {
             public LoginFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -66,7 +66,7 @@ public class AccountEndpointIntegrationTests
                 var ctx = new DefaultHttpContext();
                 ctx.Request.Headers["Authorization"] = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMDVjNDJkYy0zNTI5LTQwODYtOTY4OS1kMjNiNjNkYTYzY2EifQ.e8h7WEI5NhKdP1dz71haA85V1WqkPqR-kKtguRT8hVj257w2hYsqH39ffdNnGxxCIuq5scZt5qSzfnx5rQuRz_YbF0IdmN8hIFyjWuFadP9tXrTq9x_xU45i_E1oxQQrHcD1_9SLWE8WiaAqY4stv7Nz1Kot0Z-W1HRXr9AXBm296bTg3SRH2NrxDv2h9onRPNPAduLx_ZRN4B7IZAYatHY5ki39JTzo7J9X9AfxqNEdudUOLU7XYcVx8VfjSx3VU0DlL8E0nZ4zW1K_TcN3-iayguhPcj5_4fjRi05ZLBHpXJE4N4XpXZrsJtx1HTEH1ymzuxzF4cBu17fgjEpJ0w";
 
-                return await AccountEndpoints.Login(
+                return await UserEndpoints.Login(
                     ctx,
                     new JwtSecurityTokenHandler(),
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
@@ -77,9 +77,6 @@ public class AccountEndpointIntegrationTests
             public async Task PrepareDatabaseAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
-                //var context = ArrangeScope.ServiceProvider.GetRequiredService<UserContext>();
-
-                //await context.SaveChangesAsync();
             }
 
             public void SetupExpectedUser()
@@ -94,9 +91,9 @@ public class AccountEndpointIntegrationTests
         }
     }
 
-    private abstract class AccountEndpointFixture : DatabaseFixture
+    private abstract class UserEndpointFixture : DatabaseFixture
     {
-        protected AccountEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        protected UserEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
             ArrangeScope = CreateServiceScope();
         }

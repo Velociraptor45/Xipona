@@ -120,7 +120,7 @@ app.UseAuthorization();
 
 app.UseDiagnosticsMiddleware();
 
-app.RegisterAccountEndpoints();
+app.RegisterUserEndpoints();
 app.RegisterItemCategoryEndpoints();
 app.RegisterItemEndpoints();
 app.RegisterManufacturerEndpoints();

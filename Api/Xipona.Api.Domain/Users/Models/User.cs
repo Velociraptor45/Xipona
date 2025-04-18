@@ -1,6 +1,6 @@
 ﻿using ProjectHermes.Xipona.Api.Domain.Common.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Accounts.Models;
+namespace ProjectHermes.Xipona.Api.Domain.Users.Models;
 
 public class User : AggregateRoot, IUser
 {

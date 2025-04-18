@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Logging;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Models;
-using ProjectHermes.Xipona.Api.Domain.Accounts.Ports;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Ports;
 using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 
