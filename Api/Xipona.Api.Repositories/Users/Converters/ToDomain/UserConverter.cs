@@ -2,11 +2,12 @@
 using ProjectHermes.Xipona.Api.Domain.Accounts.Models;
 using ProjectHermes.Xipona.Api.Domain.Accounts.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using User = ProjectHermes.Xipona.Api.Repositories.Accounts.Entities.User;
+using Entities_User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
+using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Accounts.Converters.ToDomain;
+namespace ProjectHermes.Xipona.Api.Repositories.Users.Converters.ToDomain;
 
-public class UserConverter : IToDomainConverter<User, IUser>
+public class UserConverter : IToDomainConverter<Entities_User, IUser>
 {
     private readonly IUserFactory _userFactory;
 

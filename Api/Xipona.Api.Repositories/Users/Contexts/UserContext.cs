@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Entities;
+using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
+namespace ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 
 public class UserContext : DbContext
 {

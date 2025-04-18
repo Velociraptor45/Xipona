@@ -7,7 +7,6 @@ using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Domain;
 using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
@@ -19,6 +18,8 @@ using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 using System;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests;
@@ -148,7 +149,7 @@ public abstract class DatabaseFixture : IDisposable
             .ToListAsync();
     }
 
-    public async Task<List<Repositories.Accounts.Entities.User>> LoadAllUsersAsync(IServiceScope assertionScope)
+    public async Task<List<User>> LoadAllUsersAsync(IServiceScope assertionScope)
     {
         await using var userContext = GetContextInstance<UserContext>(assertionScope);
 

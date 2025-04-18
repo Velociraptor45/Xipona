@@ -7,22 +7,23 @@ using ProjectHermes.Xipona.Api.Domain.Accounts.Ports;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Models;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Accounts.Adapters;
+namespace ProjectHermes.Xipona.Api.Repositories.Users.Adapters;
 
 public class UserRepository : IUserRepository
 {
     private readonly UserContext _dbContext;
-    private readonly IToDomainConverter<Entities.User, IUser> _toDomainConverter;
-    private readonly IToContractConverter<IUser, Entities.User> _toContractConverter;
+    private readonly IToDomainConverter<User, IUser> _toDomainConverter;
+    private readonly IToContractConverter<IUser, User> _toContractConverter;
     private readonly IDomainEventDispatcher _domainEventDispatcher;
     private readonly ILogger<UserRepository> _logger;
     private readonly CancellationToken _cancellationToken;
 
     public UserRepository(UserContext dbContext,
-        IToDomainConverter<Entities.User, IUser> toDomainConverter,
-        IToContractConverter<IUser, Entities.User> toContractConverter,
+        IToDomainConverter<User, IUser> toDomainConverter,
+        IToContractConverter<IUser, User> toContractConverter,
         IDomainEventDispatcher domainEventDispatcher,
         ILogger<UserRepository> logger,
         CancellationToken cancellationToken)
@@ -86,7 +87,7 @@ public class UserRepository : IUserRepository
         return _toDomainConverter.ToDomain(convertedEntity);
     }
 
-    private async Task<Entities.User?> FindTrackedEntityById(UserId id, CancellationToken cancellationToken)
+    private async Task<User?> FindTrackedEntityById(UserId id, CancellationToken cancellationToken)
     {
         return await _dbContext.Users
             .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);

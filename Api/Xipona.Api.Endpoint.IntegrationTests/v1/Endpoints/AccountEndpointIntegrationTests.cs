@@ -7,8 +7,8 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Entities;
+using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System;
@@ -49,7 +49,7 @@ public class AccountEndpointIntegrationTests
             users.Should().HaveCount(1);
             var user = users[0];
             user.Should().BeEquivalentTo(_fixture.ExpectedUser,
-                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision());
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision(TimeSpan.FromSeconds(30)));
         }
 
         private sealed class LoginFixture : AccountEndpointFixture

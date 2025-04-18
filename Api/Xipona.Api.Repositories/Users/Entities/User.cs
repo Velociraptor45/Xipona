@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Accounts.Entities;
+namespace ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 
 public class User
 {

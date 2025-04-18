@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
+namespace ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 
 public class UserContextFactory : ContextFactoryBase, IDesignTimeDbContextFactory<UserContext>
 {

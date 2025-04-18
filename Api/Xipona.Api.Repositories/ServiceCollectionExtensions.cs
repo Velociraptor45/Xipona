@@ -23,8 +23,6 @@ using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.Accounts.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
@@ -40,11 +38,14 @@ using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Adapters;
+using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using ProjectHermes.Xipona.Api.Secrets.Configs;
 using System.Data.Common;
 using System.Reflection;
 using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
 using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 
 namespace ProjectHermes.Xipona.Api.Repositories;
 
@@ -91,8 +92,8 @@ public static class ServiceCollectionExtensions
         {
             return ct => new UserRepository(
                 provider.GetRequiredService<UserContext>(),
-                provider.GetRequiredService<IToDomainConverter<Accounts.Entities.User, IUser>>(),
-                provider.GetRequiredService<IToContractConverter<IUser, Accounts.Entities.User>>(),
+                provider.GetRequiredService<IToDomainConverter<User, IUser>>(),
+                provider.GetRequiredService<IToContractConverter<IUser, User>>(),
                 provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>()(ct),
                 provider.GetRequiredService<ILogger<UserRepository>>(),
                 ct);
