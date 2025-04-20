@@ -1,7 +1,42 @@
-﻿ul {
+﻿.top-row {
+    font-size: 1.2rem;
+    color: var(--secondary-contrast-color);
+    margin-top: 4px;
+}
+
+.user-info {
+    cursor: pointer;
+}
+
+.user-info i {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.user-box {
+    position: absolute;
+    top: 40px;
+    right: 8px;
+    background: var(--secondary-color-shade-1);
+    border: 1px solid var(--primary-color);
+    width: 150px;
+    color: var(--secondary-contrast-color-shade-1);
+    padding-left: 4px;
+    font-size: 1.2rem;
+}
+
+    .user-box div i {
+        padding-right: 4px;
+    }
+
+.user-box-entry {
+    cursor: pointer;
+}
+
+ul {
     list-style-type: none;
-    padding-left: 8px;
-    padding-top: 48px;
+    padding-left: 0;
+    padding-top: 24px;
 }
 
 li {
@@ -19,7 +54,7 @@ li {
 
 .other-nav-link div,
 .other-nav-link i {
-    color: var(--primary-color);
+    color: var(--secondary-contrast-color);
 }
 
 .other-nav-link i {
