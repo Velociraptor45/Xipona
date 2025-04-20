@@ -45,7 +45,7 @@ public static class UserEndpoints
         [FromServices] AuthenticationOptions authOptions,
         CancellationToken cancellationToken)
     {
-        var auth = httpContext.Request.Headers["Authorization"].First()!;
+        var auth = httpContext.Request.Headers.Authorization.First()!;
         var token = handler.ReadJwtToken(auth[7..]);
 
         if (!Guid.TryParse(token.Subject, out Guid subject))
