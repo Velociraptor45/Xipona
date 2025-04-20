@@ -41,6 +41,7 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -65,12 +66,12 @@ namespace ProjectHermes.Xipona.Api.Client
         #region User
 
         /// <summary>
-        /// TODO
+        /// Logs the user in by making sure there's a user record in the database. Returns the user info.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Post("users/login")]
-        Task LoginAsync(CancellationToken cancellationToken = default);
+        Task<UserInfoContract> LoginAsync(CancellationToken cancellationToken = default);
 
         #endregion
 

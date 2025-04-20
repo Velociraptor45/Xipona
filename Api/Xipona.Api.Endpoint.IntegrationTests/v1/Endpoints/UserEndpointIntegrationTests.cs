@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.Xipona.Api.Contracts.Common;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
@@ -11,6 +12,7 @@ using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using ProjectHermes.Xipona.Api.WebApp.Auth;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using Xunit;
@@ -32,16 +34,21 @@ public class UserEndpointIntegrationTests
         {
             // Arrange
             _fixture.SetupExpectedUser();
+            _fixture.SetupExpectedResult();
             await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedUser);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
             // Act
             var result = await _fixture.ActAsync();
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().BeOfType<NoContent>();
+            result.Should().BeOfType<Ok<UserInfoContract>>();
+
+            var okResult = (Ok<UserInfoContract>)result;
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
 
             using var assertionServiceScope = _fixture.CreateServiceScope();
 
@@ -59,18 +66,23 @@ public class UserEndpointIntegrationTests
             }
 
             public User? ExpectedUser { get; private set; }
+            public UserInfoContract? ExpectedResult { get; private set; }
 
             public async Task<IResult> ActAsync()
             {
                 var scope = CreateServiceScope();
                 var ctx = new DefaultHttpContext();
-                ctx.Request.Headers["Authorization"] = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMDVjNDJkYy0zNTI5LTQwODYtOTY4OS1kMjNiNjNkYTYzY2EifQ.e8h7WEI5NhKdP1dz71haA85V1WqkPqR-kKtguRT8hVj257w2hYsqH39ffdNnGxxCIuq5scZt5qSzfnx5rQuRz_YbF0IdmN8hIFyjWuFadP9tXrTq9x_xU45i_E1oxQQrHcD1_9SLWE8WiaAqY4stv7Nz1Kot0Z-W1HRXr9AXBm296bTg3SRH2NrxDv2h9onRPNPAduLx_ZRN4B7IZAYatHY5ki39JTzo7J9X9AfxqNEdudUOLU7XYcVx8VfjSx3VU0DlL8E0nZ4zW1K_TcN3-iayguhPcj5_4fjRi05ZLBHpXJE4N4XpXZrsJtx1HTEH1ymzuxzF4cBu17fgjEpJ0w";
+                ctx.Request.Headers["Authorization"] = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMDVjNDJkYy0zNTI5LTQwODYtOTY4OS1kMjNiNjNkYTYzY2EiLCJnaXZlbl9uYW1lIjoiSm9obi1vaCBEZWVyIn0.CEBWi9GOoMZKC0Lu_qSXbCGbbv7UlCSeR_ttPAC1N-YVd2RXnHVAKe0BLhvgRdB8jMY0LXse2LrODcKtC0eLvFjMCg6TWGSuS1cM-QP-yrHRPpzvNNRZojkSSfeTQcmo475dSCcNpqMtJhvYj0d6bAuunFv0vm5yL3tWRNgtDKPUvsx8DkbTcq1-r6F8K7LCxUWjWO6mj-Vva0AbkJQIgO32e3j7Ny2ArykTpvFG00-5uVxc9po7OMIEw7ld23PFwqkrAD9Z9plxXK9GTTNHj-4sh0P-MqrONrXOlER5Bqx6lzis0freHPV_NspXXoMGK599S9eFG2CPsU7pR-SXjg";
 
                 return await UserEndpoints.Login(
                     ctx,
                     new JwtSecurityTokenHandler(),
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    new AuthenticationOptions()
+                    {
+                        NameClaimType = "given_name"
+                    },
                     default);
             }
 
@@ -85,6 +97,14 @@ public class UserEndpointIntegrationTests
                 {
                     Id = Guid.Parse("005c42dc-3529-4086-9689-d23b63da63ca"),
                     CreatedAt = DateTimeOffset.UtcNow,
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new UserInfoContract()
+                {
+                    DisplayName = "John-oh Deer"
                 };
             }
 

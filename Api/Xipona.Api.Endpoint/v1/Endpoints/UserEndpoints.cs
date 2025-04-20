@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Routing;
 using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
 using ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.Login;
 using ProjectHermes.Xipona.Api.Contracts.Common;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using ProjectHermes.Xipona.Api.WebApp.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
 
@@ -28,7 +30,8 @@ public static class UserEndpoints
     {
         builder.MapPost($"/{_routeBase}/login", Login)
             .WithName("Login")
-            .Produces(StatusCodes.Status204NoContent)
+            .Produces<UserInfoContract>()
+            .Produces<string>(StatusCodes.Status400BadRequest)
             .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
             .RequireAuthorization("User");
 
@@ -39,17 +42,18 @@ public static class UserEndpoints
         [FromServices] JwtSecurityTokenHandler handler,
         [FromServices] ICommandDispatcher commandDispatcher,
         [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        [FromServices] AuthenticationOptions authOptions,
         CancellationToken cancellationToken)
     {
         var auth = httpContext.Request.Headers["Authorization"].First()!;
         var token = handler.ReadJwtToken(auth[7..]);
-        var subClaim = token.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
-        if (subClaim == null)
+
+        if (!Guid.TryParse(token.Subject, out Guid subject))
         {
-            return Results.BadRequest("Token does not contain 'sub' claim");
+            return Results.BadRequest($"Token contains invalid 'sub' claim: {token.Subject}");
         }
 
-        var userId = new UserId(Guid.Parse(subClaim));
+        var userId = new UserId(subject);
 
         try
         {
@@ -62,6 +66,16 @@ public static class UserEndpoints
             return Results.UnprocessableEntity(errorContract);
         }
 
-        return Results.NoContent();
+        if (!token.Payload.TryGetValue(authOptions.NameClaimType, out var name))
+        {
+            return Results.BadRequest($"Token doesn't contain a '{authOptions.NameClaimType}' claim");
+        }
+
+        var userInfo = new UserInfoContract
+        {
+            DisplayName = (string)name
+        };
+
+        return Results.Ok(userInfo);
     }
 }
