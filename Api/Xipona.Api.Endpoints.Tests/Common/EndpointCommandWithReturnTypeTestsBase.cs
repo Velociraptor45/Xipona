@@ -95,7 +95,7 @@ public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterIn
         public TReturnType? ExpectedResult { get; protected set; }
         public override Type OkResultReturnType => typeof(TReturnType);
 
-        public void SetupExpectedResult()
+        public virtual void SetupExpectedResult()
         {
             ExpectedResult = new DomainTestBuilder<TReturnType>().Create();
         }
