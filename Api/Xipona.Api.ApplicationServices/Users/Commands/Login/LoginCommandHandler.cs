@@ -23,10 +23,10 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, IUser>
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var service = _userCreationServiceDelegate(cancellationToken);
-        var result = service.CreateAsync(command.UserId);
+        var result = await service.CreateAsync(command.UserId);
 
         await transaction.CommitAsync(cancellationToken);
 
-        return await result;
+        return result;
     }
 }

@@ -83,6 +83,11 @@ public class ApiClient : IApiClient
         _ = await _client.IsAlive();
     }
 
+    public async Task LoginAsync()
+    {
+        await _client.LoginAsync();
+    }
+
     public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
     {
         var contract = _converters.ToContract<PutItemInBasketRequest, PutItemInBasketContract>(request);
