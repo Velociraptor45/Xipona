@@ -9,6 +9,7 @@ using ProjectHermes.Xipona.Api.Domain.RecipeTags;
 using ProjectHermes.Xipona.Api.Domain.Shared;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists;
 using ProjectHermes.Xipona.Api.Domain.Stores;
+using ProjectHermes.Xipona.Api.Domain.Users;
 using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Domain;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDomain(this IServiceCollection services)
     {
+        services.AddUsers();
         services.AddItemCategories();
         services.AddManufacturers();
         services.AddShared();
@@ -28,5 +30,7 @@ public static class ServiceCollectionExtensions
 
         var assembly = Assembly.GetExecutingAssembly();
         services.AddImplementationOfGenericType(assembly, typeof(IDomainEventHandler<>));
+
+        services.AddSingleton(TimeProvider.System);
     }
 }

@@ -42,6 +42,7 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -81,6 +82,16 @@ namespace ProjectHermes.Xipona.Api.Client
         {
             return await _apiClient.IsAlive();
         }
+
+        #region User
+
+        /// <inheritdoc/>
+        public async Task<UserInfoContract> LoginAsync(CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.LoginAsync(cancellationToken);
+        }
+
+        #endregion
 
         #region ShoppingList
 

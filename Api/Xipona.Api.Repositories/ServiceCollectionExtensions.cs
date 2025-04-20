@@ -21,6 +21,8 @@ using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Ports;
 using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
@@ -36,11 +38,14 @@ using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Adapters;
+using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using ProjectHermes.Xipona.Api.Secrets.Configs;
 using System.Data.Common;
 using System.Reflection;
 using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
 using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 
 namespace ProjectHermes.Xipona.Api.Repositories;
 
@@ -74,6 +79,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
 
+        services.AddDbContext<UserContext>(SetDbConnection);
         services.AddDbContext<ShoppingListContext>(SetDbConnection);
         services.AddDbContext<ItemCategoryContext>(SetDbConnection);
         services.AddDbContext<ManufacturerContext>(SetDbConnection);
@@ -81,6 +87,17 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<StoreContext>(SetDbConnection);
         services.AddDbContext<RecipeContext>(SetDbConnection);
         services.AddDbContext<RecipeTagContext>(SetDbConnection);
+
+        services.AddTransient<Func<CancellationToken, IUserRepository>>(provider =>
+        {
+            return ct => new UserRepository(
+                provider.GetRequiredService<UserContext>(),
+                provider.GetRequiredService<IToDomainConverter<User, IUser>>(),
+                provider.GetRequiredService<IToContractConverter<IUser, User>>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>()(ct),
+                provider.GetRequiredService<ILogger<UserRepository>>(),
+                ct);
+        });
 
         services.AddTransient<Func<CancellationToken, IShoppingListRepository>>(provider =>
         {
@@ -195,6 +212,7 @@ public static class ServiceCollectionExtensions
     {
         // The order of the types is important, because the migrations are applied in the same order
         // and some of them depend on others
+        yield return typeof(UserContext);
         yield return typeof(ManufacturerContext);
         yield return typeof(ItemCategoryContext);
         yield return typeof(StoreContext);

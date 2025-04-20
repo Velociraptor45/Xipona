@@ -263,6 +263,45 @@ public class SharedReducerTests
         }
     }
 
+    public class OnUserLoggedIn
+    {
+        private readonly OnUserLoggedInFixture _fixture = new();
+
+        [Fact]
+        public void OnUserLoggedIn_WithValidAction_ShouldSetUser()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = SharedReducer.OnUserLoggedIn(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnUserLoggedInFixture : SharedReducerFixture
+        {
+            public UserLoggedInAction? Action { get; private set; }
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    User = new DomainTestBuilder<UserInfo>().Create()
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new UserLoggedInAction(ExpectedState.User!);
+            }
+
+        }
+    }
+
     private abstract class SharedReducerFixture
     {
         public SharedState ExpectedState { get; protected set; } = new DomainTestBuilder<SharedState>().Create();

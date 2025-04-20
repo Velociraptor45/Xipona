@@ -12,6 +12,7 @@ using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 
@@ -44,6 +45,7 @@ public class DomainCustomization : ICustomization
         fixture.Customize<IngredientId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<RecipeTagId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<UserId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
         fixture.Customize<Discount>(c => c.FromFactory(new MethodInvoker(new DiscountConstructorQuery())));
 

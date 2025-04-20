@@ -1,10 +1,16 @@
 ﻿@page "/authentication/{action}"
 
 @inject NavigationManager Navigation
+@inject IApiClient ApiClient
+@inject IShoppingListNotificationService NotificationService
+@inject IDispatcher Dispatcher
 
 @attribute [AllowAnonymous]
 
+@using Fluxor
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports
 
 <RemoteAuthenticatorView Action="@Action">
     <LoggingIn></LoggingIn>
@@ -21,6 +27,26 @@
 
 @code{
     [Parameter] public string Action { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Action == "login-callback")
+        {
+            try
+            {
+                var userInfo = await ApiClient.LoginAsync();
+                Dispatcher.Dispatch(new UserLoggedInAction(userInfo));
+            }
+            catch (Exception e)
+            {
+                NotificationService.NotifyError("Login failed", "Login at the remote server failed: " + e.Message);
+
+                Navigation.NavigateToLogout("authentication/logout");
+                return;
+            }
+        }
+        await base.OnInitializedAsync();
+    }
 
     private void LogIn()
     {

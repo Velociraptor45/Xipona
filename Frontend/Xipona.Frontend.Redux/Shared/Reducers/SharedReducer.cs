@@ -40,4 +40,13 @@ public static class SharedReducer
             IsRetryOngoing = false
         };
     }
+
+    [ReducerMethod]
+    public static SharedState OnUserLoggedIn(SharedState state, UserLoggedInAction action)
+    {
+        return state with
+        {
+            User = action.User
+        };
+    }
 }

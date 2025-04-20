@@ -18,6 +18,8 @@ using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
 using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 using System;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests;
@@ -144,6 +146,14 @@ public abstract class DatabaseFixture : IDisposable
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
             .Include(l => l.Discounts)
+            .ToListAsync();
+    }
+
+    public async Task<List<User>> LoadAllUsersAsync(IServiceScope assertionScope)
+    {
+        await using var userContext = GetContextInstance<UserContext>(assertionScope);
+
+        return await userContext.Users.AsNoTracking()
             .ToListAsync();
     }
 

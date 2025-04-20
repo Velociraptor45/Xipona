@@ -1,38 +1,57 @@
 ﻿@page "/navigation/other"
 ﻿
+@using Fluxor
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.States
 
 @inject NavigationManager Navigation
+@inject IState<SharedState> State
 
-<ul class="other-nav-menu">
-    <li class="other-nav-item">
-        <NavLink class="other-nav-link d-flex" href="@PageRoutes.Manufacturers">
-            <i class="bi bi-briefcase align-self-center"></i>
-            <div class="align-self-center">Manufacturers</div>
-        </NavLink>
-    </li>
-    <li class="other-nav-item">
-        <NavLink class="other-nav-link d-flex" href="@PageRoutes.ItemCategories">
-            <i class="bi bi-tag align-self-center"></i>
-            <div class="align-self-center">Categories</div>
-        </NavLink>
-    </li>
-    <AuthorizeView>
-        <Authorized>
-            <li class="other-nav-item logout">
-                <div class="other-nav-link d-flex" @onclick="LogOut">
-                    <i class="bi bi-power align-self-center"></i>
-                    <div class="align-self-center">Logout</div>
+<div class="content px-2">
+    @if (State.Value.User is not null)
+    {
+        <AuthorizeView>
+            <Authorized>
+                <div class="w-100 top-row d-flex justify-content-end">
+                    <div class="d-flex user-info" @onclick="_ => _userBoxVisible = !_userBoxVisible">
+                        <div>@State.Value.User.Name</div>
+                        <i class="bi bi-person-circle"></i>
+                    </div>
                 </div>
-            </li>
-        </Authorized>
-    </AuthorizeView>
-</ul>
+                @if (_userBoxVisible)
+                {
+                    <div class="user-box">
+                        <div class="d-flex user-box-entry" @onclick="LogOut">
+                            <i class="bi bi-power align-self-center"></i>
+                            <div class="align-self-center">Logout</div>
+                        </div>
+                    </div>
+                }
+            </Authorized>
+        </AuthorizeView>
+    }
+    <ul class="other-nav-menu">
+        <li>
+            <NavLink class="other-nav-link d-flex" href="@PageRoutes.Manufacturers">
+                <i class="bi bi-briefcase align-self-center"></i>
+                <div class="align-self-center">Manufacturers</div>
+            </NavLink>
+        </li>
+        <li>
+            <NavLink class="other-nav-link d-flex" href="@PageRoutes.ItemCategories">
+                <i class="bi bi-tag align-self-center"></i>
+                <div class="align-self-center">Categories</div>
+            </NavLink>
+        </li>
+    </ul>
+</div>
 
 @code
 {
+    private bool _userBoxVisible = false;
+
     private void LogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");
