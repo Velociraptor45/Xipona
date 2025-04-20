@@ -42,6 +42,7 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
 using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.Xipona.Frontend.Redux.Items.States;
@@ -83,9 +84,10 @@ public class ApiClient : IApiClient
         _ = await _client.IsAlive();
     }
 
-    public async Task LoginAsync()
+    public async Task<UserInfo> LoginAsync()
     {
-        await _client.LoginAsync();
+        var result = await _client.LoginAsync();
+        return _converters.ToDomain<UserInfoContract, UserInfo>(result);
     }
 
     public async Task PutItemInBasketAsync(PutItemInBasketRequest request)

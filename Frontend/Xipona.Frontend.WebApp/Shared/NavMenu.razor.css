@@ -20,8 +20,8 @@
     color: grey;
 }
 
-.nav-link div,
-.nav-link i {
+
+::deep .nav-link {
     color: var(--contrast-color);
 }
 
@@ -43,6 +43,16 @@
         height: 100vh;
     }
 
+    ::deep .nav-link {
+        font-size: 1.2rem;
+        padding: 6px 4px;
+    }
+
+    ::deep .nav-link:hover,
+    .nav-link-ext:hover {
+        color: var(--secondary-color);
+    }
+
     .nav-link i {
         padding-right: 8px;
     }
@@ -56,11 +66,48 @@
         display: none;
     }
 
-    .logout {
-        cursor: pointer;
+    .user {
+        color: var(--contrast-color);
+        font-size: 1.2rem;
+        padding-left: 4px;
+        width: 100%;
         position: absolute;
-        bottom: 0;
+        bottom: 10px;
+        cursor: pointer;
     }
+
+    .user .bi {
+        padding-right: 8px;
+    }
+
+        .user .bi-caret-up-fill {
+            padding-left: 4px;
+            color: var(--secondary-contrast-color);
+        }
+
+    .user-box {
+        position: absolute;
+        bottom: 50px;
+        left: 12px;
+        background: var(--primary-color-shade-1);
+        border: 1px solid var(--secondary-color);
+        width: calc(100% - 24px);
+        color: var(--contrast-color-shade-1);
+        padding-left: 4px;
+        font-size: 1.2rem;
+    }
+
+    .user-box div i {
+        padding-right: 4px;
+    }
+
+    .user-box-entry {
+        cursor: pointer;
+    }
+
+        .user-box-entry:hover {
+            color: var(--secondary-color);
+        }
 }
 
 @media (max-width: 768px) {
@@ -73,6 +120,11 @@
         .nav-menu .bi {
             font-size: 1rem;
         }
+
+    ::deep .nav-link {
+        padding: 0;
+        flex-direction: column;
+    }
 
     .hide-mobile {
         display: none;

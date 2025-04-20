@@ -5,40 +5,21 @@
     /* Colors */
     --primary-color: #3498db;
     --primary-color-transparent: #3498db33;
+    --primary-color-shade-1: #2c81ba;
     --secondary-color: #ffffff;
     --color-red: #e74c3c;
     --color-yellow: #f7d80f;
     --contrast-color: #3d5770;
+    --contrast-color-shade-1: #2a3f54;
     --secondary-contrast-color: #34495e;
     --button-border-color: #ecf0f1;
     --discreet-hint-color: #bdc3c7;
     --approve-color: #27ae60;
 }
 
-.nav-link {
-    color: var(--contrast-color);
-}
-
 @media (min-width: 769px) {
-    .nav-link {
-        font-size: 1.2rem;
-        padding: 6px 4px;
-    }
-
-        .nav-link:hover,
-        .nav-link-ext:hover {
-            color: var(--secondary-color);
-        }
-
     .ant-modal-wrap {
         margin-left: 181.5px;
-    }
-}
-
-@media (max-width: 768px) {
-    .nav-link {
-        padding: 0;
-        flex-direction: column;
     }
 }
 

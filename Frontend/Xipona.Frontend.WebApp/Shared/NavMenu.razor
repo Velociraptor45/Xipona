@@ -106,18 +106,37 @@
         }
         <AuthorizeView>
             <Authorized>
-                <li class="nav-item logout hide-mobile">
-                    <div class="nav-link d-flex" @onclick="LogOut">
-                        <i class="bi bi-power align-self-center"></i>
-                        <div class="align-self-center">Logout</div>
+                @if (State.Value.User is not null)
+                {
+                    <div class="hide-mobile">
+                        <div class="d-flex user" @onmouseover="_ => _arrowHovered = true" @onmouseleave="_ => _arrowHovered = false" @onclick="_ => _userBoxVisible = !_userBoxVisible">
+                            <i class="bi bi-person-circle"></i>
+                            <div>@State.Value.User.Name</div>
+                            @if (_arrowHovered || _userBoxVisible)
+                            {
+                                <i class="bi bi-caret-up-fill"></i>
+                            }
+                        </div>
+                        @if (_userBoxVisible)
+                        {
+                            <div class="user-box">
+                                <div class="d-flex user-box-entry" @onclick="LogOut">
+                                    <i class="bi bi-power align-self-center"></i>
+                                    <div class="align-self-center">Logout</div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                </li>
+                }
             </Authorized>
         </AuthorizeView>
     </ul>
 </div>
 
 @code {
+    private bool _arrowHovered = false;
+    private bool _userBoxVisible = false;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
