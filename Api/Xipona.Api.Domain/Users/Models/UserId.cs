@@ -4,7 +4,7 @@ public readonly record struct UserId
 {
     public UserId()
     {
-        throw new NotSupportedException("Use the other ctor to create a user.");
+        throw new NotSupportedException("Use the other ctor to create a user id.");
     }
 
     public UserId(Guid value)
