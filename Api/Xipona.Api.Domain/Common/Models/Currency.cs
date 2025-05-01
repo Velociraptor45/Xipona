@@ -4,12 +4,12 @@ namespace ProjectHermes.Xipona.Api.Domain.Common.Models;
 
 public enum Currency
 {
-    [CurrencySign("€")]
+    [CurrencySymbol("€")]
     Euro = 0,
-    [CurrencySign("$")]
+    [CurrencySymbol("$")]
     Dollar = 1,
-    [CurrencySign("£")]
+    [CurrencySymbol("£")]
     Pound = 2,
-    [CurrencySign("¥")]
+    [CurrencySymbol("¥")]
     Yen = 3,
 }

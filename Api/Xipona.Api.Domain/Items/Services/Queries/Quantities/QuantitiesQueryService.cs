@@ -6,9 +6,7 @@ public class QuantitiesQueryService : IQuantitiesQueryService
 {
     public IEnumerable<QuantityTypeReadModel> GetAllQuantityTypes()
     {
-        var values = Enum.GetValues(typeof(QuantityType))
-            .Cast<QuantityType>()
-            .ToList();
+        var values = Enum.GetValues<QuantityType>().ToList();
         var readModels = values.Select(v => new QuantityTypeReadModel(v));
 
         return readModels;
@@ -16,9 +14,7 @@ public class QuantitiesQueryService : IQuantitiesQueryService
 
     public IEnumerable<QuantityTypeInPacketReadModel> GetAllQuantityTypesInPacket()
     {
-        var values = Enum.GetValues(typeof(QuantityTypeInPacket))
-            .Cast<QuantityTypeInPacket>()
-            .ToList();
+        var values = Enum.GetValues<QuantityTypeInPacket>().ToList();
         var readModels = values.Select(v => new QuantityTypeInPacketReadModel(v));
 
         return readModels;

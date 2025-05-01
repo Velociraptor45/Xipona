@@ -157,6 +157,14 @@ public abstract class DatabaseFixture : IDisposable
             .ToListAsync();
     }
 
+    public async Task<List<GeneralSetting>> LoadAllGeneralSettingsAsync(IServiceScope assertionScope)
+    {
+        await using var generalSettingContext = GetContextInstance<GeneralSettingContext>(assertionScope);
+
+        return await generalSettingContext.GeneralSettings.AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<RecipeTag>> LoadAllRecipeTagsAsync(IServiceScope assertionScope)
     {
         await using var dbContext = GetContextInstance<RecipeTagContext>(assertionScope);

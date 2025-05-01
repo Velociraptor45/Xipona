@@ -12,5 +12,10 @@ public class GeneralSetting : AggregateRoot, IGeneralSetting
     }
 
     public GeneralSettingId Id { get; }
-    public Currency Currency { get; }
+    public Currency Currency { get; private set; }
+
+    public void Update(Currency currency)
+    {
+        Currency = currency;
+    }
 }

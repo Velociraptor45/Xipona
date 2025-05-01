@@ -6,4 +6,5 @@ public interface IGeneralSetting
 {
     GeneralSettingId Id { get; }
     Currency Currency { get; }
+    void Update(Currency currency);
 }

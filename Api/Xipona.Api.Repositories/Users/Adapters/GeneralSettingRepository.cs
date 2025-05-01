@@ -4,12 +4,13 @@ using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Ports;
 using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using GeneralSetting = ProjectHermes.Xipona.Api.Repositories.Users.Entities.GeneralSetting;
 
 namespace ProjectHermes.Xipona.Api.Repositories.Users.Adapters;
 
-public class GeneralSettingRepository
+public class GeneralSettingRepository : IGeneralSettingRepository
 {
     private readonly GeneralSettingContext _dbContext;
     private readonly IToDomainConverter<GeneralSetting, IGeneralSetting> _toDomainConverter;
@@ -28,6 +29,15 @@ public class GeneralSettingRepository
         _toContractConverter = toContractConverter;
         _logger = logger;
         _cancellationToken = cancellationToken;
+    }
+
+    public async Task<IGeneralSetting> GetAsync()
+    {
+        var entry = await _dbContext.GeneralSettings
+            .AsNoTracking()
+            .SingleAsync(_cancellationToken);
+
+        return _toDomainConverter.ToDomain(entry);
     }
 
     public async Task<IGeneralSetting> StoreAsync(IGeneralSetting model)

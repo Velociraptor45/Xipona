@@ -43,6 +43,7 @@ using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using ProjectHermes.Xipona.Api.Secrets.Configs;
 using System.Data.Common;
 using System.Reflection;
+using GeneralSetting = ProjectHermes.Xipona.Api.Repositories.Users.Entities.GeneralSetting;
 using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
 using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
 using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
@@ -97,6 +98,16 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<IToContractConverter<IUser, User>>(),
                 provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>()(ct),
                 provider.GetRequiredService<ILogger<UserRepository>>(),
+                ct);
+        });
+
+        services.AddTransient<Func<CancellationToken, IGeneralSettingRepository>>(provider =>
+        {
+            return ct => new GeneralSettingRepository(
+                provider.GetRequiredService<GeneralSettingContext>(),
+                provider.GetRequiredService<IToDomainConverter<GeneralSetting, IGeneralSetting>>(),
+                provider.GetRequiredService<IToContractConverter<IGeneralSetting, GeneralSetting>>(),
+                provider.GetRequiredService<ILogger<GeneralSettingRepository>>(),
                 ct);
         });
 
@@ -213,6 +224,7 @@ public static class ServiceCollectionExtensions
     {
         // The order of the types is important, because the migrations are applied in the same order
         // and some of them depend on others
+        yield return typeof(GeneralSettingContext);
         yield return typeof(UserContext);
         yield return typeof(ManufacturerContext);
         yield return typeof(ItemCategoryContext);
