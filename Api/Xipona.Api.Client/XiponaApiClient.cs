@@ -42,7 +42,9 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -89,6 +91,18 @@ namespace ProjectHermes.Xipona.Api.Client
         public async Task<UserInfoContract> LoginAsync(CancellationToken cancellationToken = default)
         {
             return await _apiClient.LoginAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateGeneralSettingsAsync(GeneralSettingsContract contract, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.UpdateGeneralSettingsAsync(contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetAllCurrenciesAsync(cancellationToken);
         }
 
         #endregion

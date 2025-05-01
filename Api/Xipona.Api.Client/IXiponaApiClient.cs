@@ -41,7 +41,9 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -73,8 +75,24 @@ namespace ProjectHermes.Xipona.Api.Client
         [Post("users/login")]
         Task<UserInfoContract> LoginAsync(CancellationToken cancellationToken = default);
 
-        #endregion
+        /// <summary>
+        /// Updates the application-wide general settings
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Put("users/general-settings")]
+        Task UpdateGeneralSettingsAsync(GeneralSettingsContract contract, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Gets all currencies that are available for the service.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Get("users/all-currencies")]
+        Task<List<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default);
+
+        #endregion
 
         #region ShoppingList
 
