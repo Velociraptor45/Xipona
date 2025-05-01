@@ -123,6 +123,7 @@ public class UserEndpointIntegrationTests
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
             yield return scope.ServiceProvider.GetRequiredService<UserContext>();
+            yield return scope.ServiceProvider.GetRequiredService<GeneralSettingContext>();
         }
 
         protected override void Dispose(bool disposing)

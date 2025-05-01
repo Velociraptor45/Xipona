@@ -79,6 +79,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
 
+        services.AddDbContext<GeneralSettingContext>(SetDbConnection);
         services.AddDbContext<UserContext>(SetDbConnection);
         services.AddDbContext<ShoppingListContext>(SetDbConnection);
         services.AddDbContext<ItemCategoryContext>(SetDbConnection);
