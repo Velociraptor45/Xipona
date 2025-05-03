@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States;
 
-public record SharedState(UserInfo? User, bool IsMobile, bool IsOnline, bool IsRetryOngoing);
+public record SharedState(UserInfo? User, bool IsMobile, bool IsOnline, bool IsRetryOngoing, Settings Settings);
 
 public class SharedFeatureState : Feature<SharedState>
 {
@@ -13,6 +13,6 @@ public class SharedFeatureState : Feature<SharedState>
 
     protected override SharedState GetInitialState()
     {
-        return new SharedState(null, false, true, false);
+        return new SharedState(null, false, true, false, new(new([], null!), null, false));
     }
 }

@@ -4,8 +4,10 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.States
+@using ProjectHermes.Xipona.Frontend.WebApp.Components.Common
 
 @inject IState<SharedState> State
 @inject IDispatcher Dispatcher
@@ -120,6 +122,10 @@
                         @if (_userBoxVisible)
                         {
                             <div class="user-box">
+                                <div class="d-flex user-box-entry" @onclick="OpenSettings">
+                                    <i class="bi bi-gear align-self-center"></i>
+                                    <div class="align-self-center">Settings</div>
+                                </div>
                                 <div class="d-flex user-box-entry" @onclick="LogOut">
                                     <i class="bi bi-power align-self-center"></i>
                                     <div class="align-self-center">Logout</div>
@@ -127,6 +133,10 @@
                             </div>
                         }
                     </div>
+                    @if (State.Value.Settings.SettingsOpen)
+                    {
+                        <Settings></Settings>
+                    }
                 }
             </Authorized>
         </AuthorizeView>
@@ -148,5 +158,10 @@
     private void LogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");
+    }
+
+    private void OpenSettings()
+    {
+        Dispatcher.Dispatch(new OpenSettingsAction());
     }
 }

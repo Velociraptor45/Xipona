@@ -42,7 +42,9 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
 using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
 using ProjectHermes.Xipona.Frontend.Redux.Items.States;
@@ -216,7 +218,7 @@ public class ApiClient : IApiClient
         var contracts = await _client.GetActiveStoresForShoppingAsync();
 
         return contracts is null ?
-            Enumerable.Empty<ShoppingListStore>() :
+            [] :
             contracts.Select(_converters.ToDomain<StoreForShoppingContract, ShoppingListStore>);
     }
 
@@ -225,7 +227,7 @@ public class ApiClient : IApiClient
         var contracts = await _client.GetActiveStoresForItemAsync();
 
         return contracts is null ?
-            Enumerable.Empty<ItemStore>() :
+            [] :
             contracts.Select(_converters.ToDomain<StoreForItemContract, ItemStore>);
     }
 
@@ -234,7 +236,7 @@ public class ApiClient : IApiClient
         var contracts = await _client.GetActiveStoresOverviewAsync();
 
         return contracts is null
-            ? Enumerable.Empty<StoreSearchResult>()
+            ? []
             : contracts.Select(_converters.ToDomain<StoreSearchResultContract, StoreSearchResult>);
     }
 
@@ -250,7 +252,7 @@ public class ApiClient : IApiClient
     {
         var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput, cancellationToken);
         if (result is null)
-            return Enumerable.Empty<SearchItemForShoppingListResult>();
+            return [];
 
         return result
             .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
@@ -266,7 +268,7 @@ public class ApiClient : IApiClient
         var result = await _client.SearchItemsAsync(searchInput, page, pageSize);
 
         return result is null
-            ? Enumerable.Empty<ItemSearchResult>()
+            ? []
             : result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
     }
 
@@ -280,7 +282,7 @@ public class ApiClient : IApiClient
     {
         var result = await _client.GetAllQuantityTypesAsync();
         return result is null ?
-            Enumerable.Empty<QuantityType>() :
+            [] :
             result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
     }
 
@@ -288,7 +290,7 @@ public class ApiClient : IApiClient
     {
         var result = await _client.GetAllQuantityTypesInPacketAsync();
         return result is null ?
-            Enumerable.Empty<QuantityTypeInPacket>() :
+            [] :
             result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
     }
 
@@ -315,7 +317,7 @@ public class ApiClient : IApiClient
         var result = await _client.GetManufacturerSearchResultsAsync(searchInput, false);
 
         return result is null
-            ? Enumerable.Empty<ManufacturerSearchResult>()
+            ? []
             : result.Select(_converters.ToDomain<ManufacturerSearchResultContract, ManufacturerSearchResult>);
     }
 
@@ -348,7 +350,7 @@ public class ApiClient : IApiClient
         var results = await _client.SearchItemCategoriesByNameAsync(searchInput, false);
 
         return results is null
-            ? Enumerable.Empty<ItemCategorySearchResult>()
+            ? []
             : results.Select(_converters.ToDomain<ItemCategorySearchResultContract, ItemCategorySearchResult>);
     }
 
@@ -367,7 +369,7 @@ public class ApiClient : IApiClient
     {
         var results = await _client.SearchItemsByItemCategoryAsync(itemCategoryId);
         return results is null
-            ? Enumerable.Empty<SearchItemByItemCategoryResult>()
+            ? []
             : _converters.ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
     }
 
@@ -381,7 +383,7 @@ public class ApiClient : IApiClient
     {
         var results = await _client.SearchRecipesByNameAsync(searchInput);
         return results is null
-            ? Enumerable.Empty<RecipeSearchResult>()
+            ? []
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
     }
 
@@ -402,7 +404,7 @@ public class ApiClient : IApiClient
     {
         var types = await _client.GetAllIngredientQuantityTypes();
         return types is null
-            ? Enumerable.Empty<IngredientQuantityType>()
+            ? []
             : _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
     }
 
@@ -410,7 +412,7 @@ public class ApiClient : IApiClient
     {
         var tags = await _client.GetAllRecipeTagsAsync();
         return tags is null
-            ? Enumerable.Empty<RecipeTag>()
+            ? []
             : _converters.ToDomain<RecipeTagContract, RecipeTag>(tags);
     }
 
@@ -425,7 +427,7 @@ public class ApiClient : IApiClient
     {
         var results = await _client.SearchRecipesByTagsAsync(tagIds.ToArray());
         return results is null
-            ? Enumerable.Empty<RecipeSearchResult>()
+            ? []
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
     }
 
@@ -462,5 +464,20 @@ public class ApiClient : IApiClient
     {
         var contract = new RemoveItemDiscountContract(itemId, itemTypeId);
         await _client.RemoveItemDiscountAsync(shoppingListId, contract);
+    }
+
+    public async Task<IEnumerable<Currency>> GetAllCurrenciesAsync()
+    {
+        var result = await _client.GetAllCurrenciesAsync();
+        return _converters.ToDomain<CurrencyContract, Currency>(result);
+    }
+
+    public async Task UpdateGeneralSettingsAsync(Currency currency)
+    {
+        var contract = new GeneralSettingsContract()
+        {
+            CurrencyId = currency.Id
+        };
+        await _client.UpdateGeneralSettingsAsync(contract);
     }
 }
