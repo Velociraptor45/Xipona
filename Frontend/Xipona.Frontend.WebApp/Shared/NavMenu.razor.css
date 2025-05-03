@@ -90,11 +90,12 @@
         bottom: 50px;
         left: 12px;
         background: var(--primary-color-shade-1);
-        border: 1px solid var(--secondary-color);
+        border: 1px solid var(--contrast-color);
         width: calc(100% - 24px);
         color: var(--contrast-color-shade-1);
         padding-left: 4px;
         font-size: 1.2rem;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
 
     .user-box div i {
