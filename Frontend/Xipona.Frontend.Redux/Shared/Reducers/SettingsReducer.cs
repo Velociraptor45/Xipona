@@ -13,7 +13,8 @@ public static class SettingsReducer
         {
             Settings = state.Settings with
             {
-                SettingsOpen = false
+                SettingsOpen = false,
+                Editor = null
             }
         };
     }
@@ -37,8 +38,7 @@ public static class SettingsReducer
         {
             Settings = state.Settings with
             {
-                GeneralSettings = action.GeneralSettings,
-                AllCurrencies = action.AllCurrencies
+                Editor = new SettingsEditor(state.Settings.GeneralSettings!, action.AllCurrencies)
             }
         };
     }
@@ -50,10 +50,13 @@ public static class SettingsReducer
         {
             Settings = state.Settings with
             {
-                GeneralSettings = state.Settings.GeneralSettings with
+                Editor = state.Settings.Editor! with
                 {
-                    Currency = action.Currency
-                }
+                    GeneralSettings = state.Settings.GeneralSettings! with
+                    {
+                        Currency = action.Currency
+                    }
+                },
             }
         };
     }
@@ -77,7 +80,21 @@ public static class SettingsReducer
         {
             Settings = state.Settings with
             {
-                IsSaving = false
+                IsSaving = false,
+                GeneralSettings = state.Settings.Editor!.GeneralSettings,
+                Editor = null
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static SharedState OnGeneralSettingsLoaded(SharedState state, GeneralSettingsLoadedAction action)
+    {
+        return state with
+        {
+            Settings = state.Settings with
+            {
+                GeneralSettings = action.GeneralSettings
             }
         };
     }

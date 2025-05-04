@@ -47,7 +47,11 @@ public class SettingsReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    Settings = ExpectedState.Settings with { SettingsOpen = true }
+                    Settings = ExpectedState.Settings with
+                    {
+                        SettingsOpen = true,
+                        Editor = new DomainTestBuilder<SettingsEditor>().Create()
+                    }
                 };
             }
 
@@ -55,7 +59,11 @@ public class SettingsReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    Settings = ExpectedState.Settings with { SettingsOpen = false }
+                    Settings = ExpectedState.Settings with
+                    {
+                        SettingsOpen = false,
+                        Editor = new DomainTestBuilder<SettingsEditor>().Create()
+                    }
                 };
             }
 
@@ -63,7 +71,11 @@ public class SettingsReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    Settings = ExpectedState.Settings with { SettingsOpen = false }
+                    Settings = ExpectedState.Settings with
+                    {
+                        SettingsOpen = false,
+                        Editor = null
+                    }
                 };
             }
         }
@@ -134,10 +146,28 @@ public class SettingsReducerTests
         private readonly OnSettingsLoadedFixture _fixture = new();
 
         [Fact]
-        public void OnSettingsLoaded_ShouldUpdateSettings()
+        public void OnSettingsLoaded_WithEditorInitialized_ShouldUpdateSettings()
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = SettingsReducer.OnSettingsLoaded(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnSettingsLoaded_WithEditorNull_ShouldUpdateSettings()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithEditorNull();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -159,17 +189,39 @@ public class SettingsReducerTests
                 {
                     Settings = ExpectedState.Settings with
                     {
-                        GeneralSettings = new DomainTestBuilder<GeneralSettings>().Create(),
-                        AllCurrencies = new DomainTestBuilder<List<Currency>>().Create()
+                        Editor = new DomainTestBuilder<SettingsEditor>().Create()
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithEditorNull()
+            {
+                InitialState = ExpectedState with
+                {
+                    Settings = ExpectedState.Settings with
+                    {
+                        Editor = null
                     }
                 };
             }
 
             public void SetupAction()
             {
-                Action = new SettingsLoadedAction(
-                    ExpectedState.Settings.GeneralSettings,
-                    ExpectedState.Settings.AllCurrencies);
+                Action = new SettingsLoadedAction(ExpectedState.Settings.Editor!.AllCurrencies);
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Settings = ExpectedState.Settings with
+                    {
+                        Editor = ExpectedState.Settings.Editor! with
+                        {
+                            GeneralSettings = ExpectedState.Settings.GeneralSettings!
+                        }
+                    }
+                };
             }
         }
     }
@@ -204,9 +256,12 @@ public class SettingsReducerTests
                 {
                     Settings = ExpectedState.Settings with
                     {
-                        GeneralSettings = ExpectedState.Settings.GeneralSettings with
+                        Editor = ExpectedState.Settings.Editor! with
                         {
-                            Currency = new DomainTestBuilder<Currency>().Create()
+                            GeneralSettings = ExpectedState.Settings.Editor.GeneralSettings with
+                            {
+                                Currency = new DomainTestBuilder<Currency>().Create()
+                            }
                         }
                     }
                 };
@@ -214,7 +269,7 @@ public class SettingsReducerTests
 
             public void SetupAction()
             {
-                Action = new SelectedCurrencyChangedAction(ExpectedState.Settings.GeneralSettings.Currency);
+                Action = new SelectedCurrencyChangedAction(ExpectedState.Settings.Editor!.GeneralSettings.Currency);
             }
         }
     }
@@ -287,8 +342,8 @@ public class SettingsReducerTests
         public void OnSaveSettingsFinished_WithSaving_ShouldSetIsSavingToFalse()
         {
             // Arrange
-            _fixture.SetupInitialState();
             _fixture.SetupExpectedState();
+            _fixture.SetupInitialState();
 
             // Act
             var result = SettingsReducer.OnSaveSettingsFinished(_fixture.InitialState);
@@ -301,8 +356,8 @@ public class SettingsReducerTests
         public void OnSaveSettingsFinished_WithAlreadyNotSaving_ShouldNotChangeAnything()
         {
             // Arrange
-            _fixture.SetupInitialStateAlreadyNotSaving();
             _fixture.SetupExpectedState();
+            _fixture.SetupInitialStateAlreadyNotSaving();
 
             // Act
             var result = SettingsReducer.OnSaveSettingsFinished(_fixture.InitialState);
@@ -317,7 +372,15 @@ public class SettingsReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    Settings = ExpectedState.Settings with { IsSaving = true }
+                    Settings = ExpectedState.Settings with
+                    {
+                        Editor = new DomainTestBuilder<SettingsEditor>().Create() with
+                        {
+                            GeneralSettings = ExpectedState.Settings.GeneralSettings!
+                        },
+                        GeneralSettings = new DomainTestBuilder<GeneralSettings>().Create(),
+                        IsSaving = true
+                    }
                 };
             }
 
@@ -325,7 +388,15 @@ public class SettingsReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    Settings = ExpectedState.Settings with { IsSaving = false }
+                    Settings = ExpectedState.Settings with
+                    {
+                        Editor = new DomainTestBuilder<SettingsEditor>().Create() with
+                        {
+                            GeneralSettings = ExpectedState.Settings.GeneralSettings!
+                        },
+                        GeneralSettings = new DomainTestBuilder<GeneralSettings>().Create(),
+                        IsSaving = false
+                    }
                 };
             }
 
@@ -333,8 +404,54 @@ public class SettingsReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    Settings = ExpectedState.Settings with { IsSaving = false }
+                    Settings = ExpectedState.Settings with
+                    {
+                        Editor = null,
+                        IsSaving = false
+                    }
                 };
+            }
+        }
+    }
+
+    public class OnGeneralSettingsLoaded
+    {
+        private readonly OnGeneralSettingsLoadedFixture _fixture = new();
+
+        [Fact]
+        public void OnGeneralSettingsLoaded_ShouldUpdateCurrency()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = SettingsReducer.OnGeneralSettingsLoaded(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnGeneralSettingsLoadedFixture : SettingsReducerFixture
+        {
+            public GeneralSettingsLoadedAction? Action { get; private set; }
+
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Settings = ExpectedState.Settings with
+                    {
+                        GeneralSettings = new DomainTestBuilder<GeneralSettings>().Create()
+                    }
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new GeneralSettingsLoadedAction(ExpectedState.Settings.GeneralSettings!);
             }
         }
     }

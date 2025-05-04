@@ -23,7 +23,7 @@
                 <!-- upper row -->
                 <div class="d-flex">
                     <div class="h3 pl-1">@Model.Name</div>
-                    <div class="pb-2 pl-1 align-self-end">@($"{CalculatePrice():0.00}")€</div>
+                    <div class="pb-2 pl-1 align-self-end">@($"{CalculatePrice():0.00}{SharedState.Value.GetCurrencySymbol()}")</div>
                 </div>
                 <Button Danger="true"
                         Class="mr-2 ml-auto px-2 remove-item"
@@ -98,7 +98,7 @@
                 {
                     <span class="pr-1"><i class="bi bi-percent discount-symbol"></i></span>
                 }
-                <span>@($"{CalculatePrice():0.00}")</span><span class="price-currency">€</span>
+                <span>@($"{CalculatePrice():0.00}")</span><span class="price-currency">@SharedState.Value.GetCurrencySymbol()</span>
             </div>
         </div>
     }

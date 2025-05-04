@@ -21,15 +21,38 @@ public class SettingsEffects
         _notificationService = notificationService;
     }
 
+    [EffectMethod(typeof(LoadGeneralSettingsAction))]
+    public async Task HandleLoadGeneralSettingsAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Settings.GeneralSettings is not null)
+            return;
+
+        GeneralSettings generalSettings;
+        try
+        {
+            generalSettings = await _apiClient.GetGeneralSettingsAsync();
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading general settings failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading general settings failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new GeneralSettingsLoadedAction(generalSettings));
+    }
+
     [EffectMethod(typeof(OpenSettingsAction))]
     public async Task HandleOpenSettingsAction(IDispatcher dispatcher)
     {
-        var currenciesTask = _apiClient.GetAllCurrenciesAsync();
-        var generalSettingsTask = _apiClient.GetGeneralSettingsAsync();
-
+        List<Currency> currencies;
         try
         {
-            await Task.WhenAll(currenciesTask, generalSettingsTask);
+            currencies = (await _apiClient.GetAllCurrenciesAsync()).ToList();
         }
         catch (ApiException e)
         {
@@ -42,12 +65,15 @@ public class SettingsEffects
             return;
         }
 
-        dispatcher.Dispatch(new SettingsLoadedAction(generalSettingsTask.Result, currenciesTask.Result.ToList()));
+        dispatcher.Dispatch(new SettingsLoadedAction(currencies));
     }
 
     [EffectMethod]
     public async Task HandleSaveSettingsAction(SaveSettingsAction action, IDispatcher dispatcher)
     {
+        if (_state.Value.Settings.GeneralSettings is null)
+            return;
+
         dispatcher.Dispatch(new SaveSettingsStartedAction());
 
         try

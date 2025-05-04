@@ -1,8 +1,8 @@
 ﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States;
 
 public record Settings(
-    GeneralSettings GeneralSettings,
+    GeneralSettings? GeneralSettings,
     UserSettings? UserSettings,
-    IReadOnlyCollection<Currency> AllCurrencies,
+    SettingsEditor? Editor,
     bool SettingsOpen,
     bool IsSaving);

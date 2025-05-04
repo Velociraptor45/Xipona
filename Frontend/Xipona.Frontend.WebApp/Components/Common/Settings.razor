@@ -8,37 +8,40 @@
 @inject IDispatcher Dispatcher
 
 <Modal Title="Settings"
-Visible="@State.Value.Settings.SettingsOpen"
-OnCancel="CloseSettings"
-Footer="GetFooter()">
-    <div class="settings-container">
-        <div>
-            <div class="section-title">General</div>
-            <hr/>
+       Visible="@State.Value.Settings.SettingsOpen"
+       OnCancel="CloseSettings"
+       Footer="GetFooter()">
+    @if (State.Value.Settings.Editor is not null)
+    {
+        <div class="settings-container">
             <div>
+                <div class="section-title">General</div>
+                <hr/>
                 <div>
-                    <div class="mr-2">Currency</div>
-                    @if (State.Value.Settings.AllCurrencies.Count > 0)
-                    {
-                        <Select
-                            Class="currency-select"
-                            TItem="Currency"
-                            TItemValue="int"
-                            ValueName="@nameof(Currency.Id)"
-                            LabelName="@nameof(Currency.Symbol)"
-                            DataSource="@State.Value.Settings.AllCurrencies"
-                            OnSelectedItemChanged="OnCurrencyChanged"
-                            Value="State.Value.Settings.GeneralSettings.Currency.Id">
-                        </Select>
-                    }
-                    else
-                    {
-                        <div class="currency-skeleton"></div>
-                    }
+                    <div>
+                        <div class="mr-2">Currency</div>
+                        @if (State.Value.Settings.Editor.AllCurrencies.Count > 0)
+                        {
+                            <Select
+                                Class="currency-select"
+                                TItem="Currency"
+                                TItemValue="int"
+                                ValueName="@nameof(Currency.Id)"
+                                LabelName="@nameof(Currency.Symbol)"
+                                DataSource="@State.Value.Settings.Editor.AllCurrencies"
+                                OnSelectedItemChanged="OnCurrencyChanged"
+                                Value="State.Value.Settings.Editor.GeneralSettings.Currency.Id">
+                            </Select>
+                        }
+                        else
+                        {
+                            <div class="currency-skeleton"></div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 </Modal>
 
 @code
