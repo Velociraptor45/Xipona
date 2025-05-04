@@ -8,9 +8,9 @@
 @inject IDispatcher Dispatcher
 
 <Modal Title="Settings"
-       Visible="@State.Value.Settings.SettingsOpen"
-       OnCancel="CloseSettings"
-       Footer="GetFooter()">
+Visible="@State.Value.Settings.SettingsOpen"
+OnCancel="CloseSettings"
+Footer="GetFooter()">
     <div class="settings-container">
         <div>
             <div class="section-title">General</div>
@@ -20,16 +20,16 @@
                     <div class="mr-2">Currency</div>
                     @if (State.Value.Settings.AllCurrencies.Count > 0)
                     {
-                        <SingleSelect
+                        <Select
                             Class="currency-select"
                             TItem="Currency"
-                            TValue="int"
+                            TItemValue="int"
                             ValueName="@nameof(Currency.Id)"
                             LabelName="@nameof(Currency.Symbol)"
-                            DataSource="@State.Value.Settings.AllCurrencies.ToList()"
-                            OnItemChanged="OnCurrencyChanged"
+                            DataSource="@State.Value.Settings.AllCurrencies"
+                            OnSelectedItemChanged="OnCurrencyChanged"
                             Value="State.Value.Settings.GeneralSettings.Currency.Id">
-                        </SingleSelect>
+                        </Select>
                     }
                     else
                     {
@@ -55,6 +55,7 @@
 
     private void Save()
     {
+        Dispatcher.Dispatch(new SaveSettingsAction());
     }
 
     private RenderFragment GetFooter()

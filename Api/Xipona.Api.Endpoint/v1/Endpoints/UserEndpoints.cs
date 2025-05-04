@@ -102,7 +102,7 @@ public static class UserEndpoints
         return builder;
     }
 
-    internal static async Task<IResult> UpdateGeneralSettings(GeneralSettingsContract contract,
+    internal static async Task<IResult> UpdateGeneralSettings([FromBody] GeneralSettingsContract contract,
         [FromServices] ICommandDispatcher commandDispatcher,
         [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
         CancellationToken cancellationToken)
@@ -146,7 +146,7 @@ public static class UserEndpoints
 
     private static IEndpointRouteBuilder RegisterGetGeneralSettings(this IEndpointRouteBuilder builder)
     {
-        builder.MapGet($"/{_routeBase}/general-settings", GetAllCurrencies)
+        builder.MapGet($"/{_routeBase}/general-settings", GetGeneralSettings)
             .WithName("GetGeneralSettings")
             .Produces<GeneralSettingsContract>()
             .RequireAuthorization("User");

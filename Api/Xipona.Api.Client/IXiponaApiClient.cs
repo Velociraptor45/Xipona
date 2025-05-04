@@ -82,7 +82,7 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Put("users/general-settings")]
-        Task UpdateGeneralSettingsAsync(GeneralSettingsContract contract, CancellationToken cancellationToken = default);
+        Task UpdateGeneralSettingsAsync([Body] GeneralSettingsContract contract, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all currencies that are available for the service.
