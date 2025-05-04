@@ -90,7 +90,15 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("users/all-currencies")]
-        Task<List<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the general settings of the application
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Get("users/general-settings")]
+        Task<GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default);
 
         #endregion
 

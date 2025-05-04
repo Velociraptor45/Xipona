@@ -100,9 +100,15 @@ namespace ProjectHermes.Xipona.Api.Client
         }
 
         /// <inheritdoc/>
-        public async Task<List<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetAllCurrenciesAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetGeneralSettingsAsync(cancellationToken);
         }
 
         #endregion

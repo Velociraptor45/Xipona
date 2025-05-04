@@ -7,6 +7,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
 using ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.Login;
 using ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.UpdateGeneralSettings;
 using ProjectHermes.Xipona.Api.ApplicationServices.Users.Queries.AllCurrencies;
+using ProjectHermes.Xipona.Api.ApplicationServices.Users.Queries.GetGeneralSettings;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
@@ -33,7 +34,8 @@ public static class UserEndpoints
         builder
             .RegisterLogin()
             .RegisterUpdateGeneralSettings()
-            .RegisterGetAllCurrencies();
+            .RegisterGetAllCurrencies()
+            .RegisterGetGeneralSettings();
     }
 
     private static IEndpointRouteBuilder RegisterLogin(this IEndpointRouteBuilder builder)
@@ -140,5 +142,27 @@ public static class UserEndpoints
         var contracts = toContractConverter.ToContract(result).ToList();
 
         return Results.Ok(contracts);
+    }
+
+    private static IEndpointRouteBuilder RegisterGetGeneralSettings(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/general-settings", GetAllCurrencies)
+            .WithName("GetGeneralSettings")
+            .Produces<GeneralSettingsContract>()
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> GetGeneralSettings(
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract> toContractConverter,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetGeneralSettingsQuery();
+        var result = await queryDispatcher.DispatchAsync(query, cancellationToken);
+        var contract = toContractConverter.ToContract(result);
+
+        return Results.Ok(contract);
     }
 }

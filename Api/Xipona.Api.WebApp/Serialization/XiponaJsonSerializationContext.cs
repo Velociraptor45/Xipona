@@ -141,6 +141,8 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(UserInfoContract))]
 [JsonSerializable(typeof(GeneralSettingsContract))]
 [JsonSerializable(typeof(CurrencyContract))]
+[JsonSerializable(typeof(List<CurrencyContract>))]
+[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Queries00GetGeneralSettings")]
 // Common
 [JsonSerializable(typeof(List<ItemCategoryContract>))]
 [JsonSerializable(typeof(List<ManufacturerContract>))]

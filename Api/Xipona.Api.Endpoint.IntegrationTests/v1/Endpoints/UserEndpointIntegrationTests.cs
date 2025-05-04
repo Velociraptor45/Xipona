@@ -10,16 +10,19 @@ using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
 using ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
 using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
 using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
 using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using ProjectHermes.Xipona.Api.WebApp.Auth;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using Xunit;
+using GeneralSetting = ProjectHermes.Xipona.Api.Repositories.Users.Entities.GeneralSetting;
+using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
 
 namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
@@ -172,10 +175,7 @@ public class UserEndpointIntegrationTests
 
             public void SetupContract()
             {
-                _contract = new GeneralSettingsContract
-                {
-                    CurrencyId = 1
-                };
+                _contract = new GeneralSettingsContract(1);
             }
 
             public void SetupExpectedResult()
@@ -195,7 +195,7 @@ public class UserEndpointIntegrationTests
         private readonly GetAllCurrenciesFixture _fixture = new(dockerFixture);
 
         [Fact]
-        public async Task GetAllCurrencies_ShouldReturnAllCurrencies()
+        public async Task GetAllCurrencies_WithValidData_ShouldReturnAllCurrencies()
         {
             // Arrange
             await _fixture.PrepareDatabaseAsync();
@@ -231,6 +231,7 @@ public class UserEndpointIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<CurrencyReadModel, CurrencyContract>>(),
                     default);
             }
+
             public async Task PrepareDatabaseAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
@@ -247,6 +248,79 @@ public class UserEndpointIntegrationTests
                 };
             }
 
+        }
+    }
+
+    public sealed class GetGeneralSettings(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    {
+        private readonly GetGeneralSettingsFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task GetGeneralSettings_WithValidData_ShouldReturnGeneralSettings()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+
+            result.Should().BeOfType<Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>();
+            var okResult = (Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>)result;
+
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private class GetGeneralSettingsFixture : UserEndpointFixture
+        {
+            private Contracts.Users.Queries.GetGeneralSettings.CurrencyContract? _expectedCurrency;
+            private List<Contracts.Users.Queries.GetGeneralSettings.CurrencyContract> _allCurrencies =
+            [
+                new(0, "€"),
+                new(1, "$"),
+                new(2, "£"),
+                new(3, "¥")
+            ];
+
+            public GetGeneralSettingsFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await UserEndpoints.GetGeneralSettings(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>(),
+                    default);
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedCurrency);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var context = GetContextInstance<GeneralSettingContext>(ArrangeScope);
+
+                var settings = await context.GeneralSettings.SingleAsync();
+                settings.Currency = _expectedCurrency.Id;
+
+                await context.SaveChangesAsync();
+            }
+
+            public void SetupExpectedResult()
+            {
+                _expectedCurrency = CommonFixture.ChooseRandom(_allCurrencies);
+                ExpectedResult = new Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract(_expectedCurrency);
+            }
         }
     }
 
