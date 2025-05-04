@@ -82,7 +82,8 @@ public static class SharedReducer
         {
             Settings = state.Settings with
             {
-                GeneralSettings = action.GeneralSettings
+                GeneralSettings = action.GeneralSettings,
+                AllCurrencies = action.AllCurrencies
             }
         };
     }

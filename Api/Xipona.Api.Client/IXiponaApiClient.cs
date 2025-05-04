@@ -98,7 +98,7 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("users/general-settings")]
-        Task<GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default);
+        Task<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default);
 
         #endregion
 

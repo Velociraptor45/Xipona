@@ -106,7 +106,7 @@ namespace ProjectHermes.Xipona.Api.Client
         }
 
         /// <inheritdoc/>
-        public async Task<GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default)
+        public async Task<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetGeneralSettingsAsync(cancellationToken);
         }

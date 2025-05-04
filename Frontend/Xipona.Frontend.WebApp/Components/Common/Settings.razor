@@ -27,7 +27,7 @@
             <div>
                 <div>
                     <div class="mr-2">Currency</div>
-                    @if (State.Value.Settings.GeneralSettings.AllCurrencies.Count > 0)
+                    @if (State.Value.Settings.AllCurrencies.Count > 0)
                     {
                         <SingleSelect
                             Class="currency-select"
@@ -35,7 +35,7 @@
                             TValue="int"
                             ValueName="@nameof(Currency.Id)"
                             LabelName="@nameof(Currency.Symbol)"
-                            DataSource="@State.Value.Settings.GeneralSettings.AllCurrencies.ToList()"
+                            DataSource="@State.Value.Settings.AllCurrencies.ToList()"
                             OnItemChanged="OnCurrencyChanged"
                             Value="State.Value.Settings.GeneralSettings.Currency.Id">
                         </SingleSelect>

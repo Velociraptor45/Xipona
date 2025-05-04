@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Effects;
 
@@ -17,8 +16,11 @@ public class SettingsEffects
     [EffectMethod(typeof(OpenSettingsAction))]
     public async Task HandleOpenSettingsAction(IDispatcher dispatcher)
     {
-        var currencies = (await _apiClient.GetAllCurrenciesAsync()).ToList();
-        var generalSettings = new GeneralSettings(currencies, currencies[0]); //todo load from settings
-        dispatcher.Dispatch(new SettingsLoadedAction(generalSettings));
+        var currenciesTask = _apiClient.GetAllCurrenciesAsync();
+        var generalSettingsTask = _apiClient.GetGeneralSettingsAsync();
+
+        await Task.WhenAll(currenciesTask, generalSettingsTask);
+
+        dispatcher.Dispatch(new SettingsLoadedAction(generalSettingsTask.Result, currenciesTask.Result.ToList()));
     }
 }

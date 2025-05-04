@@ -13,6 +13,6 @@ public class SharedFeatureState : Feature<SharedState>
 
     protected override SharedState GetInitialState()
     {
-        return new SharedState(null, false, true, false, new(new([], null!), null, false));
+        return new SharedState(null, false, true, false, new(new(null!), null, [], false));
     }
 }

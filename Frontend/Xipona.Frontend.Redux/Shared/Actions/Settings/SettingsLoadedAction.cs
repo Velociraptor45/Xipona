@@ -2,4 +2,4 @@
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings;
 
-public record SettingsLoadedAction(GeneralSettings GeneralSettings);
+public record SettingsLoadedAction(GeneralSettings GeneralSettings, IReadOnlyCollection<Currency> AllCurrencies);

@@ -131,4 +131,5 @@ public interface IApiClient
     Task<UserInfo> LoginAsync();
     Task<IEnumerable<Currency>> GetAllCurrenciesAsync();
     Task UpdateGeneralSettingsAsync(Currency currency);
+    Task<GeneralSettings> GetGeneralSettingsAsync();
 }

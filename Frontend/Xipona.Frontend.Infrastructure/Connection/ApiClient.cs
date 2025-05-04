@@ -474,10 +474,14 @@ public class ApiClient : IApiClient
 
     public async Task UpdateGeneralSettingsAsync(Currency currency)
     {
-        var contract = new GeneralSettingsContract()
-        {
-            CurrencyId = currency.Id
-        };
+        var contract = new GeneralSettingsContract(currency.Id);
         await _client.UpdateGeneralSettingsAsync(contract);
+    }
+
+    public async Task<GeneralSettings> GetGeneralSettingsAsync()
+    {
+        var settings = await _client.GetGeneralSettingsAsync();
+        return _converters
+            .ToDomain<Api.Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract, GeneralSettings>(settings);
     }
 }
