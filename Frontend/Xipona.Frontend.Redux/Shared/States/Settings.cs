@@ -4,4 +4,5 @@ public record Settings(
     GeneralSettings GeneralSettings,
     UserSettings? UserSettings,
     IReadOnlyCollection<Currency> AllCurrencies,
-    bool SettingsOpen);
+    bool SettingsOpen,
+    bool IsSaving);

@@ -1,23 +1,4 @@
-﻿
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(100, 100, 100, .5);
-    z-index: 1001;
-    width: 100%;
-    height: 100%;
-}
-
-.top-bar {
-    margin-bottom: 8px;
-}
-
-.settings-title {
-    font-size: 1.4em;
-}
-
-.bi-x-lg {
+﻿.bi-x-lg {
     cursor: pointer;
 }
 
@@ -26,17 +7,11 @@ hr {
 }
 
 .section-title {
-    font-size: 1.4em;
+    font-size: 1.3em;
     font-weight: bold;
 }
 
 .settings-container {
-    position: fixed;
-    top: 200px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--secondary-color);
-    z-index: 1002;
     color: var(--secondary-contrast-color);
 }
 
@@ -47,16 +22,4 @@ hr {
 
 .currency-skeleton {
     height: 36px;
-}
-
-@media (min-width: 769px) {
-    .settings-container {
-        width: 600px;
-    }
-}
-
-@media (max-width: 768px) {
-    .settings-container {
-        width: calc(100% - 20px);
-    }
 }

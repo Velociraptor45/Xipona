@@ -7,20 +7,11 @@
 @inject IState<SharedState> State
 @inject IDispatcher Dispatcher
 
-
-<div class="background" @onclick="CloseSettings"></div>
-<div class="settings-container px-2">
-    <div class="top-bar">
-        <div class="d-flex">
-            <div class="settings-title">
-                Settings
-            </div>
-            <div class="ml-auto mt-1">
-                <i class="bi bi-x-lg" @onclick="CloseSettings"></i>
-            </div>
-        </div>
-    </div>
-    <div>
+<Modal Title="Settings"
+       Visible="@State.Value.Settings.SettingsOpen"
+       OnCancel="CloseSettings"
+       Footer="GetFooter()">
+    <div class="settings-container">
         <div>
             <div class="section-title">General</div>
             <hr/>
@@ -48,10 +39,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex pb-2 mt-4">
-        <Button Class="ml-auto" Size="ButtonSize.Default" Type="ButtonType.Primary" OnClick="Save">Save</Button>
-    </div>
-</div>
+</Modal>
 
 @code
 {
@@ -67,5 +55,18 @@
 
     private void Save()
     {
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template>
+            <Button Class="ml-auto"
+                    OnClick="Save"
+                    @key="@("submit")"
+                    Type="@ButtonType.Primary"
+                    Loading="@State.Value.Settings.IsSaving">
+                Save
+            </Button>
+        </Template>;
     }
 }

@@ -1,4 +1,5 @@
-﻿app {
+﻿.ant-modal,
+app {
     --nav-mobile-height: 71.15px;
     --nav-desktop-width: 181.467px;
     --ongoing-retry-notice-height: 25px;
