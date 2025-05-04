@@ -1,4 +1,5 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
@@ -20,13 +21,16 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
     private readonly IStoreRepository _storeRepository;
+    private readonly IMemoryCache _cache;
 
     public ItemReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
-        IManufacturerRepository manufacturerRepository, IStoreRepository storeRepository)
+        IManufacturerRepository manufacturerRepository, IStoreRepository storeRepository,
+        IMemoryCache cache)
     {
         _itemCategoryRepository = itemCategoryRepository;
         _manufacturerRepository = manufacturerRepository;
         _storeRepository = storeRepository;
+        _cache = cache;
     }
 
     public async Task<ItemReadModel> ConvertAsync(IItem item)
@@ -56,7 +60,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
         return ToReadModel(item, itemCategory, manufacturer, storeDict);
     }
 
-    private static ItemReadModel ToReadModel(IItem model, IItemCategory? itemCategory,
+    private ItemReadModel ToReadModel(IItem model, IItemCategory? itemCategory,
         IManufacturer? manufacturer, IReadOnlyDictionary<StoreId, IStore> stores)
     {
         var availabilityReadModels = ToAvailabilityReadModel(model.Availabilities, stores).ToList();
@@ -83,7 +87,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
             model.IsDeleted,
             model.Comment,
             model.IsTemporary,
-            new QuantityTypeReadModel(model.ItemQuantity.Type),
+            new QuantityTypeReadModel(model.ItemQuantity.Type, _cache),
             itemQuantityInPacket?.Quantity,
             quantityTypeInPacketReadModel,
             itemCategory is null ?

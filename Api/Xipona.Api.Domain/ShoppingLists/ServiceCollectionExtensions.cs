@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ProjectHermes.Xipona.Api.Core.Services;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
@@ -49,7 +50,8 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct),
                 provider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(ct),
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct));
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct),
+                provider.GetRequiredService<IMemoryCache>());
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListModificationService>>(provider =>

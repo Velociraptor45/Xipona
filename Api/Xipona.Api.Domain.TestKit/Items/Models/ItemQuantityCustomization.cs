@@ -13,12 +13,7 @@ public class ItemQuantityCustomization : ICustomization
 
     private class ItemQuantitySpecimenBuilder : ISpecimenBuilder
     {
-        private readonly RandomNumericSequenceGenerator _numberGenerator;
-
-        public ItemQuantitySpecimenBuilder()
-        {
-            _numberGenerator = new RandomNumericSequenceGenerator(0, 1);
-        }
+        private readonly RandomNumericSequenceGenerator _numberGenerator = new(0, 1);
 
         public object Create(object request, ISpecimenContext context)
         {

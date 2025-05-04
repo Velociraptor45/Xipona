@@ -60,6 +60,7 @@ await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLo
 builder.Services.Configure<JsonOptions>(opt =>
     opt.SerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
 
+builder.Services.AddMemoryCache();
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointConverters();
