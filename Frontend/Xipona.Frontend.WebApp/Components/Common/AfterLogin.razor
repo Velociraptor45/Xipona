@@ -1,0 +1,27 @@
+﻿@using Fluxor
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports
+
+
+@inject IApiClient ApiClient
+@inject IShoppingListNotificationService NotificationService
+@inject IDispatcher Dispatcher
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var userInfo = await ApiClient.LoginAsync();
+            Dispatcher.Dispatch(new UserLoggedInAction(userInfo));
+        }
+        catch (Exception e)
+        {
+            NotificationService.NotifyError("Login failed", "Login at the remote server failed: " + e.Message);
+            return;
+        }
+
+        await base.OnInitializedAsync();
+    }
+}
