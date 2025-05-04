@@ -32,6 +32,7 @@ public static class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         var authConfig = builder.Configuration.GetSection("Auth").Get<AuthConfig>();
+        builder.Services.AddSingleton(authConfig);
         AddSecurity(builder, authConfig);
 
         ConfigureHttpClient(builder, authConfig);

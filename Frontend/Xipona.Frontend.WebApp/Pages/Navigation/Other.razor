@@ -3,7 +3,6 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent﻿
 
 @using Fluxor
-@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants
@@ -14,31 +13,30 @@
 @inject IDispatcher Dispatcher
 
 <div class="content px-2">
-    @if (State.Value.User is not null)
+    <div class="w-100 top-row d-flex justify-content-end">
+        <div class="d-flex user-info" @onclick="_ => _userBoxVisible = !_userBoxVisible">
+            @if (State.Value.User is not null)
+            {
+                <div>@State.Value.User.Name</div>
+            }
+            <i class="bi bi-person-circle"></i>
+        </div>
+    </div>
+    @if (_userBoxVisible)
     {
-        <AuthorizeView>
-            <Authorized>
-                <div class="w-100 top-row d-flex justify-content-end">
-                    <div class="d-flex user-info" @onclick="_ => _userBoxVisible = !_userBoxVisible">
-                        <div>@State.Value.User.Name</div>
-                        <i class="bi bi-person-circle"></i>
-                    </div>
+        <div class="user-box">
+            <div class="d-flex user-box-entry" @onclick="OpenSettings">
+                <i class="bi bi-gear align-self-center"></i>
+                <div class="align-self-center">Settings</div>
+            </div>
+            @if (State.Value.User is not null)
+            {
+                <div class="d-flex user-box-entry" @onclick="LogOut">
+                    <i class="bi bi-power align-self-center"></i>
+                    <div class="align-self-center">Logout</div>
                 </div>
-                @if (_userBoxVisible)
-                {
-                    <div class="user-box">
-                        <div class="d-flex user-box-entry" @onclick="OpenSettings">
-                            <i class="bi bi-gear align-self-center"></i>
-                            <div class="align-self-center">Settings</div>
-                        </div>
-                        <div class="d-flex user-box-entry" @onclick="LogOut">
-                            <i class="bi bi-power align-self-center"></i>
-                            <div class="align-self-center">Logout</div>
-                        </div>
-                    </div>
-                }
-            </Authorized>
-        </AuthorizeView>
+            }
+        </div>
     }
     <ul class="other-nav-menu">
         <li>
