@@ -59,10 +59,14 @@ public abstract class DatabaseFixture : IDisposable
         _provider = CreateServiceProvider();
 
         var memoryCache = _provider.GetRequiredService<IMemoryCache>();
+        var settings = new DomainTestBuilder<Domain.Users.Models.GeneralSetting>().Create();
         memoryCache.Set(
             CacheKeys.GeneralSettings,
-            new DomainTestBuilder<Domain.Users.Models.GeneralSetting>().Create());
+            settings);
+        CachedCurrencySymbol = settings.CurrencySymbol;
     }
+
+    public string CachedCurrencySymbol { get; }
 
     protected IServiceProvider CreateServiceProvider()
     {
