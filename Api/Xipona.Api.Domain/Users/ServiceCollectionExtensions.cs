@@ -30,8 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IGeneralSettingsQueryService>>(provider =>
         {
             return ct => new GeneralSettingsQueryService(
-                provider.GetRequiredService<Func<CancellationToken, IGeneralSettingRepository>>()(ct),
-                ct);
+                provider.GetRequiredService<Func<CancellationToken, IGeneralSettingRepository>>()(ct));
         });
     }
 }

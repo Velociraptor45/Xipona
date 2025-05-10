@@ -9,12 +9,10 @@ namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
 public class GeneralSettingsQueryService : IGeneralSettingsQueryService
 {
     private readonly IGeneralSettingRepository _repository;
-    private readonly CancellationToken _cancellationToken;
 
-    public GeneralSettingsQueryService(IGeneralSettingRepository repository, CancellationToken cancellationToken)
+    public GeneralSettingsQueryService(IGeneralSettingRepository repository)
     {
         _repository = repository;
-        _cancellationToken = cancellationToken;
     }
 
     public IEnumerable<CurrencyReadModel> GetAllCurrencies()
