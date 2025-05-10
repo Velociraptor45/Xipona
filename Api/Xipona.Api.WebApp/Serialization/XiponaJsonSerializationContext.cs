@@ -44,7 +44,9 @@ using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
+using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -135,8 +137,13 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(RecipeTagContract))]
 [JsonSerializable(typeof(List<RecipeTagContract>))]
 [JsonSerializable(typeof(CreateRecipeTagContract))]
-// Uesr
+// User
 [JsonSerializable(typeof(UserInfoContract))]
+[JsonSerializable(typeof(GeneralSettingsContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Commands00UpdateGeneralSettings00GeneralSettingsContract")]
+[JsonSerializable(typeof(CurrencyContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Commands00AllCurrencies00CurrencyContract")]
+[JsonSerializable(typeof(List<CurrencyContract>))]
+[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Queries00GetGeneralSettings00GeneralSettingsContract")]
+[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.CurrencyContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Queries00GetGeneralSettings00CurrencyContract")]
 // Common
 [JsonSerializable(typeof(List<ItemCategoryContract>))]
 [JsonSerializable(typeof(List<ManufacturerContract>))]

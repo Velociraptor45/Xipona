@@ -1,4 +1,5 @@
 ﻿using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -8,16 +9,28 @@ using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
 
 namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
 public class ConvertAsyncTestData : IEnumerable<object[]>
 {
+    public static MemoryCacheMock MemoryCacheMock { get; }
+
+    static ConvertAsyncTestData()
+    {
+        MemoryCacheMock = new MemoryCacheMock(MockBehavior.Strict);
+
+        var settings = new DomainTestBuilder<GeneralSetting>().Create();
+        MemoryCacheMock.SetupTryGetValue("GeneralSettings", settings, true);
+    }
+
     public IEnumerator<object[]> GetEnumerator()
     {
         yield return NoItemCategory();
@@ -208,7 +221,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
                 item.Comment,
                 item.IsTemporary,
                 item.Availabilities.First().Price,
-                new QuantityTypeReadModel(item.ItemQuantity.Type),
+                new QuantityTypeReadModel(item.ItemQuantity.Type, MemoryCacheMock.Object),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,
                 itemCategoryReadModel,

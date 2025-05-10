@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Core.Services;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
@@ -44,14 +45,16 @@ public static class ServiceCollectionExtensions
         {
             return ct => new ItemSearchReadModelConversionService(
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct));
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct),
+                provider.GetRequiredService<IMemoryCache>());
         });
         services.AddTransient<Func<CancellationToken, IItemReadModelConversionService>>(provider =>
         {
             return ct => new ItemReadModelConversionService(
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
                 provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct));
+                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct),
+                provider.GetRequiredService<IMemoryCache>());
         });
 
         services.AddTransient<Func<CancellationToken, IItemAvailabilityReadModelConversionService>>(provider =>

@@ -6,15 +6,10 @@ namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.States;
 
 public class SearchItemForShoppingListResultTests
 {
-    private readonly SearchItemForShoppingListResultFixture _fixture;
-
-    public SearchItemForShoppingListResultTests()
-    {
-        _fixture = new SearchItemForShoppingListResultFixture();
-    }
+    private readonly SearchItemForShoppingListResultFixture _fixture = new();
 
     [Theory]
-    [InlineData("Melon", 32.1f, "€", "Melon | 32,10€")]
+    [InlineData("Melon", 32.1f, "ct", "Melon | 32,10ct")]
     [InlineData("Cheese", 6f, "€", "Cheese | 6,00€")]
     public void DisplayValue_WithManufacturerNameEmpty_ShouldReturnExpectedValue(string name, decimal price,
         string priceLabel, string expected)
@@ -35,7 +30,7 @@ public class SearchItemForShoppingListResultTests
 
     [Theory]
     [InlineData("Butter", "MyMan", 13.5f, "€", "Butter | MyMan | 13,50€")]
-    [InlineData("Bread", "AnotherMan", 1f, "€", "Bread | AnotherMan | 1,00€")]
+    [InlineData("Bread", "AnotherMan", 1f, "$", "Bread | AnotherMan | 1,00$")]
     public void DisplayValue_WithManufacturerName_ShouldReturnExpectedValue(string name, string manufacturerName,
         decimal price, string priceLabel, string expected)
     {
@@ -55,12 +50,7 @@ public class SearchItemForShoppingListResultTests
 
     private class SearchItemForShoppingListResultFixture
     {
-        private readonly SearchItemForShoppingListResultBuilder _builder;
-
-        public SearchItemForShoppingListResultFixture()
-        {
-            _builder = new SearchItemForShoppingListResultBuilder();
-        }
+        private readonly SearchItemForShoppingListResultBuilder _builder = new();
 
         public SearchItemForShoppingListResult CreateSut()
         {

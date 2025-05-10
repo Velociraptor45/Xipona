@@ -1,5 +1,6 @@
 ﻿using ProjectHermes.Xipona.Api.Core.Attributes;
 using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -9,6 +10,7 @@ using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
+using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
@@ -16,18 +18,14 @@ using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Ports;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
 using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 
 namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.Conversion.ItemSearchReadModels;
 
 public class ItemSearchReadModelConversionServiceTests
 {
-    private readonly LocalFixture _fixture;
-
-    public ItemSearchReadModelConversionServiceTests()
-    {
-        _fixture = new LocalFixture();
-    }
+    private readonly LocalFixture _fixture = new();
 
     [Fact]
     public async Task ConvertAsync_WithNeitherItemCategoryNorManufacturer_ShouldConvertToReadModel()
@@ -37,6 +35,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         _fixture.SetupStore();
         _fixture.SetupItemsWithNeitherItemCategoryNorManufacturer();
+        _fixture.SetupCachedSettings();
 
         _fixture.SetupItemCategories();
         _fixture.SetupManufacturers();
@@ -66,6 +65,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         _fixture.SetupStore();
         _fixture.SetupItemsWithoutManufacturer();
+        _fixture.SetupCachedSettings();
 
         _fixture.SetupItemCategories();
         _fixture.SetupManufacturers();
@@ -95,6 +95,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         _fixture.SetupStore();
         _fixture.SetupItemsWithoutItemCategory();
+        _fixture.SetupCachedSettings();
 
         _fixture.SetupItemCategories();
         _fixture.SetupManufacturers();
@@ -124,6 +125,7 @@ public class ItemSearchReadModelConversionServiceTests
 
         _fixture.SetupStore();
         _fixture.SetupItems();
+        _fixture.SetupCachedSettings();
 
         _fixture.SetupItemCategories();
         _fixture.SetupManufacturers();
@@ -149,16 +151,26 @@ public class ItemSearchReadModelConversionServiceTests
     {
         private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock = new(MockBehavior.Strict);
         private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock = new(MockBehavior.Strict);
+        private readonly MemoryCacheMock _memoryCacheMock = new(MockBehavior.Strict);
         private readonly Dictionary<ItemCategoryId, IItemCategory> _itemCategories = new();
         private readonly Dictionary<ManufacturerId, IManufacturer> _manufacturers = new();
+        private GeneralSetting? _settings;
 
         public List<IItem>? Items { get; private set; }
         public IStore? Store { get; private set; }
 
         public ItemSearchReadModelConversionService CreateSut()
         {
-            return new ItemSearchReadModelConversionService(_itemCategoryRepositoryMock.Object,
-                _manufacturerRepositoryMock.Object);
+            return new ItemSearchReadModelConversionService(
+                _itemCategoryRepositoryMock.Object,
+                _manufacturerRepositoryMock.Object,
+                _memoryCacheMock.Object);
+        }
+
+        public void SetupCachedSettings()
+        {
+            _settings = new DomainTestBuilder<GeneralSetting>().Create();
+            _memoryCacheMock.SetupTryGetValue("GeneralSettings", _settings, true);
         }
 
         public void SetupStore()
@@ -251,6 +263,7 @@ public class ItemSearchReadModelConversionServiceTests
         {
             TestPropertyNotSetException.ThrowIfNull(Items);
             TestPropertyNotSetException.ThrowIfNull(Store);
+            TestPropertyNotSetException.ThrowIfNull(_settings);
 
             foreach (IItem item in Items)
             {
@@ -288,7 +301,7 @@ public class ItemSearchReadModelConversionServiceTests
                     item.Name,
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     availability.Price,
-                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                    _settings.CurrencySymbol + item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
                     manufacturerReadModel,
                     itemCategoryReadModel,
                     sectionReadModel);

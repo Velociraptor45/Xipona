@@ -1,5 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ProjectHermes.Xipona.Api.Core.Attributes;
 using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Domain.Common.Extensions;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
@@ -17,12 +19,15 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
 {
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
+    private readonly IMemoryCache _cache;
 
     public ItemSearchReadModelConversionService(IItemCategoryRepository itemCategoryRepository,
-        IManufacturerRepository manufacturerRepository)
+        IManufacturerRepository manufacturerRepository,
+        IMemoryCache cache)
     {
         _itemCategoryRepository = itemCategoryRepository;
         _manufacturerRepository = manufacturerRepository;
+        _cache = cache;
     }
 
     public async Task<IEnumerable<SearchItemForShoppingResultReadModel>> ConvertAsync(IEnumerable<IItem> items,
@@ -52,7 +57,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     item.Name,
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
-                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().GetFullLabel(_cache),
                     manufacturer is null ?
                         null :
                         new ManufacturerReadModel(manufacturer),
@@ -96,7 +101,7 @@ public class ItemSearchReadModelConversionService : IItemSearchReadModelConversi
                     $"{item.Name} {type.Name}",
                     item.ItemQuantity.Type.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                     storeAvailability.Price,
-                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                    item.ItemQuantity.Type.GetAttribute<PriceLabelAttribute>().GetFullLabel(_cache),
                     manufacturer is null ?
                         null :
                         new ManufacturerReadModel(manufacturer),

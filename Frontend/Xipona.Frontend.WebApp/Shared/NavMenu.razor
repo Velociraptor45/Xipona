@@ -4,8 +4,10 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions
+@using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants
 @using ProjectHermes.Xipona.Frontend.Redux.Shared.States
+@using ProjectHermes.Xipona.Frontend.WebApp.Components.Common
 
 @inject IState<SharedState> State
 @inject IDispatcher Dispatcher
@@ -104,32 +106,38 @@
                 </div>
             </li>
         }
-        <AuthorizeView>
-            <Authorized>
+        <div class="hide-mobile">
+            <div class="d-flex user" @onmouseover="_ => _arrowHovered = true" @onmouseleave="_ => _arrowHovered = false" @onclick="_ => _userBoxVisible = !_userBoxVisible">
+                <i class="bi bi-person-circle"></i>
                 @if (State.Value.User is not null)
                 {
-                    <div class="hide-mobile">
-                        <div class="d-flex user" @onmouseover="_ => _arrowHovered = true" @onmouseleave="_ => _arrowHovered = false" @onclick="_ => _userBoxVisible = !_userBoxVisible">
-                            <i class="bi bi-person-circle"></i>
-                            <div>@State.Value.User.Name</div>
-                            @if (_arrowHovered || _userBoxVisible)
-                            {
-                                <i class="bi bi-caret-up-fill"></i>
-                            }
-                        </div>
-                        @if (_userBoxVisible)
-                        {
-                            <div class="user-box">
-                                <div class="d-flex user-box-entry" @onclick="LogOut">
-                                    <i class="bi bi-power align-self-center"></i>
-                                    <div class="align-self-center">Logout</div>
-                                </div>
-                            </div>
-                        }
-                    </div>
+                    <div>@State.Value.User.Name</div>
                 }
-            </Authorized>
-        </AuthorizeView>
+                @if (_arrowHovered || _userBoxVisible)
+                {
+                    <i class="bi bi-caret-up-fill"></i>
+                }
+            </div>
+            @if (_userBoxVisible)
+            {
+                <div class="user-box">
+                    <div class="d-flex user-box-entry" @onclick="OpenSettings">
+                        <i class="bi bi-gear align-self-center"></i>
+                        <div class="align-self-center">Settings</div>
+                    </div>
+
+                    @if (State.Value.User is not null)
+                    {
+
+                        <div class="d-flex user-box-entry" @onclick="LogOut">
+                            <i class="bi bi-power align-self-center"></i>
+                            <div class="align-self-center">Logout</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <Settings></Settings>
     </ul>
 </div>
 
@@ -148,5 +156,11 @@
     private void LogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");
+    }
+
+    private void OpenSettings()
+    {
+        _userBoxVisible = false;
+        Dispatcher.Dispatch(new OpenSettingsAction());
     }
 }

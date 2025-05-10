@@ -593,4 +593,34 @@ public class ApiClientMock : Mock<IApiClient>
         this.SetupInOrder(m => m.RemoveItemDiscountAsync(shoppingListId, itemId, itemTypeId))
             .ThrowsAsync(ex);
     }
+
+    public void SetupGetGeneralSettingsAsync(GeneralSettings returnValue)
+    {
+        this.SetupInOrder(m => m.GetGeneralSettingsAsync()).ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetGeneralSettingsAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetGeneralSettingsAsync()).ThrowsAsync(ex);
+    }
+
+    public void SetupGetAllCurrenciesAsync(IEnumerable<Currency> returnValue)
+    {
+        this.SetupInOrder(m => m.GetAllCurrenciesAsync()).ReturnsAsync(returnValue);
+    }
+
+    public void SetupGetAllCurrenciesAsyncThrowing(Exception ex)
+    {
+        this.SetupInOrder(m => m.GetAllCurrenciesAsync()).ThrowsAsync(ex);
+    }
+
+    public void SetupUpdateGeneralSettingsAsync(Currency currency)
+    {
+        this.SetupInOrder(m => m.UpdateGeneralSettingsAsync(currency)).Returns(Task.CompletedTask);
+    }
+
+    public void SetupUpdateGeneralSettingsAsyncThrowing(Currency currency, Exception ex)
+    {
+        this.SetupInOrder(m => m.UpdateGeneralSettingsAsync(currency)).ThrowsAsync(ex);
+    }
 }

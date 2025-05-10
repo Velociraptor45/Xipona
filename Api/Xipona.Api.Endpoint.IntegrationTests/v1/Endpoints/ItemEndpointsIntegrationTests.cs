@@ -1044,7 +1044,7 @@ public class ItemEndpointsIntegrationTests
                         $"{item.Name} {item.ItemTypes.First().Name}",
                         quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                         availability.Price,
-                        quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
                         _itemCategories.First().Name,
                         "",
                         new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
@@ -1066,7 +1066,7 @@ public class ItemEndpointsIntegrationTests
                         $"{item.Name} {item.ItemTypes.First().Name}",
                         quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
                         availability.Price,
-                        quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
                         _itemCategories.First().Name,
                         "",
                         new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))

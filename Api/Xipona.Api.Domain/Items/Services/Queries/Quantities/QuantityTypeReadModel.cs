@@ -1,5 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ProjectHermes.Xipona.Api.Core.Attributes;
 using ProjectHermes.Xipona.Api.Core.Extensions;
+using ProjectHermes.Xipona.Api.Domain.Common.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 
 namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
@@ -17,12 +19,12 @@ public class QuantityTypeReadModel
         QuantityNormalizer = quantityNormalizer;
     }
 
-    public QuantityTypeReadModel(QuantityType quantityType) :
+    public QuantityTypeReadModel(QuantityType quantityType, IMemoryCache cache) :
         this(
             (int)quantityType,
             quantityType.ToString(),
             quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-            quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+            quantityType.GetAttribute<PriceLabelAttribute>().GetFullLabel(cache),
             quantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
             quantityType.GetAttribute<QuantityNormalizerAttribute>().Value)
     {

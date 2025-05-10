@@ -23,6 +23,7 @@
     color: var(--secondary-contrast-color-shade-1);
     padding-left: 4px;
     font-size: 1.2rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
     .user-box div i {
@@ -31,6 +32,10 @@
 
 .user-box-entry {
     cursor: pointer;
+}
+
+.user-box > .user-box-entry:not(:last-child) {
+    margin-bottom: 2px
 }
 
 ul {

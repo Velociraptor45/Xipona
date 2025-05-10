@@ -72,5 +72,6 @@ public enum ErrorReasonCode
     CannotModifyDeletedStore = 69,
     CannotModifyDeletedSection = 70,
     CannotChangeStoreOfIngredientWithoutShoppingListProperties = 71,
-    CannotModifyItemWithTypesAsItem = 72
+    CannotModifyItemWithTypesAsItem = 72,
+    GeneralSettingsNotLoaded = 73
 }

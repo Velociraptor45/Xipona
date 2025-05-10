@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MySqlConnector;
 using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
+using ProjectHermes.Xipona.Api.Core.Constants;
 using ProjectHermes.Xipona.Api.Domain;
+using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 using ProjectHermes.Xipona.Api.Repositories;
 using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
 using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
@@ -54,7 +57,16 @@ public abstract class DatabaseFixture : IDisposable
         connection.Close();
 
         _provider = CreateServiceProvider();
+
+        var memoryCache = _provider.GetRequiredService<IMemoryCache>();
+        var settings = new DomainTestBuilder<Domain.Users.Models.GeneralSetting>().Create();
+        memoryCache.Set(
+            CacheKeys.GeneralSettings,
+            settings);
+        CachedCurrencySymbol = settings.CurrencySymbol;
     }
+
+    public string CachedCurrencySymbol { get; }
 
     protected IServiceProvider CreateServiceProvider()
     {
@@ -66,6 +78,8 @@ public abstract class DatabaseFixture : IDisposable
         services.AddApplicationServices();
 
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+        services.AddMemoryCache();
 
         return services.BuildServiceProvider();
     }
@@ -154,6 +168,14 @@ public abstract class DatabaseFixture : IDisposable
         await using var userContext = GetContextInstance<UserContext>(assertionScope);
 
         return await userContext.Users.AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<List<GeneralSetting>> LoadAllGeneralSettingsAsync(IServiceScope assertionScope)
+    {
+        await using var generalSettingContext = GetContextInstance<GeneralSettingContext>(assertionScope);
+
+        return await generalSettingContext.GeneralSettings.AsNoTracking()
             .ToListAsync();
     }
 
