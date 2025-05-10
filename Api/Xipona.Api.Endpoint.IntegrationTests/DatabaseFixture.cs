@@ -67,6 +67,8 @@ public abstract class DatabaseFixture : IDisposable
 
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
 
+        services.AddMemoryCache();
+
         return services.BuildServiceProvider();
     }
 

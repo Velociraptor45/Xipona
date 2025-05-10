@@ -71,14 +71,14 @@ public class SettingsEffects
     [EffectMethod]
     public async Task HandleSaveSettingsAction(SaveSettingsAction action, IDispatcher dispatcher)
     {
-        if (_state.Value.Settings.GeneralSettings is null)
+        if (_state.Value.Settings.Editor is null)
             return;
 
         dispatcher.Dispatch(new SaveSettingsStartedAction());
 
         try
         {
-            await _apiClient.UpdateGeneralSettingsAsync(_state.Value.Settings.GeneralSettings.Currency);
+            await _apiClient.UpdateGeneralSettingsAsync(_state.Value.Settings.Editor!.GeneralSettings.Currency);
         }
         catch (ApiException e)
         {

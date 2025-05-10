@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectHermes.Xipona.Api.Domain.Users.Models.Factories;
 using ProjectHermes.Xipona.Api.Domain.Users.Ports;
 using ProjectHermes.Xipona.Api.Domain.Users.Services.Creations;
@@ -22,7 +23,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IGeneralSettingsUpdateService>>(provider =>
         {
             return ct => new GeneralSettingsUpdateService(
-                provider.GetRequiredService<Func<CancellationToken, IGeneralSettingRepository>>()(ct));
+                provider.GetRequiredService<Func<CancellationToken, IGeneralSettingRepository>>()(ct),
+                provider.GetRequiredService<IMemoryCache>());
         });
 
         services.AddTransient<Func<CancellationToken, IGeneralSettingsQueryService>>(provider =>
