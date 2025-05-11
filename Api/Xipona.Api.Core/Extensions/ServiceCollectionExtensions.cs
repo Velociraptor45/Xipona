@@ -27,29 +27,6 @@ public static class ServiceCollectionExtensions
         }
     }
 
-    public static void AddImplementationOfNonGenericType(this IServiceCollection services, Assembly assembly,
-        Type type)
-    {
-        var assemblyTypes = assembly
-            .GetTypes()
-            .Where(t => !t.IsAbstract)
-            .ToList();
-
-        foreach (var assemblyType in assemblyTypes)
-        {
-            var interfaceTypes = assemblyType
-                .GetInterfaces()
-                .Where(t => !t.IsGenericType
-                            && t == type
-                            && services.All(service => !service.TypeIsInDescriptor(t, assemblyType)));
-
-            foreach (var interfaceType in interfaceTypes)
-            {
-                services.AddTransient(interfaceType, assemblyType);
-            }
-        }
-    }
-
     public static bool TypeIsInDescriptor(this ServiceDescriptor descriptor, Type serviceType, Type implementationType)
     {
         if (descriptor.ServiceType != serviceType)

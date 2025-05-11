@@ -3,15 +3,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Text;
 using Xipona.Api.Generators.Common;
+using Xipona.Api.Generators.Extensions;
 
-namespace Xipona.Api.Generators.Handlers;
+namespace Xipona.Api.Generators.Converters;
 
-public abstract class HandlerDiGeneratorBase : IIncrementalGenerator
+public abstract class ConverterDiGeneratorBase : IIncrementalGenerator
 {
     public abstract void Initialize(IncrementalGeneratorInitializationContext context);
 
-    protected IncrementalValuesProvider<Handler> GetAllHandlers(IncrementalGeneratorInitializationContext context,
-        string interfaceName)
+    protected IncrementalValuesProvider<Converter> GetAllConverters(IncrementalGeneratorInitializationContext context,
+        string interfaceName, string namespaceNameStart)
     {
         return context.SyntaxProvider.CreateSyntaxProvider(
             (s, _) =>
@@ -26,6 +27,9 @@ public abstract class HandlerDiGeneratorBase : IIncrementalGenerator
                     || baseType.TypeArgumentList.Arguments.Count != 2)
                     return false;
 
+                if (!classNode.NamespaceStartsWith(namespaceNameStart))
+                    return false;
+
                 return true;
             },
             static (ctx, _) =>
@@ -37,48 +41,28 @@ public abstract class HandlerDiGeneratorBase : IIncrementalGenerator
 
                 var genericArguments = baseType.TypeArgumentList.Arguments;
 
-                // first and second generic argument of handler interface
-                var firstGenericArgument = genericArguments[0];
-                var secondGenericArgument = genericArguments[1];
+                // source and target type from generic argument of converter interface
+                var sourceType = genericArguments[0];
+                var targetType = genericArguments[1];
 
-                return new Handler(
+                return new Converter(
                     classNode.Identifier.Text,
-                    new TypeAnalysis(firstGenericArgument, ctx),
-                    new TypeAnalysis(secondGenericArgument, ctx));
+                    classNode.GetNamespace(),
+                    new TypeAnalysis(sourceType, ctx),
+                    new TypeAnalysis(targetType, ctx));
             });
     }
 
-    protected string GetRegistrations(ImmutableArray<Handler> allHandlers, string interfaceName)
+    protected string GetRegistrations(ImmutableArray<Converter> allConverters, string interfaceName)
     {
         var registrationBuilder = new StringBuilder();
-        foreach (var qh in allHandlers)
+        foreach (var c in allConverters)
         {
             registrationBuilder.AppendLine(
-                $"services.AddTransient<{interfaceName}<{qh.FirstGenericArgument.TypeName}, {qh.SecondGenericArgument.TypeName}>, {qh.Name}>();");
+                $"services.AddTransient<{interfaceName}<{c.SourceType}, {c.TargetType}>, {c.NamespaceName}.{c.Name}>();");
             registrationBuilder.Append("        ");
         }
 
         return registrationBuilder.ToString();
-    }
-
-    protected string GetNamespaces(ImmutableArray<Handler> allHandlers, string interfaceNamespace)
-    {
-        var namespaces = allHandlers
-            .SelectMany(qh => qh.GetAllNamespaces())
-            .Union([
-                "Microsoft.Extensions.DependencyInjection",
-                interfaceNamespace
-            ])
-            .Distinct()
-            .OrderBy(x => x)
-            .ToList();
-
-        var namespaceBuilder = new StringBuilder();
-        foreach (var ns in namespaces)
-        {
-            namespaceBuilder.AppendLine($"using {ns};");
-        }
-
-        return namespaceBuilder.ToString();
     }
 }

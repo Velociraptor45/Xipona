@@ -23,10 +23,7 @@ public static class TypeSyntaxExtensions
 
         foreach (var genericArgument in genericArguments)
         {
-            yield return new TypeAnalysis(
-                genericArgument.ToString(),
-                genericArgument.GetNamespace(ctx),
-                genericArgument.GetGenericTypeArguments(ctx));
+            yield return new TypeAnalysis(genericArgument, ctx);
         }
     }
 }
