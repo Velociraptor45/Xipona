@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
 
     private static void AddHandlersForAssembly(this IServiceCollection services, Assembly assembly)
     {
-        services.AddImplementationOfGenericType(assembly, typeof(IQueryHandler<,>));
+        services.AddQueryHandlers();
         services.AddImplementationOfGenericType(assembly, typeof(ICommandHandler<,>));
     }
 }

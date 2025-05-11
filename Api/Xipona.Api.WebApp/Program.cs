@@ -29,7 +29,6 @@ using System.IO;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
-
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 
 if (builder.Environment.IsEnvironment("Local"))

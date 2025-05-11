@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Xipona.Api.ApplicationServices\Xipona.Api.ApplicationServices.csproj" />
     <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Generators\Xipona.Api.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
