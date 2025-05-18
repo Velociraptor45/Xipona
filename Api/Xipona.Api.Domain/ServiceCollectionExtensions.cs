@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories;
 using ProjectHermes.Xipona.Api.Domain.Items;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers;
@@ -10,7 +8,6 @@ using ProjectHermes.Xipona.Api.Domain.Shared;
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists;
 using ProjectHermes.Xipona.Api.Domain.Stores;
 using ProjectHermes.Xipona.Api.Domain.Users;
-using System.Reflection;
 
 namespace ProjectHermes.Xipona.Api.Domain;
 
@@ -28,8 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddRecipeTags();
         services.AddStores();
 
-        var assembly = Assembly.GetExecutingAssembly();
-        services.AddImplementationOfGenericType(assembly, typeof(IDomainEventHandler<>));
+        services.AddDomainEventHandlers();
 
         services.AddSingleton(TimeProvider.System);
     }

@@ -13,8 +13,12 @@
 
   <ItemGroup>
     <TrimmableAssembly Include="Xipona.Api.WebApp" />
-    <TrimmableAssembly Include="Xipona.Api.Core" />
+    <TrimmableAssembly Include="Xipona.Api.Endpoint" />
+    <TrimmableAssembly Include="Xipona.Api.Contracts" />
+    <TrimmableAssembly Include="Xipona.Api.ApplicationServices" />
     <TrimmableAssembly Include="Xipona.Api.Secrets" />
+    <TrimmableAssembly Include="Xipona.Api.Domain" />
+    <TrimmableAssembly Include="Xipona.Api.Core" />
   </ItemGroup>
 
   <ItemGroup>

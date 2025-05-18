@@ -4,12 +4,14 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>ProjectHermes.Xipona.Api.Endpoint</RootNamespace>
     <Nullable>enable</Nullable>
+    <!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.ApplicationServices\Xipona.Api.ApplicationServices.csproj" />
     <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Endpoint.Generators\Xipona.Api.Endpoint.Generators.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>ProjectHermes.Xipona.Api.Repositories</RootNamespace>
     <Nullable>enable</Nullable>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Repositories.Generators\Xipona.Api.Repositories.Generators.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Xipona.Api.Secrets\Xipona.Api.Secrets.csproj" />
   </ItemGroup>
 

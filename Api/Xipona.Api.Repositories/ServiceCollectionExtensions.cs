@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using Polly;
+using Polly.Retry;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -42,7 +42,6 @@ using ProjectHermes.Xipona.Api.Repositories.Users.Adapters;
 using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
 using ProjectHermes.Xipona.Api.Secrets.Configs;
 using System.Data.Common;
-using System.Reflection;
 using GeneralSetting = ProjectHermes.Xipona.Api.Repositories.Users.Entities.GeneralSetting;
 using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
 using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
@@ -56,11 +55,18 @@ public static class ServiceCollectionExtensions
 
     public static void AddRepositories(this IServiceCollection services, string? connectionString = null)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var connectionRetryPolicy = Policy.Handle<Exception>().WaitAndRetry(
-                5,
-                _ => TimeSpan.FromSeconds(5),
-                (e, _, tryNo, _) => Console.WriteLine($"Failed to open DB connection (Try no. {tryNo}): {e}"));
+        var retryOpt = new RetryStrategyOptions()
+        {
+            MaxRetryAttempts = 5,
+            Delay = TimeSpan.FromSeconds(5),
+            OnRetry = static args =>
+            {
+                Console.WriteLine($"Failed to open DB connection (Try no. {args.AttemptNumber}): {args.Outcome.Exception}");
+
+                return default;
+            }
+        };
+        var pipeline = new ResiliencePipelineBuilder().AddRetry(retryOpt).Build();
 
         services.AddScoped<DbConnection>(provider =>
         {
@@ -70,7 +76,7 @@ public static class ServiceCollectionExtensions
                 connectionString = cs.ShoppingDatabase;
             }
 
-            return connectionRetryPolicy.Execute(() =>
+            return pipeline.Execute(() =>
             {
                 var connection = new MySqlConnection(connectionString);
                 connection.Open();
@@ -200,8 +206,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
-        services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
-        services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
+        services.AddToDomainConverter();
+        services.AddToContractConverter();
     }
 
     private static void SetDbConnection(IServiceProvider serviceProvider, DbContextOptionsBuilder options)

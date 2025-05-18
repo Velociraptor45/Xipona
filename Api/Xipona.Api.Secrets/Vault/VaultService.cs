@@ -13,7 +13,7 @@ public class VaultService : ISecretStore
     private readonly VaultConfig _config;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    private readonly AsyncRetryPolicy _policy;
+    private readonly ResiliencePipeline _pipeline;
     private readonly JsonSerializerOptions _jsonSerializationOptions;
 
     private const int _retryCount = 10;
@@ -24,10 +24,20 @@ public class VaultService : ISecretStore
         _config = config;
         _httpClientFactory = httpClientFactory;
 
-        _policy = Policy.Handle<Exception>().WaitAndRetryAsync(
-            _retryCount,
-            i => TimeSpan.FromSeconds(Math.Pow(1.5, i) + 1),
-            (e, _, tryNo, _) => Console.WriteLine($"Failed to retrieve value from vault (Try no. {tryNo}): {e}"));
+        var retryOpt = new RetryStrategyOptions
+        {
+            ShouldHandle = new PredicateBuilder().Handle<HttpRequestException>(),
+            MaxRetryAttempts = _retryCount,
+            Delay = TimeSpan.FromSeconds(5),
+            OnRetry = static args =>
+            {
+                Console.WriteLine($"Failed to retrieve value from vault (Try no. {args.AttemptNumber}): {args.Outcome.Exception}");
+
+                return default;
+            }
+        };
+        _pipeline = new ResiliencePipelineBuilder().AddRetry(retryOpt).Build();
+
 
         _jsonSerializationOptions = new JsonSerializerOptions();
         _jsonSerializationOptions.TypeInfoResolverChain.Add(VaultJsonSerializationContext.Default);
@@ -38,38 +48,39 @@ public class VaultService : ISecretStore
         if (string.IsNullOrWhiteSpace(_config.Paths.Logging))
             return null;
 
-        return await _policy.ExecuteAsync(async () =>
+        return await _pipeline.ExecuteAsync(async ct =>
         {
-            var loggingSecret = await GetSecret<LoggingSecret>(_config.Paths.Logging);
+            var loggingSecret = await GetSecret<LoggingSecret>(_config.Paths.Logging, ct);
             return loggingSecret.ApiKey;
         });
     }
 
     public async Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
     {
-        return await _policy.ExecuteAsync(async () =>
+        return await _pipeline.ExecuteAsync(async ct =>
         {
-            var dbSecret = await GetSecret<DatabaseSecret>(_config.Paths.Database);
+            var dbSecret = await GetSecret<DatabaseSecret>(_config.Paths.Database, ct);
             return (dbSecret.Username, dbSecret.Password);
         });
     }
 
-    private async Task<T> GetSecret<T>(string secret)
+    private async Task<T> GetSecret<T>(string secret, CancellationToken cancellationToken)
     {
         using var client = _httpClientFactory.CreateClient("vault");
-        var token = await GetToken(client);
+        var token = await GetToken(client, cancellationToken);
 
         client.DefaultRequestHeaders.Add("X-Vault-Token", token);
         var response = await client.GetAsync(
-            new Uri($"v1/{_config.MountPoint}/data/{secret}", UriKind.Relative));
+            new Uri($"v1/{_config.MountPoint}/data/{secret}", UriKind.Relative),
+            cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
         var deserializedResponse = JsonSerializer.Deserialize<VaultResponse<T>>(content, _jsonSerializationOptions)!;
         return deserializedResponse.Type.Data;
     }
 
-    private async Task<string> GetToken(HttpClient client)
+    private async Task<string> GetToken(HttpClient client, CancellationToken cancellationToken)
     {
         var data = new Dictionary<string, string>
         {
@@ -83,7 +94,7 @@ public class VaultService : ISecretStore
             requestData);
 
         response.EnsureSuccessStatusCode();
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
         var token = JsonSerializer.Deserialize<TokenAuthResponse>(json, _jsonSerializationOptions)!;
         return token.Auth.ClientToken;
     }
