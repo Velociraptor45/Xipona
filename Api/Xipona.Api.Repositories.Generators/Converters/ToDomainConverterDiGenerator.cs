@@ -2,11 +2,12 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
+using Xipona.Api.Generators.Core.Converters;
 
-namespace Xipona.Api.Generators.Converters.Repositories;
+namespace Xipona.Api.Repositories.Generators.Converters;
 
 [Generator]
-public class RepositoriesToDomainConverterDiGenerator : ConverterDiGeneratorBase
+public class ToDomainConverterDiGenerator : ConverterDiGeneratorBase
 {
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -18,7 +19,7 @@ public class RepositoriesToDomainConverterDiGenerator : ConverterDiGeneratorBase
             var allConverters = allConvertersArrays.SelectMany(x => x).ToImmutableArray();
 
             if (allConverters.Length == 0)
-                return;
+                throw new InvalidOperationException("No domain converters detected");
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;

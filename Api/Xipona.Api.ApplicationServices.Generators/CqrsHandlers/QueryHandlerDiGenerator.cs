@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
-namespace Xipona.Api.Generators.CqrsHandlers;
+namespace Xipona.Api.ApplicationServices.Generators.CqrsHandlers;
 
 [Generator]
 public class QueryHandlerDiGenerator : CqrsHandlerDiGeneratorBase
@@ -14,7 +14,7 @@ public class QueryHandlerDiGenerator : CqrsHandlerDiGeneratorBase
         context.RegisterSourceOutput(queryHandlers.Collect(), (ctx, allQueryHandlers) =>
         {
             if (allQueryHandlers.Length == 0)
-                return;
+                throw new InvalidOperationException("No query handlers detected");
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Xipona.Api.Generators.Extensions;
+namespace Xipona.Api.Generators.Core.Extensions;
 
 public static class ClassDeclarationSyntaxExtensions
 {

@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
-namespace Xipona.Api.Generators.CqrsHandlers;
+namespace Xipona.Api.ApplicationServices.Generators.CqrsHandlers;
 
 [Generator]
 public class CommandHandlerDiGenerator : CqrsHandlerDiGeneratorBase
@@ -14,7 +14,7 @@ public class CommandHandlerDiGenerator : CqrsHandlerDiGeneratorBase
         context.RegisterSourceOutput(commandHandlers.Collect(), (ctx, allCommandHandlers) =>
         {
             if (allCommandHandlers.Length == 0)
-                return;
+                throw new InvalidOperationException("No command handlers detected");
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +34,7 @@ public class CommandHandlerDiGenerator : CqrsHandlerDiGeneratorBase
                         }
                         """;
 
-            ctx.AddSource("CommandHandlerServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
+            ctx.AddSource("ServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
         });
     }
 }

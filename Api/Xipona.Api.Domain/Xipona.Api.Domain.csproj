@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.Core\Xipona.Api.Core.csproj" />
-    <ProjectReference Include="..\Xipona.Api.Generators\Xipona.Api.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Xipona.Api.Domain.Generators\Xipona.Api.Domain.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

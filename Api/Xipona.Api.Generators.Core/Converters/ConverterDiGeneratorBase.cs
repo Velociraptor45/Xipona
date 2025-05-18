@@ -2,10 +2,10 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Text;
-using Xipona.Api.Generators.Common;
-using Xipona.Api.Generators.Extensions;
+using Xipona.Api.Generators.Core.Common;
+using Xipona.Api.Generators.Core.Extensions;
 
-namespace Xipona.Api.Generators.Converters;
+namespace Xipona.Api.Generators.Core.Converters;
 
 public abstract class ConverterDiGeneratorBase : IIncrementalGenerator
 {

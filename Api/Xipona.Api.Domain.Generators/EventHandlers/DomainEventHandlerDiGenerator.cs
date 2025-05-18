@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
-namespace Xipona.Api.Generators.EventHandlers;
+namespace Xipona.Api.Domain.Generators.EventHandlers;
 
 [Generator]
 public class DomainEventHandlerDiGenerator : EventHandlerDiGeneratorBase
@@ -14,7 +14,7 @@ public class DomainEventHandlerDiGenerator : EventHandlerDiGeneratorBase
         context.RegisterSourceOutput(handlers.Collect(), (ctx, allHandlers) =>
         {
             if (allHandlers.Length == 0)
-                return;
+                throw new InvalidOperationException("No domain event handlers detected");
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;

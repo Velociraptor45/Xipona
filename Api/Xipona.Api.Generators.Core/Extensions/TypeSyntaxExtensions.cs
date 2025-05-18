@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Xipona.Api.Generators.Common;
+using Xipona.Api.Generators.Core.Common;
 
-namespace Xipona.Api.Generators.Extensions;
+namespace Xipona.Api.Generators.Core.Extensions;
 
 public static class TypeSyntaxExtensions
 {

@@ -1,6 +1,6 @@
-﻿using Xipona.Api.Generators.Common;
+﻿using Xipona.Api.Generators.Core.Common;
 
-namespace Xipona.Api.Generators.Converters;
+namespace Xipona.Api.Generators.Core.Converters;
 
 public readonly record struct Converter
 {

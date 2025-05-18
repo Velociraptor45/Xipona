@@ -2,32 +2,33 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
+using Xipona.Api.Generators.Core.Converters;
 
-namespace Xipona.Api.Generators.Converters.Repositories;
+namespace Xipona.Api.Endpoint.Generators.Converters;
 
 [Generator]
-public class RepositoriesToContractConverterDiGenerator : ConverterDiGeneratorBase
+public class ToContractConverterDiGenerator : ConverterDiGeneratorBase
 {
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var converters = GetAllConverters(context, "IToContractConverter",
-            "ProjectHermes.Xipona.Api.Repositories");
+            "ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract");
 
         context.RegisterSourceOutput(converters.Collect(), (ctx, allConvertersArrays) =>
         {
             var allConverters = allConvertersArrays.SelectMany(x => x).ToImmutableArray();
 
             if (allConverters.Length == 0)
-                return;
+                throw new InvalidOperationException("No contract converters detected");
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
                         using ProjectHermes.Xipona.Api.Core.Converter;
                         using System;
 
-                        namespace ProjectHermes.Xipona.Api.Repositories;
+                        namespace ProjectHermes.Xipona.Api.Endpoint;
 
-                        public static class RepositoriesToContractConverterServiceCollectionExtensions
+                        public static class EndpointToContractConverterServiceCollectionExtensions
                         {
                             public static IServiceCollection AddToContractConverter(this IServiceCollection services)
                             {

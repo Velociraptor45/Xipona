@@ -2,23 +2,24 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
+using Xipona.Api.Generators.Core.Converters;
 
-namespace Xipona.Api.Generators.Converters.Endpoints;
+namespace Xipona.Api.Endpoint.Generators.Converters;
 
 [Generator]
-public class EndpointToContractConverterDiGenerator : ConverterDiGeneratorBase
+public class ToDomainConverterDiGenerator : ConverterDiGeneratorBase
 {
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var converters = GetAllConverters(context, "IToContractConverter",
-            "ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract");
+        var converters = GetAllConverters(context, "IToDomainConverter",
+            "ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain");
 
         context.RegisterSourceOutput(converters.Collect(), (ctx, allConvertersArrays) =>
         {
             var allConverters = allConvertersArrays.SelectMany(x => x).ToImmutableArray();
 
             if (allConverters.Length == 0)
-                return;
+                throw new InvalidOperationException("No domain converters detected");
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
@@ -27,17 +28,17 @@ public class EndpointToContractConverterDiGenerator : ConverterDiGeneratorBase
 
                         namespace ProjectHermes.Xipona.Api.Endpoint;
 
-                        public static class EndpointToContractConverterServiceCollectionExtensions
+                        public static class EndpointToDomainConverterServiceCollectionExtensions
                         {
-                            public static IServiceCollection AddToContractConverter(this IServiceCollection services)
+                            public static IServiceCollection AddToDomainConverter(this IServiceCollection services)
                             {
-                                {{GetRegistrations(allConverters, "IToContractConverter")}}
+                                {{GetRegistrations(allConverters, "IToDomainConverter")}}
                                 return services;
                             }
                         }
                         """;
 
-            ctx.AddSource("EndpointToContractServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
+            ctx.AddSource("ServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
         });
     }
 }

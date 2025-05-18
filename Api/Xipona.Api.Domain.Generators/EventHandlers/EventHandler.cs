@@ -1,6 +1,6 @@
-﻿using Xipona.Api.Generators.Common;
+﻿using Xipona.Api.Generators.Core.Common;
 
-namespace Xipona.Api.Generators.EventHandlers;
+namespace Xipona.Api.Domain.Generators.EventHandlers;
 
 public readonly record struct EventHandler
 {

@@ -1,6 +1,6 @@
-﻿using Xipona.Api.Generators.Common;
+﻿using Xipona.Api.Generators.Core.Common;
 
-namespace Xipona.Api.Generators.CqrsHandlers;
+namespace Xipona.Api.ApplicationServices.Generators.CqrsHandlers;
 
 public readonly record struct CqrsHandler
 {

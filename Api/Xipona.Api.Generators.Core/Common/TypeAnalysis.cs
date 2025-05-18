@@ -1,9 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text;
-using Xipona.Api.Generators.Extensions;
+using Xipona.Api.Generators.Core.Extensions;
 
-namespace Xipona.Api.Generators.Common;
+namespace Xipona.Api.Generators.Core.Common;
 
 public readonly record struct TypeAnalysis
 {
