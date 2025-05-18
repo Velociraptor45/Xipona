@@ -29,6 +29,10 @@ using System.IO;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
+builder.Host.UseDefaultServiceProvider((_, opt) =>
+{
+    opt.ValidateOnBuild = true;
+});
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 
 if (builder.Environment.IsEnvironment("Local"))

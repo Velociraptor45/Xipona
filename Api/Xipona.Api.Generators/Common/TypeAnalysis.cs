@@ -9,13 +9,12 @@ public readonly record struct TypeAnalysis
 {
     public TypeAnalysis(TypeSyntax type, GeneratorSyntaxContext ctx)
     {
-        TypeName = type.ToString();
+        TypeName = type.GetName(ctx);
         TypeNamespace = type.GetNamespace(ctx);
         GenericArguments = type is TupleTypeSyntax tuple
             ? tuple.Elements.Select(el => new TypeAnalysis(el.Type, ctx)).ToList()
             : type.GetGenericTypeArguments(ctx).ToList();
         IsTuple = type is TupleTypeSyntax;
-
 
         var genericStart = TypeName.IndexOf('<');
 

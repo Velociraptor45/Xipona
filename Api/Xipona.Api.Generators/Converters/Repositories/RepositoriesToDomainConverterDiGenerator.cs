@@ -3,15 +3,15 @@ using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Xipona.Api.Generators.Converters.Endpoints;
+namespace Xipona.Api.Generators.Converters.Repositories;
 
 [Generator]
-public class EndpointToDomainConverterDiGenerator : ConverterDiGeneratorBase
+public class RepositoriesToDomainConverterDiGenerator : ConverterDiGeneratorBase
 {
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var converters = GetAllConverters(context, "IToDomainConverter",
-            "ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain");
+            "ProjectHermes.Xipona.Api.Repositories");
 
         context.RegisterSourceOutput(converters.Collect(), (ctx, allConvertersArrays) =>
         {
@@ -25,9 +25,9 @@ public class EndpointToDomainConverterDiGenerator : ConverterDiGeneratorBase
                         using ProjectHermes.Xipona.Api.Core.Converter;
                         using System;
 
-                        namespace ProjectHermes.Xipona.Api.Endpoint;
+                        namespace ProjectHermes.Xipona.Api.Repositories;
 
-                        public static class EndpointToDomainConverterServiceCollectionExtensions
+                        public static class RepositoriesToDomainConverterServiceCollectionExtensions
                         {
                             public static IServiceCollection AddToDomainConverter(this IServiceCollection services)
                             {
@@ -37,7 +37,7 @@ public class EndpointToDomainConverterDiGenerator : ConverterDiGeneratorBase
                         }
                         """;
 
-            ctx.AddSource("EndpointToDomainConverterServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
+            ctx.AddSource("ServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
         });
     }
 }

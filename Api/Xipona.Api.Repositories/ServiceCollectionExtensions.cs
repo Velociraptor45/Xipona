@@ -5,7 +5,6 @@ using MySqlConnector;
 using Polly;
 using ProjectHermes.Xipona.Api.Core.Converter;
 using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -200,8 +199,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
-        services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
-        services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
+        services.AddToDomainConverter();
+        services.AddToContractConverter();
     }
 
     private static void SetDbConnection(IServiceProvider serviceProvider, DbContextOptionsBuilder options)

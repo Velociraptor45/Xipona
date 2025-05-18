@@ -6,6 +6,14 @@ namespace Xipona.Api.Generators.Extensions;
 
 public static class TypeSyntaxExtensions
 {
+    public static string GetName(this TypeSyntax type, GeneratorSyntaxContext ctx)
+    {
+        if (ctx.SemanticModel.GetSymbolInfo(type).Symbol is not INamedTypeSymbol symbol)
+            throw new InvalidOperationException($"Unable to resolve the symbol for type {type}");
+
+        return symbol.Name;
+    }
+
     public static string GetNamespace(this TypeSyntax type, GeneratorSyntaxContext ctx)
     {
         if (ctx.SemanticModel.GetSymbolInfo(type).Symbol is not INamedTypeSymbol symbol)

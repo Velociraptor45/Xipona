@@ -1,17 +1,19 @@
 ﻿using Xipona.Api.Generators.Common;
 
-namespace Xipona.Api.Generators.Handlers;
+namespace Xipona.Api.Generators.CqrsHandlers;
 
-public readonly record struct Handler
+public readonly record struct CqrsHandler
 {
-    public Handler(string name, TypeAnalysis firstGenericArgument, TypeAnalysis secondGenericArgument)
+    public CqrsHandler(string name, string namespaceName, TypeAnalysis firstGenericArgument, TypeAnalysis secondGenericArgument)
     {
         Name = name;
+        NamespaceName = namespaceName;
         FirstGenericArgument = firstGenericArgument;
         SecondGenericArgument = secondGenericArgument;
     }
 
     public string Name { get; }
+    public string NamespaceName { get; }
     public TypeAnalysis FirstGenericArgument { get; }
     public TypeAnalysis SecondGenericArgument { get; }
 

@@ -11,7 +11,7 @@ public abstract class ConverterDiGeneratorBase : IIncrementalGenerator
 {
     public abstract void Initialize(IncrementalGeneratorInitializationContext context);
 
-    protected IncrementalValuesProvider<Converter> GetAllConverters(IncrementalGeneratorInitializationContext context,
+    protected IncrementalValuesProvider<Converter[]> GetAllConverters(IncrementalGeneratorInitializationContext context,
         string interfaceName, string namespaceNameStart)
     {
         return context.SyntaxProvider.CreateSyntaxProvider(
@@ -21,10 +21,11 @@ public abstract class ConverterDiGeneratorBase : IIncrementalGenerator
                     return false;
 
                 if (classNode.BaseList is null
-                    || classNode.BaseList.Types.Count != 1
-                    || classNode.BaseList.Types[0].Type is not GenericNameSyntax baseType
-                    || baseType.Identifier.Text != interfaceName
-                    || baseType.TypeArgumentList.Arguments.Count != 2)
+                    || classNode.BaseList.Types.Count == 0
+                    || classNode.BaseList.Types.All(t =>
+                        t.Type is not GenericNameSyntax baseType
+                        || baseType.Identifier.Text != interfaceName
+                        || baseType.TypeArgumentList.Arguments.Count != 2))
                     return false;
 
                 if (!classNode.NamespaceStartsWith(namespaceNameStart))
@@ -36,20 +37,28 @@ public abstract class ConverterDiGeneratorBase : IIncrementalGenerator
             {
                 var classNode = (ClassDeclarationSyntax)ctx.Node;
 
-                if (classNode.BaseList?.Types[0].Type is not GenericNameSyntax baseType)
-                    throw new InvalidOperationException("Base type is not a generic type.");
+                var converters = new List<Converter>();
 
-                var genericArguments = baseType.TypeArgumentList.Arguments;
+                foreach (var type in classNode.BaseList!.Types)
+                {
+                    if (type.Type is not GenericNameSyntax baseType)
+                        continue;
 
-                // source and target type from generic argument of converter interface
-                var sourceType = genericArguments[0];
-                var targetType = genericArguments[1];
+                    var genericArguments = baseType.TypeArgumentList.Arguments;
 
-                return new Converter(
-                    classNode.Identifier.Text,
-                    classNode.GetNamespace(),
-                    new TypeAnalysis(sourceType, ctx),
-                    new TypeAnalysis(targetType, ctx));
+                    // source and target type from generic argument of converter interface
+                    var sourceType = genericArguments[0];
+                    var targetType = genericArguments[1];
+
+                    converters.Add(
+                        new Converter(
+                            classNode.Identifier.Text,
+                            classNode.GetNamespace(),
+                            new TypeAnalysis(sourceType, ctx),
+                            new TypeAnalysis(targetType, ctx)));
+                }
+
+                return converters.ToArray();
             });
     }
 

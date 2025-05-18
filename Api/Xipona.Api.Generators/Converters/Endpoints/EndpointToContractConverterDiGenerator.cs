@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace Xipona.Api.Generators.Converters.Endpoints;
@@ -12,8 +13,10 @@ public class EndpointToContractConverterDiGenerator : ConverterDiGeneratorBase
         var converters = GetAllConverters(context, "IToContractConverter",
             "ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract");
 
-        context.RegisterSourceOutput(converters.Collect(), (ctx, allConverters) =>
+        context.RegisterSourceOutput(converters.Collect(), (ctx, allConvertersArrays) =>
         {
+            var allConverters = allConvertersArrays.SelectMany(x => x).ToImmutableArray();
+
             if (allConverters.Length == 0)
                 return;
 

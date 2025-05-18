@@ -2,10 +2,10 @@
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
-namespace Xipona.Api.Generators.Handlers;
+namespace Xipona.Api.Generators.CqrsHandlers;
 
 [Generator]
-public class CommandHandlerDiGenerator : HandlerDiGeneratorBase
+public class CommandHandlerDiGenerator : CqrsHandlerDiGeneratorBase
 {
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -17,7 +17,9 @@ public class CommandHandlerDiGenerator : HandlerDiGeneratorBase
                 return;
 
             var src = $$"""
-                        {{GetNamespaces(allCommandHandlers, "ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands")}}
+                        using Microsoft.Extensions.DependencyInjection;
+                        using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+                        using System;
 
                         namespace ProjectHermes.Xipona.Api.ApplicationServices;
 

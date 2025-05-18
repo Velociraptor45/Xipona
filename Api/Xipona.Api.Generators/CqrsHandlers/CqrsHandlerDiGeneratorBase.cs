@@ -3,14 +3,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Text;
 using Xipona.Api.Generators.Common;
+using Xipona.Api.Generators.Extensions;
 
-namespace Xipona.Api.Generators.Handlers;
+namespace Xipona.Api.Generators.CqrsHandlers;
 
-public abstract class HandlerDiGeneratorBase : IIncrementalGenerator
+public abstract class CqrsHandlerDiGeneratorBase : IIncrementalGenerator
 {
     public abstract void Initialize(IncrementalGeneratorInitializationContext context);
 
-    protected IncrementalValuesProvider<Handler> GetAllHandlers(IncrementalGeneratorInitializationContext context,
+    protected IncrementalValuesProvider<CqrsHandler> GetAllHandlers(IncrementalGeneratorInitializationContext context,
         string interfaceName)
     {
         return context.SyntaxProvider.CreateSyntaxProvider(
@@ -41,27 +42,28 @@ public abstract class HandlerDiGeneratorBase : IIncrementalGenerator
                 var firstGenericArgument = genericArguments[0];
                 var secondGenericArgument = genericArguments[1];
 
-                return new Handler(
+                return new CqrsHandler(
                     classNode.Identifier.Text,
+                    classNode.GetNamespace(),
                     new TypeAnalysis(firstGenericArgument, ctx),
                     new TypeAnalysis(secondGenericArgument, ctx));
             });
     }
 
-    protected string GetRegistrations(ImmutableArray<Handler> allHandlers, string interfaceName)
+    protected string GetRegistrations(ImmutableArray<CqrsHandler> allHandlers, string interfaceName)
     {
         var registrationBuilder = new StringBuilder();
-        foreach (var qh in allHandlers)
+        foreach (var h in allHandlers)
         {
             registrationBuilder.AppendLine(
-                $"services.AddTransient<{interfaceName}<{qh.FirstGenericArgument.TypeName}, {qh.SecondGenericArgument.TypeName}>, {qh.Name}>();");
+                $"services.AddTransient<{interfaceName}<{h.FirstGenericArgument}, {h.SecondGenericArgument}>, {h.NamespaceName}.{h.Name}>();");
             registrationBuilder.Append("        ");
         }
 
         return registrationBuilder.ToString();
     }
 
-    protected string GetNamespaces(ImmutableArray<Handler> allHandlers, string interfaceNamespace)
+    protected string GetNamespaces(ImmutableArray<CqrsHandler> allHandlers, string interfaceNamespace)
     {
         var namespaces = allHandlers
             .SelectMany(qh => qh.GetAllNamespaces())

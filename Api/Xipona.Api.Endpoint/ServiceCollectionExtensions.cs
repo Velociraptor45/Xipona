@@ -7,7 +7,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddEndpointConverters(this IServiceCollection services)
     {
-        var assembly = typeof(ServiceCollectionExtensions).Assembly;
         services.AddToContractConverter();
         services.AddToDomainConverter();
         services.AddTransient<JwtSecurityTokenHandler>();

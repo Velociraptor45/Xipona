@@ -16,9 +16,4 @@ public readonly record struct Converter
     public string NamespaceName { get; }
     public TypeAnalysis SourceType { get; }
     public TypeAnalysis TargetType { get; }
-
-    public IEnumerable<string> GetAllNamespaces()
-    {
-        return SourceType.GetAllNamespaces().Concat(TargetType.GetAllNamespaces()).Concat([NamespaceName]);
-    }
 };
