@@ -28,18 +28,14 @@ public class CommandDispatcherGenerator : DispatcherGeneratorBase
                                 _serviceProvider = serviceProvider;
                             }
 
-                            private readonly Dictionary<Type, Type> _typeDict = new()
-                            {
-                                {{GetDictEntries(allCommandHandlers, "ICommandHandler")}}
-                            };
-
                             public async Task<T> DispatchAsync<T>(ICommand<T> command, CancellationToken cancellationToken)
                             {
-                                var commandType = command.GetType();
-                                var commandHandlerType = _typeDict[commandType];
-
-                                var commandHandler = _serviceProvider.GetRequiredService(commandHandlerType);
-                                return await ((dynamic)commandHandler).HandleAsync((dynamic)command, cancellationToken);
+                                switch (command)
+                                {
+                                    {{GetSwitchCases(allCommandHandlers, "ICommandHandler")}}
+                                    default:
+                                        throw new InvalidOperationException("No handler for command {command.GetType()} registered");
+                                }
                             }
                         }
                         """;

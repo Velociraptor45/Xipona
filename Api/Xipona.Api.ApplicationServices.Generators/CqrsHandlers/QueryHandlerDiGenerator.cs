@@ -34,7 +34,7 @@ public class QueryHandlerDiGenerator : CqrsHandlerDiGeneratorBase
                         }
                         """;
 
-            ctx.AddSource("QueryHandlerServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
+            ctx.AddSource("SCE.g.cs", SourceText.From(src, Encoding.UTF8));
         });
     }
 }

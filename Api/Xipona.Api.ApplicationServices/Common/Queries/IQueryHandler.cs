@@ -5,3 +5,4 @@ public interface IQueryHandler<in TQuery, TValue>
 {
     Task<TValue> HandleAsync(TQuery query, CancellationToken cancellationToken);
 }
+

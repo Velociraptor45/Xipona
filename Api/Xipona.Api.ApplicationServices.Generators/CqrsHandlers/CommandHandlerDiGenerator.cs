@@ -34,7 +34,7 @@ public class CommandHandlerDiGenerator : CqrsHandlerDiGeneratorBase
                         }
                         """;
 
-            ctx.AddSource("ServiceCollectionExtensions.g.cs", SourceText.From(src, Encoding.UTF8));
+            ctx.AddSource("SCE.g.cs", SourceText.From(src, Encoding.UTF8));
         });
     }
 }

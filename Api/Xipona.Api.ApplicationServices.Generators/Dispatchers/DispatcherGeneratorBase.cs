@@ -39,21 +39,26 @@ public abstract class DispatcherGeneratorBase : IIncrementalGenerator
                 var firstGenericArgument = genericArguments[0];
                 var secondGenericArgument = genericArguments[1];
 
-                return new Handler(
-                    new TypeAnalysis(firstGenericArgument, ctx),
+                return new Handler(new TypeAnalysis(firstGenericArgument, ctx),
                     new TypeAnalysis(secondGenericArgument, ctx));
             });
     }
 
-    protected string GetDictEntries(ImmutableArray<Handler> allHandlers, string handlerInterfaceName)
+    protected string GetSwitchCases(ImmutableArray<Handler> allHandlers, string handlerInterfaceName)
     {
         var builder = new StringBuilder();
 
-        foreach (var handler in allHandlers)
+        for (int i = 0; i < allHandlers.Length; i++)
         {
+            var handler = allHandlers[i];
+            var handlerName = $"handler{i}";
             builder.AppendLine(
-                $"{{ typeof({handler.FirstArgumentType}), typeof({handlerInterfaceName}<{handler.FirstArgumentType}, {handler.ReturnType}>) }},");
-            builder.Append("        ");
+                $"case {handler.FirstArgumentType} x:");
+            builder.Append("                ");
+            builder.AppendLine($"var {handlerName} = _serviceProvider.GetRequiredService<{handlerInterfaceName}<{handler.FirstArgumentType}, {handler.ReturnType}>>();");
+            builder.Append("                ");
+            builder.AppendLine($"return (T)(object)await {handlerName}.HandleAsync(x, cancellationToken);");
+            builder.Append("            ");
         }
 
         return builder.ToString();
