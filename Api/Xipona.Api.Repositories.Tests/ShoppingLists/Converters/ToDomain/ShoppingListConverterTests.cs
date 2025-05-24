@@ -18,7 +18,8 @@ public class ShoppingListConverterTests
     public override ShoppingListConverter CreateSut()
     {
         return new(new ShoppingListFactory(new ShoppingListSectionFactory(), _dateTimeServiceMock.Object),
-            new ShoppingListSectionFactory(), new ShoppingListItemConverter(), new DiscountConverter());
+            new ShoppingListSectionFactory(), new ShoppingListItemConverter(), new DiscountConverter(),
+            new ListDiscountConverter());
     }
 
     protected override Repositories.ShoppingLists.Entities.ShoppingList CreateSource()

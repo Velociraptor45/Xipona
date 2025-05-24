@@ -1,15 +1,16 @@
 ﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
+using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 
 namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddShoppingListDiscount;
+
 public class AddShoppingListDiscountCommand : ICommand<bool>
 {
-    public AddShoppingListDiscountCommand(decimal discountPrice, Percentage discountPercentage)
+    public AddShoppingListDiscountCommand(ShoppingListId shoppingListId, ListDiscount discount)
     {
-        DiscountPrice = discountPrice;
-        DiscountPercentage = discountPercentage;
+        ShoppingListId = shoppingListId;
+        Discount = discount;
     }
 
-    public decimal DiscountPrice { get; }
-    public Percentage DiscountPercentage { get; }
+    public ShoppingListId ShoppingListId { get; }
+    public ListDiscount Discount { get; }
 }

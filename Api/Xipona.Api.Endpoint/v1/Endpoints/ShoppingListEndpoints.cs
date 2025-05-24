@@ -61,7 +61,8 @@ public static class ShoppingListEndpoints
             .RegisterChangeItemQuantityOnShoppingList()
             .RegisterFinishList()
             .RegisterAddItemDiscount()
-            .RegisterRemoveItemDiscount();
+            .RegisterRemoveItemDiscount()
+            .RegisterAddShoppingListDiscount();
     }
 
     private static IEndpointRouteBuilder RegisterGetActiveShoppingListByStoreId(this IEndpointRouteBuilder builder)
@@ -571,6 +572,11 @@ public static class ShoppingListEndpoints
         [FromServices] IToDomainConverter<(Guid, AddShoppingListDiscountContract), AddShoppingListDiscountCommand> domainConverter,
         CancellationToken cancellationToken)
     {
+        if (contract.DiscountPercentage is not null && contract.DiscountPrice is not null)
+            return Results.BadRequest("Only a discount percentage OR price is allowed");
+        if (contract.DiscountPercentage is null && contract.DiscountPrice is null)
+            return Results.BadRequest("Either discount percentage or price must be specified");
+
         var command = domainConverter.ToDomain((id, contract));
         try
         {

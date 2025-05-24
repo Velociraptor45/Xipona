@@ -18,7 +18,6 @@ public class AddItemDiscountCommandHandler : ICommandHandler<AddItemDiscountComm
 
     public async Task<bool> HandleAsync(AddItemDiscountCommand command, CancellationToken cancellationToken)
     {
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var modificationService = _modificationServiceDelegate(cancellationToken);
