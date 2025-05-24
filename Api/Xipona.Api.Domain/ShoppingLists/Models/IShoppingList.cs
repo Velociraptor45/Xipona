@@ -12,7 +12,8 @@ public interface IShoppingList
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<ShoppingListItem> Items { get; }
     DateTimeOffset CreatedAt { get; }
-    IReadOnlyCollection<Discount> Discounts { get; }
+    IReadOnlyCollection<Discount> ItemDiscounts { get; }
+    IReadOnlyCollection<ListDiscount> ListDiscounts { get; }
 
     void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
 

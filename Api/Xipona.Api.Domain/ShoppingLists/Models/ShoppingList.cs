@@ -13,9 +13,11 @@ public class ShoppingList : AggregateRoot, IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
     private readonly Dictionary<(ItemId, ItemTypeId?), Discount> _discounts;
+    private readonly ListDiscounts _listDiscounts;
 
     public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts)
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts,
+        IEnumerable<ListDiscount> listDiscounts)
     {
         Id = id;
         StoreId = storeId;
@@ -23,6 +25,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
         CreatedAt = createdAt;
         _sections = sections.ToDictionary(s => s.Id);
         _discounts = discounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
+        _listDiscounts = new ListDiscounts(listDiscounts);
     }
 
     public ShoppingListId Id { get; }
@@ -32,7 +35,8 @@ public class ShoppingList : AggregateRoot, IShoppingList
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
-    public IReadOnlyCollection<Discount> Discounts => _discounts.Values.ToList().AsReadOnly();
+    public IReadOnlyCollection<Discount> ItemDiscounts => _discounts.Values.ToList().AsReadOnly();
+    public IReadOnlyCollection<ListDiscount> ListDiscounts => _listDiscounts.AsReadOnly();
 
     public void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
@@ -128,7 +132,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
         }
 
         return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values, dateTimeService.UtcNow,
-            []);
+            [], []);
     }
 
     public void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId)

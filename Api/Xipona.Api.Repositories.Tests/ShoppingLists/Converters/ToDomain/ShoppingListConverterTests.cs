@@ -50,7 +50,7 @@ public class ShoppingListConverterTests
                     .Select(g => new ShoppingListSection(
                         new SectionId(g.SectionId),
                         g.Items))))
-            .ForCtorParam(nameof(IShoppingList.Discounts).LowerFirstChar(),
+            .ForCtorParam(nameof(IShoppingList.ItemDiscounts).LowerFirstChar(),
                 opt => opt.MapFrom((src, ctx) => src.Discounts.Select(d => ctx.Mapper.Map<Discount>(d))))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.Items, opt => opt.Ignore())

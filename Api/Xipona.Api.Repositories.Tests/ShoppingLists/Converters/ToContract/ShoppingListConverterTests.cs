@@ -60,7 +60,7 @@ public class ShoppingListConverterTests
 
     private static List<Discount> ConvertDiscounts(Domain.ShoppingLists.Models.ShoppingList src)
     {
-        return src.Discounts.Select(d => new Discount
+        return src.ItemDiscounts.Select(d => new Discount
         {
             ShoppingListId = src.Id.Value,
             ItemId = d.ItemId.Value,

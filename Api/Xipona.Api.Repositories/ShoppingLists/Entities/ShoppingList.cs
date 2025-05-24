@@ -9,6 +9,7 @@ public class ShoppingList
     {
         ItemsOnList ??= new List<ItemsOnList>();
         Discounts ??= new List<Discount>();
+        ListDiscounts ??= new List<ShoppingListDiscount>();
         RowVersion ??= [];
     }
 
@@ -25,6 +26,9 @@ public class ShoppingList
 
     [InverseProperty("ShoppingList")]
     public ICollection<Discount> Discounts { get; set; }
+
+    [InverseProperty("ShoppingList")]
+    public ICollection<ShoppingListDiscount> ListDiscounts { get; set; }
 
     [Timestamp]
     public byte[] RowVersion { get; set; }

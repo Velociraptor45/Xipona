@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
 using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
 using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
@@ -137,7 +136,8 @@ public class ShoppingListRepository : IShoppingListRepository
     {
         var updatedEntity = _toContractConverter.ToContract(shoppingList);
         var onListMappings = existingEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
-        var onListDiscounts = existingEntity.Discounts.ToDictionary(map => (map.ItemId, map.ItemTypeId));
+        var existingDiscounts = existingEntity.Discounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
+        var existingListDiscounts = existingEntity.ListDiscounts.ToDictionary(d => d.Id);
 
         var existingRowVersion = existingEntity.RowVersion;
         _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
@@ -145,7 +145,8 @@ public class ShoppingListRepository : IShoppingListRepository
         _dbContext.Entry(existingEntity).State = EntityState.Modified;
 
         StoreMapping(updatedEntity, onListMappings);
-        StoreDiscounts(updatedEntity, onListDiscounts);
+        StoreDiscounts(updatedEntity, existingDiscounts);
+        StoreListDiscounts(updatedEntity, existingListDiscounts);
 
         try
         {
@@ -211,6 +212,32 @@ public class ShoppingListRepository : IShoppingListRepository
         }
     }
 
+    private void StoreListDiscounts(ShoppingList updatedEntity,
+        Dictionary<int, ShoppingListDiscount> existingListDiscounts)
+    {
+        foreach (var discount in updatedEntity.ListDiscounts)
+        {
+            if (existingListDiscounts.TryGetValue(discount.Id, out var existingDiscount))
+            {
+                // mapping was modified
+                discount.Id = existingDiscount.Id;
+                _dbContext.Entry(discount).State = EntityState.Modified;
+                existingListDiscounts.Remove(discount.Id);
+            }
+            else
+            {
+                // mapping was added
+                _dbContext.Entry(discount).State = EntityState.Added;
+            }
+        }
+
+        // mapping was deleted
+        foreach (var discount in existingListDiscounts.Values)
+        {
+            _dbContext.Entry(discount).State = EntityState.Deleted;
+        }
+    }
+
     private async Task StoreAsNewListAsync(IShoppingList shoppingList)
     {
         var entity = _toContractConverter.ToContract(shoppingList);
@@ -223,6 +250,10 @@ public class ShoppingListRepository : IShoppingListRepository
         foreach (var onListDiscount in entity.Discounts)
         {
             _dbContext.Entry(onListDiscount).State = EntityState.Added;
+        }
+        foreach (var listDiscount in entity.ListDiscounts)
+        {
+            _dbContext.Entry(listDiscount).State = EntityState.Added;
         }
 
         await _dbContext.SaveChangesAsync(_cancellationToken);

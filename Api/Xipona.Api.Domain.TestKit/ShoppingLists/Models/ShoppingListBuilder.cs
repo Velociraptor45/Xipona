@@ -1,14 +1,22 @@
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-
 public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
 {
     public ShoppingListBuilder()
     {
         Customize(new QuantityInBasketCustomization());
+    }
+
+    // tcg keep
+    public ShoppingListBuilder WithSection(IShoppingListSection section)
+    {
+        return WithSections([section]);
     }
 
     public ShoppingListBuilder WithId(ShoppingListId id)
@@ -32,12 +40,6 @@ public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
     public ShoppingListBuilder WithoutCompletionDate()
     {
         return WithCompletionDate(null);
-    }
-
-    // tcg keep
-    public ShoppingListBuilder WithSection(IShoppingListSection section)
-    {
-        return WithSections([section]);
     }
 
     public ShoppingListBuilder WithSections(IEnumerable<IShoppingListSection> sections)

@@ -43,7 +43,7 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
 
     private static IEnumerable<Discount> CreateDiscountsMap(IShoppingList source)
     {
-        foreach (var discount in source.Discounts)
+        foreach (var discount in source.ItemDiscounts)
         {
             yield return new Discount
             {

@@ -8,6 +8,7 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddIte
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemToShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.FinishShoppingList;
@@ -20,6 +21,7 @@ using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -530,6 +532,43 @@ public static class ShoppingListEndpoints
         [FromServices] ICommandDispatcher commandDispatcher,
         [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
         [FromServices] IToDomainConverter<(Guid, AddItemDiscountContract), AddItemDiscountCommand> domainConverter,
+        CancellationToken cancellationToken)
+    {
+        var command = domainConverter.ToDomain((id, contract));
+        try
+        {
+            await commandDispatcher.DispatchAsync(command, cancellationToken);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            if (e.Reason.ErrorCode is ErrorReasonCode.ShoppingListNotFound)
+                return Results.NotFound(errorContract);
+
+            return Results.UnprocessableEntity(errorContract);
+        }
+
+        return Results.NoContent();
+    }
+
+    private static IEndpointRouteBuilder RegisterAddShoppingListDiscount(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPut($"/{_routeBase}/{{id:guid}}/add-discount", AddShoppingListDiscount)
+            .WithName("AddShoppingListDiscount")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> AddShoppingListDiscount(
+        [FromRoute] Guid id,
+        [FromBody] AddShoppingListDiscountContract contract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        [FromServices] IToDomainConverter<(Guid, AddShoppingListDiscountContract), AddShoppingListDiscountCommand> domainConverter,
         CancellationToken cancellationToken)
     {
         var command = domainConverter.ToDomain((id, contract));

@@ -69,11 +69,16 @@ public static partial class EquivalencyOptionsExtensions
     [GeneratedRegex(@"Discounts\[\d+\].ShoppingList")]
     private static partial Regex DiscountsShoppingListCycle();
 
+    [GeneratedRegex(@"ListDiscounts\[\d+\].ShoppingList")]
+    private static partial Regex ListDiscountsShoppingListCycle();
+
     public static EquivalencyOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info =>
             ItemsOnListShoppingListCycle().IsMatch(info.Path)
-            || DiscountsShoppingListCycle().IsMatch(info.Path));
+            || DiscountsShoppingListCycle().IsMatch(info.Path)
+            || ListDiscountsShoppingListCycle().IsMatch(info.Path)
+            );
     }
 
     [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]
@@ -90,6 +95,14 @@ public static partial class EquivalencyOptionsExtensions
     public static EquivalencyOptions<T> ExcludeDiscountId<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info => DiscountId().IsMatch(info.Path));
+    }
+
+    [GeneratedRegex(@"ListDiscounts\[\d+\].Id")]
+    private static partial Regex ListDiscountId();
+
+    public static EquivalencyOptions<T> ExcludeListDiscountId<T>(this EquivalencyOptions<T> options)
+    {
+        return options.Excluding(info => ListDiscountId().IsMatch(info.Path));
     }
 
     [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]
@@ -109,11 +122,11 @@ public static partial class EquivalencyOptionsExtensions
     }
 
     [GeneratedRegex(@"Sections\[\d+\].Id")]
-    private static partial Regex SectiondIds();
+    private static partial Regex SectionIds();
 
     public static EquivalencyOptions<T> ExcludeSectionIds<T>(this EquivalencyOptions<T> options)
     {
-        return options.Excluding(info => SectiondIds().IsMatch(info.Path));
+        return options.Excluding(info => SectionIds().IsMatch(info.Path));
     }
 
     public static EquivalencyOptions<T> UsingDateTimeOffsetWithPrecision<T>(
