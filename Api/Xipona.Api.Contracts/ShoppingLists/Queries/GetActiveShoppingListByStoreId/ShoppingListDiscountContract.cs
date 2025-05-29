@@ -1,4 +1,6 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
+﻿using System;
+
+namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
 {
     /// <summary>
     /// Represents a discount applied to a shopping list.
@@ -7,21 +9,28 @@
     {
         /// <summary> 
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="discountPrice"></param>
         /// <param name="discountPercentage"></param>
-        public ShoppingListDiscountContract(decimal? discountPrice, decimal? discountPercentage)
+        public ShoppingListDiscountContract(Guid id, decimal? discountPrice, decimal? discountPercentage)
         {
+            Id = id;
             DiscountPrice = discountPrice;
             DiscountPercentage = discountPercentage;
         }
 
         /// <summary>
-        /// The price by which the shopping list is discounted
+        /// The ID of the shopping list discount.
+        /// </summary>
+        public Guid Id { get; }
+
+        /// <summary>
+        /// The price by which the shopping list is discounted.
         /// </summary>
         public decimal? DiscountPrice { get; }
 
         /// <summary>
-        /// The percentage by which the shopping list is discounted
+        /// The percentage by which the shopping list is discounted.
         /// </summary>
         public decimal? DiscountPercentage { get; }
     }

@@ -60,6 +60,7 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
     {
         return source.ListDiscounts.Select(d => new ShoppingListDiscount
         {
+            Id = d.Id,
             ShoppingListId = source.Id,
             DiscountPercentage = d.Percentage,
             DiscountPrice = d.Price

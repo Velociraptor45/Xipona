@@ -24,6 +24,6 @@ public class ShoppingListContractConverter : IToContractConverter<ShoppingListRe
             _shoppingListStoreContractConverter.ToContract(source.Store),
             _shoppingListSectionContractConverter.ToContract(source.Sections),
             source.CompletionDate,
-            source.ListDiscounts.Select(d => new ShoppingListDiscountContract(d.Price, d.Percentage)));
+            source.ListDiscounts.Select(d => new ShoppingListDiscountContract(d.Id, d.Price, d.Percentage)));
     }
 }

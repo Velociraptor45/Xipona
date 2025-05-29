@@ -189,6 +189,7 @@ public class ShoppingListEndpointsIntegrationTests
                     ListDiscounts = ExpectedResult.ShoppingListDiscounts
                         .Select(d => new ShoppingListDiscount
                         {
+                            Id = d.Id,
                             DiscountPercentage = d.DiscountPercentage,
                             DiscountPrice = d.DiscountPrice,
                             ShoppingListId = ExpectedResult.Id

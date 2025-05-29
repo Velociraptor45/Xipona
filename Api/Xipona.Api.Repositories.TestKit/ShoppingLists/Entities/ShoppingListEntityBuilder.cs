@@ -8,7 +8,7 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
     {
         WithItemsOnList(new ItemsOnListEntityBuilder().CreateMany(3).ToList());
         WithDiscounts(new DiscountEntityBuilder().CreateMany(3).ToList());
-        WithListDiscounts(new ShoppingListDiscountEntityBuilder().CreateMany(3).ToList());
+        WithListDiscounts(ShoppingListDiscountEntityMother.Price().CreateMany(3).ToList());
     }
 
     public ShoppingListEntityBuilder WithId(Guid id)
