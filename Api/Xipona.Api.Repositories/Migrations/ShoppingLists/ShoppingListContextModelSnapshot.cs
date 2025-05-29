@@ -110,30 +110,6 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("ShoppingLists");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal?>("DiscountPercentage")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<decimal?>("DiscountPrice")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<Guid>("ShoppingListId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShoppingListId");
-
-                    b.ToTable("ShoppingListDiscount");
-                });
-
             modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
                 {
                     b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
@@ -156,24 +132,11 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.Navigation("ShoppingList");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
-                {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
-                        .WithMany("ListDiscounts")
-                        .HasForeignKey("ShoppingListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingList");
-                });
-
             modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
                 {
                     b.Navigation("Discounts");
 
                     b.Navigation("ItemsOnList");
-
-                    b.Navigation("ListDiscounts");
                 });
 #pragma warning restore 612, 618
         }
