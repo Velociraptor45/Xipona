@@ -29,12 +29,14 @@ using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
 using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
@@ -197,6 +199,20 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             await _apiClient.RemoveItemDiscountAsync(id, contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task AddShoppingListDiscountAsync(Guid id, AddShoppingListDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddShoppingListDiscountAsync(id, contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task RemoveShoppingListDiscountAsync(Guid id, RemoveShoppingListDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.RemoveShoppingListDiscountAsync(id, contract, cancellationToken);
         }
 
         #endregion ShoppingList
