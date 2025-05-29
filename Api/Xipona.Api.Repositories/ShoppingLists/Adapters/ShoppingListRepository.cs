@@ -269,7 +269,8 @@ public class ShoppingListRepository : IShoppingListRepository
     {
         return _dbContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
-            .Include(l => l.Discounts);
+            .Include(l => l.Discounts)
+            .Include(l => l.ListDiscounts);
     }
 
     #endregion private methods

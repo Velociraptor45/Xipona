@@ -13,7 +13,8 @@
         /// <param name="discountPercentage"></param>
         public AddShoppingListDiscountContract(decimal? discountPrice, decimal? discountPercentage)
         {
-
+            DiscountPrice = discountPrice;
+            DiscountPercentage = discountPercentage;
         }
 
         /// <summary>
