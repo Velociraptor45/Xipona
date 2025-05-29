@@ -62,15 +62,15 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
 
-        return new object[]
-        {
+        return
+        [
             list,
             store,
             item.ToMonoList(),
             Enumerable.Empty<IItemCategory>(),
             manufacturer.ToMonoList(),
             listReadModel
-        };
+        ];
     }
 
     private object[] NoManufacturer()
@@ -90,15 +90,15 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
         var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, null);
 
-        return new object[]
-        {
+        return
+        [
             list,
             store,
             item.ToMonoList(),
             itemCategory.ToMonoList(),
             Enumerable.Empty<IManufacturer>(),
             listReadModel
-        };
+        ];
     }
 
     private object[] NeitherItemCategoryNorManufacturer()
@@ -113,15 +113,15 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, null, null);
 
-        return new object[]
-        {
+        return
+        [
             list,
             store,
             item.ToMonoList(),
             Enumerable.Empty<IItemCategory>(),
             Enumerable.Empty<IManufacturer>(),
             listReadModel
-        };
+        ];
     }
 
     private object[] WithItemCategoryAndManufacturer()
@@ -141,15 +141,15 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, manufacturer);
 
-        return new object[]
-        {
+        return
+        [
             list,
             store,
             item.ToMonoList(),
             itemCategory.ToMonoList(),
             manufacturer.ToMonoList(),
             listReadModel
-        };
+        ];
     }
 
     private object[] EmptyList()
@@ -158,15 +158,15 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
         var list = ShoppingListMother.NoSections().WithStoreId(store.Id).Create();
         var listReadModel = ToSimpleReadModel(list, store, null, null, null);
 
-        return new object[]
-        {
+        return
+        [
             list,
             store,
             Enumerable.Empty<IItem>(),
             Enumerable.Empty<IItemCategory>(),
             Enumerable.Empty<IManufacturer>(),
             listReadModel
-        };
+        ];
     }
 
     private IShoppingList GetShoppingListContainingOneItem(StoreId storeId, SectionId sectionId)
@@ -247,6 +247,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             new ShoppingListStoreReadModel(
                 store.Id,
                 store.Name),
-            sectionReadModels is null ? Enumerable.Empty<ShoppingListSectionReadModel>() : [sectionReadModels]);
+            sectionReadModels is null ? [] : [sectionReadModels],
+            list.ListDiscounts);
     }
 }

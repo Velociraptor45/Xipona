@@ -2,13 +2,13 @@ using ProjectHermes.Xipona.Api.Core.TestKit;
 using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 
 namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
-
 public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
 {
     public ShoppingListEntityBuilder()
     {
         WithItemsOnList(new ItemsOnListEntityBuilder().CreateMany(3).ToList());
         WithDiscounts(new DiscountEntityBuilder().CreateMany(3).ToList());
+        WithListDiscounts(new ShoppingListDiscountEntityBuilder().CreateMany(3).ToList());
     }
 
     public ShoppingListEntityBuilder WithId(Guid id)
@@ -62,9 +62,9 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
         return WithDiscounts(new List<Discount>());
     }
 
-    public ShoppingListEntityBuilder WithListDiscounts(ICollection<ShoppingListDiscount> discounts)
+    public ShoppingListEntityBuilder WithListDiscounts(ICollection<ShoppingListDiscount> listDiscounts)
     {
-        FillPropertyWith(p => p.ListDiscounts, discounts);
+        FillPropertyWith(p => p.ListDiscounts, listDiscounts);
         return this;
     }
 

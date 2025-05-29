@@ -155,9 +155,9 @@ public class ShoppingListEndpointsIntegrationTests
                         .Create()
                 ];
 
-                ExpectedResult = new ContractTestBuilder<ShoppingListContract>()
-                    .FillConstructorWith("sections", sections)
-                    .FillConstructorWith("completionDate", (DateTimeOffset?)null)
+                ExpectedResult = new ShoppingListContractBuilder()
+                    .WithSections(sections)
+                    .WithoutCompletionDate()
                     .Create();
             }
 
@@ -185,7 +185,15 @@ public class ShoppingListEndpointsIntegrationTests
                     CompletionDate = ExpectedResult.CompletionDate,
                     StoreId = ExpectedResult.Store.Id,
                     ItemsOnList = [item1, item2],
-                    Discounts = [firstItemDiscount]
+                    Discounts = [firstItemDiscount],
+                    ListDiscounts = ExpectedResult.ShoppingListDiscounts
+                        .Select(d => new ShoppingListDiscount
+                        {
+                            DiscountPercentage = d.DiscountPercentage,
+                            DiscountPrice = d.DiscountPrice,
+                            ShoppingListId = ExpectedResult.Id
+                        })
+                        .ToList()
                 };
 
                 ItemsOnList ConvertItem(Guid sectionId, ShoppingListItemContract item)

@@ -137,7 +137,7 @@ public class ShoppingListRepository : IShoppingListRepository
         var updatedEntity = _toContractConverter.ToContract(shoppingList);
         var onListMappings = existingEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
         var existingDiscounts = existingEntity.Discounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
-        var existingListDiscounts = existingEntity.ListDiscounts.ToDictionary(d => d.Id);
+        var existingListDiscounts = existingEntity.ListDiscounts.ToDictionary(d => (d.DiscountPercentage, d.DiscountPrice));
 
         var existingRowVersion = existingEntity.RowVersion;
         _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
@@ -187,16 +187,16 @@ public class ShoppingListRepository : IShoppingListRepository
     }
 
     private void StoreDiscounts(ShoppingList updatedEntity,
-        Dictionary<(Guid ItemId, Guid? ItemTypeId), Discount> onListDiscounts)
+        Dictionary<(Guid ItemId, Guid? ItemTypeId), Discount> existingItemDiscounts)
     {
         foreach (var discount in updatedEntity.Discounts)
         {
-            if (onListDiscounts.TryGetValue((discount.ItemId, discount.ItemTypeId), out var existingDiscount))
+            if (existingItemDiscounts.TryGetValue((discount.ItemId, discount.ItemTypeId), out var existingDiscount))
             {
                 // mapping was modified
                 discount.Id = existingDiscount.Id;
                 _dbContext.Entry(discount).State = EntityState.Modified;
-                onListDiscounts.Remove((discount.ItemId, discount.ItemTypeId));
+                existingItemDiscounts.Remove((discount.ItemId, discount.ItemTypeId));
             }
             else
             {
@@ -206,23 +206,24 @@ public class ShoppingListRepository : IShoppingListRepository
         }
 
         // mapping was deleted
-        foreach (var discount in onListDiscounts.Values)
+        foreach (var discount in existingItemDiscounts.Values)
         {
             _dbContext.Entry(discount).State = EntityState.Deleted;
         }
     }
 
     private void StoreListDiscounts(ShoppingList updatedEntity,
-        Dictionary<int, ShoppingListDiscount> existingListDiscounts)
+        Dictionary<(decimal?, decimal?), ShoppingListDiscount> existingListDiscounts)
     {
         foreach (var discount in updatedEntity.ListDiscounts)
         {
-            if (existingListDiscounts.TryGetValue(discount.Id, out var existingDiscount))
+            var id = (discount.DiscountPercentage, discount.DiscountPrice);
+            if (existingListDiscounts.TryGetValue(id, out var existingDiscount))
             {
                 // mapping was modified
                 discount.Id = existingDiscount.Id;
                 _dbContext.Entry(discount).State = EntityState.Modified;
-                existingListDiscounts.Remove(discount.Id);
+                existingListDiscounts.Remove(id);
             }
             else
             {
