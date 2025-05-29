@@ -9,7 +9,7 @@ public class ShoppingListDiscountEntityBuilder : TestBuilderBase<ShoppingListDis
         WithoutShoppingList();
     }
 
-    public ShoppingListDiscountEntityBuilder WithId(int id)
+    public ShoppingListDiscountEntityBuilder WithId(Guid id)
     {
         FillPropertyWith(p => p.Id, id);
         return this;

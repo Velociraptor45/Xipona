@@ -6,8 +6,8 @@ namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
 public class ShoppingListDiscount
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; set; }
 
     [Required]
     public Guid ShoppingListId { get; set; }

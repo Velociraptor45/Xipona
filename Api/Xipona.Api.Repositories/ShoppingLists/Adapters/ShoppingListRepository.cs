@@ -137,7 +137,7 @@ public class ShoppingListRepository : IShoppingListRepository
         var updatedEntity = _toContractConverter.ToContract(shoppingList);
         var onListMappings = existingEntity.ItemsOnList.ToDictionary(map => (map.ItemId, map.ItemTypeId));
         var existingDiscounts = existingEntity.Discounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
-        var existingListDiscounts = existingEntity.ListDiscounts.ToDictionary(d => (d.DiscountPercentage, d.DiscountPrice));
+        var existingListDiscounts = existingEntity.ListDiscounts.ToDictionary(d => d.Id);
 
         var existingRowVersion = existingEntity.RowVersion;
         _dbContext.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
@@ -213,17 +213,16 @@ public class ShoppingListRepository : IShoppingListRepository
     }
 
     private void StoreListDiscounts(ShoppingList updatedEntity,
-        Dictionary<(decimal?, decimal?), ShoppingListDiscount> existingListDiscounts)
+        Dictionary<Guid, ShoppingListDiscount> existingListDiscounts)
     {
         foreach (var discount in updatedEntity.ListDiscounts)
         {
-            var id = (discount.DiscountPercentage, discount.DiscountPrice);
-            if (existingListDiscounts.TryGetValue(id, out var existingDiscount))
+            if (existingListDiscounts.TryGetValue(discount.Id, out var existingDiscount))
             {
                 // mapping was modified
                 discount.Id = existingDiscount.Id;
                 _dbContext.Entry(discount).State = EntityState.Modified;
-                existingListDiscounts.Remove(id);
+                existingListDiscounts.Remove(discount.Id);
             }
             else
             {
