@@ -171,14 +171,14 @@ public class ShoppingList : AggregateRoot, IShoppingList
         _discounts.Remove((itemId, itemTypeId));
     }
 
+    public void RemoveDiscount(ListDiscountId discountId)
+    {
+        _listDiscounts.Remove(discountId);
+    }
+
     public void AddDiscount(ListDiscount discount)
     {
         _listDiscounts.Add(discount);
-    }
-
-    public void RemoveDiscount(ListDiscount discount)
-    {
-        _listDiscounts.Remove(discount);
     }
 
     private bool IsItemOnShoppingList(ItemId itemId, ItemTypeId? itemTypeId)
