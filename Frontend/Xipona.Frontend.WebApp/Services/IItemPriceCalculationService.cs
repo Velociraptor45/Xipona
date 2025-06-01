@@ -1,13 +1,12 @@
 ﻿using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Services
+namespace ProjectHermes.Xipona.Frontend.WebApp.Services;
+
+public interface IItemPriceCalculationService
 {
-    public interface IItemPriceCalculationService
-    {
-        float CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity);
+    decimal CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity);
 
-        float GetInBasketPrice(ShoppingListModel shoppingList);
+    decimal GetInBasketPrice(ShoppingListModel shoppingList);
 
-        float GetTotalPrice(ShoppingListModel shoppingList);
-    }
+    decimal GetTotalPrice(ShoppingListModel shoppingList);
 }

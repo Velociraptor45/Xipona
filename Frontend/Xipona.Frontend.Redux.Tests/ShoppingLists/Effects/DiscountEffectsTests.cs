@@ -112,7 +112,7 @@ public class DiscountEffectsTests
             {
                 State = State with
                 {
-                    DiscountDialog = State.DiscountDialog with
+                    ItemDiscountDialog = State.ItemDiscountDialog with
                     {
                         Item = null
                     }
@@ -127,7 +127,7 @@ public class DiscountEffectsTests
                     {
                         Id = _shoppingListId
                     },
-                    DiscountDialog = State.DiscountDialog with
+                    ItemDiscountDialog = State.ItemDiscountDialog with
                     {
                         Item = new DomainTestBuilder<ShoppingListItem>().Create() with
                         {
@@ -284,7 +284,7 @@ public class DiscountEffectsTests
             {
                 State = State with
                 {
-                    DiscountDialog = State.DiscountDialog with
+                    ItemDiscountDialog = State.ItemDiscountDialog with
                     {
                         Item = null
                     }
@@ -299,7 +299,7 @@ public class DiscountEffectsTests
                     {
                         Id = _shoppingListId
                     },
-                    DiscountDialog = State.DiscountDialog with
+                    ItemDiscountDialog = State.ItemDiscountDialog with
                     {
                         Item = new DomainTestBuilder<ShoppingListItem>().Create() with
                         {

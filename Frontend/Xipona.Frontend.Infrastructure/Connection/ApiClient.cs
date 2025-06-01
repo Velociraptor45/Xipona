@@ -29,6 +29,7 @@ using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -464,6 +465,18 @@ public class ApiClient : IApiClient
     {
         var contract = new RemoveItemDiscountContract(itemId, itemTypeId);
         await _client.RemoveItemDiscountAsync(shoppingListId, contract);
+    }
+
+    public async Task AddShoppingListDiscountAsync(Guid shoppingListId, decimal discount, ShoppingListDiscountType type)
+    {
+        var contract = _converters
+            .ToContract<(decimal, ShoppingListDiscountType), AddShoppingListDiscountContract>((discount, type));
+        await _client.AddShoppingListDiscountAsync(shoppingListId, contract);
+    }
+
+    public async Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId)
+    {
+        await _client.RemoveShoppingListDiscountAsync(shoppingListId, discountId);
     }
 
     public async Task<IEnumerable<Currency>> GetAllCurrenciesAsync()

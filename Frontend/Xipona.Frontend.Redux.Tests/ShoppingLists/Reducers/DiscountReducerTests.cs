@@ -37,7 +37,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         Item = new DomainTestBuilder<ShoppingListItem>().Create(),
                         Discount = new DomainTestBuilder<decimal>().Create(),
@@ -54,7 +54,7 @@ public class DiscountReducerTests
 
                 ExpectedState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         Item = item,
                         Discount = item.PricePerQuantity,
@@ -67,7 +67,7 @@ public class DiscountReducerTests
 
             public void SetupAction()
             {
-                Action = new OpenDiscountDialogAction(ExpectedState.DiscountDialog.Item!);
+                Action = new OpenDiscountDialogAction(ExpectedState.ItemDiscountDialog.Item!);
             }
         }
     }
@@ -96,7 +96,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsSaving = false
                     }
@@ -107,7 +107,7 @@ public class DiscountReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsSaving = true
                     }
@@ -140,7 +140,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsSaving = true
                     }
@@ -151,7 +151,7 @@ public class DiscountReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsSaving = false
                     }
@@ -184,7 +184,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsRemoving = false
                     }
@@ -195,7 +195,7 @@ public class DiscountReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsRemoving = true
                     }
@@ -228,7 +228,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsRemoving = true
                     }
@@ -239,7 +239,7 @@ public class DiscountReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         IsRemoving = false
                     }
@@ -272,7 +272,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         Item = new DomainTestBuilder<ShoppingListItem>().Create(),
                         IsOpen = true,
@@ -286,7 +286,7 @@ public class DiscountReducerTests
             {
                 ExpectedState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         Item = null,
                         IsOpen = false,
@@ -326,7 +326,7 @@ public class DiscountReducerTests
             {
                 InitialState = ExpectedState with
                 {
-                    DiscountDialog = ExpectedState.DiscountDialog with
+                    ItemDiscountDialog = ExpectedState.ItemDiscountDialog with
                     {
                         Discount = new DomainTestBuilder<decimal>().Create()
                     }
@@ -335,7 +335,7 @@ public class DiscountReducerTests
 
             public void SetupAction()
             {
-                Action = new DiscountChangedAction(ExpectedState.DiscountDialog.Discount);
+                Action = new DiscountChangedAction(ExpectedState.ItemDiscountDialog.Discount);
             }
         }
     }

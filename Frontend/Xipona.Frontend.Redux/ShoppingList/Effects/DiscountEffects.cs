@@ -25,11 +25,11 @@ public class DiscountEffects
     public async Task HandleSaveDiscountAction(IDispatcher dispatcher)
     {
         var state = _state.Value;
-        if (state.DiscountDialog.Item == null)
+        if (state.ItemDiscountDialog.Item == null)
             return;
 
-        var item = state.DiscountDialog.Item;
-        var discount = state.DiscountDialog.Discount;
+        var item = state.ItemDiscountDialog.Item;
+        var discount = state.ItemDiscountDialog.Discount;
 
         dispatcher.Dispatch(new SaveDiscountStartedAction());
 
@@ -51,17 +51,17 @@ public class DiscountEffects
         dispatcher.Dispatch(new SaveDiscountFinishedAction());
         dispatcher.Dispatch(new CloseDiscountDialogAction());
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
-        _notificationService.NotifySuccess($"Successfully discounted {state.DiscountDialog.Item.Name}");
+        _notificationService.NotifySuccess($"Successfully discounted {state.ItemDiscountDialog.Item.Name}");
     }
 
     [EffectMethod(typeof(RemoveDiscountAction))]
     public async Task HandleRemoveDiscountAction(IDispatcher dispatcher)
     {
         var state = _state.Value;
-        if (state.DiscountDialog.Item == null)
+        if (state.ItemDiscountDialog.Item == null)
             return;
 
-        var item = state.DiscountDialog.Item;
+        var item = state.ItemDiscountDialog.Item;
 
         dispatcher.Dispatch(new RemoveDiscountStartedAction());
 
@@ -83,6 +83,6 @@ public class DiscountEffects
         dispatcher.Dispatch(new RemoveDiscountFinishedAction());
         dispatcher.Dispatch(new CloseDiscountDialogAction());
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
-        _notificationService.NotifySuccess($"Successfully removed discount from {state.DiscountDialog.Item.Name}");
+        _notificationService.NotifySuccess($"Successfully removed discount from {state.ItemDiscountDialog.Item.Name}");
     }
 }

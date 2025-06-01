@@ -10,7 +10,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 Item = action.Item,
                 Discount = action.Item.PricePerQuantity,
@@ -26,7 +26,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 IsSaving = true
             }
@@ -38,7 +38,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 IsSaving = false
             }
@@ -50,7 +50,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 IsRemoving = true
             }
@@ -62,7 +62,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 IsRemoving = false
             }
@@ -74,7 +74,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 Item = null,
                 IsOpen = false,
@@ -89,7 +89,7 @@ public static class DiscountReducer
     {
         return state with
         {
-            DiscountDialog = state.DiscountDialog with
+            ItemDiscountDialog = state.ItemDiscountDialog with
             {
                 Discount = action.NewDiscount
             }

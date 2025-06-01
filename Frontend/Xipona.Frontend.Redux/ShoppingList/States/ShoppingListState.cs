@@ -14,10 +14,11 @@ public record ShoppingListState(
     ShoppingListModel? ShoppingList,
     SearchBar SearchBar,
     TemporaryItemCreator TemporaryItemCreator,
+    ShoppingListDiscountDialog ShoppingListDiscountDialog,
     PriceUpdate PriceUpdate,
     Summary Summary,
     InitialStoreCreator InitialStoreCreator,
-    DiscountDialog DiscountDialog)
+    ItemDiscountDialog ItemDiscountDialog)
 {
     public IEnumerable<ShoppingListSection> GetSectionsToDisplay()
     {
@@ -53,9 +54,10 @@ public class ShoppingListFeatureState : Feature<ShoppingListState>
             null,
             new SearchBar(string.Empty, []),
             new TemporaryItemCreator(string.Empty, null, 1m, 0, false, false, false),
+            ShoppingListDiscountDialog.Default(),
             new PriceUpdate(null, InitialTemporaryItemPrice, true, false, false, []),
             new Summary(false, false, DateTime.MinValue, false),
             new InitialStoreCreator(false, string.Empty, false),
-            new DiscountDialog(null, 0m, false, false, false));
+            new ItemDiscountDialog(null, 0m, false, false, false));
     }
 }
