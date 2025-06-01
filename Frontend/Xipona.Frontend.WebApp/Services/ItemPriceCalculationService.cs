@@ -33,7 +33,7 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         return Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }
 
-    public decimal GetInBasketPrice(ShoppingListModel shoppingList)
+    public decimal GetInBasketPrice(ShoppingListModel shoppingList, bool includeDiscounts = false)
     {
         var items = shoppingList.Items.Where(i => i.IsInBasket).ToList();
         var sum = 0m;
@@ -41,10 +41,14 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         {
             sum += CalculatePrice(item);
         }
-        return sum;
+
+        if (!includeDiscounts)
+            return sum;
+
+        return SubtractDiscounts(sum, shoppingList.Discounts);
     }
 
-    public decimal GetTotalPrice(ShoppingListModel shoppingList)
+    public decimal GetTotalPrice(ShoppingListModel shoppingList, bool includeDiscounts = false)
     {
         var items = shoppingList.Items.ToList();
         var sum = 0m;
@@ -53,13 +57,16 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
             sum += CalculatePrice(item);
         }
 
+        if (!includeDiscounts)
+            return sum;
+
         return SubtractDiscounts(sum, shoppingList.Discounts);
     }
 
-    private decimal SubtractDiscounts(decimal totalListPrice, IReadOnlyCollection<ShoppingListDiscount> discounts)
+    private static decimal SubtractDiscounts(decimal totalListPrice, IReadOnlyCollection<ShoppingListDiscount> discounts)
     {
-        var absolutePrices = discounts.Where(d => d.Price is not null).Sum(d => d.Price.Value);
-        var percentages = discounts.Where(d => d.Percentage is not null).Sum(d => d.Percentage.Value);
+        var absolutePrices = discounts.Where(d => d.Type == ShoppingListDiscountType.Price).Sum(d => d.DiscountValue);
+        var percentages = discounts.Where(d => d.Type == ShoppingListDiscountType.Percentage).Sum(d => d.DiscountValue);
 
         if (percentages > 100)
             percentages = 100;

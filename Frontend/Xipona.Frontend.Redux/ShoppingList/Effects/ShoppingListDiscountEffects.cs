@@ -46,4 +46,29 @@ public class ShoppingListDiscountEffects
         dispatcher.Dispatch(new CloseDiscountDialogAction());
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
     }
+
+    [EffectMethod]
+    public async Task HandleRemoveDiscountAction(RemoveDiscountAction action, IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new RemoveDiscountStartedAction(action.DiscountId));
+
+        try
+        {
+            await _client.RemoveShoppingListDiscountAsync(_state.Value.ShoppingList!.Id, action.DiscountId);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Removing discount failed", e));
+            dispatcher.Dispatch(new RemoveDiscountFailedAction(action.DiscountId));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Removing discount failed", e.Message));
+            dispatcher.Dispatch(new RemoveDiscountFailedAction(action.DiscountId));
+            return;
+        }
+
+        dispatcher.Dispatch(new RemoveDiscountFinishedAction(action.DiscountId));
+    }
 }

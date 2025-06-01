@@ -6,7 +6,7 @@ public interface IItemPriceCalculationService
 {
     decimal CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity);
 
-    decimal GetInBasketPrice(ShoppingListModel shoppingList);
+    decimal GetInBasketPrice(ShoppingListModel shoppingList, bool includeDiscounts = false);
 
-    decimal GetTotalPrice(ShoppingListModel shoppingList);
+    decimal GetTotalPrice(ShoppingListModel shoppingList, bool includeDiscounts = false);
 }

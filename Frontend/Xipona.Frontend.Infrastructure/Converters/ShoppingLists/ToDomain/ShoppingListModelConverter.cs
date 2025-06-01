@@ -21,7 +21,12 @@ public class ShoppingListModelConverter : IToDomainConverter<ShoppingListContrac
     {
         var sections = source.Sections.Select(_sectionConverter.ToDomain);
         var discounts = source.ShoppingListDiscounts
-            .Select(d => new ShoppingListDiscount(d.Id, d.DiscountPercentage, d.DiscountPrice))
+            .Select(d =>
+            {
+                if (d.DiscountPrice is null)
+                    return new ShoppingListDiscount(d.Id, d.DiscountPercentage!.Value, ShoppingListDiscountType.Percentage);
+                return new ShoppingListDiscount(d.Id, d.DiscountPrice.Value, ShoppingListDiscountType.Price);
+            })
             .ToList();
 
         return new ShoppingListModel(

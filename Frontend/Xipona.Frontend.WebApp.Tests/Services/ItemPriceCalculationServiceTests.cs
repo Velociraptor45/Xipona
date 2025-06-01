@@ -16,13 +16,13 @@ public class ItemPriceCalculationServiceTests
 
     [Theory]
     [InlineData(1, 2, 2, 4)]
-    [InlineData(1, 1.5f, 1, 1.5f)]
-    [InlineData(1000, 1.5f, 300, 0.45f)]
-    [InlineData(1000, 1.5f, 512, 0.77f)] // round up above .5
-    [InlineData(1000, 1.5f, 470, 0.71f)] // round up at .5
-    [InlineData(1000, 1.5f, 462, 0.69f)] // round down
+    [InlineData(1, 1.5f, 1, 1.5)]
+    [InlineData(1000, 1.5f, 300, 0.45)]
+    [InlineData(1000, 1.5f, 512, 0.77)] // round up above .5
+    [InlineData(1000, 1.5f, 470, 0.71)] // round up at .5
+    [InlineData(1000, 1.5f, 462, 0.69)] // round down
     public void CalculatePrice_ShouldReturnExpectedResult(int quantityNormalizer, decimal pricePerQuantity,
-        float quantity, float expectedResult)
+        float quantity, decimal expectedResult)
     {
         // Arrange
         _fixture.SetupQuantityType(quantityNormalizer);
@@ -89,13 +89,12 @@ public class ItemPriceCalculationServiceTests
         public void SetupQuantityType(int quantityNormalizer)
         {
             _quantityTypes =
-                new List<QuantityType>()
+            [
+                new DomainTestBuilder<QuantityType>().Create() with
                 {
-                    new DomainTestBuilder<QuantityType>().Create() with
-                    {
-                        QuantityNormalizer = quantityNormalizer
-                    }
-                };
+                    QuantityNormalizer = quantityNormalizer
+                }
+            ];
         }
 
         public void SetupValidQuantityTypeId()

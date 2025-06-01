@@ -77,4 +77,58 @@ public static class ShoppingListDiscountReducer
             }
         };
     }
+
+    [ReducerMethod]
+    public static ShoppingListState OnRemoveDiscountStarted(ShoppingListState state, RemoveDiscountStartedAction action)
+    {
+        return SetDiscountDeletingState(state, action.DiscountId, true);
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnRemoveDiscountFinished(ShoppingListState state, RemoveDiscountFinishedAction action)
+    {
+        if (state.ShoppingList is null)
+            return state;
+
+        var discounts = state.ShoppingList.Discounts.Where(d => d.Id != action.DiscountId).ToList();
+
+        return state with
+        {
+            ShoppingList = state.ShoppingList with
+            {
+                Discounts = discounts
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ShoppingListState OnRemoveDiscountFailed(ShoppingListState state, RemoveDiscountFailedAction action)
+    {
+        return SetDiscountDeletingState(state, action.DiscountId, false);
+    }
+
+    private static ShoppingListState SetDiscountDeletingState(ShoppingListState state, Guid discountId, bool isDeleting)
+    {
+        if (state.ShoppingList is null)
+            return state;
+
+        var discounts = state.ShoppingList.Discounts.ToList();
+        var idx = discounts.FindIndex(d => d.Id == discountId);
+        if (idx < 0)
+            return state;
+
+        discounts[idx] = discounts[idx] with
+        {
+            IsDeleting = isDeleting
+        };
+
+        return state with
+        {
+            ShoppingList = state.ShoppingList with
+            {
+                Discounts = discounts
+            }
+        };
+
+    }
 }

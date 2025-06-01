@@ -14,6 +14,7 @@ using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
 using ProjectHermes.Xipona.Frontend.WebApp.Auth;
 using ProjectHermes.Xipona.Frontend.WebApp.Configs;
 using ProjectHermes.Xipona.Frontend.WebApp.Services;
+using ProjectHermes.Xipona.Frontend.WebApp.Services.Discounts;
 using ProjectHermes.Xipona.Frontend.WebApp.Services.Notification;
 using Serilog;
 using Serilog.Core;
@@ -103,6 +104,7 @@ public static class Program
 
         builder.Services.AddTransient<IXiponaApiClient, XiponaApiClient>();
         builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
+        builder.Services.AddTransient<IDiscountLabelService, DiscountLabelService>();
         builder.Services.AddTransient<IApiClient, ApiClient>();
         builder.Services.AddScoped<ICommandQueue, CommandQueue>();
 
