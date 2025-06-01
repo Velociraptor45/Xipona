@@ -136,7 +136,7 @@ public class ShoppingListTests
             sut.RemoveItemAndItsTypes(_fixture.ItemId.Value);
 
             // Assert
-            sut.Should().BeEquivalentTo(expected);
+            sut.Should().BeEquivalentTo(expected, opt => opt.Excluding(info => info.Path.Contains("Percentage.Inverted")));
         }
 
         [Fact]

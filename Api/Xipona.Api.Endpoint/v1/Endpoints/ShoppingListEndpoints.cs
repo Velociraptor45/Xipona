@@ -29,7 +29,6 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Core.Converter;
@@ -64,7 +63,8 @@ public static class ShoppingListEndpoints
             .RegisterFinishList()
             .RegisterAddItemDiscount()
             .RegisterRemoveItemDiscount()
-            .RegisterAddShoppingListDiscount();
+            .RegisterAddShoppingListDiscount()
+            .RegisterRemoveShoppingListDiscount();
     }
 
     private static IEndpointRouteBuilder RegisterGetActiveShoppingListByStoreId(this IEndpointRouteBuilder builder)
@@ -519,7 +519,7 @@ public static class ShoppingListEndpoints
 
     private static IEndpointRouteBuilder RegisterAddItemDiscount(this IEndpointRouteBuilder builder)
     {
-        builder.MapPut($"/{_routeBase}/{{id:guid}}/items/add-discount", AddItemDiscount)
+        builder.MapPost($"/{_routeBase}/{{id:guid}}/items/discounts", AddItemDiscount)
             .WithName("AddItemDiscount")
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ErrorContract>(StatusCodes.Status404NotFound)
@@ -556,7 +556,7 @@ public static class ShoppingListEndpoints
 
     private static IEndpointRouteBuilder RegisterAddShoppingListDiscount(this IEndpointRouteBuilder builder)
     {
-        builder.MapPut($"/{_routeBase}/{{id:guid}}/add-discount", AddShoppingListDiscount)
+        builder.MapPost($"/{_routeBase}/{{id:guid}}/discounts", AddShoppingListDiscount)
             .WithName("AddShoppingListDiscount")
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ErrorContract>(StatusCodes.Status404NotFound)
@@ -598,7 +598,7 @@ public static class ShoppingListEndpoints
 
     private static IEndpointRouteBuilder RegisterRemoveItemDiscount(this IEndpointRouteBuilder builder)
     {
-        builder.MapPut($"/{_routeBase}/{{id:guid}}/items/remove-discount", RemoveItemDiscount)
+        builder.MapDelete($"/{_routeBase}/{{id:guid}}/items/discounts", RemoveItemDiscount)
             .WithName("RemoveItemDiscount")
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ErrorContract>(StatusCodes.Status404NotFound)
@@ -635,7 +635,7 @@ public static class ShoppingListEndpoints
 
     private static IEndpointRouteBuilder RegisterRemoveShoppingListDiscount(this IEndpointRouteBuilder builder)
     {
-        builder.MapPut($"/{_routeBase}/{{id:guid}}/remove-discount", RemoveShoppingListDiscount)
+        builder.MapDelete($"/{_routeBase}/{{shoppingListId:guid}}/discounts/{{discountId:guid}}", RemoveShoppingListDiscount)
             .WithName("RemoveShoppingListDiscount")
             .Produces(StatusCodes.Status204NoContent)
             .Produces<ErrorContract>(StatusCodes.Status404NotFound)
@@ -646,14 +646,15 @@ public static class ShoppingListEndpoints
     }
 
     internal static async Task<IResult> RemoveShoppingListDiscount(
-        [FromRoute] Guid id,
-        [FromBody] RemoveShoppingListDiscountContract contract,
+        [FromRoute] Guid shoppingListId,
+        [FromRoute] Guid discountId,
         [FromServices] ICommandDispatcher commandDispatcher,
         [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
-        [FromServices] IToDomainConverter<(Guid, RemoveShoppingListDiscountContract), RemoveShoppingListDiscountCommand> domainConverter,
         CancellationToken cancellationToken)
     {
-        var command = domainConverter.ToDomain((id, contract));
+        var command = new RemoveShoppingListDiscountCommand(
+            new ShoppingListId(shoppingListId),
+            new ListDiscountId(discountId));
         try
         {
             await commandDispatcher.DispatchAsync(command, cancellationToken);

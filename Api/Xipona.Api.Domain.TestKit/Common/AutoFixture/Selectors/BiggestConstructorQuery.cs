@@ -2,7 +2,7 @@
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
-public class DiscountConstructorQuery : IMethodQuery
+public class BiggestConstructorQuery : IMethodQuery
 {
     public IEnumerable<IMethod> SelectMethods(Type type)
     {

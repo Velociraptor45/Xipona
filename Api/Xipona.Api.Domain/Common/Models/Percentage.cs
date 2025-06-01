@@ -4,7 +4,6 @@ namespace ProjectHermes.Xipona.Api.Domain.Common.Models;
 
 public readonly record struct Percentage
 {
-
     public Percentage() : this(0)
     {
         throw new NotSupportedException("An empty percentage is not allowed. Use the other ctor.");

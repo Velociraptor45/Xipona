@@ -8,7 +8,6 @@ using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddIte
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemDiscount;
-using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.Common;
 using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
@@ -21,7 +20,6 @@ using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
@@ -2068,7 +2066,6 @@ public class ShoppingListEndpointsIntegrationTests
         {
             // Arrange
             _fixture.SetupShoppingListWithDiscount();
-            _fixture.SetupContract();
             await _fixture.SetupDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
@@ -2093,23 +2090,19 @@ public class ShoppingListEndpointsIntegrationTests
             private ShoppingList? _shoppingList;
             private readonly Domain.ShoppingLists.Models.ListDiscountId _listDiscountId =
                 Domain.ShoppingLists.Models.ListDiscountId.New;
-            private RemoveShoppingListDiscountContract? _contract;
             private Guid? _shoppingListId;
             public ShoppingList? ExpectedResult { get; private set; }
 
             public async Task<IResult> ActAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_shoppingListId);
-                TestPropertyNotSetException.ThrowIfNull(_contract);
 
                 var scope = CreateServiceScope();
                 return await ShoppingListEndpoints.RemoveShoppingListDiscount(
                     _shoppingListId.Value,
-                    _contract,
+                    _listDiscountId,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    scope.ServiceProvider.GetRequiredService<
-                        IToDomainConverter<(Guid, RemoveShoppingListDiscountContract), RemoveShoppingListDiscountCommand>>(),
                     CancellationToken.None);
             }
 
@@ -2135,12 +2128,6 @@ public class ShoppingListEndpointsIntegrationTests
 
                 await shoppingListContext.SaveChangesAsync();
             }
-
-            public void SetupContract()
-            {
-                _contract = new RemoveShoppingListDiscountContract(_listDiscountId);
-            }
-
         }
     }
 

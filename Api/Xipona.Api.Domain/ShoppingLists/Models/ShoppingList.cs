@@ -16,7 +16,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
     private readonly ListDiscounts _listDiscounts;
 
     public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts,
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> itemDiscounts,
         IEnumerable<ListDiscount> listDiscounts)
     {
         Id = id;
@@ -24,7 +24,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
         CompletionDate = completionDate;
         CreatedAt = createdAt;
         _sections = sections.ToDictionary(s => s.Id);
-        _discounts = discounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
+        _discounts = itemDiscounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
         _listDiscounts = new ListDiscounts(listDiscounts);
     }
 
