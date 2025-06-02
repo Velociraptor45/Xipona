@@ -1,7 +1,7 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Discounts;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
@@ -9,7 +9,7 @@ using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
 using RestEase;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
-public class DiscountEffectsTests
+public class ItemDiscountEffectsTests
 {
     public class HandleSaveDiscountAction
     {
@@ -100,7 +100,7 @@ public class DiscountEffectsTests
             queue.VerifyOrder();
         }
 
-        private sealed class HandleSaveDiscountActionFixture : DiscountEffectsFixture
+        private sealed class HandleSaveDiscountActionFixture : ItemDiscountEffectsFixture
         {
             private readonly Guid _shoppingListId = Guid.NewGuid();
             private readonly Guid _itemId = Guid.NewGuid();
@@ -273,7 +273,7 @@ public class DiscountEffectsTests
             queue.VerifyOrder();
         }
 
-        private sealed class HandleRemoveDiscountActionFixture : DiscountEffectsFixture
+        private sealed class HandleRemoveDiscountActionFixture : ItemDiscountEffectsFixture
         {
             private readonly Guid _shoppingListId = Guid.NewGuid();
             private readonly Guid _itemId = Guid.NewGuid();
@@ -355,15 +355,15 @@ public class DiscountEffectsTests
         }
     }
 
-    private abstract class DiscountEffectsFixture : ShoppingListEffectsFixtureBase
+    private abstract class ItemDiscountEffectsFixture : ShoppingListEffectsFixtureBase
     {
         protected ShoppingListNotificationServiceMock ShoppingListNotificationServiceMock { get; } =
             new(MockBehavior.Strict);
 
-        public DiscountEffects CreateSut()
+        public ItemDiscountEffects CreateSut()
         {
             SetupStateReturningState();
-            return new DiscountEffects(ApiClientMock.Object, ShoppingListStateMock.Object,
+            return new ItemDiscountEffects(ApiClientMock.Object, ShoppingListStateMock.Object,
                 ShoppingListNotificationServiceMock.Object);
         }
     }

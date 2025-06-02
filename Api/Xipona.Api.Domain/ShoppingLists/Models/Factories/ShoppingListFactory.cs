@@ -15,7 +15,7 @@ public class ShoppingListFactory : IShoppingListFactory
     }
 
     public IShoppingList Create(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts,
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<ItemDiscount> discounts,
         IEnumerable<ListDiscount> listDiscounts)
     {
         return new ShoppingList(id, storeId, completionDate, sections, createdAt, discounts, listDiscounts);

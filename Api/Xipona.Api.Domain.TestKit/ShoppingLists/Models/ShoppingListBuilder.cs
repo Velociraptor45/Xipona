@@ -56,7 +56,7 @@ public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
         return this;
     }
 
-    public ShoppingListBuilder WithItemDiscounts(IEnumerable<Discount> itemDiscounts)
+    public ShoppingListBuilder WithItemDiscounts(IEnumerable<ItemDiscount> itemDiscounts)
     {
         FillConstructorWith(nameof(itemDiscounts), itemDiscounts);
         return this;
@@ -64,6 +64,6 @@ public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
 
     public ShoppingListBuilder WithEmptyItemDiscounts()
     {
-        return WithItemDiscounts(Enumerable.Empty<Discount>());
+        return WithItemDiscounts(Enumerable.Empty<ItemDiscount>());
     }
 }

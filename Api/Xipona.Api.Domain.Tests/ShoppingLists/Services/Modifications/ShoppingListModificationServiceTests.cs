@@ -1300,7 +1300,7 @@ public class ShoppingListModificationServiceTests
         private sealed class AddDiscountAsyncFixture : ShoppingListModificationServiceFixture
         {
             public ShoppingListId ShoppingListId { get; private set; } = ShoppingListId.New;
-            public Discount? Discount { get; private set; }
+            public ItemDiscount? Discount { get; private set; }
 
             public void SetupDiscount()
             {

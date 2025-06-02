@@ -12,13 +12,13 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
     private readonly IShoppingListFactory _shoppingListFactory;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
     private readonly IToDomainConverter<ItemsOnList, ShoppingListItem> _shoppingListItemConverter;
-    private readonly IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.Discount> _itemDiscountConverter;
+    private readonly IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.ItemDiscount> _itemDiscountConverter;
     private readonly IToDomainConverter<ShoppingListDiscount, ListDiscount> _listDiscountConverter;
 
     public ShoppingListConverter(IShoppingListFactory shoppingListFactory,
         IShoppingListSectionFactory shoppingListSectionFactory,
         IToDomainConverter<ItemsOnList, ShoppingListItem> shoppingListItemConverter,
-        IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.Discount> itemDiscountConverter,
+        IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.ItemDiscount> itemDiscountConverter,
         IToDomainConverter<ShoppingListDiscount, ListDiscount> listDiscountConverter)
     {
         _shoppingListFactory = shoppingListFactory;

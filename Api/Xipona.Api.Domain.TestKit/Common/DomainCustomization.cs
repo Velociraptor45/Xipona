@@ -50,7 +50,7 @@ public class DomainCustomization : ICustomization
         fixture.Customize<ListDiscountId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<GeneralSettingId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
-        fixture.Customize<Discount>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
+        fixture.Customize<ItemDiscount>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
         fixture.Customize<Percentage>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
 
         fixture.Customize(new PriceCustomization());

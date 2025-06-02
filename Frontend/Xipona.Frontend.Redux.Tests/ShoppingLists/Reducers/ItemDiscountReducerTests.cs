@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Discounts;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
 using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Reducers;
-public class DiscountReducerTests
+public class ItemDiscountReducerTests
 {
     public class OnOpenDiscountDialog
     {
@@ -23,13 +23,13 @@ public class DiscountReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            var result = DiscountReducer.OnOpenDiscountDialog(_fixture.InitialState, _fixture.Action);
+            var result = ItemDiscountReducer.OnOpenDiscountDialog(_fixture.InitialState, _fixture.Action);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnOpenDiscountDialogFixture : DiscountReducerFixture
+        private sealed class OnOpenDiscountDialogFixture : ItemDiscountReducerFixture
         {
             public OpenDiscountDialogAction? Action { get; private set; }
 
@@ -84,13 +84,13 @@ public class DiscountReducerTests
             _fixture.SetupInitialState();
 
             // Act
-            var result = DiscountReducer.OnSaveDiscountStarted(_fixture.InitialState);
+            var result = ItemDiscountReducer.OnSaveDiscountStarted(_fixture.InitialState);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnSaveDiscountStartedFixture : DiscountReducerFixture
+        private sealed class OnSaveDiscountStartedFixture : ItemDiscountReducerFixture
         {
             public void SetupInitialState()
             {
@@ -128,13 +128,13 @@ public class DiscountReducerTests
             _fixture.SetupInitialState();
 
             // Act
-            var result = DiscountReducer.OnSaveDiscountFinished(_fixture.InitialState);
+            var result = ItemDiscountReducer.OnSaveDiscountFinished(_fixture.InitialState);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnSaveDiscountFinishedFixture : DiscountReducerFixture
+        private sealed class OnSaveDiscountFinishedFixture : ItemDiscountReducerFixture
         {
             public void SetupInitialState()
             {
@@ -172,13 +172,13 @@ public class DiscountReducerTests
             _fixture.SetupInitialState();
 
             // Act
-            var result = DiscountReducer.OnRemoveDiscountStarted(_fixture.InitialState);
+            var result = ItemDiscountReducer.OnRemoveDiscountStarted(_fixture.InitialState);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnRemoveDiscountStartedFixture : DiscountReducerFixture
+        private sealed class OnRemoveDiscountStartedFixture : ItemDiscountReducerFixture
         {
             public void SetupInitialState()
             {
@@ -216,13 +216,13 @@ public class DiscountReducerTests
             _fixture.SetupInitialState();
 
             // Act
-            var result = DiscountReducer.OnRemoveDiscountFinished(_fixture.InitialState);
+            var result = ItemDiscountReducer.OnRemoveDiscountFinished(_fixture.InitialState);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnRemoveDiscountFinishedFixture : DiscountReducerFixture
+        private sealed class OnRemoveDiscountFinishedFixture : ItemDiscountReducerFixture
         {
             public void SetupInitialState()
             {
@@ -260,13 +260,13 @@ public class DiscountReducerTests
             _fixture.SetupInitialState();
 
             // Act
-            var result = DiscountReducer.OnCloseDiscountDialog(_fixture.InitialState);
+            var result = ItemDiscountReducer.OnCloseDiscountDialog(_fixture.InitialState);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnCloseDiscountDialogFixture : DiscountReducerFixture
+        private sealed class OnCloseDiscountDialogFixture : ItemDiscountReducerFixture
         {
             public void SetupInitialState()
             {
@@ -312,13 +312,13 @@ public class DiscountReducerTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
 
             // Act
-            var result = DiscountReducer.OnDiscountChanged(_fixture.InitialState, _fixture.Action);
+            var result = ItemDiscountReducer.OnDiscountChanged(_fixture.InitialState, _fixture.Action);
 
             // Assert
             result.Should().BeEquivalentTo(_fixture.ExpectedState);
         }
 
-        private sealed class OnDiscountChangedFixture : DiscountReducerFixture
+        private sealed class OnDiscountChangedFixture : ItemDiscountReducerFixture
         {
             public DiscountChangedAction? Action { get; private set; }
 
@@ -340,7 +340,7 @@ public class DiscountReducerTests
         }
     }
 
-    private abstract class DiscountReducerFixture
+    private abstract class ItemDiscountReducerFixture
     {
         public ShoppingListState InitialState { get; protected set; } = new DomainTestBuilder<ShoppingListState>().Create();
         public ShoppingListState ExpectedState { get; protected set; } = new DomainTestBuilder<ShoppingListState>().Create();

@@ -12,7 +12,7 @@ public interface IShoppingList
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<ShoppingListItem> Items { get; }
     DateTimeOffset CreatedAt { get; }
-    IReadOnlyCollection<Discount> ItemDiscounts { get; }
+    IReadOnlyCollection<ItemDiscount> ItemDiscounts { get; }
     IReadOnlyCollection<ListDiscount> ListDiscounts { get; }
 
     void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
@@ -37,10 +37,10 @@ public interface IShoppingList
 
     void RemoveItemAndItsTypes(ItemId itemId);
 
-    Discount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
+    ItemDiscount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
 
-    void AddDiscount(Discount discount);
-    void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId);
+    void AddDiscount(ItemDiscount discount);
     void AddDiscount(ListDiscount discount);
-    void RemoveDiscount(ListDiscountId listDiscountId);
+    void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId);
+    void RemoveDiscount(ListDiscountId discountId);
 }

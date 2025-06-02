@@ -2,18 +2,18 @@
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
 using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Discounts;
+using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using RestEase;
 
 namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
-public class DiscountEffects
+public class ItemDiscountEffects
 {
     private readonly IApiClient _apiClient;
     private readonly IState<ShoppingListState> _state;
     private readonly IShoppingListNotificationService _notificationService;
 
-    public DiscountEffects(IApiClient apiClient, IState<ShoppingListState> state,
+    public ItemDiscountEffects(IApiClient apiClient, IState<ShoppingListState> state,
         IShoppingListNotificationService notificationService)
     {
         _apiClient = apiClient;

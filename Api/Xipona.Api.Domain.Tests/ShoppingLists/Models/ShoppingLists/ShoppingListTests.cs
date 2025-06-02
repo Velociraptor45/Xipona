@@ -734,7 +734,7 @@ public class ShoppingListTests
         {
             public ItemId ItemId { get; private set; } = ItemId.New;
             public ItemTypeId? ItemTypeId { get; private set; }
-            public Discount? ExpectedResult { get; private set; }
+            public ItemDiscount? ExpectedResult { get; private set; }
 
             public void SetupItemTypeId()
             {
@@ -850,7 +850,7 @@ public class ShoppingListTests
         {
             public ItemId ItemId { get; private set; } = ItemId.New;
             public ItemTypeId? ItemTypeId { get; private set; }
-            public Discount? Discount { get; private set; }
+            public ItemDiscount? Discount { get; private set; }
 
             public void SetupItemTypeId()
             {
@@ -973,7 +973,7 @@ public class ShoppingListTests
         {
             public ItemId ItemId { get; private set; } = ItemId.New;
             public ItemTypeId? ItemTypeId { get; private set; }
-            public IReadOnlyCollection<Discount>? ExpectedResult { get; private set; }
+            public IReadOnlyCollection<ItemDiscount>? ExpectedResult { get; private set; }
 
             public void SetupItemTypeId()
             {

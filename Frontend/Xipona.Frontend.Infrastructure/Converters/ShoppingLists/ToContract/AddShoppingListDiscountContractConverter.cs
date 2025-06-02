@@ -16,7 +16,7 @@ public class AddShoppingListDiscountContractConverter
         {
             ShoppingListDiscountType.Price => new AddShoppingListDiscountContract(discountValue, null),
             ShoppingListDiscountType.Percentage => new AddShoppingListDiscountContract(null, discountValue),
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown discount type.")
+            _ => throw new ArgumentOutOfRangeException(nameof(source), type, "Unknown discount type.")
         };
     }
 }
