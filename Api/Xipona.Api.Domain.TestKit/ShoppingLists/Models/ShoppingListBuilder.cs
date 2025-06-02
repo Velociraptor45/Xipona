@@ -1,9 +1,6 @@
 using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.Stores.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
@@ -59,14 +56,14 @@ public class ShoppingListBuilder : DomainTestBuilderBase<ShoppingList>
         return this;
     }
 
-    public ShoppingListBuilder WithDiscounts(IEnumerable<Discount> discounts)
+    public ShoppingListBuilder WithItemDiscounts(IEnumerable<Discount> itemDiscounts)
     {
-        FillConstructorWith(nameof(discounts), discounts);
+        FillConstructorWith(nameof(itemDiscounts), itemDiscounts);
         return this;
     }
 
-    public ShoppingListBuilder WithEmptyDiscounts()
+    public ShoppingListBuilder WithEmptyItemDiscounts()
     {
-        return WithDiscounts(Enumerable.Empty<Discount>());
+        return WithItemDiscounts(Enumerable.Empty<Discount>());
     }
 }

@@ -749,7 +749,7 @@ public class ShoppingListTests
                     ItemTypeId = ItemTypeId
                 };
 
-                Builder.WithDiscounts([ExpectedResult.Value]);
+                Builder.WithItemDiscounts([ExpectedResult.Value]);
             }
         }
     }
@@ -889,10 +889,10 @@ public class ShoppingListTests
                 };
 
                 var sut = new ShoppingListBuilder()
-                    .WithDiscounts([discount])
+                    .WithItemDiscounts([discount])
                     .Create();
 
-                Builder.WithDiscounts([discount]);
+                Builder.WithItemDiscounts([discount]);
             }
         }
     }
@@ -984,7 +984,7 @@ public class ShoppingListTests
             {
                 ExpectedResult = new DiscountBuilder().CreateMany(2).ToList();
 
-                Builder.WithDiscounts(ExpectedResult);
+                Builder.WithItemDiscounts(ExpectedResult);
             }
 
             public void SetupDiscount()
@@ -997,7 +997,7 @@ public class ShoppingListTests
                     ItemTypeId = ItemTypeId
                 };
 
-                Builder.WithDiscounts(ExpectedResult.Union([discount]));
+                Builder.WithItemDiscounts(ExpectedResult.Union([discount]));
             }
         }
     }

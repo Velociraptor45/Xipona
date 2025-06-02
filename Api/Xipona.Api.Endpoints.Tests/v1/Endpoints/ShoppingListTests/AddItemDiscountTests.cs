@@ -54,8 +54,8 @@ public class AddItemDiscountTests : EndpointCommandTestsBase<(Guid, AddItemDisco
             PossibleResultsList.Add(new UnprocessableEntityStatusResult(ErrorReasonCode.ShoppingListNotFound));
         }
 
-        public override string RoutePattern => "/v1/shopping-lists/{id:guid}/items/add-discount";
-        public override HttpMethod HttpMethod => HttpMethod.Put;
+        public override string RoutePattern => "/v1/shopping-lists/{id:guid}/items/discounts";
+        public override HttpMethod HttpMethod => HttpMethod.Post;
 
         public override Task<IResult> ExecuteTestMethod()
         {
