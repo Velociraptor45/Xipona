@@ -12,11 +12,14 @@ public class ShoppingListDiscountEffects
 {
     private readonly IApiClient _client;
     private readonly IState<ShoppingListState> _state;
+    private readonly IShoppingListNotificationService _notificationService;
 
-    public ShoppingListDiscountEffects(IApiClient client, IState<ShoppingListState> state)
+    public ShoppingListDiscountEffects(IApiClient client, IState<ShoppingListState> state,
+        IShoppingListNotificationService notificationService)
     {
         _client = client;
         _state = state;
+        _notificationService = notificationService;
     }
 
     [EffectMethod(typeof(SaveDiscountAction))]
@@ -45,6 +48,7 @@ public class ShoppingListDiscountEffects
         dispatcher.Dispatch(new SaveDiscountFinishedAction());
         dispatcher.Dispatch(new CloseDiscountDialogAction());
         dispatcher.Dispatch(new ReloadCurrentShoppingListAction());
+        _notificationService.NotifySuccess("Successfully added discount");
     }
 
     [EffectMethod]
@@ -70,5 +74,6 @@ public class ShoppingListDiscountEffects
         }
 
         dispatcher.Dispatch(new RemoveDiscountFinishedAction(action.DiscountId));
+        _notificationService.NotifySuccess("Successfully removed discount");
     }
 }
