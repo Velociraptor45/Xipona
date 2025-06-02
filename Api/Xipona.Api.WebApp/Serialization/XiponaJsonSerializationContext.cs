@@ -29,6 +29,7 @@ using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -84,6 +85,7 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(AddItemDiscountContract))]
 [JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists.AddItemToShoppingListContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00ShoppingLists00Commands00AddItemsToShoppingLists00AddItemToShoppingListContract")]
 [JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00ShoppingLists00Commands00AddItemToShoppingList00AddItemToShoppingListContract")]
+[JsonSerializable(typeof(List<AddShoppingListDiscountContract>))]
 // Recipe
 [JsonSerializable(typeof(List<RecipeSearchResultContract>))]
 [JsonSerializable(typeof(IngredientContract))]

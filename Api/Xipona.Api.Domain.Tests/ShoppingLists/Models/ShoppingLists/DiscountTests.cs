@@ -14,7 +14,7 @@ public class DiscountTests
         public void Ctor_WithNoArguments_ShouldThrowNotSupportedException()
         {
             // Act
-            var act = () => new Discount();
+            var act = () => new ItemDiscount();
 
             // Assert
             act.Should().Throw<NotSupportedException>();
@@ -28,7 +28,7 @@ public class DiscountTests
             var price = _fixture.Price;
 
             // Act
-            var discount = new Discount(itemId, price);
+            var discount = new ItemDiscount(itemId, price);
 
             // Assert
             discount.ItemId.Should().Be(itemId);
@@ -45,7 +45,7 @@ public class DiscountTests
             var price = _fixture.Price;
 
             // Act
-            var discount = new Discount(itemId, itemTypeId, price);
+            var discount = new ItemDiscount(itemId, itemTypeId, price);
 
             // Assert
             discount.ItemId.Should().Be(itemId);

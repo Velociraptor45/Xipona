@@ -1,6 +1,6 @@
 ﻿namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 
-public record ShoppingListModel(Guid Id, SortedSet<ShoppingListSection> Sections)
+public record ShoppingListModel(Guid Id, SortedSet<ShoppingListSection> Sections, IReadOnlyCollection<ShoppingListDiscount> Discounts)
 {
     public IEnumerable<ShoppingListItem> Items => Sections.SelectMany(s => s.Items);
     public bool AnyItemInBasket => Sections.Any(s => s.AnyItemsInBasket);

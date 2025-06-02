@@ -15,13 +15,16 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         /// <param name="store"></param>
         /// <param name="sections"></param>
         /// <param name="completionDate"></param>
+        /// <param name="shoppingListDiscounts"></param>
         public ShoppingListContract(Guid id, ShoppingListStoreContract store,
-            IEnumerable<ShoppingListSectionContract> sections, DateTimeOffset? completionDate)
+            IEnumerable<ShoppingListSectionContract> sections, DateTimeOffset? completionDate,
+            IEnumerable<ShoppingListDiscountContract> shoppingListDiscounts)
         {
             Id = id;
             Store = store;
             Sections = sections.ToList();
             CompletionDate = completionDate;
+            ShoppingListDiscounts = shoppingListDiscounts.ToList();
         }
 
         /// <summary>
@@ -44,5 +47,10 @@ namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShop
         /// Null if the list is active.
         /// </summary>
         public DateTimeOffset? CompletionDate { get; }
+
+        /// <summary>
+        /// The discounts applied to the entire shopping list.
+        /// </summary>
+        public IReadOnlyCollection<ShoppingListDiscountContract> ShoppingListDiscounts { get; }
     }
 }

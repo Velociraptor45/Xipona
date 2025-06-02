@@ -28,6 +28,7 @@ using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
 using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
@@ -223,7 +224,7 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="contract"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [Put("shopping-lists/{id}/items/add-discount")]
+        [Post("shopping-lists/{id}/items/discounts")]
         Task AddItemDiscountAsync([Path] Guid id, [Body] AddItemDiscountContract contract,
             CancellationToken cancellationToken = default);
 
@@ -234,8 +235,30 @@ namespace ProjectHermes.Xipona.Api.Client
         /// <param name="contract"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [Put("shopping-lists/{id}/items/remove-discount")]
+        [Delete("shopping-lists/{id}/items/discounts")]
         Task RemoveItemDiscountAsync([Path] Guid id, [Body] RemoveItemDiscountContract contract,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Adds a discount to the entire shopping list.
+        /// </summary>
+        /// <param name="id">The shopping list's ID</param>
+        /// <param name="contract"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Post("shopping-lists/{id}/discounts")]
+        Task AddShoppingListDiscountAsync([Path] Guid id, [Body] AddShoppingListDiscountContract contract,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Removes a discount for the entire shopping list. If there's no discount with the given ID, nothing happens.
+        /// </summary>
+        /// <param name="shoppingListId"></param>
+        /// <param name="discountId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Delete("shopping-lists/{shoppingListId}/discounts/{discountId}")]
+        Task RemoveShoppingListDiscountAsync([Path] Guid shoppingListId, [Path] Guid discountId,
             CancellationToken cancellationToken = default);
 
         #endregion ShoppingList

@@ -160,6 +160,7 @@ public abstract class DatabaseFixture : IDisposable
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
             .Include(l => l.Discounts)
+            .Include(l => l.ListDiscounts)
             .ToListAsync();
     }
 

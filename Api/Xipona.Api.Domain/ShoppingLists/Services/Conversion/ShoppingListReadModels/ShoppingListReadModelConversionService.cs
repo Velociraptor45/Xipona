@@ -138,6 +138,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             shoppingList.Id,
             shoppingList.CompletionDate,
             new ShoppingListStoreReadModel(store.Id, store.Name),
-            sectionReadModels);
+            sectionReadModels,
+            shoppingList.ListDiscounts);
     }
 }

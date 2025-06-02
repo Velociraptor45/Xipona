@@ -18,12 +18,18 @@ public class ShoppingListConverterTests
     public override ShoppingListConverter CreateSut()
     {
         return new(new ShoppingListFactory(new ShoppingListSectionFactory(), _dateTimeServiceMock.Object),
-            new ShoppingListSectionFactory(), new ShoppingListItemConverter(), new DiscountConverter());
+            new ShoppingListSectionFactory(), new ShoppingListItemConverter(), new DiscountConverter(),
+            new ListDiscountConverter());
     }
 
     protected override Repositories.ShoppingLists.Entities.ShoppingList CreateSource()
     {
-        return new ShoppingListEntityBuilder().Create();
+        return new ShoppingListEntityBuilder()
+            .WithListDiscounts(new ShoppingListDiscountEntityBuilder()
+                .WithoutDiscountPercentage()
+                .CreateMany(2)
+                .ToList())
+            .Create();
     }
 
     protected override void AddMapping(IMappingExpression<Repositories.ShoppingLists.Entities.ShoppingList, IShoppingList> mapping)
@@ -50,13 +56,16 @@ public class ShoppingListConverterTests
                     .Select(g => new ShoppingListSection(
                         new SectionId(g.SectionId),
                         g.Items))))
-            .ForCtorParam(nameof(IShoppingList.Discounts).LowerFirstChar(),
-                opt => opt.MapFrom((src, ctx) => src.Discounts.Select(d => ctx.Mapper.Map<Discount>(d))))
+            .ForCtorParam(nameof(IShoppingList.ItemDiscounts).LowerFirstChar(),
+                opt => opt.MapFrom((src, ctx) => src.Discounts.Select(d => ctx.Mapper.Map<ItemDiscount>(d))))
+            .ForCtorParam(nameof(IShoppingList.ListDiscounts).LowerFirstChar(),
+                opt => opt.MapFrom((src, ctx) => src.ListDiscounts.Select(d => ctx.Mapper.Map<ListDiscount>(d))))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.Items, opt => opt.Ignore())
             .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
         new ShoppingListItemConverterTests().AddMapping(cfg);
         new DiscountConverterTests().AddMapping(cfg);
+        new ListDiscountConverterTests.WithPrice().AddMapping(cfg);
     }
 }

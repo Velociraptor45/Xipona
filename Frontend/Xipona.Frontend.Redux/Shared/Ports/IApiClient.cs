@@ -132,4 +132,6 @@ public interface IApiClient
     Task<IEnumerable<Currency>> GetAllCurrenciesAsync();
     Task UpdateGeneralSettingsAsync(Currency currency);
     Task<GeneralSettings> GetGeneralSettingsAsync();
+    Task AddShoppingListDiscountAsync(Guid shoppingListId, decimal discount, ShoppingListDiscountType type);
+    Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId);
 }

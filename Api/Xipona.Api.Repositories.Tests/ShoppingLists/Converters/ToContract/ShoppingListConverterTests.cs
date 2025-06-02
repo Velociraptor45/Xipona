@@ -28,7 +28,8 @@ public class ShoppingListConverterTests
             .ForMember(dest => dest.ItemsOnList, opt => opt.MapFrom((src, _, _, ctx) =>
                 ConvertItems(src).Select(
                     ctx.Mapper.Map<(Domain.ShoppingLists.Models.ShoppingList, IShoppingListSection, ShoppingListItem), ItemsOnList>)))
-            .ForMember(dest => dest.Discounts, opt => opt.MapFrom(src => ConvertDiscounts(src)));
+            .ForMember(dest => dest.Discounts, opt => opt.MapFrom(src => ConvertDiscounts(src)))
+            .ForMember(dest => dest.ListDiscounts, opt => opt.MapFrom(src => ConvertListDiscounts(src)));
     }
 
     protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -60,12 +61,23 @@ public class ShoppingListConverterTests
 
     private static List<Discount> ConvertDiscounts(Domain.ShoppingLists.Models.ShoppingList src)
     {
-        return src.Discounts.Select(d => new Discount
+        return src.ItemDiscounts.Select(d => new Discount
         {
             ShoppingListId = src.Id.Value,
             ItemId = d.ItemId.Value,
             ItemTypeId = d.ItemTypeId,
             DiscountPrice = d.Price
+        }).ToList();
+    }
+
+    private static List<ShoppingListDiscount> ConvertListDiscounts(Domain.ShoppingLists.Models.ShoppingList src)
+    {
+        return src.ListDiscounts.Select(d => new ShoppingListDiscount()
+        {
+            ShoppingListId = src.Id.Value,
+            Id = d.Id,
+            DiscountPrice = d.Price,
+            DiscountPercentage = d.Percentage
         }).ToList();
     }
 }

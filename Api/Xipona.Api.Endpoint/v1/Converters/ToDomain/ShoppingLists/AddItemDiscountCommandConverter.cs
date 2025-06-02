@@ -11,7 +11,7 @@ public class AddItemDiscountCommandConverter : IToDomainConverter<(Guid, AddItem
     public AddItemDiscountCommand ToDomain((Guid, AddItemDiscountContract) source)
     {
         var itemTypeId = source.Item2.ItemTypeId;
-        var discount = new Discount(
+        var discount = new ItemDiscount(
             new ItemId(source.Item2.ItemId),
             itemTypeId is null ? null : new ItemTypeId(itemTypeId.Value),
             new Price(source.Item2.DiscountPrice));

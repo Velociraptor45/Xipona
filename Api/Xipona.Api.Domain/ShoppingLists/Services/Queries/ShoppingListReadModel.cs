@@ -4,19 +4,19 @@ namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
 
 public class ShoppingListReadModel
 {
-    private readonly IEnumerable<ShoppingListSectionReadModel> _sections;
-
     public ShoppingListReadModel(ShoppingListId id, DateTimeOffset? completionDate, ShoppingListStoreReadModel store,
-        IEnumerable<ShoppingListSectionReadModel> sections)
+        IEnumerable<ShoppingListSectionReadModel> sections, IEnumerable<ListDiscount> listDiscounts)
     {
         Id = id;
         CompletionDate = completionDate;
         Store = store;
-        _sections = sections;
+        Sections = sections.ToList();
+        ListDiscounts = listDiscounts.ToList();
     }
 
     public ShoppingListId Id { get; }
     public DateTimeOffset? CompletionDate { get; }
     public ShoppingListStoreReadModel Store { get; }
-    public IReadOnlyCollection<ShoppingListSectionReadModel> Sections => _sections.ToList().AsReadOnly();
+    public IReadOnlyCollection<ShoppingListSectionReadModel> Sections { get; }
+    public IReadOnlyCollection<ListDiscount> ListDiscounts { get; }
 }

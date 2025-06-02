@@ -1,6 +1,7 @@
 ﻿using Fluxor;
 using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectHermes.Xipona.Frontend.WebApp.Services;
@@ -14,7 +15,7 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
         _shoppingListState = shoppingListState;
     }
 
-    public float CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity)
+    public decimal CalculatePrice(int quantityTypeId, decimal pricePerQuantity, float quantity)
     {
         var type = _shoppingListState.Value.QuantityTypes.FirstOrDefault(type => type.Id == quantityTypeId);
         if (type == null)
@@ -22,35 +23,54 @@ public class ItemPriceCalculationService : IItemPriceCalculationService
 
         var price = (decimal)quantity / type.QuantityNormalizer * pricePerQuantity;
 
-        return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
+        return Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }
 
-    private static float CalculatePrice(ShoppingListItem item)
+    private static decimal CalculatePrice(ShoppingListItem item)
     {
         var price = (decimal)item.Quantity / item.QuantityType.QuantityNormalizer * item.PricePerQuantity;
 
-        return (float)Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
+        return Math.Round(price * 100, MidpointRounding.AwayFromZero) / 100;
     }
 
-    public float GetInBasketPrice(ShoppingListModel shoppingList)
+    public decimal GetInBasketPrice(ShoppingListModel shoppingList, bool includeDiscounts = false)
     {
         var items = shoppingList.Items.Where(i => i.IsInBasket).ToList();
-        var sum = 0f;
+        var sum = 0m;
         foreach (var item in items)
         {
             sum += CalculatePrice(item);
         }
-        return sum;
+
+        if (!includeDiscounts)
+            return sum;
+
+        return SubtractDiscounts(sum, shoppingList.Discounts);
     }
 
-    public float GetTotalPrice(ShoppingListModel shoppingList)
+    public decimal GetTotalPrice(ShoppingListModel shoppingList, bool includeDiscounts = false)
     {
         var items = shoppingList.Items.ToList();
-        var sum = 0f;
+        var sum = 0m;
         foreach (var item in items)
         {
             sum += CalculatePrice(item);
         }
-        return sum;
+
+        if (!includeDiscounts)
+            return sum;
+
+        return SubtractDiscounts(sum, shoppingList.Discounts);
+    }
+
+    private static decimal SubtractDiscounts(decimal totalListPrice, IReadOnlyCollection<ShoppingListDiscount> discounts)
+    {
+        var absolutePrices = discounts.Where(d => d.Type == ShoppingListDiscountType.Price).Sum(d => d.DiscountValue);
+        var percentages = discounts.Where(d => d.Type == ShoppingListDiscountType.Percentage).Sum(d => d.DiscountValue);
+
+        if (percentages > 100)
+            percentages = 100;
+
+        return (totalListPrice - absolutePrices) * (1 - percentages / 100);
     }
 }

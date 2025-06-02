@@ -1,4 +1,5 @@
 ﻿using AutoFixture.Kernel;
+using ProjectHermes.Xipona.Api.Domain.Common.Models;
 using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
 using ProjectHermes.Xipona.Api.Domain.Items.Models;
 using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
@@ -46,9 +47,11 @@ public class DomainCustomization : ICustomization
         fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<RecipeTagId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<UserId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<ListDiscountId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<GeneralSettingId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
-        fixture.Customize<Discount>(c => c.FromFactory(new MethodInvoker(new DiscountConstructorQuery())));
+        fixture.Customize<ItemDiscount>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
+        fixture.Customize<Percentage>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());

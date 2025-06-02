@@ -5,18 +5,10 @@
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator
 @using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
 
-@inject IState<SharedState> SharedState
 @inject IState<ShoppingListState> State
 @inject IDispatcher Dispatcher
 
-<div class="temporary-item-creator">
-    <Tooltip Placement="Placement.BottomRight" Title="@("Create temp. item")" Disabled="SharedState.Value.IsMobile">
-        <Button Type="@ButtonType.Primary"
-                OnClick="@OnOpenCreationButtonClicked"
-                Class="d-flex align-items-center">
-            <i class="bi bi-plus-lg"></i>
-        </Button>
-    </Tooltip>
+<div>
     <Modal Title="Add temporary item"
            Visible="@State.Value.TemporaryItemCreator.IsOpen"
            OnCancel="@CloseModal"
@@ -73,11 +65,6 @@
     private void OnPriceChanged(decimal price)
     {
         Dispatcher.Dispatch(new TemporaryItemPriceChangedAction(price));
-    }
-
-    private void OnOpenCreationButtonClicked()
-    {
-        Dispatcher.Dispatch(new OpenTemporaryItemCreatorAction());
     }
 
     private void CloseModal()

@@ -136,7 +136,7 @@ public class ShoppingListTests
             sut.RemoveItemAndItsTypes(_fixture.ItemId.Value);
 
             // Assert
-            sut.Should().BeEquivalentTo(expected);
+            sut.Should().BeEquivalentTo(expected, opt => opt.Excluding(info => info.Path.Contains("Percentage.Inverted")));
         }
 
         [Fact]
@@ -474,8 +474,11 @@ public class ShoppingListTests
             {
                 shoppingList.Sections.First().Items.Should().BeEquivalentTo(itemsInBasket);
                 shoppingList.CompletionDate.Should().Be(completionDate);
+
                 result.Sections.First().Items.Should().BeEquivalentTo(itemsNotInBasket);
                 result.CreatedAt.Should().Be(expectedCreatedAt);
+                result.ItemDiscounts.Should().BeEmpty();
+                result.ListDiscounts.Should().BeEmpty();
             }
         }
     }
@@ -731,7 +734,7 @@ public class ShoppingListTests
         {
             public ItemId ItemId { get; private set; } = ItemId.New;
             public ItemTypeId? ItemTypeId { get; private set; }
-            public Discount? ExpectedResult { get; private set; }
+            public ItemDiscount? ExpectedResult { get; private set; }
 
             public void SetupItemTypeId()
             {
@@ -746,7 +749,7 @@ public class ShoppingListTests
                     ItemTypeId = ItemTypeId
                 };
 
-                Builder.WithDiscounts([ExpectedResult.Value]);
+                Builder.WithItemDiscounts([ExpectedResult.Value]);
             }
         }
     }
@@ -771,7 +774,7 @@ public class ShoppingListTests
             sut.AddDiscount(_fixture.Discount.Value);
 
             // Assert
-            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+            sut.ItemDiscounts.Should().Contain(_fixture.Discount.Value);
         }
 
         [Fact]
@@ -789,7 +792,7 @@ public class ShoppingListTests
             sut.AddDiscount(_fixture.Discount.Value);
 
             // Assert
-            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+            sut.ItemDiscounts.Should().Contain(_fixture.Discount.Value);
         }
 
         [Fact]
@@ -823,7 +826,7 @@ public class ShoppingListTests
             sut.AddDiscount(_fixture.Discount.Value);
 
             // Assert
-            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+            sut.ItemDiscounts.Should().Contain(_fixture.Discount.Value);
         }
 
         [Fact]
@@ -840,14 +843,14 @@ public class ShoppingListTests
             sut.AddDiscount(_fixture.Discount.Value);
 
             // Assert
-            sut.Discounts.Should().Contain(_fixture.Discount.Value);
+            sut.ItemDiscounts.Should().Contain(_fixture.Discount.Value);
         }
 
         private sealed class AddDiscountFixture : ShoppingListFixture
         {
             public ItemId ItemId { get; private set; } = ItemId.New;
             public ItemTypeId? ItemTypeId { get; private set; }
-            public Discount? Discount { get; private set; }
+            public ItemDiscount? Discount { get; private set; }
 
             public void SetupItemTypeId()
             {
@@ -886,10 +889,10 @@ public class ShoppingListTests
                 };
 
                 var sut = new ShoppingListBuilder()
-                    .WithDiscounts([discount])
+                    .WithItemDiscounts([discount])
                     .Create();
 
-                Builder.WithDiscounts([discount]);
+                Builder.WithItemDiscounts([discount]);
             }
         }
     }
@@ -913,7 +916,7 @@ public class ShoppingListTests
             sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
 
             // Assert
-            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            sut.ItemDiscounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
         [Fact]
@@ -929,7 +932,7 @@ public class ShoppingListTests
             sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
 
             // Assert
-            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            sut.ItemDiscounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
         [Fact]
@@ -947,7 +950,7 @@ public class ShoppingListTests
             sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
 
             // Assert
-            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            sut.ItemDiscounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
         [Fact]
@@ -963,14 +966,14 @@ public class ShoppingListTests
             sut.RemoveDiscount(_fixture.ItemId, _fixture.ItemTypeId);
 
             // Assert
-            sut.Discounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
+            sut.ItemDiscounts.Should().BeEquivalentTo(_fixture.ExpectedResult);
         }
 
         private sealed class RemoveDiscountFixture : ShoppingListFixture
         {
             public ItemId ItemId { get; private set; } = ItemId.New;
             public ItemTypeId? ItemTypeId { get; private set; }
-            public IReadOnlyCollection<Discount>? ExpectedResult { get; private set; }
+            public IReadOnlyCollection<ItemDiscount>? ExpectedResult { get; private set; }
 
             public void SetupItemTypeId()
             {
@@ -981,7 +984,7 @@ public class ShoppingListTests
             {
                 ExpectedResult = new DiscountBuilder().CreateMany(2).ToList();
 
-                Builder.WithDiscounts(ExpectedResult);
+                Builder.WithItemDiscounts(ExpectedResult);
             }
 
             public void SetupDiscount()
@@ -994,7 +997,7 @@ public class ShoppingListTests
                     ItemTypeId = ItemTypeId
                 };
 
-                Builder.WithDiscounts(ExpectedResult.Union([discount]));
+                Builder.WithItemDiscounts(ExpectedResult.Union([discount]));
             }
         }
     }

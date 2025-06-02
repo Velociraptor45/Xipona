@@ -12,17 +12,20 @@ namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 public class ShoppingList : AggregateRoot, IShoppingList
 {
     private readonly Dictionary<SectionId, IShoppingListSection> _sections;
-    private readonly Dictionary<(ItemId, ItemTypeId?), Discount> _discounts;
+    private readonly Dictionary<(ItemId, ItemTypeId?), ItemDiscount> _discounts;
+    private readonly ListDiscounts _listDiscounts;
 
     public ShoppingList(ShoppingListId id, StoreId storeId, DateTimeOffset? completionDate,
-        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<Discount> discounts)
+        IEnumerable<IShoppingListSection> sections, DateTimeOffset createdAt, IEnumerable<ItemDiscount> itemDiscounts,
+        IEnumerable<ListDiscount> listDiscounts)
     {
         Id = id;
         StoreId = storeId;
         CompletionDate = completionDate;
         CreatedAt = createdAt;
         _sections = sections.ToDictionary(s => s.Id);
-        _discounts = discounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
+        _discounts = itemDiscounts.ToDictionary(d => (d.ItemId, d.ItemTypeId));
+        _listDiscounts = new ListDiscounts(listDiscounts);
     }
 
     public ShoppingListId Id { get; }
@@ -32,7 +35,8 @@ public class ShoppingList : AggregateRoot, IShoppingList
 
     public IReadOnlyCollection<IShoppingListSection> Sections => _sections.Values.ToList().AsReadOnly();
     public IReadOnlyCollection<ShoppingListItem> Items => Sections.SelectMany(s => s.Items).ToList().AsReadOnly();
-    public IReadOnlyCollection<Discount> Discounts => _discounts.Values.ToList().AsReadOnly();
+    public IReadOnlyCollection<ItemDiscount> ItemDiscounts => _discounts.Values.ToList().AsReadOnly();
+    public IReadOnlyCollection<ListDiscount> ListDiscounts => _listDiscounts.AsReadOnly();
 
     public void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true)
     {
@@ -128,7 +132,7 @@ public class ShoppingList : AggregateRoot, IShoppingList
         }
 
         return new ShoppingList(ShoppingListId.New, StoreId, null, notInBasketSections.Values, dateTimeService.UtcNow,
-            []);
+            [], []);
     }
 
     public void TransferItem(SectionId sectionId, ItemId itemId, ItemTypeId? itemTypeId)
@@ -149,12 +153,12 @@ public class ShoppingList : AggregateRoot, IShoppingList
         _sections[newSection.Id] = newSection.AddItem(item);
     }
 
-    public Discount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId)
+    public ItemDiscount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId)
     {
         return _discounts.TryGetValue((itemId, itemTypeId), out var discount) ? discount : null;
     }
 
-    public void AddDiscount(Discount discount)
+    public void AddDiscount(ItemDiscount discount)
     {
         if (!IsItemOnShoppingList(discount.ItemId, discount.ItemTypeId))
             throw new DomainException(new ItemNotOnShoppingListReason(Id, discount.ItemId, discount.ItemTypeId));
@@ -162,9 +166,19 @@ public class ShoppingList : AggregateRoot, IShoppingList
         _discounts[(discount.ItemId, discount.ItemTypeId)] = discount;
     }
 
+    public void AddDiscount(ListDiscount discount)
+    {
+        _listDiscounts.Add(discount);
+    }
+
     public void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId)
     {
         _discounts.Remove((itemId, itemTypeId));
+    }
+
+    public void RemoveDiscount(ListDiscountId discountId)
+    {
+        _listDiscounts.Remove(discountId);
     }
 
     private bool IsItemOnShoppingList(ItemId itemId, ItemTypeId? itemTypeId)

@@ -16,7 +16,8 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
             CompletionDate = source.CompletionDate,
             StoreId = source.StoreId,
             ItemsOnList = CreateItemsOnListMap(source).ToList(),
-            Discounts = CreateDiscountsMap(source).ToList(),
+            Discounts = CreateItemDiscounts(source).ToList(),
+            ListDiscounts = CreateShoppingListDiscounts(source).ToList(),
             CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
@@ -41,9 +42,9 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
         }
     }
 
-    private static IEnumerable<Discount> CreateDiscountsMap(IShoppingList source)
+    private static IEnumerable<Discount> CreateItemDiscounts(IShoppingList source)
     {
-        foreach (var discount in source.Discounts)
+        foreach (var discount in source.ItemDiscounts)
         {
             yield return new Discount
             {
@@ -53,5 +54,16 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
                 DiscountPrice = discount.Price
             };
         }
+    }
+
+    private static IEnumerable<ShoppingListDiscount> CreateShoppingListDiscounts(IShoppingList source)
+    {
+        return source.ListDiscounts.Select(d => new ShoppingListDiscount
+        {
+            Id = d.Id,
+            ShoppingListId = source.Id,
+            DiscountPercentage = d.Percentage,
+            DiscountPrice = d.Price
+        });
     }
 }

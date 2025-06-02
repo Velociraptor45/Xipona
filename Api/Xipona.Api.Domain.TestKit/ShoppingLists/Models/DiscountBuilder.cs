@@ -3,7 +3,7 @@ using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
 using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
 
 namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-public class DiscountBuilder : DomainTestBuilderBase<Discount>
+public class DiscountBuilder : DomainTestBuilderBase<ItemDiscount>
 {
     public DiscountBuilder WithItemId(ItemId itemId)
     {
