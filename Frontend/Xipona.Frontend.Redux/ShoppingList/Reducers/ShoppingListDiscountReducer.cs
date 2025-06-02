@@ -6,8 +6,8 @@ namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
 
 public static class ShoppingListDiscountReducer
 {
-    [ReducerMethod]
-    public static ShoppingListState OnOpenDiscountDialog(ShoppingListState state, OpenDiscountDialogAction action)
+    [ReducerMethod(typeof(OpenDiscountDialogAction))]
+    public static ShoppingListState OnOpenDiscountDialog(ShoppingListState state)
     {
         return state with
         {
@@ -18,8 +18,8 @@ public static class ShoppingListDiscountReducer
         };
     }
 
-    [ReducerMethod]
-    public static ShoppingListState OnCloseDiscountDialog(ShoppingListState state, CloseDiscountDialogAction action)
+    [ReducerMethod(typeof(CloseDiscountDialogAction))]
+    public static ShoppingListState OnCloseDiscountDialog(ShoppingListState state)
     {
         return state with
         {
@@ -30,8 +30,8 @@ public static class ShoppingListDiscountReducer
         };
     }
 
-    [ReducerMethod]
-    public static ShoppingListState OnSaveDiscountStarted(ShoppingListState state, SaveDiscountStartedAction action)
+    [ReducerMethod(typeof(SaveDiscountStartedAction))]
+    public static ShoppingListState OnSaveDiscountStarted(ShoppingListState state)
     {
         return state with
         {
@@ -42,8 +42,8 @@ public static class ShoppingListDiscountReducer
         };
     }
 
-    [ReducerMethod]
-    public static ShoppingListState OnSaveDiscountFinished(ShoppingListState state, SaveDiscountFinishedAction action)
+    [ReducerMethod(typeof(SaveDiscountFinishedAction))]
+    public static ShoppingListState OnSaveDiscountFinished(ShoppingListState state)
     {
         return state with
         {
