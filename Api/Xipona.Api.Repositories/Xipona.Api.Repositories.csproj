@@ -29,14 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\ItemCategories\" />
-    <Folder Include="Migrations\Manufacturers\" />
-    <Folder Include="Migrations\Stores\" />
-    <Folder Include="Migrations\ShoppingLists\" />
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
   
   <PropertyGroup>
