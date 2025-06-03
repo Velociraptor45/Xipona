@@ -33,8 +33,10 @@ public abstract class ContextFactoryBase
         return connectionStrings.ShoppingDatabase;
     }
 
-    protected static MySqlServerVersion GetVersion()
+    protected static DbContextOptionsBuilder<TDbContext> GetOptionBuilder<TDbContext>() where TDbContext : DbContext
     {
-        return new MySqlServerVersion(new Version(5, 7));
+        var optionsBuilder = new DbContextOptionsBuilder<TDbContext>();
+        optionsBuilder.UseNpgsql(GetDbConnectionString());
+        return optionsBuilder;
     }
 }

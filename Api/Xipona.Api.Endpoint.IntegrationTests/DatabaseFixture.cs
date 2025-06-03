@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using MySqlConnector;
+using Npgsql;
 using ProjectHermes.Xipona.Api.ApplicationServices;
 using ProjectHermes.Xipona.Api.Core;
 using ProjectHermes.Xipona.Api.Core.Constants;
@@ -47,11 +47,11 @@ public abstract class DatabaseFixture : IDisposable
             _connectionString = DockerFixture.ConnectionString.Replace("{DatabaseName}", databaseName);
         }
 
-        using var connection = new MySqlConnection(DockerFixture.ConnectionStringWithoutDb);
+        using var connection = new NpgsqlConnection(DockerFixture.ConnectionStringWithoutDb);
         connection.Open();
 
         var cmd = connection.CreateCommand();
-        cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}`;";
+        cmd.CommandText = $"CREATE DATABASE \"{databaseName}\";";
         cmd.ExecuteNonQuery();
 
         connection.Close();
@@ -109,7 +109,7 @@ public abstract class DatabaseFixture : IDisposable
     public static async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
     {
         var generator = scope.ServiceProvider.GetRequiredService<ITransactionGenerator>();
-        return await generator.GenerateAsync(default);
+        return await generator.GenerateAsync(CancellationToken.None);
     }
 
     public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync(IServiceScope assertionScope)

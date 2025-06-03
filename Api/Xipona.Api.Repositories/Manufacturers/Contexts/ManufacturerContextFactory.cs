@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+﻿using Microsoft.EntityFrameworkCore.Design;
 using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
 
 namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
@@ -8,8 +7,7 @@ public class ManufacturerContextFactory : ContextFactoryBase, IDesignTimeDbConte
 {
     public ManufacturerContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ManufacturerContext>();
-        optionsBuilder.UseMySql(GetDbConnectionString(), GetVersion());
+        var optionsBuilder = GetOptionBuilder<ManufacturerContext>();
 
         return new ManufacturerContext(optionsBuilder.Options);
     }

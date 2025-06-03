@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MySqlConnector;
+using Npgsql;
 using Polly;
 using Polly.Retry;
 using ProjectHermes.Xipona.Api.Core.Converter;
@@ -51,8 +51,6 @@ namespace ProjectHermes.Xipona.Api.Repositories;
 
 public static class ServiceCollectionExtensions
 {
-    private static readonly MySqlServerVersion _sqlServerVersion = new(new Version(10, 3, 27));
-
     public static void AddRepositories(this IServiceCollection services, string? connectionString = null)
     {
         var retryOpt = new RetryStrategyOptions()
@@ -78,7 +76,7 @@ public static class ServiceCollectionExtensions
 
             return pipeline.Execute(() =>
             {
-                var connection = new MySqlConnection(connectionString);
+                var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 return connection;
             });
@@ -213,7 +211,7 @@ public static class ServiceCollectionExtensions
     private static void SetDbConnection(IServiceProvider serviceProvider, DbContextOptionsBuilder options)
     {
         var connection = serviceProvider.GetService<DbConnection>()!;
-        options.UseMySql(connection, _sqlServerVersion);
+        options.UseNpgsql(connection);
     }
 
     private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)

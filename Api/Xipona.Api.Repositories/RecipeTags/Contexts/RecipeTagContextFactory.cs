@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+﻿using Microsoft.EntityFrameworkCore.Design;
 using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
 
 namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
@@ -8,8 +7,7 @@ public class RecipeTagContextFactory : ContextFactoryBase, IDesignTimeDbContextF
 {
     public RecipeTagContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<RecipeTagContext>();
-        optionsBuilder.UseMySql(GetDbConnectionString(), GetVersion());
+        var optionsBuilder = GetOptionBuilder<RecipeTagContext>();
 
         return new RecipeTagContext(optionsBuilder.Options);
     }

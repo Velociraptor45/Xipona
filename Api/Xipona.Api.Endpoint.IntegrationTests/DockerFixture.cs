@@ -26,11 +26,11 @@ public sealed class DockerFixture : IDisposable
         Task.Delay(12000).GetAwaiter().GetResult();
     }
 
-    public const string ConnectionStringWithoutDb =
-        "server=127.0.0.1;port=15906;user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
+    public const string ConnectionStringWithoutDb = "postgresql://postgres:123root@localhost:15906";
+    //"server=127.0.0.1;port=15906;user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
 
-    public const string ConnectionString =
-        "server=127.0.0.1;port=15906;database={DatabaseName};user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
+    public const string ConnectionString = "postgresql://postgres:123root@localhost:15906/{DatabaseName}";
+    //"server=127.0.0.1;port=15906;database={DatabaseName};user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
 
     public const string DatabaseName = "test-shoppinglist";
 
