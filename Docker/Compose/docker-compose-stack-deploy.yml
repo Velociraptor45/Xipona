@@ -2,20 +2,18 @@ version: "3.7"
 
 services:
   Database:
-    image: mariadb
+    image: postgres:17
     environment:
-      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/ph-xipona-db-root-pwd
-      MYSQL_DATABASE: xipona
-      MYSQL_USER_FILE: /run/secrets/ph-xipona-db-username
-      MYSQL_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+      POSTGRES_DB: xipona
+      POSTGRES_USER_FILE: /run/secrets/ph-xipona-db-username
+      POSTGRES_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
     ports:
       - "15909:3306"
     networks: 
       - ph-xipona
     volumes:
-      - ph-xipona-database:/var/lib/mysql
+      - ph-xipona-database:/var/lib/postgresql/data
     secrets:
-      - ph-xipona-db-root-pwd
       - /run/secrets/ph-xipona-db-username
       - /run/secrets/ph-xipona-db-password
 
@@ -89,8 +87,6 @@ secrets:
   ph-xipona-db-username:
     external: true
   ph-xipona-db-password:
-    external: true
-  ph-xipona-db-root-pwd:
     external: true
   # ph-xipona-otel-api-key: # uncomment this for backend OTEL API key support
   #   external: true

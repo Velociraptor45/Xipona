@@ -3,6 +3,8 @@
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-xipona-api?color=blue&label=docker%20image%20api&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-xipona-api)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-xipona-frontend?color=blue&label=docker%20image%20frontend&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-xipona-frontend)
 
+> **For docs & instructions on the latest stable release, switch to *main* branch please**
+
 ## Description
 
 With Xipona you can create **shopping lists**, manage your bought **items** and collect your favorite **recipes**.
@@ -74,7 +76,6 @@ Prepare the following things:
 - Docker Secrets (if you're using stack deploy)
   - ph-xipona-db-username
   - ph-xipona-db-password
-  - ph-xipona-db-root-pwd
 
 ### Api
 - The appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the ph-xipona-api-**config** volume. Specify the following things there:
