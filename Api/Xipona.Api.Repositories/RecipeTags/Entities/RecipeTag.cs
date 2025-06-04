@@ -15,5 +15,5 @@ public class RecipeTag
     public string Name { get; set; } = string.Empty;
 
     [Timestamp]
-    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
+    public uint RowVersion { get; set; }
 }

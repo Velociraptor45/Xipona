@@ -5,7 +5,7 @@ namespace ProjectHermes.Xipona.Api.Domain.Common.Models;
 public abstract class AggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = new();
-    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+    public uint RowVersion { get; private set; }
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
@@ -38,9 +38,9 @@ public abstract class AggregateRoot
         _domainEvents.Clear();
     }
 
-    public void EnrichWithRowVersion(byte[] rowVersion)
+    public void EnrichWithRowVersion(uint rowVersion)
     {
-        if (RowVersion.Length > 0)
+        if (RowVersion != 0)
             throw new InvalidOperationException("Row version already exists.");
 
         RowVersion = rowVersion;

@@ -73,14 +73,9 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
         return WithListDiscounts(new List<ShoppingListDiscount>());
     }
 
-    public ShoppingListEntityBuilder WithRowVersion(byte[] rowVersion)
+    public ShoppingListEntityBuilder WithRowVersion(uint rowVersion)
     {
         FillPropertyWith(p => p.RowVersion, rowVersion);
         return this;
-    }
-
-    public ShoppingListEntityBuilder WithEmptyRowVersion()
-    {
-        return WithRowVersion(Array.Empty<byte>());
     }
 }

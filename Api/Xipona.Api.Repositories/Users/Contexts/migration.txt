@@ -1,4 +1,4 @@
 ﻿dotnet ef migrations add <> --context UserContext --output-dir ./Migrations/Users
-dotnet ef migrations add <> --context GeneralSettingContext --output-dir ./Migrations/Users
+dotnet ef migrations add <> --context GeneralSettingContext --output-dir ./Migrations/GeneralSettings
 
 dotnet ef database update

@@ -10,7 +10,6 @@ public class ShoppingList
         ItemsOnList ??= new List<ItemsOnList>();
         Discounts ??= new List<Discount>();
         ListDiscounts ??= new List<ShoppingListDiscount>();
-        RowVersion ??= [];
     }
 
     [Key]
@@ -31,5 +30,5 @@ public class ShoppingList
     public ICollection<ShoppingListDiscount> ListDiscounts { get; set; }
 
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
 }

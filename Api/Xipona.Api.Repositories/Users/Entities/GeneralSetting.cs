@@ -13,5 +13,5 @@ public class GeneralSetting
     public int Currency { get; set; }
 
     [Timestamp]
-    public byte[] RowVersion { get; set; } = [];
+    public uint RowVersion { get; set; }
 }
