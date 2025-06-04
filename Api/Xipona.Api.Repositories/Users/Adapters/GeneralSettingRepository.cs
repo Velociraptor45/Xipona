@@ -31,6 +31,15 @@ public class GeneralSettingRepository : IGeneralSettingRepository
         _cancellationToken = cancellationToken;
     }
 
+    public async Task<bool> Exists()
+    {
+        var entryCount = await _dbContext.GeneralSettings
+            .AsNoTracking()
+            .CountAsync(_cancellationToken);
+
+        return entryCount > 0;
+    }
+
     public async Task<IGeneralSetting> GetAsync()
     {
         var entry = await _dbContext.GeneralSettings
@@ -73,6 +82,6 @@ public class GeneralSettingRepository : IGeneralSettingRepository
 
     private async Task<GeneralSetting?> GetTrackedEntity(CancellationToken cancellationToken)
     {
-        return await _dbContext.GeneralSettings.SingleAsync(cancellationToken);
+        return await _dbContext.GeneralSettings.SingleOrDefaultAsync(cancellationToken);
     }
 }

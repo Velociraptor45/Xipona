@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ProjectHermes.Xipona.Api.Core.Constants;
+using ProjectHermes.Xipona.Api.Domain.Common.Models;
+using ProjectHermes.Xipona.Api.Domain.Users.Models;
 using ProjectHermes.Xipona.Api.Domain.Users.Ports;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,7 +49,18 @@ public class DatabaseMigrationBackgroundService : BackgroundService
         _logger.LogInformation("Finished database migration in {Elapsed}", sw.Elapsed);
 
         var generalSettingsRepo = _generalSettingRepositoryDelegate(stoppingToken);
-        var generalSettings = await generalSettingsRepo.GetAsync();
+
+        IGeneralSetting generalSettings;
+        if (await generalSettingsRepo.Exists())
+        {
+            generalSettings = await generalSettingsRepo.GetAsync();
+        }
+        else
+        {
+            generalSettings = new GeneralSetting(new GeneralSettingId(0), Currency.Euro);
+            await generalSettingsRepo.StoreAsync(generalSettings);
+        }
+
         _cache.Set(CacheKeys.GeneralSettings, generalSettings);
     }
 }
