@@ -31,14 +31,8 @@ public class SecretLoadingService : ISecretLoadingService
         var dbConfig = new DatabaseConfig();
         _configuration.GetSection("Database").Bind(dbConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
-        //var connectionString =
-        //    $"server={dbConfig.Address};port={dbConfig.Port};database={dbConfig.Name};user id={username};pwd={password};AllowUserVariables=true;UseAffectedRows=false";
         var connectionString =
             $"server={dbConfig.Address};port={dbConfig.Port};database={dbConfig.Name};userid={username};password={password}";
-        //var connectionString =
-        //    $"host={dbConfig.Address} port={dbConfig.Port} dbname={dbConfig.Name} user={username} password={password}";
-        //var connectionString =
-        //    $"postgresql://{username}:{password}@{dbConfig.Address}:{dbConfig.Port}/{dbConfig.Name}";
 
         return new ConnectionStrings { ShoppingDatabase = connectionString };
     }

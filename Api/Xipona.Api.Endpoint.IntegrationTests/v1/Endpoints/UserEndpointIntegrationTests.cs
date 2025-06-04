@@ -260,7 +260,7 @@ public class UserEndpointIntegrationTests
             {
                 ExpectedResult = new GeneralSetting
                 {
-                    Id = 1,
+                    Id = 0,
                     Currency = 1
                 };
             }

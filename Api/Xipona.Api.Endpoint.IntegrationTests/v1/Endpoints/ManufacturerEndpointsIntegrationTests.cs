@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -137,7 +136,6 @@ public class ManufacturerEndpointsIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ManufacturerId);
 
-                using var transaction = await CreateTransactionAsync(SetupScope);
                 await ApplyMigrationsAsync(SetupScope);
 
                 // manufacturer
@@ -166,8 +164,6 @@ public class ManufacturerEndpointsIntegrationTests
                 {
                     await itemRepository.StoreAsync(item);
                 }
-
-                await transaction.CommitAsync(default);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
 using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
 
 namespace ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
@@ -10,10 +11,7 @@ public class ItemContext : DbContext
     public DbSet<ItemType> ItemTypes { get; set; }
     public DbSet<ItemTypeAvailableAt> ItemTypeAvailableAts { get; set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
     public ItemContext(DbContextOptions<ItemContext> options)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         : base(options)
     {
     }
@@ -25,5 +23,20 @@ public class ItemContext : DbContext
             .HasKey(av => new { av.ItemId, av.StoreId });
         modelBuilder.Entity<ItemTypeAvailableAt>()
             .HasKey(av => new { av.ItemTypeId, av.StoreId });
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTimeOffset))
+                {
+                    property.SetValueConverter(new DateTimeOffsetConverter());
+                }
+                else if (property.ClrType == typeof(DateTimeOffset?))
+                {
+                    property.SetValueConverter(new NullableDateTimeOffsetConverter());
+                }
+            }
+        }
     }
 }
