@@ -53,15 +53,10 @@ public class RecipeEntityBuilder : TestBuilderBase<Recipe>
         return this;
     }
 
-    public RecipeEntityBuilder WithRowVersion(byte[] rowVersion)
+    public RecipeEntityBuilder WithRowVersion(uint rowVersion)
     {
         FillPropertyWith(p => p.RowVersion, rowVersion);
         return this;
-    }
-
-    public RecipeEntityBuilder WithEmptyRowVersion()
-    {
-        return WithRowVersion(Array.Empty<byte>());
     }
 
     public RecipeEntityBuilder WithIngredients(ICollection<Ingredient> ingredients)

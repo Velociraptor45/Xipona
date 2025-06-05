@@ -9,7 +9,6 @@ public class Store
     {
         Sections ??= new List<Section>();
         Name ??= string.Empty;
-        RowVersion ??= Array.Empty<byte>();
     }
 
     [Key]
@@ -27,5 +26,5 @@ public class Store
     public ICollection<Section> Sections { get; set; }
 
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
 }

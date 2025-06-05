@@ -8,7 +8,6 @@ public class ItemCategory
     public ItemCategory()
     {
         Name = string.Empty;
-        RowVersion = Array.Empty<byte>();
     }
 
     [Key]
@@ -23,5 +22,5 @@ public class ItemCategory
     public DateTimeOffset CreatedAt { get; set; }
 
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
 }

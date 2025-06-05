@@ -2,11 +2,11 @@ version: "3.7"
 
 services:
   Database:
-    image: mariadb
+    image: postgres:17
     container_name: test-ph-sl-db
     environment:
-      MYSQL_ROOT_PASSWORD: 123root
-      MYSQL_DATABASE: test-shoppinglist
+      POSTGRES_PASSWORD: 123root
+      POSTGRES_USER: postgres
     ports:
-      - "15906:3306"
-    command: "--max-connections 400"
+      - "15906:5432"
+    command: -c 'max_connections=400'

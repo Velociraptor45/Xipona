@@ -2,18 +2,17 @@ version: "3.7"
 
 services:
   Database:
-    image: mariadb
+    image: postgres:17
     environment:
-      MARIADB_ROOT_PASSWORD: change_me_root
-      MYSQL_DATABASE: xipona
-      MYSQL_USER: xipona
-      MYSQL_PASSWORD: change_me
+      POSTGRES_PASSWORD: change_me
+      POSTGRES_USER: xipona
+      POSTGRES_DB: xipona
     ports:
       - "15909:3306"
     networks: 
       - ph-xipona
     volumes:
-      - ph-xipona-database:/var/lib/mysql
+      - ph-xipona-database:/var/lib/postgresql/data
 
   Api:
     image: velocir4ptor/ph-xipona-api:0.13.1

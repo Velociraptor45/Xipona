@@ -11,7 +11,6 @@ public class Item
         Name = string.Empty;
         Comment = string.Empty;
         ItemTypes ??= new List<ItemType>();
-        RowVersion = Array.Empty<byte>();
     }
 
     [Key]
@@ -35,7 +34,7 @@ public class Item
     public DateTimeOffset CreatedAt { get; set; }
 
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
 
     [ForeignKey("PredecessorId")]
     public Item? Predecessor { get; set; }

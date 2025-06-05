@@ -10,6 +10,12 @@ public class DiscountEntityBuilder : TestBuilderBase<Discount>
         WithoutShoppingList();
     }
 
+    public DiscountEntityBuilder WithId(int id)
+    {
+        FillPropertyWith(p => p.Id, id);
+        return this;
+    }
+
     public DiscountEntityBuilder WithDiscountPrice(decimal discountPrice)
     {
         FillPropertyWith(p => p.DiscountPrice, discountPrice);

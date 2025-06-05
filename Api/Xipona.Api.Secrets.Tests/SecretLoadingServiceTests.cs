@@ -141,7 +141,7 @@ public class SecretLoadingServiceTests
 
         public ConnectionStrings ExpectedDbConnectionString => new()
         {
-            ShoppingDatabase = $"server={_dbAddress};port={_dbPort};database={_dbName};user id={_dbUsername};pwd={_dbPassword};AllowUserVariables=true;UseAffectedRows=false"
+            ShoppingDatabase = $"server={_dbAddress};port={_dbPort};database={_dbName};userid={_dbUsername};password={_dbPassword}"
         };
 
         public void SetupVaultStore()

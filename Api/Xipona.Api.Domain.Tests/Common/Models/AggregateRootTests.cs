@@ -25,10 +25,10 @@ public class AggregateRootTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.RowVersion);
 
             // Act
-            sut.EnrichWithRowVersion(_fixture.RowVersion);
+            sut.EnrichWithRowVersion(_fixture.RowVersion.Value);
 
             // Assert
-            sut.RowVersion.Should().BeEquivalentTo(_fixture.RowVersion);
+            sut.RowVersion.Should().Be(_fixture.RowVersion.Value);
         }
 
         [Fact]
@@ -40,10 +40,10 @@ public class AggregateRootTests
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.RowVersion);
 
-            sut.EnrichWithRowVersion(_fixture.RowVersion);
+            sut.EnrichWithRowVersion(_fixture.RowVersion.Value);
 
             // Act
-            Action act = () => sut.EnrichWithRowVersion(_fixture.RowVersion);
+            Action act = () => sut.EnrichWithRowVersion(_fixture.RowVersion.Value);
 
             // Assert
             act.Should().Throw<InvalidOperationException>();
@@ -51,11 +51,11 @@ public class AggregateRootTests
 
         private sealed class EnrichWithRowVersionFixture
         {
-            public byte[]? RowVersion { get; private set; }
+            public uint? RowVersion { get; private set; }
 
             public void SetupRowVersion()
             {
-                RowVersion = new DomainTestBuilder<byte[]>().Create();
+                RowVersion = new DomainTestBuilder<uint>().Create();
             }
 
             public TestAggregateRoot CreateSut()

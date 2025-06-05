@@ -73,6 +73,6 @@ public class GeneralSettingRepository : IGeneralSettingRepository
 
     private async Task<GeneralSetting?> GetTrackedEntity(CancellationToken cancellationToken)
     {
-        return await _dbContext.GeneralSettings.SingleAsync(cancellationToken);
+        return await _dbContext.GeneralSettings.SingleOrDefaultAsync(cancellationToken);
     }
 }

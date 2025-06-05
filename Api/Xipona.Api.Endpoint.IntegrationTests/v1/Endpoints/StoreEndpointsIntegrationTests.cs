@@ -612,12 +612,16 @@ public class StoreEndpointsIntegrationTests
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Item"))
                     .WithUpdatedOnPrecision()
-                    .WithCreatedAtPrecision());
+                    .WithCreatedAtPrecision()
+                    .ExcludeRowVersion());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".ShoppingList"))
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
         }
 
         [Fact]
@@ -658,12 +662,16 @@ public class StoreEndpointsIntegrationTests
                 opt => opt
                     .Excluding(info => info.Path.EndsWith(".Item") || info.Path.EndsWith(".ItemType"))
                     .WithUpdatedOnPrecision()
-                    .WithCreatedAtPrecision());
+                    .WithCreatedAtPrecision()
+                    .ExcludeRowVersion());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.Excluding(info => info.Path.EndsWith(".ShoppingList")).WithCreatedAtPrecision());
+                opt => opt
+                    .Excluding(info => info.Path.EndsWith(".ShoppingList"))
+                    .ExcludeRowVersion()
+                    .WithCreatedAtPrecision());
         }
 
         [Fact]

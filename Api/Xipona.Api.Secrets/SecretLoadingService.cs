@@ -32,7 +32,7 @@ public class SecretLoadingService : ISecretLoadingService
         _configuration.GetSection("Database").Bind(dbConfig, opt => opt.ErrorOnUnknownConfiguration = true);
 
         var connectionString =
-            $"server={dbConfig.Address};port={dbConfig.Port};database={dbConfig.Name};user id={username};pwd={password};AllowUserVariables=true;UseAffectedRows=false";
+            $"server={dbConfig.Address};port={dbConfig.Port};database={dbConfig.Name};userid={username};password={password}";
 
         return new ConnectionStrings { ShoppingDatabase = connectionString };
     }

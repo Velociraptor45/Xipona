@@ -17,5 +17,5 @@ public class Manufacturer
     public DateTimeOffset CreatedAt { get; set; }
 
     [Timestamp]
-    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
+    public uint RowVersion { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
 using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
 
 namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
@@ -18,5 +19,20 @@ public class RecipeContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<TagsForRecipe>().HasKey(t => new { t.RecipeId, t.RecipeTagId });
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(DateTimeOffset))
+                {
+                    property.SetValueConverter(new DateTimeOffsetConverter());
+                }
+                else if (property.ClrType == typeof(DateTimeOffset?))
+                {
+                    property.SetValueConverter(new NullableDateTimeOffsetConverter());
+                }
+            }
+        }
     }
 }

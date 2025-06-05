@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+﻿using Microsoft.EntityFrameworkCore.Design;
 using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
 
 namespace ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
@@ -8,8 +7,7 @@ public class ItemCategoryContextFactory : ContextFactoryBase, IDesignTimeDbConte
 {
     public ItemCategoryContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ItemCategoryContext>();
-        optionsBuilder.UseMySql(GetDbConnectionString(), GetVersion());
+        var optionsBuilder = GetOptionBuilder<ItemCategoryContext>();
 
         return new ItemCategoryContext(optionsBuilder.Options);
     }

@@ -2982,13 +2982,14 @@ public class ItemEndpointsIntegrationTests
             recipes.First().Should().BeEquivalentTo(_fixture.ExpectedRecipe,
                 opt => opt
                 .ExcludeRecipeCycleRef()
+                .ExcludeRowVersion()
                 .Excluding(info => Regex.IsMatch(info.Path, @"Ingredients\[\d+\].Id"))
                 .WithCreatedAtPrecision());
 
             var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionServiceScope)).ToArray();
             shoppingLists.Should().HaveCount(1);
             shoppingLists.First().Should().BeEquivalentTo(_fixture.ExpectedShoppingList,
-                opt => opt.ExcludeShoppingListCycleRef().WithCreatedAtPrecision());
+                opt => opt.ExcludeShoppingListCycleRef().WithCreatedAtPrecision().ExcludeRowVersion());
         }
 
         private sealed class DeleteItemAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
