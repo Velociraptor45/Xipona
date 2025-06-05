@@ -2190,6 +2190,7 @@ public class ShoppingListEndpointsIntegrationTests
                 ExpectedResult = ShoppingListEntityMother.Active().Create();
 
                 var discount = new DiscountEntityBuilder()
+                    .WithId(ExpectedResult.Discounts.Max(d => d.Id) + 1)
                     .WithItemId(ItemId)
                     .WithItemTypeId(ItemTypeId)
                     .Create();
