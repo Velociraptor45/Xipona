@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+﻿namespace Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 
 public static class ShoppingListDiscountContractMother
 {

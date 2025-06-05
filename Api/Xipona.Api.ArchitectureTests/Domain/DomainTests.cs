@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.ArchitectureTests.Domain;
+﻿namespace Xipona.Api.ArchitectureTests.Domain;
 
 public class DomainTests
 {
@@ -16,8 +16,8 @@ public class DomainTests
             .InAssembly(_fixture.Assembly)
             .Should()
             .OnlyHaveDependenciesOn(
-                "ProjectHermes.Xipona.Api.Core",
-                "ProjectHermes.Xipona.Api.Domain",
+                "Xipona.Api.Core",
+                "Xipona.Api.Domain",
                 "System",
                 "Microsoft")
             .GetResult()

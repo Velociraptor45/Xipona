@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
+﻿using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.Stores.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
+namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public class StoreEntityBuilder : TestBuilderBase<Store>
 {

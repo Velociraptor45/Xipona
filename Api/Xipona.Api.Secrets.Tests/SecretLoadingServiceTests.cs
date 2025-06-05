@@ -1,16 +1,15 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Core.TestKit.Files;
-using ProjectHermes.Xipona.Api.Secrets;
-using ProjectHermes.Xipona.Api.Secrets.Configs;
-using ProjectHermes.Xipona.Api.Secrets.Vault;
-using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using RichardSzalay.MockHttp;
 using System.Net;
 using System.Net.Http.Json;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Core.TestKit.Files;
+using Xipona.Api.Secrets.Configs;
+using Xipona.Api.Secrets.Vault;
+using Xipona.Api.Secrets.Vault.Config;
+using Xipona.Api.TestTools.Exceptions;
 using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace Xipona.Api.Secrets.Tests;
@@ -168,8 +167,8 @@ public class SecretLoadingServiceTests
 
             List<KeyValuePair<string, string?>> collection =
             [
-                new("PH_XIPONA_DB_USERNAME_FILE", usernameFile),
-                new("PH_XIPONA_DB_PASSWORD_FILE", passwordFile)
+                new("XIPONA_DB_USERNAME_FILE", usernameFile),
+                new("XIPONA_DB_PASSWORD_FILE", passwordFile)
             ];
             _configurationBuilder.AddInMemoryCollection(collection);
 
@@ -181,8 +180,8 @@ public class SecretLoadingServiceTests
         {
             List<KeyValuePair<string, string?>> collection =
             [
-                new("PH_XIPONA_DB_USERNAME", _dbUsername),
-                new("PH_XIPONA_DB_PASSWORD", _dbPassword)
+                new("XIPONA_DB_USERNAME", _dbUsername),
+                new("XIPONA_DB_PASSWORD", _dbPassword)
             ];
             _configurationBuilder.AddInMemoryCollection(collection);
         }
@@ -193,7 +192,7 @@ public class SecretLoadingServiceTests
 
             List<KeyValuePair<string, string?>> collection =
             [
-                new("PH_XIPONA_OTEL_API_KEY_FILE", apiKeyFile)
+                new("XIPONA_OTEL_API_KEY_FILE", apiKeyFile)
             ];
             _configurationBuilder.AddInMemoryCollection(collection);
 
@@ -204,7 +203,7 @@ public class SecretLoadingServiceTests
         {
             List<KeyValuePair<string, string?>> collection =
             [
-                new("PH_XIPONA_OTEL_API_KEY", ApiKey)
+                new("XIPONA_OTEL_API_KEY", ApiKey)
             ];
             _configurationBuilder.AddInMemoryCollection(collection);
         }

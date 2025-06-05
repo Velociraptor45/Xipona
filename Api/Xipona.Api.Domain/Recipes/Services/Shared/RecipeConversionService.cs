@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
+﻿using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Shared;
+namespace Xipona.Api.Domain.Recipes.Services.Shared;
 
 public class RecipeConversionService : IRecipeConversionService
 {

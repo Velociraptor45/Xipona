@@ -1,21 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.Recipes.Entities;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Adapters;
+namespace Xipona.Api.Repositories.Recipes.Adapters;
 
 public class RecipeRepository : IRecipeRepository
 {

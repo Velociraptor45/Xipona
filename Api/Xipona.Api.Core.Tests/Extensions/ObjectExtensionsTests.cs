@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
+﻿using Xipona.Api.Core.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Core.Tests.Extensions;
+namespace Xipona.Api.Core.Tests.Extensions;
 
 public class ObjectExtensionsTests
 {

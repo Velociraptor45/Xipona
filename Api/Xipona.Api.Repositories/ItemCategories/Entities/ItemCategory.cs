@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
+namespace Xipona.Api.Repositories.ItemCategories.Entities;
 
 public class ItemCategory
 {

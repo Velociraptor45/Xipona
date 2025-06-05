@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.Conversion;
+﻿namespace Xipona.Api.Domain.Tests.Items.Services.Conversion;
 
 public class ItemAvailabilityReadModelConversionServiceTests
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
+namespace Xipona.Api.Domain.Recipes.Services.Modifications;
 
 public interface IRecipeModificationService
 {

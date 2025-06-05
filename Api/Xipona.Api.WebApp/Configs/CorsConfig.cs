@@ -1,4 +1,4 @@
-namespace ProjectHermes.Xipona.Api.WebApp.Configs;
+namespace Xipona.Api.WebApp.Configs;
 
 internal class CorsConfig
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login
+﻿namespace Xipona.Api.Contracts.Users.Commands.Login
 {
     /// <summary>
     /// Represents the user information.

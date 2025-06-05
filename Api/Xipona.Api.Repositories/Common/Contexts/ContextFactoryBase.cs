@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.Files;
-using ProjectHermes.Xipona.Api.Secrets;
+using Xipona.Api.Core.Files;
+using Xipona.Api.Secrets;
 using System.IO;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
+namespace Xipona.Api.Repositories.Common.Contexts;
 
 /// <summary>
 /// This is needed for creating migrations.

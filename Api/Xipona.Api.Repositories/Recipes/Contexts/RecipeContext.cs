@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Repositories.Common.Converters;
+using Xipona.Api.Repositories.Recipes.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
+namespace Xipona.Api.Repositories.Recipes.Contexts;
 
 public class RecipeContext : DbContext
 {

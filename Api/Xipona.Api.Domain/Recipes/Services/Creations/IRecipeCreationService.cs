@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
+﻿using Xipona.Api.Domain.Recipes.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
+namespace Xipona.Api.Domain.Recipes.Services.Creations;
 
 public interface IRecipeCreationService
 {

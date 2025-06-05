@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings
+﻿namespace Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings
 {
     /// <summary>
     /// Represents the contract for updating application-wide settings.

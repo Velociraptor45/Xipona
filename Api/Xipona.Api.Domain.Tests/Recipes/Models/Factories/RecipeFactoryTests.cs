@@ -1,16 +1,16 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Reasons;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.TestKit.Items.Services.Validation;
+using Xipona.Api.Domain.TestKit.Recipes.Models;
+using Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Recipes.Models.Factories;
+namespace Xipona.Api.Domain.Tests.Recipes.Models.Factories;
 
 public class RecipeFactoryTests
 {

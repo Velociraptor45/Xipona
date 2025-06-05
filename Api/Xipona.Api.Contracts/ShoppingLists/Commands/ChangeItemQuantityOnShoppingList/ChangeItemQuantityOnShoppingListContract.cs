@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList
 {
     /// <summary>
     /// Represents a request to change the quantity of an item on a shopping list.

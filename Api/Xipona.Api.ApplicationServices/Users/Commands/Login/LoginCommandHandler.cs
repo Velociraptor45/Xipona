@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Creations;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Domain.Users.Services.Creations;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.Login;
+namespace Xipona.Api.ApplicationServices.Users.Commands.Login;
 
 public class LoginCommandHandler : ICommandHandler<LoginCommand, IUser>
 {

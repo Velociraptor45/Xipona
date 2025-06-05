@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories;
-using ProjectHermes.Xipona.Api.Domain.Items;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers;
-using ProjectHermes.Xipona.Api.Domain.Recipes;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags;
-using ProjectHermes.Xipona.Api.Domain.Shared;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists;
-using ProjectHermes.Xipona.Api.Domain.Stores;
-using ProjectHermes.Xipona.Api.Domain.Users;
+using Xipona.Api.Domain.ItemCategories;
+using Xipona.Api.Domain.Items;
+using Xipona.Api.Domain.Manufacturers;
+using Xipona.Api.Domain.Recipes;
+using Xipona.Api.Domain.RecipeTags;
+using Xipona.Api.Domain.Shared;
+using Xipona.Api.Domain.ShoppingLists;
+using Xipona.Api.Domain.Stores;
+using Xipona.Api.Domain.Users;
 
-namespace ProjectHermes.Xipona.Api.Domain;
+namespace Xipona.Api.Domain;
 
 public static class ServiceCollectionExtensions
 {

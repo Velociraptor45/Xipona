@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
+using Xipona.Api.Repositories.RecipeTags.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.RecipeTags
+namespace Xipona.Api.Repositories.Migrations.RecipeTags
 {
     [DbContext(typeof(RecipeTagContext))]
     partial class RecipeTagContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.RecipeTags
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");

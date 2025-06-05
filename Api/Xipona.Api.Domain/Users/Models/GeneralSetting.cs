@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Attributes;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
+﻿using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Attributes;
+using Xipona.Api.Domain.Common.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Models;
+namespace Xipona.Api.Domain.Users.Models;
 
 public class GeneralSetting : AggregateRoot, IGeneralSetting
 {

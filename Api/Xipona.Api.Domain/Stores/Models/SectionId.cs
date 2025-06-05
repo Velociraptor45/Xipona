@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿namespace Xipona.Api.Domain.Stores.Models;
 
 public readonly record struct SectionId
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
+namespace Xipona.Api.Domain.TestKit.ItemCategories.Models;
 
 public class ItemCategoryBuilder : DomainTestBuilderBase<ItemCategory>
 {

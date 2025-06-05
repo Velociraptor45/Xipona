@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
 
 public class DiscountTests
 {

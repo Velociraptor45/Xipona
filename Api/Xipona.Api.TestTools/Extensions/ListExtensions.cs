@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿namespace Xipona.Api.TestTools.Extensions;
 
 public static class ListExtensions
 {

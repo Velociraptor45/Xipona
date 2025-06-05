@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Users.Models;
+﻿using Xipona.Api.Domain.Users.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
+namespace Xipona.Api.Domain.Users.Services.Queries;
 
 public interface IGeneralSettingsQueryService
 {

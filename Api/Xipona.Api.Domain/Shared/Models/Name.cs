@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Shared.Models;
+﻿namespace Xipona.Api.Domain.Shared.Models;
 
 public abstract record Name
 {

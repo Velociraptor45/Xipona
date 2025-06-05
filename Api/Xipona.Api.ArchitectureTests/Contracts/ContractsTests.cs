@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.ArchitectureTests.Contracts;
+﻿namespace Xipona.Api.ArchitectureTests.Contracts;
 
 public class ContractsTests
 {
@@ -16,7 +16,7 @@ public class ContractsTests
             .InAssembly(_fixture.Assembly)
             .Should()
             .OnlyHaveDependenciesOn(
-                "ProjectHermes.Xipona.Api.Contracts",
+                "Xipona.Api.Contracts",
                 "System")
             .GetResult()
             .IsSuccessful;

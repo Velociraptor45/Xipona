@@ -1,9 +1,9 @@
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
+namespace Xipona.Api.Domain.TestKit.Recipes.Models;
 
 public class IngredientShoppingListPropertiesBuilder : DomainRecordTestBuilderBase<IngredientShoppingListProperties>
 {

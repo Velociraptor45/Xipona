@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Ports;
+namespace Xipona.Api.Domain.Items.Ports;
 
 public interface IItemRepository
 {

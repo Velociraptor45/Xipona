@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Validations;
+namespace Xipona.Api.Domain.RecipeTags.Services.Validations;
 
 public interface IRecipeTagValidationService
 {

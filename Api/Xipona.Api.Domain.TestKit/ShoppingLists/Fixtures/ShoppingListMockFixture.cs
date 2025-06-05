@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+﻿using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Fixtures;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Fixtures;
 
 public class ShoppingListMockFixture
 {

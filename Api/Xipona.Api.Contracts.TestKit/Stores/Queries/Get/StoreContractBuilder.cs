@@ -1,11 +1,11 @@
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Api.Contracts.Stores.Queries.Shared;
+using Xipona.Api.Core.TestKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Stores.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Stores.Queries.Get;
 public class StoreContractBuilder : TestBuilderBase<StoreContract>
 {
     public StoreContractBuilder WithId(Guid id)

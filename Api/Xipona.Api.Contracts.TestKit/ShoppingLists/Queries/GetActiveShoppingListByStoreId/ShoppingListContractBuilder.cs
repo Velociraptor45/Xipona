@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Contracts.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+namespace Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 public class ShoppingListContractBuilder : ContractTestBuilderBase<ShoppingListContract>
 {
     public ShoppingListContractBuilder()

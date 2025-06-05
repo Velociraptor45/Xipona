@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
+namespace Xipona.Api.Domain.Items.Services.Modifications;
 
 public interface IItemModificationService
 {

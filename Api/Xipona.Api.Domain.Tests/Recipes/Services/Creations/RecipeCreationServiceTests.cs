@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Tests.Recipes.Services.Shared;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Recipes.Models;
+using Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
+using Xipona.Api.Domain.TestKit.Recipes.Ports;
+using Xipona.Api.Domain.Tests.Recipes.Services.Shared;
+using Xipona.Api.TestTools.Exceptions;
 using Xunit.Abstractions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Recipes.Services.Creations;
+namespace Xipona.Api.Domain.Tests.Recipes.Services.Creations;
 
 public class RecipeCreationServiceTests
 {

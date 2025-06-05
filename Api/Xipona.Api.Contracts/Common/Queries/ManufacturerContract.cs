@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Common.Queries
+namespace Xipona.Api.Contracts.Common.Queries
 {
     /// <summary>
     /// Represents a manufacturer.

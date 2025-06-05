@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.Items.Contexts;
+using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Adapters;
+namespace Xipona.Api.Repositories.Items.Adapters;
 
 public class ItemTypeReadRepository : IItemTypeReadRepository
 {

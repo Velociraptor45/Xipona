@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+using Xipona.Api.Repositories.Users.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Users
+namespace Xipona.Api.Repositories.Migrations.Users
 {
     [DbContext(typeof(UserContext))]
     partial class UserContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Users
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Users.Entities.User", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Users.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");

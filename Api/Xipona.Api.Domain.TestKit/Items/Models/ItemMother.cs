@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Models.Factories;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public static class ItemMother
 {

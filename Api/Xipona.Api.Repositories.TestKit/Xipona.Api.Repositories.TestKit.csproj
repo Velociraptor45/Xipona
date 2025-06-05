@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>ProjectHermes.Xipona.Api.Repositories.TestKit</RootNamespace>
+    <RootNamespace>Xipona.Api.Repositories.TestKit</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

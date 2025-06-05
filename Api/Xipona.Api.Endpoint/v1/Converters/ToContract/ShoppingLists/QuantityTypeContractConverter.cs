@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
+﻿using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
 
 public class QuantityTypeContractConverter : IToContractConverter<QuantityTypeReadModel, QuantityTypeContract>
 {

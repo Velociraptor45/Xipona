@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Attributes;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Ports;
+﻿using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Attributes;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Domain.Users.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
+namespace Xipona.Api.Domain.Users.Services.Queries;
 
 public class GeneralSettingsQueryService : IGeneralSettingsQueryService
 {

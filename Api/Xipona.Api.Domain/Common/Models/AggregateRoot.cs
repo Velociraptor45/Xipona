@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+﻿using Xipona.Api.Core.DomainEventHandlers;
 
-namespace ProjectHermes.Xipona.Api.Domain.Common.Models;
+namespace Xipona.Api.Domain.Common.Models;
 
 public abstract class AggregateRoot
 {

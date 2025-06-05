@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Converters.ToDomain;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Repositories.ShoppingLists.Converters.ToDomain;
+using Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.ShoppingLists.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Tests.ShoppingLists.Converters.ToDomain;
 
 public class DiscountConverterTests :
     ToDomainConverterTestBase<Repositories.ShoppingLists.Entities.Discount, ItemDiscount, DiscountConverter>

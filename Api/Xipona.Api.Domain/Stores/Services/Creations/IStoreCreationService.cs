@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+namespace Xipona.Api.Domain.Stores.Services.Creations;
 
 public interface IStoreCreationService
 {

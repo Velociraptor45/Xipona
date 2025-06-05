@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.GeneralSettings;
+namespace Xipona.Api.Repositories.Migrations.GeneralSettings;
 
 /// <inheritdoc />
 public partial class InitialMigration : Migration

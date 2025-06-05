@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 
 public class ShoppingListMock : Mock<IShoppingList>
 {

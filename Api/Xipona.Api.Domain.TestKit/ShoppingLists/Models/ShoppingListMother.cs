@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using Xipona.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 
 public static class ShoppingListMother
 {

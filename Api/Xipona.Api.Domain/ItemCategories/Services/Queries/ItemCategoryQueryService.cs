@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.ItemCategories.Reasons;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
+namespace Xipona.Api.Domain.ItemCategories.Services.Queries;
 
 public class ItemCategoryQueryService : IItemCategoryQueryService
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public class ListDiscounts : IEnumerable<ListDiscount>
 {

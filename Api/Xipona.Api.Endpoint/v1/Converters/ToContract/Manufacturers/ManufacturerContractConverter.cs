@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+﻿using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Manufacturers;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Manufacturers;
 
 public class ManufacturerContractConverter :
     IToContractConverter<ManufacturerReadModel, ManufacturerContract>,

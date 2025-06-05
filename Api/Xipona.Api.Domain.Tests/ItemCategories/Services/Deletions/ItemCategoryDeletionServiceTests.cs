@@ -1,17 +1,17 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Deletions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Ports;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ItemCategories.Services.Deletions;
+namespace Xipona.Api.Domain.Tests.ItemCategories.Services.Deletions;
 
 public class ItemCategoryDeletionServiceTests
 {

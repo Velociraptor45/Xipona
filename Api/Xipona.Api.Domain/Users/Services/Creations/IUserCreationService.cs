@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Users.Models;
+﻿using Xipona.Api.Domain.Users.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Creations;
+namespace Xipona.Api.Domain.Users.Services.Creations;
 
 public interface IUserCreationService
 {

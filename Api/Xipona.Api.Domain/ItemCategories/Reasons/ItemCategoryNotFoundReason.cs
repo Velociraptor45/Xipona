@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
+namespace Xipona.Api.Domain.ItemCategories.Reasons;
 
 public class ItemCategoryNotFoundReason : IReason
 {

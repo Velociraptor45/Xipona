@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
+using Xipona.Api.Contracts.Items.Queries.Shared;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemTests;
 
 public class SearchItemsTests :
     EndpointEnumerableQueryNoConverterTestsBase<SearchItemQuery, SearchItemResultReadModel, SearchItemResultContract,

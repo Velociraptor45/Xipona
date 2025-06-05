@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
+namespace Xipona.Api.Domain.RecipeTags.Ports;
 
 public interface IRecipeTagRepository
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
+using Xipona.Api.Repositories.Common.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
+namespace Xipona.Api.Repositories.RecipeTags.Contexts;
 
 public class RecipeTagContextFactory : ContextFactoryBase, IDesignTimeDbContextFactory<RecipeTagContext>
 {

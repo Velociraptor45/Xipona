@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace ProjectHermes.Xipona.Api.Domain.Common.Models;
+namespace Xipona.Api.Domain.Common.Models;
 
 public readonly record struct Percentage
 {

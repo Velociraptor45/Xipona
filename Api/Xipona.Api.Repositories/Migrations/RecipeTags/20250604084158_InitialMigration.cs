@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.RecipeTags
+namespace Xipona.Api.Repositories.Migrations.RecipeTags
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

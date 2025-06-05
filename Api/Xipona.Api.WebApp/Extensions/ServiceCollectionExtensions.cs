@@ -7,13 +7,13 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using ProjectHermes.Xipona.Api.Core.Constants;
-using ProjectHermes.Xipona.Api.Secrets;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Secrets;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Api.WebApp.Extensions;
+namespace Xipona.Api.WebApp.Extensions;
 
 [ExcludeFromCodeCoverage]
 public static class ServiceCollectionExtensions

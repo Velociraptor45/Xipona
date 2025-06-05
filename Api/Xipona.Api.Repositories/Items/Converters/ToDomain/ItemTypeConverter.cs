@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Repositories.Items.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Items.Converters.ToDomain;
 
 public class ItemTypeConverter : IToDomainConverter<Entities.ItemType, IItemType>
 {

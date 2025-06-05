@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Ports;
+using Xipona.Api.Domain.RecipeTags.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Validations;
+namespace Xipona.Api.Domain.RecipeTags.Services.Validations;
 
 public class RecipeTagValidationService : IRecipeTagValidationService
 {

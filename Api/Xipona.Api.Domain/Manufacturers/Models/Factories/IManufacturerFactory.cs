@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Models.Factories;
+﻿namespace Xipona.Api.Domain.Manufacturers.Models.Factories;
 
 public interface IManufacturerFactory
 {

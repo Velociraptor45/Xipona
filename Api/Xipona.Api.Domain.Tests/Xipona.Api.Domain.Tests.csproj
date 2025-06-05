@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>ProjectHermes.Xipona.Api.Domain.Tests</RootNamespace>
+    <RootNamespace>Xipona.Api.Domain.Tests</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

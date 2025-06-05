@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
+﻿using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.Recipes.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Creations;
+namespace Xipona.Api.Domain.TestKit.Recipes.Services.Creations;
 
 public class RecipeCreationServiceMock : Mock<IRecipeCreationService>
 {

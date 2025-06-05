@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
-using Entities_User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
-using User = ProjectHermes.Xipona.Api.Repositories.Users.Entities.User;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Users.Models;
+using Entities_User = Xipona.Api.Repositories.Users.Entities.User;
+using User = Xipona.Api.Repositories.Users.Entities.User;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Users.Converters.ToContract;
+namespace Xipona.Api.Repositories.Users.Converters.ToContract;
 
 public class UserConverter : IToContractConverter<IUser, Entities_User>
 {

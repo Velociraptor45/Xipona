@@ -1,58 +1,58 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
-using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
-using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
-using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Threading;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.ItemCategories.Commands;
+using Xipona.Api.Contracts.ItemCategories.Queries;
+using Xipona.Api.Contracts.Items.Commands.CreateItem;
+using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.ModifyItem;
+using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.UpdateItem;
+using Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
+using Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using Xipona.Api.Contracts.Items.Queries.Shared;
+using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Api.Contracts.Manufacturers.Queries;
+using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using Xipona.Api.Contracts.RecipeTags.Commands;
+using Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Contracts.Stores.Commands.CreateStore;
+using Xipona.Api.Contracts.Stores.Commands.ModifyStore;
+using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using Xipona.Api.Contracts.Stores.Queries.Shared;
+using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
+using Xipona.Api.Contracts.Users.Commands.Login;
+using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 
-namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
+namespace Xipona.Api.WebApp.Serialization;
 
 [JsonSourceGenerationOptions(WriteIndented = false)]
 [JsonSerializable(typeof(ErrorContract))]
@@ -83,8 +83,8 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(AddItemWithTypeToShoppingListContract))]
 [JsonSerializable(typeof(AddItemsToShoppingListsContract))]
 [JsonSerializable(typeof(AddItemDiscountContract))]
-[JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists.AddItemToShoppingListContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00ShoppingLists00Commands00AddItemsToShoppingLists00AddItemToShoppingListContract")]
-[JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00ShoppingLists00Commands00AddItemToShoppingList00AddItemToShoppingListContract")]
+[JsonSerializable(typeof(Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists.AddItemToShoppingListContract), TypeInfoPropertyName = "Xipona00Api00Contracts00ShoppingLists00Commands00AddItemsToShoppingLists00AddItemToShoppingListContract")]
+[JsonSerializable(typeof(Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract), TypeInfoPropertyName = "Xipona00Api00Contracts00ShoppingLists00Commands00AddItemToShoppingList00AddItemToShoppingListContract")]
 [JsonSerializable(typeof(List<AddShoppingListDiscountContract>))]
 // Recipe
 [JsonSerializable(typeof(List<RecipeSearchResultContract>))]
@@ -110,12 +110,12 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(List<SearchItemForShoppingListResultContract>))]
 [JsonSerializable(typeof(SearchItemByItemCategoryAvailabilityContract))]
 [JsonSerializable(typeof(List<SearchItemByItemCategoryResultContract>))]
-[JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get.ItemAvailabilityContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Items00Queries00Get00ItemAvailabilityContract")]
+[JsonSerializable(typeof(Xipona.Api.Contracts.Items.Queries.Get.ItemAvailabilityContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Items00Queries00Get00ItemAvailabilityContract")]
 [JsonSerializable(typeof(ItemContract))]
 [JsonSerializable(typeof(ItemSectionContract))]
 [JsonSerializable(typeof(ItemStoreContract))]
-[JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared.ItemTypeContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Items00Commands00Shared00ItemTypeContract")]
-[JsonSerializable(typeof(ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get.ItemTypeContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Items00Queries00Get00ItemTypeContract")]
+[JsonSerializable(typeof(Xipona.Api.Contracts.Items.Commands.Shared.ItemTypeContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Items00Commands00Shared00ItemTypeContract")]
+[JsonSerializable(typeof(Xipona.Api.Contracts.Items.Queries.Get.ItemTypeContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Items00Queries00Get00ItemTypeContract")]
 [JsonSerializable(typeof(ItemTypePriceContract))]
 [JsonSerializable(typeof(ItemTypePricesContract))]
 [JsonSerializable(typeof(List<QuantityTypeContract>))]
@@ -124,7 +124,7 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(UpdateItemTypeContract))]
 [JsonSerializable(typeof(UpdateItemWithTypesContract))]
 [JsonSerializable(typeof(UpdateItemPriceContract))]
-[JsonSerializable(typeof(IEnumerable<ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract>), TypeInfoPropertyName = "ListProjectHermes00Xipona00Api00Contracts00Items00Commands00Shared00ItemAvailabilityContract")]
+[JsonSerializable(typeof(IEnumerable<Xipona.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract>), TypeInfoPropertyName = "ListXipona00Api00Contracts00Items00Commands00Shared00ItemAvailabilityContract")]
 [JsonSerializable(typeof(ModifyItemContract))]
 [JsonSerializable(typeof(ModifyItemTypeContract))]
 [JsonSerializable(typeof(ModifyItemWithTypesContract))]
@@ -141,11 +141,11 @@ namespace ProjectHermes.Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(CreateRecipeTagContract))]
 // User
 [JsonSerializable(typeof(UserInfoContract))]
-[JsonSerializable(typeof(GeneralSettingsContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Commands00UpdateGeneralSettings00GeneralSettingsContract")]
-[JsonSerializable(typeof(CurrencyContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Commands00AllCurrencies00CurrencyContract")]
+[JsonSerializable(typeof(GeneralSettingsContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Users00Commands00UpdateGeneralSettings00GeneralSettingsContract")]
+[JsonSerializable(typeof(CurrencyContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Users00Commands00AllCurrencies00CurrencyContract")]
 [JsonSerializable(typeof(List<CurrencyContract>))]
-[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Queries00GetGeneralSettings00GeneralSettingsContract")]
-[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.CurrencyContract), TypeInfoPropertyName = "ProjectHermes00Xipona00Api00Contracts00Users00Queries00GetGeneralSettings00CurrencyContract")]
+[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Users00Queries00GetGeneralSettings00GeneralSettingsContract")]
+[JsonSerializable(typeof(Contracts.Users.Queries.GetGeneralSettings.CurrencyContract), TypeInfoPropertyName = "Xipona00Api00Contracts00Users00Queries00GetGeneralSettings00CurrencyContract")]
 // Common
 [JsonSerializable(typeof(List<ItemCategoryContract>))]
 [JsonSerializable(typeof(List<ManufacturerContract>))]

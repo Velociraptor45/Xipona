@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.Shared
 {
     /// <summary>
     /// Represents an item ID.

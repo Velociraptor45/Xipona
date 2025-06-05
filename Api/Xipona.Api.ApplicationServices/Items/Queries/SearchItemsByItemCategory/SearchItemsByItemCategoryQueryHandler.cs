@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Items.Services.Searches;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
+namespace Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 
 public class SearchItemsByItemCategoryQueryHandler :
     IQueryHandler<SearchItemsByItemCategoryQuery, IEnumerable<SearchItemByItemCategoryResult>>

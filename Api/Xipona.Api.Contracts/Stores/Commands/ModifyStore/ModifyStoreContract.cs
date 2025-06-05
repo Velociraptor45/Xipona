@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore
+namespace Xipona.Api.Contracts.Stores.Commands.ModifyStore
 {
     /// <summary>
     /// Represents a request for modifying a store.

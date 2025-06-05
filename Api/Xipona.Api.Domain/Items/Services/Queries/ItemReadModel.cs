@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+﻿using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+namespace Xipona.Api.Domain.Items.Services.Queries;
 
 public class ItemReadModel
 {

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
+namespace Xipona.Api.Endpoints.Tests.Common;
 public abstract class EndpointQueryNoConverterTestsBase<TQuery, TQueryReturnType, TReturnType, TFixture>
     : EndpointQueryTestsBase<bool, TQuery, TQueryReturnType, TReturnType, TFixture>
     where TQuery : IQuery<TQueryReturnType>

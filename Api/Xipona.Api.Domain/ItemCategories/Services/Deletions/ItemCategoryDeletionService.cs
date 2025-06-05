@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.ShoppingLists.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Deletions;
+namespace Xipona.Api.Domain.ItemCategories.Services.Deletions;
 
 public class ItemCategoryDeletionService : IItemCategoryDeletionService
 {

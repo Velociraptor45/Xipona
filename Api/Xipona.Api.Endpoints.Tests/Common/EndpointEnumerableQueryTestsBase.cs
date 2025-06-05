@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
+namespace Xipona.Api.Endpoints.Tests.Common;
 
 public abstract class EndpointEnumerableQueryTestsBase<TQueryConverterInputType, TQuery, TQueryReturnType, TReturnType, TFixture>
     : EndpointQueryTestsBase<TQueryConverterInputType, TQuery, IEnumerable<TQueryReturnType>, List<TReturnType>, TFixture>

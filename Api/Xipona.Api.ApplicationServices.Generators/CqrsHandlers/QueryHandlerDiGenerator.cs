@@ -18,10 +18,10 @@ public class QueryHandlerDiGenerator : CqrsHandlerDiGeneratorBase
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
-                        using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+                        using Xipona.Api.ApplicationServices.Common.Queries;
                         using System;
 
-                        namespace ProjectHermes.Xipona.Api.ApplicationServices;
+                        namespace Xipona.Api.ApplicationServices;
 
                         public static class QueryHandlerServiceCollectionExtensions
                         {

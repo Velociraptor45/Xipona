@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models.Factories;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Converters.ToDomain;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
-using Manufacturer = ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
+using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Models.Factories;
+using Xipona.Api.Repositories.Manufacturers.Converters.ToDomain;
+using Xipona.Api.TestTools.Extensions;
+using Manufacturer = Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Manufacturers.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Tests.Manufacturers.Converters.ToDomain;
 
 public class ManufacturerConverterTests : ToDomainConverterTestBase<Manufacturer, IManufacturer, ManufacturerConverter>
 {

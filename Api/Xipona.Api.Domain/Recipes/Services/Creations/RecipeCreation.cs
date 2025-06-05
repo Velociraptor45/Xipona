@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
+namespace Xipona.Api.Domain.Recipes.Services.Creations;
 
 public class RecipeCreation
 {

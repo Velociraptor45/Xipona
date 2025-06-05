@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Attributes;
+﻿using Xipona.Api.Domain.Common.Attributes;
 
-namespace ProjectHermes.Xipona.Api.Domain.Common.Models;
+namespace Xipona.Api.Domain.Common.Models;
 
 public enum Currency
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.ArchitectureTests.Core;
+﻿namespace Xipona.Api.ArchitectureTests.Core;
 
 public class CoreTests
 {
@@ -16,7 +16,7 @@ public class CoreTests
             .InAssembly(_fixture.Assembly)
             .Should()
             .OnlyHaveDependenciesOn(
-                "ProjectHermes.Xipona.Api.Core",
+                "Xipona.Api.Core",
                 "System",
                 "Microsoft")
             .GetResult()

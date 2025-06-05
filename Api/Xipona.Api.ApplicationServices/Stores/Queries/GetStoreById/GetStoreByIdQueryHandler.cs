@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
+namespace Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
 
 public class GetStoreByIdQueryHandler : IQueryHandler<GetStoreByIdQuery, IStore>
 {

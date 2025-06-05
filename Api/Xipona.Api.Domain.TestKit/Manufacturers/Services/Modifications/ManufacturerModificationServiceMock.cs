@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
+﻿using Xipona.Api.Domain.Manufacturers.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Services.Modifications;
+namespace Xipona.Api.Domain.TestKit.Manufacturers.Services.Modifications;
 
 public class ManufacturerModificationServiceMock : Mock<IManufacturerModificationService>
 {

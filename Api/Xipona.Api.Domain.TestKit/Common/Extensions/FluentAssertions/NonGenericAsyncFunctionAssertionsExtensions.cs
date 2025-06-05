@@ -1,8 +1,8 @@
 ﻿using FluentAssertions.Specialized;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+namespace Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 
 public static class NonGenericAsyncFunctionAssertionsExtensions
 {

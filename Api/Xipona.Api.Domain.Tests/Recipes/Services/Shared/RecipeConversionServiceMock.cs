@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Shared;
+﻿using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.Recipes.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Recipes.Services.Shared;
+namespace Xipona.Api.Domain.Tests.Recipes.Services.Shared;
 
 public class RecipeConversionServiceMock : Mock<IRecipeConversionService>
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+namespace Xipona.Api.Domain.ShoppingLists.Services.AddItems;
 
 public class ItemToShoppingListAddition
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
 public static class ShoppingListDiscountEntityMother
 {
     public static ShoppingListDiscountEntityBuilder Price()

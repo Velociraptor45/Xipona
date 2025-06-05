@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Reasons;
+namespace Xipona.Api.Domain.Items.Reasons;
 
 public class ItemWithTypesHasNoAvailabilitiesReason : IReason
 {

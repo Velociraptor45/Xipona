@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.RecipeTags.Commands.CreateRecipeTag;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
-using ProjectHermes.Xipona.Api.Core.Converter;
+﻿using Xipona.Api.ApplicationServices.RecipeTags.Commands.CreateRecipeTag;
+using Xipona.Api.Contracts.RecipeTags.Commands;
+using Xipona.Api.Core.Converter;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.RecipeTags;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.RecipeTags;
 
 public class CreateRecipeTagCommandConverter : IToDomainConverter<CreateRecipeTagContract, CreateRecipeTagCommand>
 {

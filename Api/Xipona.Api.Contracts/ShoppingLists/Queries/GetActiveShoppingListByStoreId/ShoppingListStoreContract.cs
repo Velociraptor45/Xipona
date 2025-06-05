@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
+namespace Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
 {
     /// <summary>
     /// Represents a store.

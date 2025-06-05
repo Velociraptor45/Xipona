@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+namespace Xipona.Api.Repositories.ShoppingLists.Entities;
 
 [Index("ItemId")]
 [Index("ItemTypeId")]

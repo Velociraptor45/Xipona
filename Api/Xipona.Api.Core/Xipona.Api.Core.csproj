@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>ProjectHermes.Xipona.Api.Core</RootNamespace>
+    <RootNamespace>Xipona.Api.Core</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

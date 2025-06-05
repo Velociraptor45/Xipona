@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+namespace Xipona.Api.Domain.Stores.Ports;
 
 public interface IStoreRepository
 {

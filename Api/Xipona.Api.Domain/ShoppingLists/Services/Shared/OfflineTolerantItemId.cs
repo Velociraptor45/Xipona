@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
+﻿namespace Xipona.Api.Domain.ShoppingLists.Services.Shared;
 
 public class OfflineTolerantItemId
 {

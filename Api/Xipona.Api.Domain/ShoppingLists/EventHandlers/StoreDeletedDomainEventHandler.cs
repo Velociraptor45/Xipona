@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Stores.DomainEvents;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.ShoppingLists.Services.Deletions;
+using Xipona.Api.Domain.Stores.DomainEvents;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.EventHandlers;
+namespace Xipona.Api.Domain.ShoppingLists.EventHandlers;
 
 public class StoreDeletedDomainEventHandler : IDomainEventHandler<StoreDeletedDomainEvent>
 {

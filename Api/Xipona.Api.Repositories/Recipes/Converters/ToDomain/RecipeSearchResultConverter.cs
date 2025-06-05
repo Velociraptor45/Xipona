@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Recipes.Converters.ToDomain;
 
 public class RecipeSearchResultConverter : IToDomainConverter<Entities.Recipe, RecipeSearchResult>
 {

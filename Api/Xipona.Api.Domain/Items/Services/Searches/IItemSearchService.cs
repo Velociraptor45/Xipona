@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+namespace Xipona.Api.Domain.Items.Services.Searches;
 
 public interface IItemSearchService
 {

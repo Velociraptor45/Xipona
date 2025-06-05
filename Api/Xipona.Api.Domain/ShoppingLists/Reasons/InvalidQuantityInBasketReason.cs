@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using Xipona.Api.Domain.Common.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
+namespace Xipona.Api.Domain.ShoppingLists.Reasons;
 
 public class InvalidQuantityInBasketReason : IReason
 {

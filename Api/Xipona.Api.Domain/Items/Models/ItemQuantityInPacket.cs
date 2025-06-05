@@ -1,3 +1,3 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿namespace Xipona.Api.Domain.Items.Models;
 
 public record ItemQuantityInPacket(Quantity Quantity, QuantityTypeInPacket Type);

@@ -1,8 +1,8 @@
 ﻿using Moq.Language.Flow;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.TestKit.Common.Commands;
+namespace Xipona.Api.ApplicationServices.TestKit.Common.Commands;
 
 public class CommandDispatcherMock : Mock<ICommandDispatcher>
 {

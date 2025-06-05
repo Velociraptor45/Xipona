@@ -2,12 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Core.TestKit.Files;
-using ProjectHermes.Xipona.Api.Secrets;
-using ProjectHermes.Xipona.Api.Secrets.Vault;
-using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Core.TestKit.Files;
+using Xipona.Api.Secrets.Vault;
+using Xipona.Api.Secrets.Vault.Config;
+using Xipona.Api.TestTools.Exceptions;
 
 namespace Xipona.Api.Secrets.Tests.Configs;
 
@@ -168,27 +167,27 @@ public class SecretStoreRegisterTests
         public void SetupVaultUsername()
         {
             _vaultUsername = _username;
-            _collection.Add(new("PH_XIPONA_VAULT_USERNAME", _vaultUsername));
+            _collection.Add(new("XIPONA_VAULT_USERNAME", _vaultUsername));
         }
 
         public void SetupVaultUsernameFile()
         {
             _vaultUsernameFile = new TestBuilder<string>().Create();
             FileLoadingServiceMock.SetupReadFile(_vaultUsernameFile, _username);
-            _collection.Add(new("PH_XIPONA_VAULT_USERNAME_FILE", _vaultUsernameFile));
+            _collection.Add(new("XIPONA_VAULT_USERNAME_FILE", _vaultUsernameFile));
         }
 
         public void SetupVaultPassword()
         {
             _vaultPassword = _password;
-            _collection.Add(new("PH_XIPONA_VAULT_PASSWORD", _vaultPassword));
+            _collection.Add(new("XIPONA_VAULT_PASSWORD", _vaultPassword));
         }
 
         public void SetupVaultPasswordFile()
         {
             _vaultPasswordFile = new TestBuilder<string>().Create();
             FileLoadingServiceMock.SetupReadFile(_vaultPasswordFile, _password);
-            _collection.Add(new("PH_XIPONA_VAULT_PASSWORD_FILE", _vaultPasswordFile));
+            _collection.Add(new("XIPONA_VAULT_PASSWORD_FILE", _vaultPasswordFile));
         }
 
         public void SetupVaultConfig()

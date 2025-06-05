@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Models.Factories;
+using Xipona.Api.Domain.Manufacturers.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Creations;
+namespace Xipona.Api.Domain.Manufacturers.Services.Creations;
 
 public class ManufacturerCreationService : IManufacturerCreationService
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public interface IShoppingList
 {

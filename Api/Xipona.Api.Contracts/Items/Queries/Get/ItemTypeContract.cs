@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get
+namespace Xipona.Api.Contracts.Items.Queries.Get
 {
     /// <summary>
     /// Represents an item type.

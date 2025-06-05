@@ -6,7 +6,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>ProjectHermes.Xipona.Api.ApplicationServices.Tests</RootNamespace>
+    <RootNamespace>Xipona.Api.ApplicationServices.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Core.Extensions;
+﻿namespace Xipona.Api.Core.Extensions;
 
 public static class IntExtensions
 {

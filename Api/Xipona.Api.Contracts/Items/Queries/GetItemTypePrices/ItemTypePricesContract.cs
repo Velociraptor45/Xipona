@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
+namespace Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
 {
     /// <summary>
     /// Represents the prices of all of an item's types in a store.

@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Repositories.Items.Entities;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToContract;
+namespace Xipona.Api.Repositories.Items.Converters.ToContract;
 
 public class ItemConverter : IToContractConverter<IItem, Entities.Item>
 {

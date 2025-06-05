@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
+﻿namespace Xipona.Api.Domain.Items.Services.TemporaryItems;
 
 public interface ITemporaryItemService
 {

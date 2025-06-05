@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+﻿using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.Items.DomainEvents;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.EventHandlers;
+namespace Xipona.Api.Domain.ShoppingLists.EventHandlers;
 
 public class ItemDeletedDomainEventHandler : IDomainEventHandler<ItemDeletedDomainEvent>
 {

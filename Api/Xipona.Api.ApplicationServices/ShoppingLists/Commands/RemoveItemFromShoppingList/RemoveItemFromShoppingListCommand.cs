@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
+namespace Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
 
 public class RemoveItemFromShoppingListCommand : ICommand<bool>
 {

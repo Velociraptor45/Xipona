@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.FinishShoppingList;
+namespace Xipona.Api.ApplicationServices.ShoppingLists.Commands.FinishShoppingList;
 
 public class FinishShoppingListCommand : ICommand<bool>
 {

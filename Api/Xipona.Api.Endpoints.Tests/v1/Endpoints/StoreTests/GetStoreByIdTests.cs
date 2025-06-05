@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.StoreTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.StoreTests;
 
 public class GetStoreByIdTests : EndpointQueryNoConverterTestsBase<GetStoreByIdQuery, IStore, StoreContract,
     GetStoreByIdTests.GetStoreByIdFixture>

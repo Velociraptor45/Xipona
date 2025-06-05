@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Common;
+namespace Xipona.Api.Domain.Tests.Common;
 
 public abstract class DomainEventHandlerTestsBase<TDomainEvent, TDomainEventHandler>
     where TDomainEvent : IDomainEvent

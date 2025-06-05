@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 
 public record ItemQuantity
 {

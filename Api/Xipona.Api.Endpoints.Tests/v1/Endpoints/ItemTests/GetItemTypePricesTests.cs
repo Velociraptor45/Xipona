@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemTests;
 
 public class GetItemTypePricesTests() :
     EndpointQueryNoConverterTestsBase<GetItemTypePricesQuery, ItemTypePricesReadModel, ItemTypePricesContract,

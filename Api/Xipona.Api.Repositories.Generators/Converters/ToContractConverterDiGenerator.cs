@@ -12,7 +12,7 @@ public class ToContractConverterDiGenerator : ConverterDiGeneratorBase
     public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var converters = GetAllConverters(context, "IToContractConverter",
-            "ProjectHermes.Xipona.Api.Repositories");
+            "Xipona.Api.Repositories");
 
         context.RegisterSourceOutput(converters.Collect(), (ctx, allConvertersArrays) =>
         {
@@ -23,10 +23,10 @@ public class ToContractConverterDiGenerator : ConverterDiGeneratorBase
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
-                        using ProjectHermes.Xipona.Api.Core.Converter;
+                        using Xipona.Api.Core.Converter;
                         using System;
 
-                        namespace ProjectHermes.Xipona.Api.Repositories;
+                        namespace Xipona.Api.Repositories;
 
                         public static class RepositoriesToContractConverterServiceCollectionExtensions
                         {

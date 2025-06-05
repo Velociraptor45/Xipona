@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
+namespace Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
 
 public class ItemCategoryByIdQueryHandler : IQueryHandler<ItemCategoryByIdQuery, IItemCategory>
 {

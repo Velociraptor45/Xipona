@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
+﻿using Xipona.Api.Domain.Items.Services.TemporaryItems;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.TemporaryItems;
+namespace Xipona.Api.Domain.TestKit.Items.Services.TemporaryItems;
 
 public class TemporaryItemServiceMock : Mock<ITemporaryItemService>
 {

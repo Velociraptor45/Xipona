@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion;
+namespace Xipona.Api.Domain.Items.Services.Conversion;
 
 public class ItemAvailabilityReadModelConversionService : IItemAvailabilityReadModelConversionService
 {

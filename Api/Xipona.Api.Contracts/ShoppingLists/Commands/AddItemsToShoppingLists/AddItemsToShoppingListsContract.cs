@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists
 {
     /// <summary>
     /// Represents a request to add multiple items to multiple shopping lists.

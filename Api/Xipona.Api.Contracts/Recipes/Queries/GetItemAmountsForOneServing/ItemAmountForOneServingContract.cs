@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing
+namespace Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing
 {
     /// <summary>
     /// Represents the normalized amount of an item for one serving.

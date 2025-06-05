@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
+﻿using Xipona.Api.Core.Attributes;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+namespace Xipona.Api.Domain.Recipes.Models;
 
 public enum IngredientQuantityType
 {

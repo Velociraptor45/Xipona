@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Creations;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Creations;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
+namespace Xipona.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 
 public class CreateItemCategoryCommandHandler : ICommandHandler<CreateItemCategoryCommand, IItemCategory>
 {

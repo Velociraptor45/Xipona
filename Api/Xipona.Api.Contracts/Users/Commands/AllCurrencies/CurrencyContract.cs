@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies
+﻿namespace Xipona.Api.Contracts.Users.Commands.AllCurrencies
 {
     /// <summary>
     /// Represents a currency.

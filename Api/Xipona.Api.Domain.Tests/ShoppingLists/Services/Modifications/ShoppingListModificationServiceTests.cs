@@ -1,24 +1,24 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Ports;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Services;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-using DomainModels = ProjectHermes.Xipona.Api.Domain.Items.Models;
+using DomainModels = Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.Modifications;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Services.Modifications;
 
 public class ShoppingListModificationServiceTests
 {

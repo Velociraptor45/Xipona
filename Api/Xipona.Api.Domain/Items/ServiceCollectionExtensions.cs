@@ -1,27 +1,27 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Services.Conversion;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
+using Xipona.Api.Domain.Items.Services.Creations;
+using Xipona.Api.Domain.Items.Services.Deletions;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Items.Services.Validations;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items;
+namespace Xipona.Api.Domain.Items;
 
 public static class ServiceCollectionExtensions
 {

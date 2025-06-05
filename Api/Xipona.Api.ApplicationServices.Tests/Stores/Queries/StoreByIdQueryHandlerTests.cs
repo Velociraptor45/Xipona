@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Services.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Services.Queries;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Stores.Queries;
+namespace Xipona.Api.ApplicationServices.Tests.Stores.Queries;
 
 public class StoreByIdQueryHandlerTests : QueryHandlerTestsBase<GetStoreByIdQueryHandler, GetStoreByIdQuery, IStore>
 {

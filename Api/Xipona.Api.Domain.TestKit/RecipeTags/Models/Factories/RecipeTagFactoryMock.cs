@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models.Factories;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Models.Factories;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Models.Factories;
+namespace Xipona.Api.Domain.TestKit.RecipeTags.Models.Factories;
 
 public class RecipeTagFactoryMock : Mock<IRecipeTagFactory>
 {

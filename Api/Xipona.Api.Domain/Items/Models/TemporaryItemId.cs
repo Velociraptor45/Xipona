@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿namespace Xipona.Api.Domain.Items.Models;
 
 public readonly record struct TemporaryItemId
 {

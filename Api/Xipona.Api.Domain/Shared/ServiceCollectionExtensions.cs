@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.ItemCategories.Services.Validations;
+using Xipona.Api.Domain.Items.Services.Validations;
+using Xipona.Api.Domain.Manufacturers.Services.Validations;
+using Xipona.Api.Domain.RecipeTags.Services.Validations;
+using Xipona.Api.Domain.Shared.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Shared;
+namespace Xipona.Api.Domain.Shared;
 
 public static class ServiceCollectionExtensions
 {

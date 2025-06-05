@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
 
 public class ShoppingListModificationServiceMock : Mock<IShoppingListModificationService>
 {

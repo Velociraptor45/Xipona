@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Services.Searches;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Searches;
+namespace Xipona.Api.Domain.TestKit.Items.Services.Searches;
 
 public class ItemSearchServiceMock : Mock<IItemSearchService>
 {

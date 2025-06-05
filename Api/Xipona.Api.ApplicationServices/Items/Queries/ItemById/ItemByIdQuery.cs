@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.ItemById;
+namespace Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 
 public class ItemByIdQuery : IQuery<ItemReadModel>
 {

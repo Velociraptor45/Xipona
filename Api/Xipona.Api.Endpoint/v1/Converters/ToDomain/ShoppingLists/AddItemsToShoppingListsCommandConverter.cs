@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists;
 
 public class AddItemsToShoppingListsCommandConverter :
     IToDomainConverter<AddItemsToShoppingListsContract, AddItemsToShoppingListsCommand>

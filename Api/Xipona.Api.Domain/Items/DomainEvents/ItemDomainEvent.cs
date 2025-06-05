@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
+namespace Xipona.Api.Domain.Items.DomainEvents;
 
 public record ItemDomainEvent : IDomainEvent
 {

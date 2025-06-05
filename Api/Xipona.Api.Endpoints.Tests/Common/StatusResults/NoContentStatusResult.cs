@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using Xipona.Api.Domain.Common.Reasons;
 using System.Net;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+namespace Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
 public class NoContentStatusResult : IStatusResult
 {

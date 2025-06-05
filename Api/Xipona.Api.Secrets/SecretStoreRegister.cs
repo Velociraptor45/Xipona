@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.Files;
-using ProjectHermes.Xipona.Api.Secrets.Vault;
-using ProjectHermes.Xipona.Api.Secrets.Vault.Config;
+using Xipona.Api.Core.Files;
+using Xipona.Api.Secrets.Vault;
+using Xipona.Api.Secrets.Vault.Config;
 
-namespace ProjectHermes.Xipona.Api.Secrets;
+namespace Xipona.Api.Secrets;
 
 public static class SecretStoreRegister
 {
@@ -49,15 +49,15 @@ public static class SecretStoreRegister
 
 internal class Secrets
 {
-    [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME")]
+    [ConfigurationKeyName("XIPONA_VAULT_USERNAME")]
     public string VaultUsername { get; set; } = string.Empty;
 
-    [ConfigurationKeyName("PH_XIPONA_VAULT_USERNAME_FILE")]
+    [ConfigurationKeyName("XIPONA_VAULT_USERNAME_FILE")]
     public string VaultUsernameFile { get; set; } = string.Empty;
 
-    [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD")]
+    [ConfigurationKeyName("XIPONA_VAULT_PASSWORD")]
     public string VaultPassword { get; set; } = string.Empty;
 
-    [ConfigurationKeyName("PH_XIPONA_VAULT_PASSWORD_FILE")]
+    [ConfigurationKeyName("XIPONA_VAULT_PASSWORD_FILE")]
     public string VaultPasswordFile { get; set; } = string.Empty;
 }

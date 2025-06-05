@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ItemCategories.DomainEvents;
+using Xipona.Api.Domain.ItemCategories.Reasons;
+using Xipona.Api.Domain.ItemCategories.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+namespace Xipona.Api.Domain.ItemCategories.Models;
 
 public class ItemCategory : AggregateRoot, IItemCategory
 {

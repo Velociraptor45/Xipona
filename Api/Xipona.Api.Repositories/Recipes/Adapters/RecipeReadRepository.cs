@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Repositories.Recipes.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Adapters;
+namespace Xipona.Api.Repositories.Recipes.Adapters;
 public class RecipeReadRepository : IRecipeReadRepository
 {
     private readonly RecipeContext _dbContext;

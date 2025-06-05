@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
 
 public class ShoppingListItemTests
 {

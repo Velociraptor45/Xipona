@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
+namespace Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
 
 public class CreateManufacturerCommand : ICommand<IManufacturer>
 {

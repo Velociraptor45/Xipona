@@ -1,17 +1,17 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Reasons;
+using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Recipes;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Recipes;
 
 public class CreateRecipeCommandConverter : IToDomainConverter<CreateRecipeContract, CreateRecipeCommand>
 {

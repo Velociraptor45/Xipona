@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Items.Services.TemporaryItems;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Items.Commands.MakeTemporaryItemPermanent;
+namespace Xipona.Api.ApplicationServices.Tests.Items.Commands.MakeTemporaryItemPermanent;
 
 public class MakeTemporaryItemPermanentCommandHandlerTests()
     : CommandHandlerTestsBase<MakeTemporaryItemPermanentCommandHandler, MakeTemporaryItemPermanentCommand, bool>

@@ -1,8 +1,8 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public class ItemQuantityCustomization : ICustomization
 {

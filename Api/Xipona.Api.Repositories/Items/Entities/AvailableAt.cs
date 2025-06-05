@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Entities;
+namespace Xipona.Api.Repositories.Items.Entities;
 
 public class AvailableAt
 {

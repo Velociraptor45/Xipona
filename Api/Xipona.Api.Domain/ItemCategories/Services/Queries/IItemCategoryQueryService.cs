@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
+namespace Xipona.Api.Domain.ItemCategories.Services.Queries;
 
 public interface IItemCategoryQueryService
 {

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
 public class GetAllActiveManufacturersTests : EndpointEnumerableQueryNoConverterTestsBase<
     AllActiveManufacturersQuery, ManufacturerReadModel, ManufacturerContract,

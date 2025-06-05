@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+﻿namespace Xipona.Api.Domain.Recipes.Models;
 public readonly record struct RecipeId
 {
     public RecipeId()

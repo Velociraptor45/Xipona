@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using Xipona.Api.Contracts.Common;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Common;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Common;
 
 public class ErrorContractConverter : IToContractConverter<IReason, ErrorContract>
 {

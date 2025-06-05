@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Manufacturers.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Validations;
+namespace Xipona.Api.Domain.Manufacturers.Services.Validations;
 
 public class ManufacturerValidationService : IManufacturerValidationService
 {

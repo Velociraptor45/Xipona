@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToDomain;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Repositories.Items.Converters.ToDomain;
+using Xipona.Api.Repositories.TestKit.Items.Entities;
+using Xipona.Api.TestTools.Extensions;
 
-using DomainModels = ProjectHermes.Xipona.Api.Domain.Items.Models;
+using DomainModels = Xipona.Api.Domain.Items.Models;
 
-using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
+using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Items.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Tests.Items.Converters.ToDomain;
 
 public class ItemTypeConverterTests : ToDomainConverterTestBase<ItemType, IItemType, ItemTypeConverter>
 {

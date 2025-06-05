@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+﻿namespace Xipona.Api.Domain.ItemCategories.Models;
 
 public readonly record struct ItemCategoryId
 {

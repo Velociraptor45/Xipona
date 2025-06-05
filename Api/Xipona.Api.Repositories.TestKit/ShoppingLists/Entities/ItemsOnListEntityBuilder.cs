@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+namespace Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
 
 public class ItemsOnListEntityBuilder : TestBuilderBase<ItemsOnList>
 {

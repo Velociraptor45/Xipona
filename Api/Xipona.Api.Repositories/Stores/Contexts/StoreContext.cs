@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
+using Xipona.Api.Repositories.Common.Converters;
+using Xipona.Api.Repositories.Stores.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+namespace Xipona.Api.Repositories.Stores.Contexts;
 
 public class StoreContext : DbContext
 {

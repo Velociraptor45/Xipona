@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Core.Files;
+﻿namespace Xipona.Api.Core.Files;
 
 public interface IFileLoadingService
 {

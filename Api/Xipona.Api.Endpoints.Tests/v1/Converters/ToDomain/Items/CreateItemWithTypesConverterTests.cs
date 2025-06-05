@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
 using FluentAssertions.Equivalency;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
+using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
 using System.Text.RegularExpressions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Converters.ToDomain.Items;
+namespace Xipona.Api.Endpoints.Tests.v1.Converters.ToDomain.Items;
 
 public class CreateItemWithTypesConverterTests
 {

@@ -1,15 +1,15 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Ports;
+using Xipona.Api.Domain.TestKit.Items.Services.Validation;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.TemporaryItems;
+namespace Xipona.Api.Domain.Tests.Items.Services.TemporaryItems;
 
 public class TemporaryItemServiceTests
 {

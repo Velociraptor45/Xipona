@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
+﻿namespace Xipona.Api.Domain.Items.Services.Queries.Quantities;
 
 public interface IQuantitiesQueryService
 {

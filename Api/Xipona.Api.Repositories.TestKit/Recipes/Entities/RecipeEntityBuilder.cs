@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.Recipes.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Recipes.Entities;
+namespace Xipona.Api.Repositories.TestKit.Recipes.Entities;
 public class RecipeEntityBuilder : TestBuilderBase<Recipe>
 {
     public RecipeEntityBuilder()

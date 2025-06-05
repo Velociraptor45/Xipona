@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Users.Models;
+﻿namespace Xipona.Api.Domain.Users.Models;
 
 public readonly record struct UserId
 {

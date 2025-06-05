@@ -17,7 +17,7 @@ public class QueryDispatcherGenerator : DispatcherGeneratorBase
                         using Microsoft.Extensions.DependencyInjection;
                         using System;
                         
-                        namespace ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+                        namespace Xipona.Api.ApplicationServices.Common.Queries;
                         
                         public class QueryDispatcher : IQueryDispatcher
                         {

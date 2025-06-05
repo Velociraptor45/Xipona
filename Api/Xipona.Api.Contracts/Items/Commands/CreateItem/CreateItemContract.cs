@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
+﻿using Xipona.Api.Contracts.Items.Commands.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem
+namespace Xipona.Api.Contracts.Items.Commands.CreateItem
 {
     /// <summary>
     /// Represents a command to create an item.

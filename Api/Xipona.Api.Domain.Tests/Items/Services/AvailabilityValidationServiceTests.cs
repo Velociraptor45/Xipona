@@ -1,15 +1,15 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Validations;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models.Factories;
+using Xipona.Api.Domain.TestKit.Stores.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services;
+namespace Xipona.Api.Domain.Tests.Items.Services;
 
 public class AvailabilityValidationServiceTests
 {

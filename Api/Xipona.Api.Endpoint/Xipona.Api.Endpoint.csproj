@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>ProjectHermes.Xipona.Api.Endpoint</RootNamespace>
+    <RootNamespace>Xipona.Api.Endpoint</RootNamespace>
     <Nullable>enable</Nullable>
     <!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
   </PropertyGroup>

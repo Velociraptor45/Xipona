@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using Ingredient = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Recipes.Models;
+using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToContract;
+namespace Xipona.Api.Repositories.Recipes.Converters.ToContract;
 
 public class IngredientConverter : IToContractConverter<(RecipeId, IIngredient), Entities.Ingredient>
 {

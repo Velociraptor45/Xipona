@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿namespace Xipona.Api.Repositories.Common.Transactions;
 
 public interface ITransaction : IDisposable
 {

@@ -18,10 +18,10 @@ public class DomainEventHandlerDiGenerator : EventHandlerDiGeneratorBase
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
-                        using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+                        using Xipona.Api.Core.DomainEventHandlers;
                         using System;
 
-                        namespace ProjectHermes.Xipona.Api.Domain;
+                        namespace Xipona.Api.Domain;
 
                         public static class DomainEventHandlerServiceCollectionExtensions
                         {

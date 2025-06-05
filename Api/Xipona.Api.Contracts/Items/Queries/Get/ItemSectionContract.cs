@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get
+namespace Xipona.Api.Contracts.Items.Queries.Get
 {
     /// <summary>
     /// Represents a section where an item is located in a store.

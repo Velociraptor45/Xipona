@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Manufacturers.Services.Queries;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
+namespace Xipona.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
 
 public class AllActiveManufacturersQueryHandler
     : IQueryHandler<AllActiveManufacturersQuery, IEnumerable<ManufacturerReadModel>>

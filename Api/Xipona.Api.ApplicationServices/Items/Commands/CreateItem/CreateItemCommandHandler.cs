@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Services.Creations;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.CreateItem;
+namespace Xipona.Api.ApplicationServices.Items.Commands.CreateItem;
 
 public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, ItemReadModel>
 {

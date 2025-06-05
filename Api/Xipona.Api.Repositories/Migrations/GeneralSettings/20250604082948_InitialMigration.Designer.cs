@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+using Xipona.Api.Repositories.Users.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.GeneralSettings
+namespace Xipona.Api.Repositories.Migrations.GeneralSettings
 {
     [DbContext(typeof(GeneralSettingContext))]
     [Migration("20250604082948_InitialMigration")]
@@ -24,7 +24,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.GeneralSettings
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Users.Entities.GeneralSetting", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Users.Entities.GeneralSetting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

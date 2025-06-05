@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Models.Factories;
+using Xipona.Api.Domain.RecipeTags.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Creation;
+namespace Xipona.Api.Domain.RecipeTags.Services.Creation;
 
 public class RecipeTagCreationService : IRecipeTagCreationService
 {

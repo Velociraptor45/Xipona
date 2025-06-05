@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+﻿using Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
+using Xipona.Api.Contracts.Stores.Commands.CreateStore;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Stores;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Stores;
 
 public class CreateStoreCommandConverter : IToDomainConverter<CreateStoreContract, CreateStoreCommand>
 {

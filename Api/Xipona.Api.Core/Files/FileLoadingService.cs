@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ProjectHermes.Xipona.Api.Core.Files;
+namespace Xipona.Api.Core.Files;
 
 public class FileLoadingService : IFileLoadingService
 {

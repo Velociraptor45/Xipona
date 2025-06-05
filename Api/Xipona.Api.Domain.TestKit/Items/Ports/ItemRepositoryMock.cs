@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
+namespace Xipona.Api.Domain.TestKit.Items.Ports;
 
 public class ItemRepositoryMock : Mock<IItemRepository>
 {

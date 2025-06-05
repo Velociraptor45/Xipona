@@ -1,14 +1,14 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
+using Xipona.Api.Contracts.Items.Commands.Shared;
+using Xipona.Api.Contracts.Items.Commands.UpdateItem;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
 
 public class UpdateItemCommandConverter : IToDomainConverter<(Guid id, UpdateItemContract contract), UpdateItemCommand>
 {

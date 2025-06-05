@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿namespace Xipona.Api.Domain.RecipeTags.Models;
 
 public interface IRecipeTag
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Stores.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
+namespace Xipona.Api.Domain.Stores.Models.Factories;
 
 public class StoreFactory : IStoreFactory
 {

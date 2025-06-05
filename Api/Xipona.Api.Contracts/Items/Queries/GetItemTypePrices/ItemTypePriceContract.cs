@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
+namespace Xipona.Api.Contracts.Items.Queries.GetItemTypePrices
 {
     /// <summary>
     /// Represents the price of an item type in a store.

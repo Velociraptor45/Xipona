@@ -1,8 +1,8 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Common.Reasons;
+namespace Xipona.Api.Domain.Tests.Common.Reasons;
 
 public class ReasonTests
 {

@@ -1,11 +1,11 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public class ItemBuilder : DomainTestBuilderBase<Item>
 {

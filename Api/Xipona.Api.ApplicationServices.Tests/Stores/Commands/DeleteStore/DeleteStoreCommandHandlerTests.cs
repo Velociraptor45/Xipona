@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Services.Deletions;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Stores.Services.Deletions;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Stores.Commands.DeleteStore;
+namespace Xipona.Api.ApplicationServices.Tests.Stores.Commands.DeleteStore;
 
 public class DeleteStoreCommandHandlerTests : CommandHandlerTestsBase<DeleteStoreCommandHandler,
     DeleteStoreCommand, bool>

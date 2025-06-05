@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
+namespace Xipona.Api.Repositories.Migrations.ShoppingLists
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
+﻿namespace Xipona.Api.Domain.Stores.Services.Modifications;
 
 public interface IStoreModificationService
 {

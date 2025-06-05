@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Shared.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
+﻿using Xipona.Api.Domain.Shared.Models;
+using Xipona.Api.Domain.Stores.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Models;
+namespace Xipona.Api.Domain.Stores.Models;
 
 public interface ISection : ISortable
 {

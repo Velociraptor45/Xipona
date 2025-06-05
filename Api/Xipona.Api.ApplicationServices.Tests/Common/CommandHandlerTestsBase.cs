@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Repositories.Tests.Common.Transactions;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Repositories.Tests.Common.Transactions;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
+namespace Xipona.Api.ApplicationServices.Tests.Common;
 
 public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturnType>
     where TCommandHandler : ICommandHandler<TCommand, TReturnType>

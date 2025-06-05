@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
 
 public static class ItemCategoryEntityMother
 {

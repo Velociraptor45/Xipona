@@ -1,7 +1,7 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Api.Core.Files;
+using Xipona.Api.Core.Files;
 
-namespace ProjectHermes.Xipona.Api.Core.TestKit.Files;
+namespace Xipona.Api.Core.TestKit.Files;
 
 public class FileLoadingServiceMock : Mock<IFileLoadingService>
 {

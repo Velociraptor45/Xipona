@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
+using Xipona.Api.Repositories.Common.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
+namespace Xipona.Api.Repositories.Manufacturers.Contexts;
 
 public class ManufacturerContextFactory : ContextFactoryBase, IDesignTimeDbContextFactory<ManufacturerContext>
 {

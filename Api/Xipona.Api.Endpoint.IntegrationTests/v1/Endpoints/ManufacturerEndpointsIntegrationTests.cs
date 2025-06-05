@@ -2,27 +2,27 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.TestTools.Exceptions;
 using System;
 using Xunit;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
-using Manufacturer = ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
-using Models = ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
+using Manufacturer = Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
+using Models = Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
+namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ManufacturerEndpointsIntegrationTests
 {

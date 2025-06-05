@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+﻿using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Models;
+namespace Xipona.Api.Domain.Tests.Items.Models;
 
 public class QuantityTests
 {

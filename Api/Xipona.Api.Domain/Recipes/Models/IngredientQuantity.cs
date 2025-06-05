@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Recipes.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+namespace Xipona.Api.Domain.Recipes.Models;
 public readonly record struct IngredientQuantity
 {
     public IngredientQuantity(float value)

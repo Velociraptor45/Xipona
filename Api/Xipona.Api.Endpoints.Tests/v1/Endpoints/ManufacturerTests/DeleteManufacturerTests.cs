@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
 public class DeleteManufacturerTests : EndpointCommandTestsBase<Guid, DeleteManufacturerCommand,
     bool, DeleteManufacturerTests.DeleteManufacturerFixture>

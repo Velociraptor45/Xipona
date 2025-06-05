@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
+﻿using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Services.Queries;
+namespace Xipona.Api.Domain.TestKit.Stores.Services.Queries;
 
 public class StoreQueryServiceMock : Mock<IStoreQueryService>
 {

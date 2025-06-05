@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using Xipona.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Queries;
 
 public class ShoppingListReadModel
 {

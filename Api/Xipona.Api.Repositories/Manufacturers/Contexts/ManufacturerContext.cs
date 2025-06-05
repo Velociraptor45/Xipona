@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities;
+using Xipona.Api.Repositories.Common.Converters;
+using Xipona.Api.Repositories.Manufacturers.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
+namespace Xipona.Api.Repositories.Manufacturers.Contexts;
 
 public class ManufacturerContext : DbContext
 {

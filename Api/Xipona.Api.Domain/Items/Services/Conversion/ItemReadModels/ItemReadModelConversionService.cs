@@ -1,20 +1,20 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.ItemCategories.Reasons;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Manufacturers.Reasons;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
+namespace Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
 
 public class ItemReadModelConversionService : IItemReadModelConversionService
 {
