@@ -14,8 +14,8 @@ services:
     volumes:
       - ph-xipona-database:/var/lib/postgresql/data
     secrets:
-      - /run/secrets/ph-xipona-db-username
-      - /run/secrets/ph-xipona-db-password
+      - ph-xipona-db-username
+      - ph-xipona-db-password
 
   Api:
     image: velocir4ptor/ph-xipona-api:0.13.1
