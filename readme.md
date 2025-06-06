@@ -62,7 +62,7 @@ But what if you're missing some ingredients? It's tedious to add all of them to 
 And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/Xipona/milestones) to get a glimps at what's coming soon 👀
 
 ## Setup in Docker
-To run all required services in containers, Dockerfiles and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
+To run all required services in containers, Docker images and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
 
 ### Prerequisits
 Prepare the following things:
@@ -78,8 +78,8 @@ Prepare the following things:
   - xipona-db-password
 
 ### Api
-- The appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the xipona-api-**config** volume. Specify the following things there:
-  - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
+
+- In order to not get CORS issues, fill `XIPONA_CORS_ORIGIN__0` with the frontend's base URL. In the unlikely case that you have multiple URLs, duplicate the env variable and increment the number at the end.
 
 ### Frontend
 - Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the xipona-frontend-**config**.

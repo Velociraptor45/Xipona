@@ -21,6 +21,7 @@ services:
     image: velocir4ptor/xipona-api:0.13.1
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      XIPONA_CORS_ORIGIN__0: https://localhost:5000
       XIPONA_DB_USERNAME_FILE: /run/secrets/xipona-db-username
       XIPONA_DB_PASSWORD_FILE: /run/secrets/xipona-db-password
       XIPONA_DB_NAME: xipona
