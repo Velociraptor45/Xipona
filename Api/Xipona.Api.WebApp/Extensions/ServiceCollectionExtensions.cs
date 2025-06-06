@@ -7,11 +7,11 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Xipona.Api.Core.Constants;
-using Xipona.Api.Secrets;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Secrets;
 
 namespace Xipona.Api.WebApp.Extensions;
 
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
         IWebHostEnvironment environment, ISecretLoadingService secretLoadingService)
     {
         var otelConfig = new OtelConfig();
-        configuration.GetSection("OpenTelemetry").Bind(otelConfig);
+        configuration.Bind(otelConfig);
 
         if (string.IsNullOrWhiteSpace(otelConfig.LogsEndpoint) || string.IsNullOrWhiteSpace(otelConfig.TracesEndpoint))
         {
@@ -121,8 +121,13 @@ public static class ServiceCollectionExtensions
 
     internal sealed class OtelConfig
     {
+        [ConfigurationKeyName("XIPONA_OTEL_ENDPOINT_LOGS")]
         public string LogsEndpoint { get; set; } = string.Empty;
+
+        [ConfigurationKeyName("XIPONA_OTEL_ENDPOINT_TRACES")]
         public string TracesEndpoint { get; set; } = string.Empty;
+
+        [ConfigurationKeyName("XIPONA_OTEL_API_KEY_HEADER_PREFIX")]
         public string ApiKeyHeaderPrefix { get; set; } = string.Empty;
     }
 }

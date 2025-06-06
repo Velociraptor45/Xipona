@@ -145,16 +145,18 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 ### Backend Logging
 
-The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the xipona-api-**config** volume.<br/>
-In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
-An example for a local seq instance with API key requirement could be
+The backend logging has OTEL support. In order to enable it, fill the following env variables:
+- `XIPONA_OTEL_ENDPOINT_LOGS`
+- `XIPONA_OTEL_ENDPOINT_TRACES`
+- `XIPONA_OTEL_API_KEY_FILE` (only if you're not using the Vault and need an api key)
+- `XIPONA_OTEL_API_KEY_HEADER_PREFIX` (only if you need an api key)
 
-```json
-"OpenTelemetry": {
-  "LogsEndpoint": "http://localhost:5341/ingest/otlp/v1/logs",
-  "TracesEndpoint": "http://localhost:5341/ingest/otlp/v1/traces",
-  "ApiKeyHeaderPrefix": "X-Seq-ApiKey="
-}
+An example for a seq instance with API key requirement could be
+```
+XIPONA_OTEL_API_KEY_FILE: /run/secrets/xipona-otel-api-key
+XIPONA_OTEL_ENDPOINT_LOGS: http://myhost.example:5341/ingest/otlp/v1/logs
+XIPONA_OTEL_ENDPOINT_TRACES: http://myhost.example:5341/ingest/otlp/v1/traces
+XIPONA_OTEL_API_KEY_HEADER_PREFIX: X-Seq-ApiKey=
 ```
 
 ### Frontend Logging
