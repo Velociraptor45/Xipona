@@ -67,8 +67,6 @@ To run all required services in containers, Docker images and docker-compose fil
 ### Prerequisits
 Prepare the following things:
 - Docker Volumes
-  - Api
-    - xipona-api-config
   - Frontend
     - xipona-frontend-config
   - Database
@@ -207,11 +205,8 @@ Instead of providing the database credentials via docker secrets for the api, it
     - `apiKey`: the api key for the OTEL collector platform
 
 ## Local Development Setup
-To get everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the dev database.
+To get everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the persisted dev database.
 
 ### API
 
-#### Database connection
-To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: XIPONA_DB_USERNAME_FILE & XIPONA_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create XIPONA_VAULT_USERNAME_FILE & XIPONA_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
-
-Also, set the DB's address and port in your *Api/Xipona.Api.WebApp/appsettings.Local.json* or use the environment secrets of the WebApi project (recommended).
+The Xipona.Api.WebApp has user secret support. Add all the needed env variables (that were described above) to this file and fill them with the correct values. The api's CORS config should probably point towards localhost, but the DB connection to your dev stack.
