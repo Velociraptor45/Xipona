@@ -81,12 +81,8 @@ Prepare the following things:
 
 ### Frontend
 - Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the xipona-frontend-**config**.
-- Set the api's address in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) and copy it into a directory of your choice on your host.
 
-### yml files
-- Under *Docker/Compose/* is a compose yml file. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings file is
-- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`
-
+Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`.
 And now you're done. Happy shopping!
 
 ## Optional Setup

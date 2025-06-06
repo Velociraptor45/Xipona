@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Core;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xipona.Api.Client;
 using Xipona.Frontend.Infrastructure;
 using Xipona.Frontend.Infrastructure.Connection;
@@ -16,11 +21,6 @@ using Xipona.Frontend.WebApp.Configs;
 using Xipona.Frontend.WebApp.Services;
 using Xipona.Frontend.WebApp.Services.Discounts;
 using Xipona.Frontend.WebApp.Services.Notification;
-using Serilog;
-using Serilog.Core;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Xipona.Frontend.WebApp;
 
@@ -47,12 +47,13 @@ public static class Program
 
     private static void ConfigureHttpClient(WebAssemblyHostBuilder builder, AuthConfig authConfig)
     {
-        var connectionConfig = builder.Configuration.GetSection("Connection").Get<ConnectionConfig>();
+        var connectionConfig = new ConnectionConfig();
+        builder.Configuration.Bind(connectionConfig);
 
         builder.Services.AddSingleton(connectionConfig);
 
         if (string.IsNullOrWhiteSpace(connectionConfig.ApiUri))
-            throw new InvalidOperationException($"The Connection:{nameof(ConnectionConfig.ApiUri)} section in the appsettings is missing");
+            throw new InvalidOperationException("The Api-Url is missing in the configuration");
 
         var uri = new Uri(connectionConfig.ApiUri);
         var httpClientBuilder = builder.Services.AddHttpClient("Api", client => client.BaseAddress = uri);

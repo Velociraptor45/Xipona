@@ -66,6 +66,8 @@ services:
 
   Frontend:
     image: velocir4ptor/xipona-frontend:0.13.1
+    environment:
+      XIPONA_API_URL: https://Api:80
     ports:
       - "14000:80"
     depends_on:
