@@ -23,7 +23,13 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       XIPONA_DB_USERNAME_FILE: /run/secrets/xipona-db-username
       XIPONA_DB_PASSWORD_FILE: /run/secrets/xipona-db-password
-      #XIPONA_OTEL_API_KEY_FILE: /run/secrets/xipona-otel-api-key # uncomment this for backend OTEL API key support
+      # XIPONA_OTEL_API_KEY_FILE: /run/secrets/xipona-otel-api-key # uncomment this for backend OTEL API key support
+      # XIPONA_VAULT_USERNAME_FILE: /run/secrets/xipona-vault-api-username # uncomment this for vault support
+      # XIPONA_VAULT_PASSWORD_FILE: /run/secrets/xipona-vault-api-password
+      # XIPONA_VAULT_URI: https://myvault.example
+      # XIPONA_VAULT_MOUNT_POINT: xipona
+      # "XIPONA_VAULT_PATHS_DATABASE: database
+      # XIPONA_VAULT_PATHS_LOGGING: logging
     ports:
       - "12489:80"
     depends_on:
@@ -37,6 +43,8 @@ services:
       - xipona-db-username
       - xipona-db-password
       # - xipona-otel-api-key # uncomment this for backend OTEL API key support
+      # - xipona-vault-api-username # uncomment this for vault support
+      # - xipona-vault-api-password
 
   # LogCollector: # uncomment this for frontend log support
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0

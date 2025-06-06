@@ -175,19 +175,23 @@ Set the `Auth` section in the respective appsettings file (*Frontend/Xipona.Fron
 Set the `Auth` section in the respective appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) to `"Enabled": true` and fill the remaining properties.
 
 ### Key Vault
-Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault. If you're using the docker compose, remove the _FILE suffix from all capitalized env variables and provide the values directly in the compose file instead of using secrets):
+Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
 
 > If the Vault is configured, all other secret configurations (DB credentials, ...) that are supplied via env variables are ignored
 
-- (optional, but recommended) Remove all environment variables starting with XIPONA and their respective docker secrets from the Api service in the compose file
+- (optional, but recommended) Remove all environment variables starting with `XIPONA_DB` and their respective docker secrets from the Api service in the compose file
 - Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
   - xipona-vault-api-username 
   - xipona-vault-api-password
-- Import both secrets in the docker compose file and replace the api's two DB environment variables with
-  - XIPONA_VAULT_USERNAME_FILE: /run/secrets/xipona-vault-api-username
-  - XIPONA_VAULT_PASSWORD_FILE: /run/secrets/xipona-vault-api-password
-- Set the vault's URI in the api's appsettings files (*Api/Xipona.Api.WebApp/appsettings.\*.json*)
-- The default mount point (xipona) & secret names (database, logging) are defined in the same appsettings file and can be changed at will. But the key names inside the respective secrets must be as follows
+- Import both secrets in the docker compose file and replace the api's two DB environment variables with (If you're using docker compose, remove the _FILE suffix from both env variables and provide the values directly in the compose file instead of using secrets)
+  - `XIPONA_VAULT_USERNAME_FILE`: /run/secrets/xipona-vault-api-username
+  - `XIPONA_VAULT_PASSWORD_FILE`: /run/secrets/xipona-vault-api-password
+- Set the following env variables in the compose file:
+  - `XIPONA_VAULT_URI`
+  - `XIPONA_VAULT_MOUNT_POINT`
+  - `XIPONA_VAULT_PATHS_DATABASE`
+  - `XIPONA_VAULT_PATHS_LOGGING` (only if you're using [backend logging](#backend-logging))
+- The default mount point (xipona) & secret names (database, logging) can be changed at will. But the key names inside the respective secrets must be as follows
   - Secret "database"
     - `username`: the username with which you want to log in to the database
     - `password`: the password for the database user

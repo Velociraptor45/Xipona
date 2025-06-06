@@ -20,7 +20,13 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       XIPONA_DB_USERNAME: xipona
       XIPONA_DB_PASSWORD: change_me
-      #XIPONA_OTEL_API_KEY: XXX # uncomment this for backend OTEL API key support
+      # XIPONA_OTEL_API_KEY: XXX # uncomment this for backend OTEL API key support
+      # XIPONA_VAULT_USERNAME: /run/secrets/xipona-vault-api-username # uncomment this for vault support
+      # XIPONA_VAULT_PASSWORD: /run/secrets/xipona-vault-api-password
+      # XIPONA_VAULT_URI: https://myvault.example
+      # XIPONA_VAULT_MOUNT_POINT: xipona
+      # "XIPONA_VAULT_PATHS_DATABASE: database
+      # XIPONA_VAULT_PATHS_LOGGING: logging
     ports:
       - "12489:80"
     depends_on:

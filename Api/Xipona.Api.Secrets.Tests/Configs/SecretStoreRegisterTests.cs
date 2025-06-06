@@ -192,7 +192,7 @@ public class SecretStoreRegisterTests
 
         public void SetupVaultConfig()
         {
-            _collection.Add(new("KeyVault:Uri", _uri));
+            _collection.Add(new("XIPONA_VAULT_URI", _uri));
         }
 
         public void SetupConfiguration()

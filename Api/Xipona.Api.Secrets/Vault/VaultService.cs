@@ -1,9 +1,9 @@
 ﻿using Polly;
 using Polly.Retry;
+using System.Text.Json;
 using Xipona.Api.Secrets.Vault.Config;
 using Xipona.Api.Secrets.Vault.Response;
 using Xipona.Api.Secrets.Vault.Response.Token;
-using System.Text.Json;
 
 namespace Xipona.Api.Secrets.Vault;
 
@@ -45,12 +45,12 @@ public class VaultService : ISecretStore
 
     public async Task<string?> LoadLoggingApiKey()
     {
-        if (string.IsNullOrWhiteSpace(_config.Paths.Logging))
+        if (string.IsNullOrWhiteSpace(_config.LoggingPath))
             return null;
 
         return await _pipeline.ExecuteAsync(async ct =>
         {
-            var loggingSecret = await GetSecret<LoggingSecret>(_config.Paths.Logging, ct);
+            var loggingSecret = await GetSecret<LoggingSecret>(_config.LoggingPath, ct);
             return loggingSecret.ApiKey;
         });
     }
@@ -59,7 +59,7 @@ public class VaultService : ISecretStore
     {
         return await _pipeline.ExecuteAsync(async ct =>
         {
-            var dbSecret = await GetSecret<DatabaseSecret>(_config.Paths.Database, ct);
+            var dbSecret = await GetSecret<DatabaseSecret>(_config.DatabasePath, ct);
             return (dbSecret.Username, dbSecret.Password);
         });
     }

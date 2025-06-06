@@ -232,7 +232,7 @@ public class SecretLoadingServiceTests
 
         public void SetupRetrievingDbCredentials()
         {
-            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.Paths.Database}")
+            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.DatabasePath}")
                 .With(msg =>
                 {
                     var token = msg.Headers.GetValues("X-Vault-Token").First();
@@ -254,7 +254,7 @@ public class SecretLoadingServiceTests
 
         public void SetupRetrievingApiKey()
         {
-            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.Paths.Logging}")
+            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.LoggingPath}")
                 .With(msg =>
                 {
                     var token = msg.Headers.GetValues("X-Vault-Token").First();
