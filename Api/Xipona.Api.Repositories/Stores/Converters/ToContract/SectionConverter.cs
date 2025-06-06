@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using Section = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Stores.Models;
+using Section = Xipona.Api.Repositories.Stores.Entities.Section;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Stores.Converters.ToContract;
+namespace Xipona.Api.Repositories.Stores.Converters.ToContract;
 
 public class SectionConverter : IToContractConverter<(StoreId, ISection), Section>
 {

@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+namespace Xipona.Frontend.Redux.Stores.States;
 public record StoreState(
     IReadOnlyCollection<StoreSearchResult> SearchResults,
     StoreEditor Editor);

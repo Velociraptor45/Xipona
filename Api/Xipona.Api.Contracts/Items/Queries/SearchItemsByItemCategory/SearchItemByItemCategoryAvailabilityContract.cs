@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory
+namespace Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory
 {
     /// <summary>
     /// Represents availability of an item in a store.

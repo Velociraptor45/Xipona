@@ -1,20 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Adapters;
+namespace Xipona.Api.Repositories.Items.Adapters;
 
 public class ItemRepository : IItemRepository
 {

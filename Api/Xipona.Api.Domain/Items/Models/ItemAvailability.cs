@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 
 public sealed record ItemAvailability(StoreId StoreId, Price Price, SectionId DefaultSectionId)
 {

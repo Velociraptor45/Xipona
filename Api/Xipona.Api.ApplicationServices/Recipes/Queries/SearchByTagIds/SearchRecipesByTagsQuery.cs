@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
+namespace Xipona.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
 
 public class SearchRecipesByTagsQuery : IQuery<IEnumerable<RecipeSearchResult>>
 {

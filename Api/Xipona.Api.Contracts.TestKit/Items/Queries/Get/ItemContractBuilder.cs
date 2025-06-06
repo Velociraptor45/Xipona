@@ -1,9 +1,9 @@
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Core.TestKit;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 
 public class ItemContractBuilder : TestBuilderBase<ItemContract>
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Api.Contracts.Users.Commands.Login;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Shared.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Shared.ToDomain;
 
 public class UserInfoConverter : IToDomainConverter<UserInfoContract, UserInfo>
 {

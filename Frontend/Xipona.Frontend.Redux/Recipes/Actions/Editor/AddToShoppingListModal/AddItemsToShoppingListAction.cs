@@ -1,2 +1,2 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
+﻿namespace Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 public record AddItemsToShoppingListAction;

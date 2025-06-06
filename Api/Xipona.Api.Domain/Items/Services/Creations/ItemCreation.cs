@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
+namespace Xipona.Api.Domain.Items.Services.Creations;
 
 public class ItemCreation
 {

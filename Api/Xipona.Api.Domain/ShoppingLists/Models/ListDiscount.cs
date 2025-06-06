@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Models;
+﻿using Xipona.Api.Domain.Common.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 public record ListDiscount
 {
     public ListDiscount(ListDiscountId id, Percentage percentage)

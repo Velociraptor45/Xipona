@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+namespace Xipona.Frontend.Redux.ShoppingList.States;
 
 public record ShoppingListSection(Guid Id, string Name, int SortingIndex, bool IsExpanded,
     IReadOnlyCollection<ShoppingListItem> Items) : ISortableItem, IComparable<ShoppingListSection>

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.WebApp.Auth;
+﻿namespace Xipona.Api.WebApp.Auth;
 
 public class AuthenticationOptions
 {

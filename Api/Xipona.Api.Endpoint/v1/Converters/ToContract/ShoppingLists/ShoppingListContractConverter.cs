@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
+﻿using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
 
 public class ShoppingListContractConverter : IToContractConverter<ShoppingListReadModel, ShoppingListContract>
 {

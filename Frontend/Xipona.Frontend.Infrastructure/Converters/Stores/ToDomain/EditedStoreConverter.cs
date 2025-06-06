@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+﻿using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Stores.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Stores.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Stores.ToDomain;
 
 public class EditedStoreConverter : IToDomainConverter<StoreContract, EditedStore>
 {

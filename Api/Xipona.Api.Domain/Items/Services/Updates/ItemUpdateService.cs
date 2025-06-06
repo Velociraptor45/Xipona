@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
+namespace Xipona.Api.Domain.Items.Services.Updates;
 
 public class ItemUpdateService : IItemUpdateService
 {

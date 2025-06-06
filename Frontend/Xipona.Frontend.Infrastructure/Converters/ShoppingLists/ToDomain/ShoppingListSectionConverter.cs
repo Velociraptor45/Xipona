@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
 
 public class ShoppingListSectionConverter : IToDomainConverter<ShoppingListSectionContract, ShoppingListSection>
 {

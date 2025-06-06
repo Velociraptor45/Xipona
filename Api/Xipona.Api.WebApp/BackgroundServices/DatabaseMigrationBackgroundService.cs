@@ -3,14 +3,14 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Constants;
-using ProjectHermes.Xipona.Api.Domain.Users.Ports;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Domain.Users.Ports;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
+namespace Xipona.Api.WebApp.BackgroundServices;
 
 public class DatabaseMigrationBackgroundService : BackgroundService
 {

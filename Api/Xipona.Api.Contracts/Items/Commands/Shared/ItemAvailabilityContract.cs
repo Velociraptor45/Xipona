@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared
+namespace Xipona.Api.Contracts.Items.Commands.Shared
 {
     /// <summary>
     /// Represents an item or item type's availability.

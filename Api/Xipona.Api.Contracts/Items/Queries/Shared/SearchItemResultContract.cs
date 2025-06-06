@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared
+namespace Xipona.Api.Contracts.Items.Queries.Shared
 {
     /// <summary>
     /// Represents the search result for an item.

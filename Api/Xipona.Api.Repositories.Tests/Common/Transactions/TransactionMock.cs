@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.Repositories.Common.Transactions;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Common.Transactions;
+namespace Xipona.Api.Repositories.Tests.Common.Transactions;
 
 public class TransactionMock : Mock<ITransaction>
 {

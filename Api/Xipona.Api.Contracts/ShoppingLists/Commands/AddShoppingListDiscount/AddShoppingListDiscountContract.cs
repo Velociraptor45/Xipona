@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount
+﻿namespace Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount
 {
     /// <summary>
     /// Represents a one-time discount for an entire shopping list.

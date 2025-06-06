@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Common.Models;
+namespace Xipona.Api.Domain.Tests.Common.Models;
 
 public class AggregateRootTests
 {

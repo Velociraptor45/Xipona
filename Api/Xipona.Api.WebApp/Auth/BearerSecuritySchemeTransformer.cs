@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Api.WebApp.Auth;
+namespace Xipona.Api.WebApp.Auth;
 
 // https://github.com/scalar/scalar/issues/4055#issuecomment-2533205394
 internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransformer

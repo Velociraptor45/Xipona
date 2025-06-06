@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Validations;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Models.Factories;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Manufacturers.Services.Creations;
+using Xipona.Api.Domain.Manufacturers.Services.Deletions;
+using Xipona.Api.Domain.Manufacturers.Services.Modifications;
+using Xipona.Api.Domain.Manufacturers.Services.Queries;
+using Xipona.Api.Domain.Manufacturers.Services.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers;
+namespace Xipona.Api.Domain.Manufacturers;
 
 public static class ServiceCollectionExtensions
 {

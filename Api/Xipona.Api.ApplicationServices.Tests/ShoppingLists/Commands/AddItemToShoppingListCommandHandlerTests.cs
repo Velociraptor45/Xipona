@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemToShoppingList;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemToShoppingList;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Services;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.ShoppingLists.Commands;
+namespace Xipona.Api.ApplicationServices.Tests.ShoppingLists.Commands;
 
 public class AddItemToShoppingListCommandHandlerTests : CommandHandlerTestsBase<AddItemToShoppingListCommandHandler,
     AddItemToShoppingListCommand, bool>

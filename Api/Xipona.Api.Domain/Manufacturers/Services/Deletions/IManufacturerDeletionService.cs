@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Deletions;
+namespace Xipona.Api.Domain.Manufacturers.Services.Deletions;
 
 public interface IManufacturerDeletionService
 {

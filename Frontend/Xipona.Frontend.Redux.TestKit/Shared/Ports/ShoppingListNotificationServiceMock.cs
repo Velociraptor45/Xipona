@@ -1,8 +1,8 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
+namespace Xipona.Frontend.Redux.TestKit.Shared.Ports;
 
 public class ShoppingListNotificationServiceMock : Mock<IShoppingListNotificationService>
 {

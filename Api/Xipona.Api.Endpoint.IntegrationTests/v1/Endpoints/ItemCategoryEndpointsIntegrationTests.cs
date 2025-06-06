@@ -2,25 +2,25 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Recipes.Entities;
-using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+using Xipona.Api.Repositories.TestKit.Recipes.Entities;
+using Xipona.Api.TestTools.AutoFixture;
+using Xipona.Api.TestTools.Exceptions;
 using System;
 using Xunit;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
+namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ItemCategoryEndpointsIntegrationTests
 {

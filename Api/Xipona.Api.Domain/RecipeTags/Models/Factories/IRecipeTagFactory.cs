@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Models.Factories;
+﻿namespace Xipona.Api.Domain.RecipeTags.Models.Factories;
 
 public interface IRecipeTagFactory
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.Domain.ShoppingLists.Services.Deletions;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.Deletions;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Services.Deletions;
 
 public class ShoppingListDeletionServiceTests
 {

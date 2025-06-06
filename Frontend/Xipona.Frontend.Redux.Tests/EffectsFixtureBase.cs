@@ -1,11 +1,11 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests;
+namespace Xipona.Frontend.Redux.Tests;
 
 public abstract class EffectsFixtureBase
 {

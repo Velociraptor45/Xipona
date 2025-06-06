@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.Stores.Actions;
+using Xipona.Frontend.Redux.Stores.Actions.Editor;
+using Xipona.Frontend.Redux.Stores.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Stores.Reducers;
+namespace Xipona.Frontend.Redux.Stores.Reducers;
 
 public static class StoreReducer
 {

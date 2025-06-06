@@ -1,13 +1,13 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Stores.Actions.Editor;
+using Xipona.Frontend.Redux.Stores.States;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Stores.Effects;
+namespace Xipona.Frontend.Redux.Stores.Effects;
 
 public class StoreEditorEffects
 {

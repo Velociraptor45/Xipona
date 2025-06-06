@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Creation;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Services.Creation;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.RecipeTags.Models;
+using Xipona.Api.Domain.TestKit.RecipeTags.Models.Factories;
+using Xipona.Api.Domain.TestKit.RecipeTags.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.RecipeTags.Services.Creation;
+namespace Xipona.Api.Domain.Tests.RecipeTags.Services.Creation;
 
 public class RecipeTagCreationServiceTests
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Core.DomainEventHandlers;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Common.Events;
+namespace Xipona.Api.ApplicationServices.Common.Events;
 
 public class DomainEventDispatcher : IDomainEventDispatcher
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Stores.DomainEvents;
+﻿namespace Xipona.Api.Domain.Stores.DomainEvents;
 
 public record StoreDeletedDomainEvent : StoreDomainEvent
 {

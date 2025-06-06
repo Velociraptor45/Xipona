@@ -1,15 +1,15 @@
 ﻿using Force.DeepCloner;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Stores.DomainEvents;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Modifications;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models.Factories;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Stores.Models;
+namespace Xipona.Api.Domain.Tests.Stores.Models;
 
 public class StoreTests
 {

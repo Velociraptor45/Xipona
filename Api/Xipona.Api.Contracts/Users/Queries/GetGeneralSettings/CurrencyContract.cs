@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Users.Queries.GetGeneralSettings
+﻿namespace Xipona.Api.Contracts.Users.Queries.GetGeneralSettings
 {
     /// <summary>
     /// Represents a currency.

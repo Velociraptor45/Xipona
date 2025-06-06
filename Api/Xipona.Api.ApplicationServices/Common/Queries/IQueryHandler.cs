@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
+﻿namespace Xipona.Api.ApplicationServices.Common.Queries;
 
 public interface IQueryHandler<in TQuery, TValue>
     where TQuery : IQuery<TValue>

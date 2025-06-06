@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+namespace Xipona.Frontend.Redux.Shared.States;
 
 public record SharedState(UserInfo? User, bool IsMobile, bool IsOnline, bool IsRetryOngoing, Settings Settings)
 {

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
+﻿using Xipona.Api.Core.Attributes;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 
 public enum QuantityType
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount
 {
     /// <summary>
     /// Represents a one-time discount for a single item on a shopping list.

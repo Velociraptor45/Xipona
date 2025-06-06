@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Shared.Models;
+﻿using Xipona.Api.Domain.Shared.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Models;
+namespace Xipona.Api.Domain.Stores.Models;
 
 public record SectionName : Name
 {

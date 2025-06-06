@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+﻿using Xipona.Api.Contracts.Stores.Commands.CreateStore;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Stores.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Stores.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Stores.ToContract;
 
 public class CreateStoreContractConverter : IToContractConverter<EditedStore, CreateStoreContract>
 {

@@ -6,7 +6,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RootNamespace>ProjectHermes.Xipona.Api.Contracts.TestKit</RootNamespace>
+    <RootNamespace>Xipona.Api.Contracts.TestKit</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

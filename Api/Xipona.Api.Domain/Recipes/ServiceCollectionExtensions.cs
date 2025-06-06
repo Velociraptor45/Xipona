@@ -1,19 +1,19 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.Recipes.Services.Modifications;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
+using Xipona.Api.Domain.Recipes.Services.Shared;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes;
+namespace Xipona.Api.Domain.Recipes;
 
 internal static class ServiceCollectionExtensions
 {

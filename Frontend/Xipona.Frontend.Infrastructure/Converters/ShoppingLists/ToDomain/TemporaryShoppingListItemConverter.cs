@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
 
 public class TemporaryShoppingListItemConverter :
     IToDomainConverter<TemporaryShoppingListItemContract, TemporaryShoppingListItem>

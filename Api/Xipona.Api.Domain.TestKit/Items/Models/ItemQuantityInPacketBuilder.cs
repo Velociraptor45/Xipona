@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public class ItemQuantityInPacketBuilder : DomainRecordTestBuilderBase<ItemQuantityInPacket>
 {

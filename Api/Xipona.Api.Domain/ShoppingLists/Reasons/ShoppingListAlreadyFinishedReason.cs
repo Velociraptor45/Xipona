@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
+namespace Xipona.Api.Domain.ShoppingLists.Reasons;
 
 public class ShoppingListAlreadyFinishedReason : IReason
 {

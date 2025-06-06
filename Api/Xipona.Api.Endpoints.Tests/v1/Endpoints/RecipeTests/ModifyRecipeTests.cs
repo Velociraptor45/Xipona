@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.RecipeTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.RecipeTests;
 
 public class ModifyRecipeTests : EndpointCommandTestsBase<(Guid, ModifyRecipeContract), ModifyRecipeCommand, bool,
         ModifyRecipeTests.ModifyRecipeFixture>

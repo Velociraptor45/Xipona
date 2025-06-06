@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
 public class ModifyManufacturerTests : EndpointCommandTestsBase<ModifyManufacturerContract,
     ModifyManufacturerCommand, bool, ModifyManufacturerTests.ModifyManufacturerFixture>

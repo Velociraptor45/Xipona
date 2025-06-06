@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
+namespace Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
 
 public interface IItemSearchReadModelConversionService
 {

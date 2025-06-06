@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
+﻿namespace Xipona.Api.Domain.TestKit.Shared;
 
 public static class CommonFixture
 {

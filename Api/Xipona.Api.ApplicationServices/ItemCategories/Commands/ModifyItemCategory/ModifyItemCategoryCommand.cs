@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.ItemCategories.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.ModifyItemCategory;
+namespace Xipona.Api.ApplicationServices.ItemCategories.Commands.ModifyItemCategory;
 
 public class ModifyItemCategoryCommand : ICommand<bool>
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Reasons;
+namespace Xipona.Api.Domain.RecipeTags.Reasons;
 
 public class InvalidRecipeTagIdsReason : IReason
 {

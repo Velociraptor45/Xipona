@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
+﻿using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+namespace Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 
 public static class ShoppingListItemContractMother
 {

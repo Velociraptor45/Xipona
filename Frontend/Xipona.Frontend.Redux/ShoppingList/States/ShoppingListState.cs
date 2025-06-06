@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.States;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.Tests.ShoppingLists.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+namespace Xipona.Frontend.Redux.ShoppingList.States;
 
 public record ShoppingListState(
     IReadOnlyCollection<QuantityType> QuantityTypes,

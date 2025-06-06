@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
+﻿using Xipona.Api.Repositories.Stores.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
+namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class StoreEntityMother
 {

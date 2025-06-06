@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Secrets;
+﻿namespace Xipona.Api.Secrets;
 
 public interface ISecretStore
 {

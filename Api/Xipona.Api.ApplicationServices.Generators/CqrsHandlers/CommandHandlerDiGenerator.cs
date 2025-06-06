@@ -18,10 +18,10 @@ public class CommandHandlerDiGenerator : CqrsHandlerDiGeneratorBase
 
             var src = $$"""
                         using Microsoft.Extensions.DependencyInjection;
-                        using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+                        using Xipona.Api.ApplicationServices.Common.Commands;
                         using System;
 
-                        namespace ProjectHermes.Xipona.Api.ApplicationServices;
+                        namespace Xipona.Api.ApplicationServices;
 
                         public static class CommandHandlerServiceCollectionExtensions
                         {

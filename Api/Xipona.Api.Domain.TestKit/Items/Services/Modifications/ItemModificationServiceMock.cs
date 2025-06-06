@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Modifications;
+namespace Xipona.Api.Domain.TestKit.Items.Services.Modifications;
 
 public class ItemModificationServiceMock : Mock<IItemModificationService>
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+﻿namespace Xipona.Frontend.Redux.Shared.States.Validators;
 
 public interface IValidator<in TProperty>
 {

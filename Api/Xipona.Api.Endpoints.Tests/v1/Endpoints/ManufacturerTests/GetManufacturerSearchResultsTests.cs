@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
+using Xipona.Api.Contracts.Manufacturers.Queries;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Manufacturers.Services.Queries;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
 public class GetManufacturerSearchResultsTests : EndpointEnumerableQueryNoConverterTestsBase<
     ManufacturerSearchQuery, ManufacturerSearchResultReadModel, ManufacturerSearchResultContract,

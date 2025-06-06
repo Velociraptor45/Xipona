@@ -1,8 +1,8 @@
 ﻿using AntDesign;
 using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.WebApp.Services.Notification;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.WebApp.Services.Notification;
 using Xipona.Frontend.WebApp.TestKit.Services.Notification;
 
 namespace Xipona.Frontend.WebApp.Tests.Services;

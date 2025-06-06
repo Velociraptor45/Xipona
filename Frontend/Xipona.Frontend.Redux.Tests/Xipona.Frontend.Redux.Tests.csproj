@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>ProjectHermes.Xipona.Frontend.Redux.Tests</RootNamespace>
+    <RootNamespace>Xipona.Frontend.Redux.Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>

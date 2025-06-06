@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using Xipona.Api.Domain.Common.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
+namespace Xipona.Api.Domain.Common.Exceptions;
 
 public class DomainException(IReason reason) : Exception
 {

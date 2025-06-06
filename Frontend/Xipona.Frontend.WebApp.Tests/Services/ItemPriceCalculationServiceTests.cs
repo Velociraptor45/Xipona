@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.TestTools.AutoFixture.Builder;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
-using ProjectHermes.Xipona.Frontend.WebApp.Services;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.ShoppingList.States;
+using Xipona.Frontend.TestTools.AutoFixture.Builder;
+using Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.WebApp.Services;
 
 namespace Xipona.Frontend.WebApp.Tests.Services;
 

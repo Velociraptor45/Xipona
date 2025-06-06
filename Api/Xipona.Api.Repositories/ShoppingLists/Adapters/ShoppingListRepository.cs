@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
-using Discount = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
-using ShoppingList = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
+using Discount = Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
+using ShoppingList = Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Adapters;
+namespace Xipona.Api.Repositories.ShoppingLists.Adapters;
 
 public class ShoppingListRepository : IShoppingListRepository
 {

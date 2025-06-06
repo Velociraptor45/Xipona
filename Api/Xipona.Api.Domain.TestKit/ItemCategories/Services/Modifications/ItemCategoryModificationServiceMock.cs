@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
+﻿using Xipona.Api.Domain.ItemCategories.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services.Modifications;
+namespace Xipona.Api.Domain.TestKit.ItemCategories.Services.Modifications;
 
 public class ItemCategoryModificationServiceMock : Mock<IItemCategoryModificationService>
 {

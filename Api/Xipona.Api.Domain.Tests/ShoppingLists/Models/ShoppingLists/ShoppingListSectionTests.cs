@@ -1,14 +1,14 @@
 ﻿using Force.DeepCloner;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
 
 public class ShoppingListSectionTests
 {

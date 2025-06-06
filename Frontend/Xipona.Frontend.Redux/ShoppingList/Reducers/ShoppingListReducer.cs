@@ -1,10 +1,10 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Stores.Actions.Editor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
+namespace Xipona.Frontend.Redux.ShoppingList.Reducers;
 
 public static class ShoppingListReducer
 {

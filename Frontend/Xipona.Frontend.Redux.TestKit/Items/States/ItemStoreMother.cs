@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+﻿using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Items.States;
+namespace Xipona.Frontend.Redux.TestKit.Items.States;
 
 public static class ItemStoreMother
 {

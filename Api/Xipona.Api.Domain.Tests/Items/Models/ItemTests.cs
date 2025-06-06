@@ -1,26 +1,26 @@
 ﻿using Force.DeepCloner;
-using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.DomainEvents;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Models.Factories;
+using Xipona.Api.Domain.TestKit.Items.Services.Validation;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.TestTools.Extensions;
 using System.Text.RegularExpressions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Models;
+namespace Xipona.Api.Domain.Tests.Items.Models;
 
 public class ItemTests
 {

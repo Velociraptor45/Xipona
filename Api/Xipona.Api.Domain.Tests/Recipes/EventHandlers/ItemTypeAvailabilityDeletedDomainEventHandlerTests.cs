@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.Recipes.EventHandlers;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Tests.Common;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.Domain.Items.DomainEvents;
+using Xipona.Api.Domain.Recipes.EventHandlers;
+using Xipona.Api.Domain.TestKit.Recipes.Services.Modifications;
+using Xipona.Api.Domain.Tests.Common;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Recipes.EventHandlers;
+namespace Xipona.Api.Domain.Tests.Recipes.EventHandlers;
 
 public class ItemTypeAvailabilityDeletedDomainEventHandlerTests
     : DomainEventHandlerTestsBase<ItemTypeAvailabilityDeletedDomainEvent, ItemTypeAvailabilityDeletedDomainEventHandler>

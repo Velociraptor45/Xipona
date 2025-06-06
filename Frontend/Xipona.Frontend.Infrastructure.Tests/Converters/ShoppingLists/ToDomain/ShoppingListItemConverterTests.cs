@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
+using Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.ShoppingLists.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.ShoppingLists.ToDomain;
 public class ShoppingListItemConverterTests
     : ToDomainConverterBase<ShoppingListItemContract, ShoppingListItem, ShoppingListItemConverter>
 {

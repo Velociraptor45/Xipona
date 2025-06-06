@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.Services;
+using Xipona.Api.Core.Services;
 
-namespace ProjectHermes.Xipona.Api.Core;
+namespace Xipona.Api.Core;
 
 public static class ServiceCollectionExtensions
 {

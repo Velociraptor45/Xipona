@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get
+namespace Xipona.Api.Contracts.Recipes.Queries.Get
 {
     /// <summary>
     /// Represents the contract for an ingredient.

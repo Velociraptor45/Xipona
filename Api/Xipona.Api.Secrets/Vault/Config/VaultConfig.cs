@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Secrets.Vault.Config;
+﻿namespace Xipona.Api.Secrets.Vault.Config;
 
 public sealed class VaultConfig
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
+namespace Xipona.Api.Domain.Recipes.Models.Factories;
 
 public interface IRecipeFactory
 {

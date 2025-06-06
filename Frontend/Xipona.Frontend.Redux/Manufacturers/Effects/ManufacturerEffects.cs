@@ -1,15 +1,15 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using Xipona.Frontend.Redux.Manufacturers.Actions;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using RestEase;
 using Timer = System.Timers.Timer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Effects;
+namespace Xipona.Frontend.Redux.Manufacturers.Effects;
 
 public class ManufacturerEffects
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Converters.ToContract;
+namespace Xipona.Api.Repositories.Manufacturers.Converters.ToContract;
 
 public class ManufacturerConverter : IToContractConverter<IManufacturer, Entities.Manufacturer>
 {

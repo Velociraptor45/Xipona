@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+﻿namespace Xipona.Api.Domain.TestKit.Stores.Models;
 
 public static class SectionMother
 {

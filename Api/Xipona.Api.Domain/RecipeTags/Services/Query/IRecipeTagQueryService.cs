@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Query;
+namespace Xipona.Api.Domain.RecipeTags.Services.Query;
 
 public interface IRecipeTagQueryService
 {

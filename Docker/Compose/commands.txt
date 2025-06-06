@@ -1,5 +1,5 @@
-docker stack deploy --compose-file docker-compose-stack-deploy.yml ph-xipona
-docker stack rm ph-xipona
+docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona
+docker stack rm xipona
 
-docker compose -f docker-compose.yml -p ph-xipona up -d
-docker compose -f docker-compose.yml -p ph-xipona down
+docker compose -f docker-compose.yml -p xipona up -d
+docker compose -f docker-compose.yml -p xipona down

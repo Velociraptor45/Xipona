@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.Shared.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+namespace Xipona.Api.Domain.Recipes.Models;
 
 public class RecipeTags : IEnumerable<RecipeTagId>
 {

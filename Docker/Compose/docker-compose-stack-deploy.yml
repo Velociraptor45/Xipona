@@ -5,88 +5,88 @@ services:
     image: postgres:17
     environment:
       POSTGRES_DB: xipona
-      POSTGRES_USER_FILE: /run/secrets/ph-xipona-db-username
-      POSTGRES_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
+      POSTGRES_USER_FILE: /run/secrets/xipona-db-username
+      POSTGRES_PASSWORD_FILE: /run/secrets/xipona-db-password
     ports:
       - "15909:3306"
     networks: 
-      - ph-xipona
+      - xipona
     volumes:
-      - ph-xipona-database:/var/lib/postgresql/data
+      - xipona-database:/var/lib/postgresql/data
     secrets:
-      - ph-xipona-db-username
-      - ph-xipona-db-password
+      - xipona-db-username
+      - xipona-db-password
 
   Api:
-    image: velocir4ptor/ph-xipona-api:0.13.1
+    image: velocir4ptor/xipona-api:0.13.1
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      PH_XIPONA_DB_USERNAME_FILE: /run/secrets/ph-xipona-db-username
-      PH_XIPONA_DB_PASSWORD_FILE: /run/secrets/ph-xipona-db-password
-      #PH_XIPONA_OTEL_API_KEY_FILE: /run/secrets/ph-xipona-otel-api-key # uncomment this for backend OTEL API key support
+      XIPONA_DB_USERNAME_FILE: /run/secrets/xipona-db-username
+      XIPONA_DB_PASSWORD_FILE: /run/secrets/xipona-db-password
+      #XIPONA_OTEL_API_KEY_FILE: /run/secrets/xipona-otel-api-key # uncomment this for backend OTEL API key support
     ports:
       - "12489:80"
     depends_on:
       - Database
     volumes:
-      # - ph-xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
-      - ph-xipona-api-config:/app/config:ro
+      # - xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
+      - xipona-api-config:/app/config:ro
     networks:
-      - ph-xipona
+      - xipona
     secrets:
-      - ph-xipona-db-username
-      - ph-xipona-db-password
-      # - ph-xipona-otel-api-key # uncomment this for backend OTEL API key support
+      - xipona-db-username
+      - xipona-db-password
+      # - xipona-otel-api-key # uncomment this for backend OTEL API key support
 
   # LogCollector: # uncomment this for frontend log support
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
   #   ports:
   #     - "13880:80"
   #   volumes:
-  #     - ph-xipona-log-collector-config:/app/config:ro
-  #     - ph-xipona-log-collector-logs:/app/logs
+  #     - xipona-log-collector-config:/app/config:ro
+  #     - xipona-log-collector-logs:/app/logs
   #   networks:
-  #     - ph-xipona
+  #     - xipona
 
   Frontend:
-    image: velocir4ptor/ph-xipona-frontend:0.13.1
+    image: velocir4ptor/xipona-frontend:0.13.1
     ports:
       - "14000:80"
     depends_on:
       - Api
     volumes:
-      - ph-xipona-frontend-config:/etc/nginx/conf.d:ro
+      - xipona-frontend-config:/etc/nginx/conf.d:ro
       - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
-      # - ph-xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
+      # - xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks:
-      - ph-xipona
+      - xipona
 
 volumes:
-  # ph-xipona-frontend-tls: # uncomment this for https support, see readme
+  # xipona-frontend-tls: # uncomment this for https support, see readme
   #   external: true
-  # ph-xipona-api-tls:
+  # xipona-api-tls:
   #   external: true
-  ph-xipona-frontend-config:
+  xipona-frontend-config:
     external: true
-  ph-xipona-api-logs:
+  xipona-api-logs:
     external: true
-  ph-xipona-api-config:
+  xipona-api-config:
     external: true
-  ph-xipona-database:
+  xipona-database:
     external: true
-  # ph-xipona-log-collector-config: # uncomment this for frontend log support
+  # xipona-log-collector-config: # uncomment this for frontend log support
   #   external: true
-  # ph-xipona-log-collector-logs:
+  # xipona-log-collector-logs:
   #   external: true
 
 networks:
-  ph-xipona:
-    name: ph-xipona
+  xipona:
+    name: xipona
 
 secrets:
-  ph-xipona-db-username:
+  xipona-db-username:
     external: true
-  ph-xipona-db-password:
+  xipona-db-password:
     external: true
-  # ph-xipona-otel-api-key: # uncomment this for backend OTEL API key support
+  # xipona-otel-api-key: # uncomment this for backend OTEL API key support
   #   external: true

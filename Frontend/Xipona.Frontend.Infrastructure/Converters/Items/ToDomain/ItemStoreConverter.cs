@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
+﻿using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Items.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
 
 public class ItemStoreConverter : IToDomainConverter<StoreForItemContract, ItemStore>
 {

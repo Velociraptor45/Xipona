@@ -1,8 +1,8 @@
 ﻿using AntDesign;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Services.Notification
+namespace Xipona.Frontend.WebApp.Services.Notification
 {
     public class ShoppingListNotificationService : IShoppingListNotificationService
     {

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Models;
+﻿using Xipona.Api.Domain.Common.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Models;
+namespace Xipona.Api.Domain.Users.Models;
 
 public interface IGeneralSetting
 {

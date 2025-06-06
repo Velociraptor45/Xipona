@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Recipes.Services.Creations;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Recipes.Commands.CreateRecipe;
+namespace Xipona.Api.ApplicationServices.Tests.Recipes.Commands.CreateRecipe;
 
 public class CreateRecipeCommandHandlerTests : CommandHandlerTestsBase<
     CreateRecipeCommandHandler, CreateRecipeCommand, RecipeReadModel>

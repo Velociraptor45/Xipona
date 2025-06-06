@@ -1,12 +1,12 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
+namespace Xipona.Frontend.Redux.ShoppingList.Effects;
 public class ItemDiscountEffects
 {
     private readonly IApiClient _apiClient;

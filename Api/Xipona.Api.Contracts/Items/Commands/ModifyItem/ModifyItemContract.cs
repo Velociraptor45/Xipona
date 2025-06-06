@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
+﻿using Xipona.Api.Contracts.Items.Commands.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem
+namespace Xipona.Api.Contracts.Items.Commands.ModifyItem
 {
     /// <summary>
     /// Represents a command to modify an item.

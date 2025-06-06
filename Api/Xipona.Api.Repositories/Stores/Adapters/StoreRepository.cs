@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using Store = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Store = Xipona.Api.Repositories.Stores.Entities.Store;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Stores.Adapters;
+namespace Xipona.Api.Repositories.Stores.Adapters;
 
 public class StoreRepository : IStoreRepository
 {

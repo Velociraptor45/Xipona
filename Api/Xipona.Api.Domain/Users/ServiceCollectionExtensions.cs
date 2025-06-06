@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.Users.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Users.Ports;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Update;
+using Xipona.Api.Domain.Users.Models.Factories;
+using Xipona.Api.Domain.Users.Ports;
+using Xipona.Api.Domain.Users.Services.Creations;
+using Xipona.Api.Domain.Users.Services.Queries;
+using Xipona.Api.Domain.Users.Services.Update;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users;
+namespace Xipona.Api.Domain.Users;
 
 public static class ServiceCollectionExtensions
 {

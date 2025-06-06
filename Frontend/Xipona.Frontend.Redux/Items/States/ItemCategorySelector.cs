@@ -1,4 +1,4 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+﻿using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.States;
+namespace Xipona.Frontend.Redux.Items.States;
 public record ItemCategorySelector(IReadOnlyCollection<ItemCategorySearchResult> ItemCategories, string Input);

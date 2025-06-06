@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList
 {
     /// <summary>
     /// Represents a temporary item in a shopping list.

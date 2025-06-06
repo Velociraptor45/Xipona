@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Reasons;
+namespace Xipona.Api.Domain.Manufacturers.Reasons;
 
 public class ManufacturerNotFoundReason : IReason
 {

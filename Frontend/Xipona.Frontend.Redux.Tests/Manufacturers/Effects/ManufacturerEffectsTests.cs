@@ -1,15 +1,15 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Manufacturers.Actions;
+using Xipona.Frontend.Redux.Manufacturers.Effects;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Manufacturers.Effects;
+namespace Xipona.Frontend.Redux.Tests.Manufacturers.Effects;
 
 public class ManufacturerEffectsTests
 {

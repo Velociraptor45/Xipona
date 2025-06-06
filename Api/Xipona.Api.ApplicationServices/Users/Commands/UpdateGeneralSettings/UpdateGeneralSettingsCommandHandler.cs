@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Update;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Users.Services.Update;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.UpdateGeneralSettings;
+namespace Xipona.Api.ApplicationServices.Users.Commands.UpdateGeneralSettings;
 
 public class UpdateGeneralSettingsCommandHandler : ICommandHandler<UpdateGeneralSettingsCommand, bool>
 {

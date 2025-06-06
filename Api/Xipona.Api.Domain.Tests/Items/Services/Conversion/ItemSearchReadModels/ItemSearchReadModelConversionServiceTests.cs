@@ -1,27 +1,27 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Core.Attributes;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Ports;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.Conversion.ItemSearchReadModels;
+namespace Xipona.Api.Domain.Tests.Items.Services.Conversion.ItemSearchReadModels;
 
 public class ItemSearchReadModelConversionServiceTests
 {

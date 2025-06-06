@@ -1,13 +1,13 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Recipes.Reasons;
+using Xipona.Api.Domain.Recipes.Services.Modifications;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+namespace Xipona.Api.Domain.Recipes.Models;
 
 public class Ingredients : IEnumerable<IIngredient>
 {

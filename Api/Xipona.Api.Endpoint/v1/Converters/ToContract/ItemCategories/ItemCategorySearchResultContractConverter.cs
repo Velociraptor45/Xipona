@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
+﻿using Xipona.Api.Contracts.ItemCategories.Queries;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.ItemCategories;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.ItemCategories;
 
 public class ItemCategorySearchResultContractConverter :
     IToContractConverter<ItemCategorySearchResultReadModel, ItemCategorySearchResultContract>

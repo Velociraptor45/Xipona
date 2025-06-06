@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
-using ProjectHermes.Xipona.Frontend.TestTools.AutoFixture;
+using Xipona.Frontend.TestTools.AutoFixture;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools;
+namespace Xipona.Frontend.TestTools;
 
 public abstract class TestBuilderBase<TModel> : Fixture
 {

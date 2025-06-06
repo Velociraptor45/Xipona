@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Queries;
 
 public class ShoppingListItemReadModel
 {

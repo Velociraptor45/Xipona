@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using ProjectHermes.Xipona.Api.Core.Files;
+using Xipona.Api.Core.Files;
 
-namespace ProjectHermes.Xipona.Api.Secrets;
+namespace Xipona.Api.Secrets;
 
 public class EnvSecretStore : ISecretStore
 {
@@ -16,8 +16,8 @@ public class EnvSecretStore : ISecretStore
 
     public Task<(string Username, string Password)> LoadDatabaseCredentialsAsync()
     {
-        var username = LoadSecret("PH_XIPONA_DB_USERNAME_FILE", "PH_XIPONA_DB_USERNAME");
-        var password = LoadSecret("PH_XIPONA_DB_PASSWORD_FILE", "PH_XIPONA_DB_PASSWORD");
+        var username = LoadSecret("XIPONA_DB_USERNAME_FILE", "XIPONA_DB_USERNAME");
+        var password = LoadSecret("XIPONA_DB_PASSWORD_FILE", "XIPONA_DB_PASSWORD");
 
         if (string.IsNullOrWhiteSpace(username))
             throw new InvalidOperationException("Database username is missing");
@@ -29,7 +29,7 @@ public class EnvSecretStore : ISecretStore
 
     public Task<string?> LoadLoggingApiKey()
     {
-        var apiKey = LoadSecret("PH_XIPONA_OTEL_API_KEY_FILE", "PH_XIPONA_OTEL_API_KEY");
+        var apiKey = LoadSecret("XIPONA_OTEL_API_KEY_FILE", "XIPONA_OTEL_API_KEY");
         return Task.FromResult<string?>(apiKey);
     }
 

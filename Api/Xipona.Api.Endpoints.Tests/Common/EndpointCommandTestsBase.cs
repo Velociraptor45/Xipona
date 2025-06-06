@@ -3,20 +3,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.TestKit.Common.Commands;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.TestKit.Common.Commands;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
+namespace Xipona.Api.Endpoints.Tests.Common;
 
 public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TCommand, TCommandReturnType, TFixture>
     where TCommand : ICommand<TCommandReturnType>

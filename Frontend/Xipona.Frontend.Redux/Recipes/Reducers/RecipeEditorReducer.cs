@@ -1,10 +1,10 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States.Validators;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Recipes.States.Validators;
+using Xipona.Frontend.Redux.Shared.States.Validators;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Reducers;
+namespace Xipona.Frontend.Redux.Recipes.Reducers;
 
 public static class RecipeEditorReducer
 {

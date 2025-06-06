@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿using Xipona.Api.Domain.Common.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
+namespace Xipona.Api.Domain.Recipes.Reasons;
 public class NumberOfServingsMustBeAtLeastOneReason : IReason
 {
     public string Message => "Number of servings must be at least one";

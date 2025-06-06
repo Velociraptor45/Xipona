@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.StoreTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.StoreTests;
 
 public class GetActiveStoresForItemTests : EndpointEnumerableQueryNoConverterTestsBase<
     GetActiveStoresForItemQuery, IStore, StoreForItemContract,

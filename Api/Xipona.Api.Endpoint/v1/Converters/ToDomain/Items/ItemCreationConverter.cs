@@ -1,13 +1,13 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Contracts.Items.Commands.CreateItem;
+using Xipona.Api.Contracts.Items.Commands.Shared;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Creations;
+using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
 
 public class ItemCreationConverter : IToDomainConverter<CreateItemContract, ItemCreation>
 {

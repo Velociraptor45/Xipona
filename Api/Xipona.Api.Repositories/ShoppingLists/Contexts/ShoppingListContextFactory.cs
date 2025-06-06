@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
+using Xipona.Api.Repositories.Common.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+namespace Xipona.Api.Repositories.ShoppingLists.Contexts;
 
 public class ShoppingListContextFactory : ContextFactoryBase, IDesignTimeDbContextFactory<ShoppingListContext>
 {

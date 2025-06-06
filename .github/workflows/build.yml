@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet-sonarscanner begin /k:"Velociraptor45_ProjectHermes-ShoppingList" /o:"velociraptor45" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/** /d:sonar.coverage.exclusions=**/*.Generators*/**,**/*.razor /d:sonar.cpd.exclusions=**/*.Generators*/** /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
+          dotnet-sonarscanner begin /k:"Velociraptor45_Xipona" /o:"velociraptor45" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/** /d:sonar.coverage.exclusions=**/*.Generators*/**,**/*.razor /d:sonar.cpd.exclusions=**/*.Generators*/** /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
       - name: Build Backend
         run: |
           dotnet build Api/Xipona.Api.sln --configuration Release
@@ -116,7 +116,7 @@ jobs:
           context: ./Api
           file: ./Api/Dockerfile
           push: true
-          tags: velocir4ptor/ph-xipona-api:${{ needs.build.outputs.Semver }}
+          tags: velocir4ptor/xipona-api:${{ needs.build.outputs.Semver }}
           build-args: |
             APP_VERSION=${{ needs.build.outputs.Semver }}
 
@@ -151,5 +151,5 @@ jobs:
           context: ./Frontend
           file: ./Frontend/Dockerfile
           push: true
-          tags: velocir4ptor/ph-xipona-frontend:${{ needs.build.outputs.Semver }}
+          tags: velocir4ptor/xipona-frontend:${{ needs.build.outputs.Semver }}
       

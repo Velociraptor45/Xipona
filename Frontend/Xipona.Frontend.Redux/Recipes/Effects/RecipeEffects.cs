@@ -1,13 +1,13 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Recipes.Actions;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Effects;
+namespace Xipona.Frontend.Redux.Recipes.Effects;
 
 public class RecipeEffects
 {

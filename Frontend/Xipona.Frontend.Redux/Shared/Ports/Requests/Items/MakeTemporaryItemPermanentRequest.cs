@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Items.States;
+﻿using Xipona.Frontend.Redux.Items.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items
+namespace Xipona.Frontend.Redux.Shared.Ports.Requests.Items
 {
     public class MakeTemporaryItemPermanentRequest
     {

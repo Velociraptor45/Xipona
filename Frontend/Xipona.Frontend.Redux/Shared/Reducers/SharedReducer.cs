@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Reducers;
+namespace Xipona.Frontend.Redux.Shared.Reducers;
 
 public static class SharedReducer
 {

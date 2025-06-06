@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿namespace Xipona.Api.Domain.Manufacturers.Models;
 
 public readonly record struct ManufacturerId
 {

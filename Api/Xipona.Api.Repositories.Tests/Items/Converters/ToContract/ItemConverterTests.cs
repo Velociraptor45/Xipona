@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToContract;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using Item = ProjectHermes.Xipona.Api.Domain.Items.Models.Item;
-using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Repositories.Items.Converters.ToContract;
+using Xipona.Api.Repositories.Items.Entities;
+using Item = Xipona.Api.Domain.Items.Models.Item;
+using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Items.Converters.ToContract;
+namespace Xipona.Api.Repositories.Tests.Items.Converters.ToContract;
 
 public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories.Items.Entities.Item, ItemConverter>
 {

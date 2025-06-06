@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
+namespace Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
 {
     /// <summary>
     /// Represents a shopping list.

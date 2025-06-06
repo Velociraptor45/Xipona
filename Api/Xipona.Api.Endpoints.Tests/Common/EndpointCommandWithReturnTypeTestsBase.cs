@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
+namespace Xipona.Api.Endpoints.Tests.Common;
 
 public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterInputType, TCommand, TCommandReturnType, TReturnType, TFixture>
     : EndpointCommandTestsBase<TCommandConverterInputType, TCommand, TCommandReturnType, TFixture>

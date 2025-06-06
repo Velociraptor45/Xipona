@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
+namespace Xipona.Api.Repositories.Migrations.ShoppingLists
 {
     [DbContext(typeof(ShoppingListContext))]
     partial class ShoppingListContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("Discount");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,7 +86,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("ItemsOnLists");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -111,7 +111,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("ShoppingLists");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -132,9 +132,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("ShoppingListDiscount");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
+                    b.HasOne("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
                         .WithMany("Discounts")
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -143,9 +143,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.Navigation("ShoppingList");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
+                    b.HasOne("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
                         .WithMany("ItemsOnList")
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -154,9 +154,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.Navigation("ShoppingList");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
+                    b.HasOne("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
                         .WithMany("ListDiscounts")
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -165,7 +165,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.Navigation("ShoppingList");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
                 {
                     b.Navigation("Discounts");
 

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
+﻿using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.Items.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
+namespace Xipona.Api.Repositories.TestKit.Items.Entities;
 
 public class AvailableAtEntityBuilder : TestBuilderBase<AvailableAt>
 {

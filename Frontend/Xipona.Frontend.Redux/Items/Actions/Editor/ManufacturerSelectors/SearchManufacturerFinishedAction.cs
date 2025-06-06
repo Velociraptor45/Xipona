@@ -1,4 +1,4 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
+﻿using Xipona.Frontend.Redux.Manufacturers.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
+namespace Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 public record SearchManufacturerFinishedAction(IReadOnlyCollection<ManufacturerSearchResult> SearchResults);

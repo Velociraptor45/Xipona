@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Customizations;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Shared.Customizations;
+using Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+namespace Xipona.Frontend.Redux.TestKit.Common;
 
 public class DomainCustomization : ICustomization
 {

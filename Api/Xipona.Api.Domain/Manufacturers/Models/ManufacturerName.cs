@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Shared.Models;
+﻿using Xipona.Api.Domain.Shared.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+namespace Xipona.Api.Domain.Manufacturers.Models;
 
 public record ManufacturerName : Name
 {

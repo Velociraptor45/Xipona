@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.TestKit.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
 
 public class EnumSpecimenBuilder<TEnum> : ISpecimenBuilder
     where TEnum : Enum

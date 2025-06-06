@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
+﻿namespace Xipona.Api.Domain.Items.Models.Factories;
 
 public interface IItemTypeFactory
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.RecipeTags;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.RecipeTags;
 
 public class RecipeTagContractConverter : IToContractConverter<IRecipeTag, RecipeTagContract>
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
+﻿using Xipona.Api.Contracts.Items.Commands.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent
+namespace Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent
 {
     /// <summary>
     /// Represents a command to make a temporary item permanent.

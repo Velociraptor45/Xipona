@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Manufacturers.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Manufacturers.States;
+namespace Xipona.Frontend.Redux.TestKit.Manufacturers.States;
 
 public class ManufacturerStateMock : Mock<IState<ManufacturerState>>
 {

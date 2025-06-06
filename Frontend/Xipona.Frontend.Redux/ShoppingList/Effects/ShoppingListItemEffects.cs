@@ -1,17 +1,17 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Configurations;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Configurations;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Items;
+using Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using RestEase;
 using Timer = System.Timers.Timer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
+namespace Xipona.Frontend.Redux.ShoppingList.Effects;
 
 public sealed class ShoppingListItemEffects : IAsyncDisposable
 {

@@ -1,15 +1,15 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
+using Xipona.Frontend.Redux.ShoppingList.Effects;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 using System.Text;
 using System.Text.Json;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
 
 public class ShoppingListPersistenceEffectsTests
 {

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
+﻿using Xipona.Api.Core.Services;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Models.Factories;
+namespace Xipona.Api.Domain.Manufacturers.Models.Factories;
 
 public class ManufacturerFactory : IManufacturerFactory
 {

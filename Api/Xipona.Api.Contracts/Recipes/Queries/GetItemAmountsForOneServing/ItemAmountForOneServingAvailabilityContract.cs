@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing
+namespace Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing
 {
     /// <summary>
     /// Represents the availability of an ingredient's item in a store.

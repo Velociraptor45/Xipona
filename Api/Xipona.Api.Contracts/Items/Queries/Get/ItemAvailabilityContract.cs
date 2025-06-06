@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get
+﻿namespace Xipona.Api.Contracts.Items.Queries.Get
 {
     /// <summary>
     /// Represents availability of an item in a store.

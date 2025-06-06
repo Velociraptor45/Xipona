@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
+namespace Xipona.Api.Domain.Stores.Services.Modifications;
 
 public class StoreModificationService : IStoreModificationService
 {

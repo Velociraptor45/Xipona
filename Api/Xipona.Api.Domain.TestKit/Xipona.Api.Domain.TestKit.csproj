@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>ProjectHermes.Xipona.Api.Domain.TestKit</RootNamespace>
+    <RootNamespace>Xipona.Api.Domain.TestKit</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

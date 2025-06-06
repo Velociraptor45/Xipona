@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.WebApp.Configs;
+﻿namespace Xipona.Frontend.WebApp.Configs;
 
 public sealed class AuthConfig
 {

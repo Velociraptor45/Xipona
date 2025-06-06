@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.RecipeTags.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.RecipeTags.Entities;
+namespace Xipona.Api.Repositories.TestKit.RecipeTags.Entities;
 public class RecipeTagEntityBuilder : TestBuilderBase<RecipeTag>
 {
     public RecipeTagEntityBuilder WithId(Guid id)

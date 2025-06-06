@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net.Http;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
 
 public class CreateItemCategoryTests : EndpointCommandWithReturnTypeTestsBase<string,
     CreateItemCategoryCommand, IItemCategory, ItemCategoryContract,

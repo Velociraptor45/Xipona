@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Models;
+﻿using Xipona.Api.Domain.Common.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Update;
+namespace Xipona.Api.Domain.Users.Services.Update;
 
 public interface IGeneralSettingsUpdateService
 {

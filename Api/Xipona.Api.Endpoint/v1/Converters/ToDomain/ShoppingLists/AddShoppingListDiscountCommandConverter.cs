@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddShoppingListDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿using Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists;
 
 public class AddShoppingListDiscountCommandConverter
     : IToDomainConverter<(Guid, AddShoppingListDiscountContract), AddShoppingListDiscountCommand>

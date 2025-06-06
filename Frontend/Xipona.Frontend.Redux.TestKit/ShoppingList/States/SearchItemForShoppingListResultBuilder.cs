@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+﻿using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.ShoppingList.States;
+namespace Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 
 public class SearchItemForShoppingListResultBuilder : DomainTestBuilderBase<SearchItemForShoppingListResult>
 {

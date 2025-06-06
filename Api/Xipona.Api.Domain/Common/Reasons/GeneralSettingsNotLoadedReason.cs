@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿namespace Xipona.Api.Domain.Common.Reasons;
 
 public class GeneralSettingsNotLoadedReason : IReason
 {

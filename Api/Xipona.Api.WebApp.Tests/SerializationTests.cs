@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.WebApp.Serialization;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.WebApp.Serialization;
 using System.Reflection;
 
-namespace ProjectHermes.Xipona.Api.WebApp;
+namespace Xipona.Api.WebApp;
 
 public class SerializationTests
 {
@@ -99,7 +99,7 @@ public class SerializationTests
 
     private static List<Type> GetNestedTypes(Type type)
     {
-        if (!type.Namespace!.StartsWith("ProjectHermes.Xipona") && !type.IsGenericType)
+        if (!type.Namespace!.StartsWith("Xipona") && !type.IsGenericType)
             return [];
 
         var properties = type.GetProperties()

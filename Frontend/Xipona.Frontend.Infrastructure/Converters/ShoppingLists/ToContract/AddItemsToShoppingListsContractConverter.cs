@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Recipes.States;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
 
 public class AddItemsToShoppingListsContractConverter
     : IToContractConverter<IEnumerable<AddToShoppingListItem>, AddItemsToShoppingListsContract>

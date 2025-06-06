@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
+﻿using Xipona.Api.Contracts.Stores.Queries.Shared;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists
+namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists
 {
     /// <summary>
     /// Represents a search result for an item or item type for a shopping list.

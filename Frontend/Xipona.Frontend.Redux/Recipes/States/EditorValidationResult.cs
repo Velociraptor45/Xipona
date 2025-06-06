@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿namespace Xipona.Frontend.Redux.Recipes.States;
 public record EditorValidationResult(string? Name, IReadOnlyDictionary<Guid, string> IngredientItemCategory)
 {
     public EditorValidationResult() : this(null, new Dictionary<Guid, string>(0))

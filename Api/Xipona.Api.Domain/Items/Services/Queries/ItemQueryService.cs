@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+namespace Xipona.Api.Domain.Items.Services.Queries;
 
 public class ItemQueryService : IItemQueryService
 {

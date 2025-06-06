@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.ItemCategories.Queries.AllActiveItemCategories;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
 
 public class GetAllActiveItemCategoriesTests : EndpointEnumerableQueryNoConverterTestsBase<
     AllActiveItemCategoriesQuery, ItemCategoryReadModel, ItemCategoryContract,

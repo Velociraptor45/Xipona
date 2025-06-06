@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Users.Models.Factories;
+﻿namespace Xipona.Api.Domain.Users.Models.Factories;
 
 public interface IUserFactory
 {

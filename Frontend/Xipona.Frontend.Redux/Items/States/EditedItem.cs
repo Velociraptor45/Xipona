@@ -1,7 +1,7 @@
-﻿using QuantityType = ProjectHermes.Xipona.Frontend.Redux.Shared.States.QuantityType;
-using QuantityTypeInPacket = ProjectHermes.Xipona.Frontend.Redux.Shared.States.QuantityTypeInPacket;
+﻿using QuantityType = Xipona.Frontend.Redux.Shared.States.QuantityType;
+using QuantityTypeInPacket = Xipona.Frontend.Redux.Shared.States.QuantityTypeInPacket;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.States;
+namespace Xipona.Frontend.Redux.Items.States;
 
 public record EditedItem(
     Guid Id,

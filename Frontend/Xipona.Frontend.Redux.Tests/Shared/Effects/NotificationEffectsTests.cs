@@ -1,16 +1,16 @@
 ﻿using Fluxor;
 using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Api.Contracts.Common;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Effects;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 using System.Text.Json;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Shared.Effects;
+namespace Xipona.Frontend.Redux.Tests.Shared.Effects;
 
 public class NotificationEffectsTests
 {

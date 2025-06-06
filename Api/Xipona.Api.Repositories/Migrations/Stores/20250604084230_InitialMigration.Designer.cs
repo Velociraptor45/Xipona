@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Stores.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Stores
+namespace Xipona.Api.Repositories.Migrations.Stores
 {
     [DbContext(typeof(StoreContext))]
     [Migration("20250604084230_InitialMigration")]
@@ -25,7 +25,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Stores
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Stores.Entities.Section", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -53,7 +53,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Stores
                     b.ToTable("Sections");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Stores.Entities.Store", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -79,9 +79,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Stores
                     b.ToTable("Stores");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Stores.Entities.Section", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store", "Store")
+                    b.HasOne("Xipona.Api.Repositories.Stores.Entities.Store", "Store")
                         .WithMany("Sections")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -90,7 +90,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Stores
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Stores.Entities.Store", b =>
                 {
                     b.Navigation("Sections");
                 });

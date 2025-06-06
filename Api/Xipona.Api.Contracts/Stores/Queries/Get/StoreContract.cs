@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
+﻿using Xipona.Api.Contracts.Stores.Queries.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get
+namespace Xipona.Api.Contracts.Stores.Queries.Get
 {
     /// <summary>
     /// Represents a store.

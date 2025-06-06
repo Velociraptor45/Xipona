@@ -17,7 +17,7 @@ public class CommandDispatcherGenerator : DispatcherGeneratorBase
                         using Microsoft.Extensions.DependencyInjection;
                         using System;
                         
-                        namespace ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+                        namespace Xipona.Api.ApplicationServices.Common.Commands;
                         
                         public class CommandDispatcher : ICommandDispatcher
                         {

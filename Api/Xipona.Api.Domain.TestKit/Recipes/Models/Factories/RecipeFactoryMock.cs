@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Recipes.Services.Creations;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
+namespace Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
 
 public class RecipeFactoryMock : Mock<IRecipeFactory>
 {

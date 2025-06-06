@@ -2,7 +2,7 @@
 using Moq;
 using Moq.Contrib.InOrder.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+namespace Xipona.Frontend.Redux.TestKit.Common;
 
 public class LocalStorageServiceMock : Mock<ILocalStorageService>
 {

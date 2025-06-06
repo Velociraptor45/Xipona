@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Core.Constants;
+﻿namespace Xipona.Api.Core.Constants;
 
 public static class CacheKeys
 {

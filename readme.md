@@ -1,7 +1,7 @@
 # Xipona
 
-[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-xipona-api?color=blue&label=docker%20image%20api&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-xipona-api)
-[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/ph-xipona-frontend?color=blue&label=docker%20image%20frontend&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/ph-xipona-frontend)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/xipona-api?color=blue&label=docker%20image%20api&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/xipona-api)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/xipona-frontend?color=blue&label=docker%20image%20frontend&sort=semver)](https://hub.docker.com/repository/docker/velocir4ptor/xipona-frontend)
 
 > **For docs & instructions on the latest stable release, switch to *main* branch please**
 
@@ -59,7 +59,7 @@ But what if you're missing some ingredients? It's tedious to add all of them to 
 
 <img src="./Documentation/img/RecipeAddToSl.jpg" width="700px" alt="Recipe search by the tag 'vegetarian'"/>
 
-And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/ProjectHermes-ShoppingList/milestones) to get a glimps at what's coming soon 👀
+And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/Xipona/milestones) to get a glimps at what's coming soon 👀
 
 ## Setup in Docker
 To run all required services in containers, Dockerfiles and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
@@ -68,27 +68,27 @@ To run all required services in containers, Dockerfiles and docker-compose files
 Prepare the following things:
 - Docker Volumes
   - Api
-    - ph-xipona-api-config
+    - xipona-api-config
   - Frontend
-    - ph-xipona-frontend-config
+    - xipona-frontend-config
   - Database
-    - ph-xipona-database
+    - xipona-database
 - Docker Secrets (if you're using stack deploy)
-  - ph-xipona-db-username
-  - ph-xipona-db-password
+  - xipona-db-username
+  - xipona-db-password
 
 ### Api
-- The appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the ph-xipona-api-**config** volume. Specify the following things there:
+- The appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the xipona-api-**config** volume. Specify the following things there:
   - The DB's address and port
   - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
 
 ### Frontend
-- Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the ph-xipona-frontend-**config**.
+- Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the xipona-frontend-**config**.
 - Set the api's address in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) and copy it into a directory of your choice on your host.
 
 ### yml files
 - Under *Docker/Compose/* is a compose yml file. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings file is
-- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml ph-xipona` or `docker compose -f docker-compose.yml -p ph-xipona up -d`
+- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`
 
 And now you're done. Happy shopping!
 
@@ -98,8 +98,8 @@ And now you're done. Happy shopping!
 If you don't want to run the application behind a reverse proxy that handles the certificate for you, you can also configure the application for https.
 
 #### Api
-1. Create the docker volume ph-xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
-2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the ph-xipona-api-**tls** volume.
+1. Create the docker volume xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
+2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-api-**tls** volume.
 3. Replace the existing kestrel http endpoint in your *appsettings.{env}.json* with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
     ```
     "Kestrel": {
@@ -117,8 +117,8 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 #### Frontend
 
-1. Create the docker volume ph-xipona-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
-2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the ph-xipona-frontend-**tls** volume.
+1. Create the docker volume xipona-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
+2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-frontend-**tls** volume.
 3. Replace the *xipona.conf* (under *Frontend/Docker*) with:
     ```
     server {
@@ -145,8 +145,8 @@ If you don't want to run the application behind a reverse proxy that handles the
 
 ### Backend Logging
 
-The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the ph-xipona-api-**config** volume.<br/>
-In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable PH_XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
+The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the xipona-api-**config** volume.<br/>
+In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
 An example for a local seq instance with API key requirement could be
 
 ```json
@@ -179,13 +179,13 @@ Instead of providing the database credentials via docker secrets for the api, it
 
 > If the Vault is configured, all other secret configurations (DB credentials, ...) that are supplied via env variables are ignored
 
-- (optional, but recommended) Remove all environment variables starting with PH_XIPONA and their respective docker secrets from the Api service in the compose file
+- (optional, but recommended) Remove all environment variables starting with XIPONA and their respective docker secrets from the Api service in the compose file
 - Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
-  - ph-xipona-vault-api-username 
-  - ph-xipona-vault-api-password
+  - xipona-vault-api-username 
+  - xipona-vault-api-password
 - Import both secrets in the docker compose file and replace the api's two DB environment variables with
-  - PH_XIPONA_VAULT_USERNAME_FILE: /run/secrets/ph-xipona-vault-api-username
-  - PH_XIPONA_VAULT_PASSWORD_FILE: /run/secrets/ph-xipona-vault-api-password
+  - XIPONA_VAULT_USERNAME_FILE: /run/secrets/xipona-vault-api-username
+  - XIPONA_VAULT_PASSWORD_FILE: /run/secrets/xipona-vault-api-password
 - Set the vault's URI in the api's appsettings files (*Api/Xipona.Api.WebApp/appsettings.\*.json*)
 - The default mount point (xipona) & secret names (database, logging) are defined in the same appsettings file and can be changed at will. But the key names inside the respective secrets must be as follows
   - Secret "database"
@@ -200,6 +200,6 @@ To get everything running at your dev machine, at least a running dev DB is nece
 ### API
 
 #### Database connection
-To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: PH_XIPONA_DB_USERNAME_FILE & PH_XIPONA_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create PH_XIPONA_VAULT_USERNAME_FILE & PH_XIPONA_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
+To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: XIPONA_DB_USERNAME_FILE & XIPONA_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create XIPONA_VAULT_USERNAME_FILE & XIPONA_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
 
 Also, set the DB's address and port in your *Api/Xipona.Api.WebApp/appsettings.Local.json* or use the environment secrets of the WebApi project (recommended).

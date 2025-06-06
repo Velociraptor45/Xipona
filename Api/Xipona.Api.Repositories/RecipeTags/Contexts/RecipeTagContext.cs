@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
+using Xipona.Api.Repositories.Common.Converters;
+using Xipona.Api.Repositories.RecipeTags.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
+namespace Xipona.Api.Repositories.RecipeTags.Contexts;
 
 public class RecipeTagContext : DbContext
 {

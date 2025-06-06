@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
+﻿using Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Recipes;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Recipes;
 
 public class IngredientQuantityTypeContractConverter :
     IToContractConverter<IngredientQuantityTypeReadModel, IngredientQuantityTypeContract>

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
+﻿using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.Items.DomainEvents;
+using Xipona.Api.Domain.Recipes.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.EventHandlers;
+namespace Xipona.Api.Domain.Recipes.EventHandlers;
 
 public class ItemUpdatedDomainEventHandler : IDomainEventHandler<ItemUpdatedDomainEvent>
 {

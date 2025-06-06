@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities;
+namespace Xipona.Api.Repositories.Manufacturers.Entities;
 
 public class Manufacturer
 {

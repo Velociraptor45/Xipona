@@ -1,20 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Infrastructure.Connection;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 using Xipona.Frontend.Infrastructure.TestKit.RequestSenders;
 using System.Net;
 using System.Reflection;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Connection;
+namespace Xipona.Frontend.Infrastructure.Tests.Connection;
 
 public class CommandQueueTests
 {

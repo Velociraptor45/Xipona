@@ -2,28 +2,28 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.Login;
-using ProjectHermes.Xipona.Api.ApplicationServices.Users.Commands.UpdateGeneralSettings;
-using ProjectHermes.Xipona.Api.ApplicationServices.Users.Queries.AllCurrencies;
-using ProjectHermes.Xipona.Api.ApplicationServices.Users.Queries.GetGeneralSettings;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Users.Commands.AllCurrencies;
-using ProjectHermes.Xipona.Api.Contracts.Users.Commands.Login;
-using ProjectHermes.Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
-using ProjectHermes.Xipona.Api.WebApp.Auth;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.ApplicationServices.Users.Commands.Login;
+using Xipona.Api.ApplicationServices.Users.Commands.UpdateGeneralSettings;
+using Xipona.Api.ApplicationServices.Users.Queries.AllCurrencies;
+using Xipona.Api.ApplicationServices.Users.Queries.GetGeneralSettings;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
+using Xipona.Api.Contracts.Users.Commands.Login;
+using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Domain.Users.Services.Queries;
+using Xipona.Api.WebApp.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
+namespace Xipona.Api.Endpoint.v1.Endpoints;
 
 public static class UserEndpoints
 {

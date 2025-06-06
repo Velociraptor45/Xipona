@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
-using GeneralSetting = ProjectHermes.Xipona.Api.Repositories.Users.Entities.GeneralSetting;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Users.Models;
+using GeneralSetting = Xipona.Api.Repositories.Users.Entities.GeneralSetting;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Users.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Users.Converters.ToDomain;
 
 public class GeneralSettingConverter : IToDomainConverter<GeneralSetting, IGeneralSetting>
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
+namespace Xipona.Api.Domain.Manufacturers.Services.Queries;
 
 public interface IManufacturerQueryService
 {

@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.ShoppingLists.Commands.RemoveItemFromShoppingList;
+namespace Xipona.Api.ApplicationServices.Tests.ShoppingLists.Commands.RemoveItemFromShoppingList;
 
 public class RemoveItemFromShoppingListCommandHandlerTests()
     : CommandHandlerTestsBase<RemoveItemFromShoppingListCommandHandler, RemoveItemFromShoppingListCommand, bool>

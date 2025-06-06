@@ -4,28 +4,28 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
-using ProjectHermes.Xipona.Api.ApplicationServices;
-using ProjectHermes.Xipona.Api.Core;
-using ProjectHermes.Xipona.Api.Core.Constants;
-using ProjectHermes.Xipona.Api.Domain;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Users.Entities;
+using Xipona.Api.ApplicationServices;
+using Xipona.Api.Core;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Domain;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Repositories;
+using Xipona.Api.Repositories.Common.Transactions;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Repositories.RecipeTags.Contexts;
+using Xipona.Api.Repositories.RecipeTags.Entities;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Users.Contexts;
+using Xipona.Api.Repositories.Users.Entities;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests;
+namespace Xipona.Api.Endpoint.IntegrationTests;
 
 public abstract class DatabaseFixture : IDisposable
 {

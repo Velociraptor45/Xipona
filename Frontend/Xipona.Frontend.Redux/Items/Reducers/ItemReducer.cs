@@ -1,10 +1,10 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Search;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Stores.Actions.Editor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
+namespace Xipona.Frontend.Redux.Items.Reducers;
 
 public static class ItemReducer
 {

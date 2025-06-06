@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 public readonly record struct QuantityInBasket
 {
     public QuantityInBasket()

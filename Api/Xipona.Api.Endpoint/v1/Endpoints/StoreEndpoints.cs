@@ -2,29 +2,29 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresForShopping;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresOverview;
-using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
+using Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
+using Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
+using Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresForShopping;
+using Xipona.Api.ApplicationServices.Stores.Queries.GetActiveStoresOverview;
+using Xipona.Api.ApplicationServices.Stores.Queries.StoreById;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Stores.Commands.CreateStore;
+using Xipona.Api.Contracts.Stores.Commands.ModifyStore;
+using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Stores.Models;
 using System.Threading;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
+namespace Xipona.Api.Endpoint.v1.Endpoints;
 
 public static class StoreEndpoints
 {

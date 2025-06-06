@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
+﻿using Xipona.Api.Domain.Recipes.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+namespace Xipona.Api.Domain.Recipes.Models;
 
 public class PreparationStep : IPreparationStep
 {

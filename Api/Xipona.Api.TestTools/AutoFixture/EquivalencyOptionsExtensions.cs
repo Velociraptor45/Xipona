@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace ProjectHermes.Xipona.Api.TestTools.AutoFixture;
+namespace Xipona.Api.TestTools.AutoFixture;
 
 public static partial class EquivalencyOptionsExtensions
 {

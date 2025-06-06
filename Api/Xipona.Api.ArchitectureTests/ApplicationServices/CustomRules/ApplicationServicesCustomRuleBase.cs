@@ -1,6 +1,6 @@
 ﻿using Mono.Cecil;
 
-namespace ProjectHermes.Xipona.Api.ArchitectureTests.ApplicationServices.CustomRules;
+namespace Xipona.Api.ArchitectureTests.ApplicationServices.CustomRules;
 
 internal abstract class ApplicationServicesCustomRuleBase : ICustomRule
 {

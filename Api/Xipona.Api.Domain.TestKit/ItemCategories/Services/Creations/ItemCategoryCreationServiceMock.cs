@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Creations;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services.Creations;
+namespace Xipona.Api.Domain.TestKit.ItemCategories.Services.Creations;
 
 public class ItemCategoryCreationServiceMock : Mock<IItemCategoryCreationService>
 {

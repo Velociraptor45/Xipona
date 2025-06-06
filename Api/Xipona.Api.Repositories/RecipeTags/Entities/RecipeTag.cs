@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
+namespace Xipona.Api.Repositories.RecipeTags.Entities;
 
 public class RecipeTag
 {

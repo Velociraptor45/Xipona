@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Users.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Users.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Users.Queries.AllCurrencies;
+namespace Xipona.Api.ApplicationServices.Users.Queries.AllCurrencies;
 
 public class AllCurrenciesQueryHandler : IQueryHandler<AllCurrenciesQuery, List<CurrencyReadModel>>
 {

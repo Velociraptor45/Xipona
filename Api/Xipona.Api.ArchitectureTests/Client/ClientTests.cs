@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.ArchitectureTests.Client;
+﻿namespace Xipona.Api.ArchitectureTests.Client;
 
 public class ClientTests
 {
@@ -16,8 +16,8 @@ public class ClientTests
             .InAssembly(_fixture.Assembly)
             .Should()
             .OnlyHaveDependenciesOn(
-                "ProjectHermes.Xipona.Api.Client",
-                "ProjectHermes.Xipona.Api.Contracts",
+                "Xipona.Api.Client",
+                "Xipona.Api.Contracts",
                 "System",
                 "Newtonsoft",
                 "RestEase")

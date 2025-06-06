@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Shared.Models;
+﻿using Xipona.Api.Domain.Shared.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 public record ItemName : Name
 {
     public ItemName(string value) : base(value)

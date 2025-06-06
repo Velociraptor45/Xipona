@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Converters.ToDomain;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
-using Section = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Models.Factories;
+using Xipona.Api.Repositories.Stores.Converters.ToDomain;
+using Xipona.Api.Repositories.TestKit.Stores.Entities;
+using Section = Xipona.Api.Repositories.Stores.Entities.Section;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Stores.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Tests.Stores.Converters.ToDomain;
 
 public class SectionConverterTests : ToDomainConverterTestBase<Section, ISection, SectionConverter>
 {

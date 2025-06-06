@@ -3,7 +3,7 @@ version: "3.7"
 services:
   Database:
     image: postgres:17
-    container_name: test-ph-sl-db
+    container_name: test-sl-db
     environment:
       POSTGRES_PASSWORD: 123root
       POSTGRES_USER: postgres

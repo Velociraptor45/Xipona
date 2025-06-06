@@ -1,11 +1,11 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.Users.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public class QuantityTypeReadModelCustomization : ICustomization
 {

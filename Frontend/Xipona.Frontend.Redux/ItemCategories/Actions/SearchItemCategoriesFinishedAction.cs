@@ -1,4 +1,4 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+﻿using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ItemCategories.Actions;
+namespace Xipona.Frontend.Redux.ItemCategories.Actions;
 public record SearchItemCategoriesFinishedAction(IReadOnlyCollection<ItemCategorySearchResult> SearchResults);

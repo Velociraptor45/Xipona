@@ -1,7 +1,7 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Api.Core.Services;
+using Xipona.Api.Core.Services;
 
-namespace ProjectHermes.Xipona.Api.Core.TestKit.Services;
+namespace Xipona.Api.Core.TestKit.Services;
 
 public class DateTimeServiceMock : Mock<IDateTimeService>
 {

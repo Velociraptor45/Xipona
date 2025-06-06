@@ -1,11 +1,11 @@
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Contracts.TestKit.Common;
+using Xipona.Api.Core.TestKit;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+namespace Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
 public class ShoppingListItemContractBuilder : ContractTestBuilderBase<ShoppingListItemContract>
 {
     public ShoppingListItemContractBuilder WithId(Guid id)

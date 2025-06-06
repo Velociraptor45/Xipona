@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
+namespace Xipona.Api.Domain.TestKit.ItemCategories.Ports;
 
 public class ItemCategoryRepositoryMock : Mock<IItemCategoryRepository>
 {

@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors;
+using Xipona.Frontend.Redux.Recipes.Reducers;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Recipes.Reducers;
+namespace Xipona.Frontend.Redux.Tests.Recipes.Reducers;
 
 public class ItemCategorySelectorReducerTests
 {

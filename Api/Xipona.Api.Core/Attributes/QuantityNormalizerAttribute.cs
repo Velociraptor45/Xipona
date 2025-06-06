@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Core.Attributes;
+﻿namespace Xipona.Api.Core.Attributes;
 
 [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
 public class QuantityNormalizerAttribute : Attribute

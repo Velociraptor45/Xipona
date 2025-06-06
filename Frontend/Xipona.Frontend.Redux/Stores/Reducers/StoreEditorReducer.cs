@@ -1,12 +1,12 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor.Sections;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States.Validators;
+using Xipona.Frontend.Redux.Shared.States.Validators;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Stores.Actions.Editor;
+using Xipona.Frontend.Redux.Stores.Actions.Editor.Sections;
+using Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.Stores.States.Validators;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Stores.Reducers;
+namespace Xipona.Frontend.Redux.Stores.Reducers;
 
 public static class StoreEditorReducer
 {

@@ -1,22 +1,22 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Items.Services.Conversion;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+namespace Xipona.Api.Domain.Items.Services.Searches;
 
 public class ItemSearchService : IItemSearchService
 {

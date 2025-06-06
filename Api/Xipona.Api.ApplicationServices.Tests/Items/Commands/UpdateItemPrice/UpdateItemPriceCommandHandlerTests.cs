@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Items.Commands;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Items.Services.Updates;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Items.Commands.UpdateItemPrice;
+namespace Xipona.Api.ApplicationServices.Tests.Items.Commands.UpdateItemPrice;
 
 public class UpdateItemPriceCommandHandlerTests : CommandHandlerTestsBase<
     UpdateItemPriceCommandHandler, UpdateItemPriceCommand, bool>

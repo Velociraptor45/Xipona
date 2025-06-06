@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class SectionEntityMother
 {

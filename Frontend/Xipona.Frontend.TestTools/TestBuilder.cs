@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
-using ProjectHermes.Xipona.Frontend.TestTools.AutoFixture;
+using Xipona.Frontend.TestTools.AutoFixture;
 using System.Linq.Expressions;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools;
+namespace Xipona.Frontend.TestTools;
 
 public class TestBuilder<TModel, TBuilder> : TestBuilderBase<TModel>
     where TBuilder : TestBuilder<TModel, TBuilder>

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
+namespace Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
 {
     public class RemoveItemFromShoppingListRequest : IApiRequest
     {

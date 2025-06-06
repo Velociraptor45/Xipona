@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ItemCategories
+namespace Xipona.Api.Repositories.Migrations.ItemCategories
 {
     [DbContext(typeof(ItemCategoryContext))]
     [Migration("20250604084012_InitialMigration")]
@@ -25,7 +25,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ItemCategories
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities.ItemCategory", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ItemCategories.Entities.ItemCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");

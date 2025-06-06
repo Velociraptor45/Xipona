@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+using Xipona.Api.Repositories.Common.Converters;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+namespace Xipona.Api.Repositories.ShoppingLists.Contexts;
 
 public class ShoppingListContext : DbContext
 {

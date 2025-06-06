@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
 
 public static class ManufacturerEntityMother
 {

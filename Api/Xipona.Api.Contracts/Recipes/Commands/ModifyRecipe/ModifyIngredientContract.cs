@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe
+namespace Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe
 {
     /// <summary>
     /// Represents the contract for modifying an ingredient.

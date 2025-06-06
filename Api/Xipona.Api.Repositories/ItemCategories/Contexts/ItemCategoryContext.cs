@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectHermes.Xipona.Api.Repositories.Common.Converters;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Common.Converters;
+using Xipona.Api.Repositories.ItemCategories.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
+namespace Xipona.Api.Repositories.ItemCategories.Contexts;
 
 public class ItemCategoryContext : DbContext
 {

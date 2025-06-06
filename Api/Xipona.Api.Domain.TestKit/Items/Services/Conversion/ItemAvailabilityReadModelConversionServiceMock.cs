@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Conversion;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Conversion;
+namespace Xipona.Api.Domain.TestKit.Items.Services.Conversion;
 
 public class ItemAvailabilityReadModelConversionServiceMock : Mock<IItemAvailabilityReadModelConversionService>
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe
+namespace Xipona.Api.Contracts.Recipes.Commands.CreateRecipe
 {
     /// <summary>
     /// Represents the contract for creating an ingredient.

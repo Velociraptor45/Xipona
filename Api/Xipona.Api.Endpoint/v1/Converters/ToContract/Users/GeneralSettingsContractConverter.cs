@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Users.Queries.GetGeneralSettings;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Attributes;
-using ProjectHermes.Xipona.Api.Domain.Users.Models;
+﻿using Xipona.Api.Contracts.Users.Queries.GetGeneralSettings;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Attributes;
+using Xipona.Api.Domain.Users.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Users;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Users;
 
 public class GeneralSettingsContractConverter : IToContractConverter<IGeneralSetting, GeneralSettingsContract>
 {

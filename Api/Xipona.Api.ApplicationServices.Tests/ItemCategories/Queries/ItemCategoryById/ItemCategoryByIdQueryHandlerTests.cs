@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategoryById;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Services.Queries;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategoryById;
+namespace Xipona.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategoryById;
 
 public class ItemCategoryByIdQueryHandlerTests : QueryHandlerTestsBase<ItemCategoryByIdQueryHandler,
     ItemCategoryByIdQuery, IItemCategory>

@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Recipes.Services.Queries;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Recipes.Queries;
+namespace Xipona.Api.ApplicationServices.Tests.Recipes.Queries;
 
 public class SearchRecipesByTagsQueryHandlerTests : QueryHandlerTestsBase<SearchRecipesByTagsQueryHandler,
     SearchRecipesByTagsQuery, IEnumerable<RecipeSearchResult>>

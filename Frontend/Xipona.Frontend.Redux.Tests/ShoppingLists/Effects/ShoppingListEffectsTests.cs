@@ -1,25 +1,25 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Summary;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
+using Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Summary;
+using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+using Xipona.Frontend.Redux.ShoppingList.Effects;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.TestTools.Extensions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
 
 public class ShoppingListEffectsTests
 {

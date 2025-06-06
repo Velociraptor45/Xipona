@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerById;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerById;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ManufacturerTests;
 
 public class GetManufacturerByIdTests : EndpointQueryNoConverterTestsBase<
     ManufacturerByIdQuery, IManufacturer, ManufacturerContract,

@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using System.Reflection;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools.AutoFixture;
+namespace Xipona.Frontend.TestTools.AutoFixture;
 
 public class ConstructorArgumentRelay<TTarget, TValueType> : ISpecimenBuilder
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries
+namespace Xipona.Api.Contracts.ItemCategories.Queries
 {
     /// <summary>
     /// Represents an item category search result.

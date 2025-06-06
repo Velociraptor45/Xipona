@@ -1,2 +1,2 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
+﻿namespace Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
 public record SearchManufacturerAction();

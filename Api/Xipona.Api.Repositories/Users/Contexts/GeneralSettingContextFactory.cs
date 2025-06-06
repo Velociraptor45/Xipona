@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
+using Xipona.Api.Repositories.Common.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Users.Contexts;
+namespace Xipona.Api.Repositories.Users.Contexts;
 
 public class GeneralSettingContextFactory : ContextFactoryBase, IDesignTimeDbContextFactory<GeneralSettingContext>
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Moq;
 
-namespace ProjectHermes.Xipona.Api.Core.TestKit;
+namespace Xipona.Api.Core.TestKit;
 
 public class MemoryCacheMock : Mock<IMemoryCache>
 {

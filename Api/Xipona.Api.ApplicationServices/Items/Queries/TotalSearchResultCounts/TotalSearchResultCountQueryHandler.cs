@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Items.Services.Searches;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
+namespace Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
 public class TotalSearchResultCountQueryHandler : IQueryHandler<TotalSearchResultCountQuery, int>
 {
     private readonly Func<CancellationToken, IItemSearchService> _itemSearchServiceDelegate;

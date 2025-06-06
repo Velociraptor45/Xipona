@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public readonly record struct ItemDiscount
 {

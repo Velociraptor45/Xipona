@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview
+namespace Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview
 {
     /// <summary>
     /// Represents the search result of a store.

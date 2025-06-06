@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using ProjectHermes.Xipona.Api.Core.Constants;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Users.Ports;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Users.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Users.Services.Update;
+namespace Xipona.Api.Domain.Users.Services.Update;
 
 public class GeneralSettingsUpdateService : IGeneralSettingsUpdateService
 {

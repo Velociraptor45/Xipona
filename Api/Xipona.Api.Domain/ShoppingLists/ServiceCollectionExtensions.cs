@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.ShoppingLists.Models.Factories;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+using Xipona.Api.Domain.ShoppingLists.Services.Deletions;
+using Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists;
+namespace Xipona.Api.Domain.ShoppingLists;
 
 public static class ServiceCollectionExtensions
 {

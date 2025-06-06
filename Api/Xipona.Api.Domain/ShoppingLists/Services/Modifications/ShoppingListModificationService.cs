@@ -1,20 +1,20 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Models.Factories;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 
 public class ShoppingListModificationService : IShoppingListModificationService
 {

@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
-using Discount = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
+using Discount = Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Converters.ToContract;
+namespace Xipona.Api.Repositories.ShoppingLists.Converters.ToContract;
 
 public class ShoppingListConverter : IToContractConverter<IShoppingList, Entities.ShoppingList>
 {

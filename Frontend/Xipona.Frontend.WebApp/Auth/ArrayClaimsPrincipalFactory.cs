@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Auth;
+namespace Xipona.Frontend.WebApp.Auth;
 
 public class ArrayClaimsPrincipalFactory<TAccount> : AccountClaimsPrincipalFactory<TAccount>
     where TAccount : RemoteUserAccount

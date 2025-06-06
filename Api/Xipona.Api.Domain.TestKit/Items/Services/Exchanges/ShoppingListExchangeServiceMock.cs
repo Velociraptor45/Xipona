@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Exchanges;
+namespace Xipona.Api.Domain.TestKit.Items.Services.Exchanges;
 
 public class ShoppingListExchangeServiceMock : Mock<IShoppingListExchangeService>
 {

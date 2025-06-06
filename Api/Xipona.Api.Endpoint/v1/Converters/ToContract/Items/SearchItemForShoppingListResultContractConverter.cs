@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
+﻿using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using Xipona.Api.Contracts.Stores.Queries.Shared;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Stores.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Items;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Items;
 
 public class SearchItemForShoppingListResultContractConverter :
     IToContractConverter<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>
