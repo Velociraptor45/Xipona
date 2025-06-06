@@ -1,13 +1,13 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Ports;
 using RestEase;
 using Timer = System.Timers.Timer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
+namespace Xipona.Frontend.Redux.Items.Effects;
 
 public sealed class ItemCategorySelectorEffects : IAsyncDisposable
 {

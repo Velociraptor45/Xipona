@@ -1,20 +1,20 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
+namespace Xipona.Frontend.Redux.TestKit.Shared.Ports;
 
 public class ApiClientMock : Mock<IApiClient>
 {

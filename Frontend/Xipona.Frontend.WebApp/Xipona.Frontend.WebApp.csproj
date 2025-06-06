@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-    <RootNamespace>ProjectHermes.Xipona.Frontend.WebApp</RootNamespace>
+    <RootNamespace>Xipona.Frontend.WebApp</RootNamespace>
     <Version>0.13.1</Version>
     <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>

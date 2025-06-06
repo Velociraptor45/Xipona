@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
 
 public class PutItemInBasketContractConverter :
     IToContractConverter<PutItemInBasketRequest, PutItemInBasketContract>

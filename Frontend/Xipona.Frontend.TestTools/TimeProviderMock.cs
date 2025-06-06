@@ -1,7 +1,7 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools;
+namespace Xipona.Frontend.TestTools;
 
 public class TimeProviderMock : Mock<TimeProvider>
 {

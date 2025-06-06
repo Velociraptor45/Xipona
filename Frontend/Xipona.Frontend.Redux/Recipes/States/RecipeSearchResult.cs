@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+namespace Xipona.Frontend.Redux.Recipes.States;
 
 public class RecipeSearchResult : ISearchResult
 {

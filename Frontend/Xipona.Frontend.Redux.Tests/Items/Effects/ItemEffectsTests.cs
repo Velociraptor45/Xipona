@@ -1,14 +1,14 @@
 ﻿using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Search;
+using Xipona.Frontend.Redux.Items.Effects;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Effects;
+namespace Xipona.Frontend.Redux.Tests.Items.Effects;
 
 public class ItemEffectsTests
 {

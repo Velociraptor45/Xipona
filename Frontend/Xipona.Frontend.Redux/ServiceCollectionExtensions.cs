@@ -3,7 +3,7 @@ using Fluxor.Blazor.Web.ReduxDevTools;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace ProjectHermes.Xipona.Frontend.Redux;
+namespace Xipona.Frontend.Redux;
 
 public static class ServiceCollectionExtensions
 {

@@ -1,11 +1,11 @@
 ﻿using Fluxor;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Exceptions;
-using ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
+using Xipona.Frontend.Infrastructure.Exceptions;
+using Xipona.Frontend.Infrastructure.RequestSenders;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
 using RestEase;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
+namespace Xipona.Frontend.Infrastructure.Connection;
 
 public sealed class CommandQueue : ICommandQueue, IDisposable
 {

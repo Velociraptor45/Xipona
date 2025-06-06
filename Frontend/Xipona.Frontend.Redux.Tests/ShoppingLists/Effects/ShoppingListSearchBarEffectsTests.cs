@@ -1,16 +1,16 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Configurations;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Shared.Configurations;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar;
+using Xipona.Frontend.Redux.ShoppingList.Effects;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
 
 public class ShoppingListSearchBarEffectsTests
 {

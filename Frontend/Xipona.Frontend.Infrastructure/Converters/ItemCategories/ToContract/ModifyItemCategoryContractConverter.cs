@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+﻿using Xipona.Api.Contracts.ItemCategories.Commands;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToContract;
 
 public class ModifyItemCategoryContractConverter :
     IToContractConverter<ModifyItemCategoryRequest, ModifyItemCategoryContract>

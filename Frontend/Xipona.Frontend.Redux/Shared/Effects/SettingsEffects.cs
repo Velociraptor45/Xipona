@@ -1,11 +1,11 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Actions.Settings;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.States;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Effects;
+namespace Xipona.Frontend.Redux.Shared.Effects;
 
 public class SettingsEffects
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
+namespace Xipona.Frontend.Infrastructure.Converters.Common;
 
 public class ApiToContractConverters : Dictionary<(Type, Type), IToContractConverter>
 {

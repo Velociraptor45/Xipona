@@ -1,17 +1,17 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Recipes.Actions;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
+using Xipona.Frontend.Redux.Recipes.Effects;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Recipes.Effects;
+namespace Xipona.Frontend.Redux.Tests.Recipes.Effects;
 
 public class RecipeEditorEffectsTests
 {

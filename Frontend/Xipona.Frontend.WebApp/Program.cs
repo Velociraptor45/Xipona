@@ -5,24 +5,24 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Client;
-using ProjectHermes.Xipona.Frontend.Infrastructure;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
-using ProjectHermes.Xipona.Frontend.Redux;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Configurations;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.WebApp.Auth;
-using ProjectHermes.Xipona.Frontend.WebApp.Configs;
-using ProjectHermes.Xipona.Frontend.WebApp.Services;
-using ProjectHermes.Xipona.Frontend.WebApp.Services.Discounts;
-using ProjectHermes.Xipona.Frontend.WebApp.Services.Notification;
+using Xipona.Api.Client;
+using Xipona.Frontend.Infrastructure;
+using Xipona.Frontend.Infrastructure.Connection;
+using Xipona.Frontend.Redux;
+using Xipona.Frontend.Redux.Shared.Configurations;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.WebApp.Auth;
+using Xipona.Frontend.WebApp.Configs;
+using Xipona.Frontend.WebApp.Services;
+using Xipona.Frontend.WebApp.Services.Discounts;
+using Xipona.Frontend.WebApp.Services.Notification;
 using Serilog;
 using Serilog.Core;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp;
+namespace Xipona.Frontend.WebApp;
 
 public static class Program
 {

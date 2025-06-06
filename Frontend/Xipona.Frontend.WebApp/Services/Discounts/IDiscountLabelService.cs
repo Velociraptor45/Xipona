@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Services.Discounts;
+namespace Xipona.Frontend.WebApp.Services.Discounts;
 
 public interface IDiscountLabelService
 {

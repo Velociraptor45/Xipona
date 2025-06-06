@@ -1,10 +1,10 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Services;
+namespace Xipona.Frontend.WebApp.Services;
 
 public class ItemPriceCalculationService : IItemPriceCalculationService
 {

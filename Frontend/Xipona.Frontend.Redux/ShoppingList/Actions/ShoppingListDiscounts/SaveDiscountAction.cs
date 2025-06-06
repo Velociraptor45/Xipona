@@ -1,2 +1,2 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts;
+﻿namespace Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts;
 public record SaveDiscountAction;

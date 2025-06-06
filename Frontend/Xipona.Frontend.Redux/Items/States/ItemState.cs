@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.States;
+namespace Xipona.Frontend.Redux.Items.States;
 public record ItemState(
     ItemStateInitialization Initialization,
     IReadOnlyCollection<QuantityType> QuantityTypes,

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
 
 public class QuantityTypeInPacketConverter :
     IToDomainConverter<QuantityTypeInPacketContract, QuantityTypeInPacket>

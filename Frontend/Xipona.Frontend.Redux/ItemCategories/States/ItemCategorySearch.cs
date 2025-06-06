@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+﻿namespace Xipona.Frontend.Redux.ItemCategories.States;
 public record ItemCategorySearch(
     string Input,
     bool IsLoadingSearchResults,

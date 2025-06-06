@@ -1,10 +1,10 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder.Extensions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
+namespace Xipona.Frontend.Redux.TestKit.Shared.Ports;
 
 public class CommandQueueMock : Mock<ICommandQueue>
 {

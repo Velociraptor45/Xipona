@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+﻿using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+namespace Xipona.Frontend.Redux.Recipes.States;
 public record EditedIngredient(
     Guid Key,
     Guid Id,

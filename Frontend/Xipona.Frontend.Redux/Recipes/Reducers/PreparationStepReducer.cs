@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.PreparationSteps;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Reducers;
+namespace Xipona.Frontend.Redux.Recipes.Reducers;
 
 public static class PreparationStepReducer
 {

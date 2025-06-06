@@ -1,2 +1,2 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
+﻿namespace Xipona.Frontend.Redux.Items.Actions;
 public record EnterItemSearchPageAction;

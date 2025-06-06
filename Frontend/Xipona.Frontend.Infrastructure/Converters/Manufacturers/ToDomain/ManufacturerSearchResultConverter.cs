@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
+﻿using Xipona.Api.Contracts.Manufacturers.Queries;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Manufacturers.States;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Manufacturers.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Manufacturers.ToDomain;
 
 public class ManufacturerSearchResultConverter :
     IToDomainConverter<ManufacturerSearchResultContract, ManufacturerSearchResult>

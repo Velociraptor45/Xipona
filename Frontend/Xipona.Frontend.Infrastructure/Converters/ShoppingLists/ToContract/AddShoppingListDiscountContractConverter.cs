@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
 
 public class AddShoppingListDiscountContractConverter
     : IToContractConverter<(decimal DiscountValue, ShoppingListDiscountType Type), AddShoppingListDiscountContract>

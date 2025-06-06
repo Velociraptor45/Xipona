@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.TestTools;
+﻿using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.TestTools;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
+namespace Xipona.Frontend.Infrastructure.Tests.Common;
 
 public abstract class ToContractConverterBase<TSource, TDest, TConverter> where TConverter : IToContractConverter<TSource, TDest>
 {

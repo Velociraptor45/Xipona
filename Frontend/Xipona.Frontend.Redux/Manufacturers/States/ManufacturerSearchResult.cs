@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States
+namespace Xipona.Frontend.Redux.Manufacturers.States
 {
     public class ManufacturerSearchResult : ISearchResult
     {

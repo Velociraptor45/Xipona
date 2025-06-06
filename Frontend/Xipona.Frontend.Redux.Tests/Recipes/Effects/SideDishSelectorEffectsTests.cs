@@ -1,13 +1,13 @@
 ﻿using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Recipes.States;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
+using Xipona.Frontend.Redux.Recipes.Effects;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Recipes.States;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Recipes.Effects;
+namespace Xipona.Frontend.Redux.Tests.Recipes.Effects;
 
 public class SideDishSelectorEffectsTests
 {

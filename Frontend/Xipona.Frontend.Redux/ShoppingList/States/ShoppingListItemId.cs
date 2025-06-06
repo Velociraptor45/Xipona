@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+namespace Xipona.Frontend.Redux.ShoppingList.States;
 
 [DebuggerDisplay("Actual: {ActualId}, Offline: {OfflineId}")]
 public sealed class ShoppingListItemId : IEquatable<ShoppingListItemId>

@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Recipes.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
 
 public class SearchItemByItemCategoryResultConverter :
     IToDomainConverter<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>

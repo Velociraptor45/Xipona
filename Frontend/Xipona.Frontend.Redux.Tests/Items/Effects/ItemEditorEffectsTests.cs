@@ -1,16 +1,16 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using Xipona.Frontend.Redux.Items.Effects;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Effects;
+namespace Xipona.Frontend.Redux.Tests.Items.Effects;
 
 public class ItemEditorEffectsTests
 {

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿namespace Xipona.Frontend.Redux.Recipes.States;
 public record AddToShoppingListItem(
     Guid Key,
     Guid ItemId,

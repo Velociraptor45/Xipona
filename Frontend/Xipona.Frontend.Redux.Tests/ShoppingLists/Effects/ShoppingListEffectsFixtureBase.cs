@@ -1,10 +1,10 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Services;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Services;
+using Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
 
 public class ShoppingListEffectsFixtureBase : EffectsFixtureBase
 {

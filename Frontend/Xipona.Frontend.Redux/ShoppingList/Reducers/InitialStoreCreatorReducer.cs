@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
+namespace Xipona.Frontend.Redux.ShoppingList.Reducers;
 
 public static class InitialStoreCreatorReducer
 {

@@ -1,8 +1,8 @@
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.TestTools;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.TestTools;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Recipes.States;
+namespace Xipona.Frontend.Redux.TestKit.Recipes.States;
 public class RecipeSearchResultBuilder : TestBuilderBase<RecipeSearchResult>
 {
     public RecipeSearchResultBuilder WithId(Guid id)

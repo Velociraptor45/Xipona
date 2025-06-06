@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.States;
+namespace Xipona.Frontend.Redux.TestKit.Shared.States;
 
 public class SharedStateMock : Mock<IState<SharedState>>
 {

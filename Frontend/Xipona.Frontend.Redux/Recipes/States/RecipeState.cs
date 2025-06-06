@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+namespace Xipona.Frontend.Redux.Recipes.States;
 
 public record RecipeState(
     IReadOnlyCollection<IngredientQuantityType> IngredientQuantityTypes,

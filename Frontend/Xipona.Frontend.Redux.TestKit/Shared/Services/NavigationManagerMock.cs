@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Moq;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Services;
+namespace Xipona.Frontend.Redux.TestKit.Shared.Services;
 
 public class NavigationManagerMock : Mock<NavigationManager>
 {

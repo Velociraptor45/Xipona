@@ -1,14 +1,14 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts;
+using Xipona.Frontend.Redux.ShoppingList.Effects;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Effects;
 public class ItemDiscountEffectsTests
 {
     public class HandleSaveDiscountAction

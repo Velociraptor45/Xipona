@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
+﻿using Xipona.Frontend.Redux.Shared.Actions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Actions;
+namespace Xipona.Frontend.Redux.Manufacturers.Actions;
 
 public record EditManufacturerAction : ISearchResultTriggerAction
 {

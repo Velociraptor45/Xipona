@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.Shared.Actions.Settings;
+using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Reducers;
+namespace Xipona.Frontend.Redux.Shared.Reducers;
 
 public static class SettingsReducer
 {

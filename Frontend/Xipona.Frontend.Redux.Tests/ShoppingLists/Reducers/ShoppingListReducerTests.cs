@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Reducers;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Reducers;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Reducers;
 
 public class ShoppingListReducerTests
 {

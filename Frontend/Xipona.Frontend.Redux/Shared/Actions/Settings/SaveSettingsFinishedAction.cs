@@ -1,3 +1,3 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Actions.Settings;
+﻿namespace Xipona.Frontend.Redux.Shared.Actions.Settings;
 
 public record SaveSettingsFinishedAction;

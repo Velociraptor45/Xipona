@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+﻿namespace Xipona.Frontend.Redux.Shared.States.Validators;
 
 public class NameValidator : IValidator<string?>
 {

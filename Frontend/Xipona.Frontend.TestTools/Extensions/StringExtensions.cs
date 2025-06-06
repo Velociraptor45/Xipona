@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+﻿namespace Xipona.Frontend.TestTools.Extensions;
 
 public static class StringExtensions
 {

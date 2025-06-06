@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+﻿using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.Recipes.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.Recipes.ToDomain;
 
 public class EditedRecipeConverterTests : ToDomainConverterBase<RecipeContract, EditedRecipe, EditedRecipeConverter>
 {

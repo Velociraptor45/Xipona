@@ -1,16 +1,16 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Search;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.States;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
+namespace Xipona.Frontend.Redux.Items.Effects;
 
 public class ItemEffects
 {

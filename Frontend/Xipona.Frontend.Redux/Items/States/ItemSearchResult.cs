@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.States;
+namespace Xipona.Frontend.Redux.Items.States;
 
 public class ItemSearchResult : ISearchResult
 {

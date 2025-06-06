@@ -1,6 +1,6 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.Infrastructure.RequestSenders;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
 
 namespace Xipona.Frontend.Infrastructure.TestKit.RequestSenders;
 

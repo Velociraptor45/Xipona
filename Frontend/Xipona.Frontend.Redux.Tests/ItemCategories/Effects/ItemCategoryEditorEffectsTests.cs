@@ -1,15 +1,15 @@
 ﻿using Moq;
 using Moq.Contrib.InOrder;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.Effects;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.ItemCategories.Actions;
+using Xipona.Frontend.Redux.ItemCategories.Effects;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Ports;
+using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ItemCategories.Effects;
+namespace Xipona.Frontend.Redux.Tests.ItemCategories.Effects;
 
 public class ItemCategoryEditorEffectsTests
 {

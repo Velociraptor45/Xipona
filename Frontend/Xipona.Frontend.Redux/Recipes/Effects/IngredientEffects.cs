@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
+using Xipona.Frontend.Redux.Recipes.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Effects;
+namespace Xipona.Frontend.Redux.Recipes.Effects;
 
 public class IngredientEffects
 {

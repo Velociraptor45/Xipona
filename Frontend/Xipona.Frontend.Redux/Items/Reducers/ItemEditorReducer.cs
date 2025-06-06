@@ -1,14 +1,14 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States.Validators;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Validators;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.States.Validators;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
+namespace Xipona.Frontend.Redux.Items.Reducers;
 
 public static class ItemEditorReducer
 {

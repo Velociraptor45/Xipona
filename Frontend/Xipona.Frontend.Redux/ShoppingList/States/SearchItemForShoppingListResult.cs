@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+namespace Xipona.Frontend.Redux.ShoppingList.States;
 
 public class SearchItemForShoppingListResult
 {

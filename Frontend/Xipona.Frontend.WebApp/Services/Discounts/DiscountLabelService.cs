@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Services.Discounts;
+namespace Xipona.Frontend.WebApp.Services.Discounts;
 
 public class DiscountLabelService : IDiscountLabelService
 {

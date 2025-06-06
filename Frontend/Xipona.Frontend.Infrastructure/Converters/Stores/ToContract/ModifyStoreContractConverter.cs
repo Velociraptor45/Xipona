@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+﻿using Xipona.Api.Contracts.Stores.Commands.ModifyStore;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Stores.States;
 using System;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Stores.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Stores.ToContract;
 
 public class ModifyStoreContractConverter : IToContractConverter<EditedStore, ModifyStoreContract>
 {

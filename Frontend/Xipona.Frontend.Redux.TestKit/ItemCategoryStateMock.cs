@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit;
+namespace Xipona.Frontend.Redux.TestKit;
 
 public class ItemCategoryStateMock : Mock<IState<ItemCategoryState>>
 {

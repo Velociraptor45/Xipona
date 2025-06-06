@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+﻿using Xipona.Api.Contracts.ItemCategories.Queries;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToDomain;
 
 public class ItemCategorySearchResultConverter :
     IToDomainConverter<ItemCategorySearchResultContract, ItemCategorySearchResult>

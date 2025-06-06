@@ -1,7 +1,7 @@
 ﻿using FluentAssertions.Equivalency;
 using System.Text.RegularExpressions;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+namespace Xipona.Frontend.TestTools.Extensions;
 
 public static class EquivalencyOptionsExtensions
 {

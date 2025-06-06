@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.States;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.States;
 
 public class SearchItemForShoppingListResultTests
 {

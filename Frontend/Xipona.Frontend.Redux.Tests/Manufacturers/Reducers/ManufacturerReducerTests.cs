@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Manufacturers.Actions;
+using Xipona.Frontend.Redux.Manufacturers.Reducers;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Manufacturers.Reducers;
+namespace Xipona.Frontend.Redux.Tests.Manufacturers.Reducers;
 
 public class ManufacturerReducerTests
 {
