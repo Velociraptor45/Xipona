@@ -73,7 +73,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors();
 
 var authOptions = new AuthenticationOptions();
-configuration.GetSection("Auth").Bind(authOptions);
+configuration.Bind(authOptions);
 
 builder.Services.AddSingleton(authOptions);
 

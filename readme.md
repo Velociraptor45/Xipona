@@ -165,7 +165,7 @@ It is possible to collect client-side logs (e.g. exceptions). The docker compose
 ### Authentication & Authorization
 
 In order to only grant access to this application for certain users, it's possible to enable authentication & authorization with OIDC. This must be done in both frontend and api. It's disabled by default.<br/>
-Currently, there is only one user role that decides over full access or no access for authenticated users. By default, it's called `User` but can be overridden by the `UserRoleName` setting in the frontend & api's `Auth` section. This role must be returned by the role claim in the ID **and** access token.
+Currently, there is only one user role that decides over full access or no access for authenticated users. By default, it's called `User` but can be overridden by the `XIPONA_AUTH_ROLE_NAME_USER` env variable. This role must be returned by the role claim in the ID **and** access token.
 
 #### Frontend
 
@@ -173,7 +173,14 @@ Set the `Auth` section in the respective appsettings file (*Frontend/Xipona.Fron
 
 #### API
 
-Set the `Auth` section in the respective appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) to `"Enabled": true` and fill the remaining properties.
+Fill the following env variables. As long as you don't set `XIPONA_AUTH_ENABLED` to `true`, the authentication is disabled.
+- `XIPONA_AUTH_ENABLED` (default: false)
+- `XIPONA_AUTH_AUTHORITY` (the URL of the authority, **without** the well-known part)
+- `XIPONA_AUTH_AUDIENCE`
+- `XIPONA_AUTH_VALID_TYPES__0`
+- `XIPONA_AUTH_CLAIM_NAME` (default: given_name)
+- `XIPONA_AUTH_CLAIM_ROLE` (the claim name where the user's roles are located, default: role)
+- `XIPONA_AUTH_ROLE_NAME_USER` (default: User)
 
 ### Key Vault
 Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):

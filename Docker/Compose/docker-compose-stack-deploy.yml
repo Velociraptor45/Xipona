@@ -39,6 +39,14 @@ services:
       # XIPONA_VAULT_MOUNT_POINT: xipona
       # XIPONA_VAULT_PATHS_DATABASE: database
       # XIPONA_VAULT_PATHS_LOGGING: logging
+      # uncomment this for OIDC integration
+      # XIPONA_AUTH_ENABLED: false
+      # XIPONA_AUTH_AUTHORITY: 
+      # XIPONA_AUTH_AUDIENCE:
+      # XIPONA_AUTH_VALID_TYPES__0: JWT
+      # XIPONA_AUTH_CLAIM_NAME: given_name
+      # XIPONA_AUTH_CLAIM_ROLE: role
+      # XIPONA_AUTH_ROLE_NAME_USER: User
     ports:
       - "12489:80"
     depends_on:

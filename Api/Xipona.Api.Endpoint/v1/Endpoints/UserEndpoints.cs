@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Users.Commands.Login;
@@ -19,9 +21,7 @@ using Xipona.Api.Domain.Common.Models;
 using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.Users.Models;
 using Xipona.Api.Domain.Users.Services.Queries;
-using Xipona.Api.WebApp.Auth;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading;
+using Xipona.Api.Endpoint.Middleware;
 
 namespace Xipona.Api.Endpoint.v1.Endpoints;
 
