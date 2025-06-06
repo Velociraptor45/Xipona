@@ -8,7 +8,7 @@ services:
       POSTGRES_USER_FILE: /run/secrets/xipona-db-username
       POSTGRES_PASSWORD_FILE: /run/secrets/xipona-db-password
     ports:
-      - "15909:3306"
+      - "15909:5432"
     networks: 
       - xipona
     volumes:
@@ -23,6 +23,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       XIPONA_DB_USERNAME_FILE: /run/secrets/xipona-db-username
       XIPONA_DB_PASSWORD_FILE: /run/secrets/xipona-db-password
+      XIPONA_DB_NAME: xipona
+      XIPONA_DB_ADDRESS: Database
+      XIPONA_DB_PORT: 5432
       # uncomment this for backend OTEL API key support:
       # XIPONA_OTEL_API_KEY_FILE: /run/secrets/xipona-otel-api-key
       # XIPONA_OTEL_ENDPOINT_LOGS: 

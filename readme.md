@@ -79,7 +79,6 @@ Prepare the following things:
 
 ### Api
 - The appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the xipona-api-**config** volume. Specify the following things there:
-  - The DB's address and port
   - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
 
 ### Frontend
@@ -181,11 +180,11 @@ Instead of providing the database credentials via docker secrets for the api, it
 
 > If the Vault is configured, all other secret configurations (DB credentials, ...) that are supplied via env variables are ignored
 
-- (optional, but recommended) Remove all environment variables starting with `XIPONA_DB` and their respective docker secrets from the Api service in the compose file
-- Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
+- (optional, but recommended) Remove the `XIPONA_DB_USERNAME_FILE` & `XIPONA_DB_PASSWORD_FILE` environment variables and their respective docker secrets from the Api service in the compose file
+- (if using docker secrets) Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
   - xipona-vault-api-username 
   - xipona-vault-api-password
-- Import both secrets in the docker compose file and replace the api's two DB environment variables with (If you're using docker compose, remove the _FILE suffix from both env variables and provide the values directly in the compose file instead of using secrets)
+- Import both secrets in the docker compose file (If you're using docker compose, remove the _FILE suffix from both env variables and provide the values directly in the compose file instead)
   - `XIPONA_VAULT_USERNAME_FILE`: /run/secrets/xipona-vault-api-username
   - `XIPONA_VAULT_PASSWORD_FILE`: /run/secrets/xipona-vault-api-password
 - Set the following env variables in the compose file:
