@@ -18,7 +18,7 @@ services:
     image: velocir4ptor/xipona-api:0.13.1
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      XIPONA_CORS_ORIGIN__0: https://localhost:5000
+      XIPONA_CORS_ORIGIN__0: 
       XIPONA_DB_USERNAME: xipona
       XIPONA_DB_PASSWORD: change_me
       XIPONA_DB_NAME: xipona
@@ -86,7 +86,6 @@ services:
     depends_on:
       - Api
     volumes:
-      - xipona-frontend-config:/etc/nginx/conf.d:ro
       # - xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks:
       - xipona
@@ -96,10 +95,6 @@ volumes:
   #   external: true
   # xipona-api-tls:
   #   external: true
-  xipona-frontend-config:
-    external: true
-  xipona-api-logs:
-    external: true
   xipona-api-config:
     external: true
   xipona-database:

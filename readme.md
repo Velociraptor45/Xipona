@@ -67,8 +67,6 @@ To run all required services in containers, Docker images and docker-compose fil
 ### Prerequisits
 Prepare the following things:
 - Docker Volumes
-  - Frontend
-    - xipona-frontend-config
   - Database
     - xipona-database
 - Docker Secrets (if you're using stack deploy)
@@ -78,9 +76,6 @@ Prepare the following things:
 ### Api
 
 - In order to not get CORS issues, fill `XIPONA_CORS_ORIGIN__0` with the frontend's base URL. In the unlikely case that you have multiple URLs, duplicate the env variable and increment the number at the end.
-
-### Frontend
-- Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the xipona-frontend-**config**.
 
 Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`.
 And now you're done. Happy shopping!
