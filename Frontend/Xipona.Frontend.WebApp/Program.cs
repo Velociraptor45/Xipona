@@ -69,13 +69,15 @@ public static class Program
 
     private static void ConfigureLogging(WebAssemblyHostBuilder builder)
     {
-        var config = builder.Configuration.GetSection("CollectRemoteLogs").Get<CollectRemoteLogsConfig>();
+        var config = new CollectRemoteLogsConfig();
+        builder.Configuration.Bind(config);
+
         if (!config.Enabled)
             return;
 
-        var endpointUrl = config.HostUri.EndsWith('/')
-            ? $"{config.HostUri}ingest"
-            : $"{config.HostUri}/ingest";
+        var endpointUrl = config.HostUrl.EndsWith('/')
+            ? $"{config.HostUrl}ingest"
+            : $"{config.HostUrl}/ingest";
 
         var levelSwitch = new LoggingLevelSwitch();
         Log.Logger = new LoggerConfiguration()
@@ -149,7 +151,10 @@ public static class Program
 
     private sealed class CollectRemoteLogsConfig
     {
+        [ConfigurationKeyName("XIPONA_LOGS_ENABLED")]
         public bool Enabled { get; init; }
-        public string HostUri { get; init; } = string.Empty;
+
+        [ConfigurationKeyName("XIPONA_LOGS_HOST_URL")]
+        public string HostUrl { get; init; } = string.Empty;
     }
 }

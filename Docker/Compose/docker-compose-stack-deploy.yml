@@ -76,7 +76,10 @@ services:
   Frontend:
     image: velocir4ptor/xipona-frontend:0.13.1
     environment:
-      XIPONA_API_URL: https://Api:80/v1
+      XIPONA_API_URL: http://Api:80/v1
+      # uncomment this for log collection
+      # XIPONA_LOGS_ENABLED: false
+      # XIPONA_LOGS_HOST_URL: http://LogCollector:80
     ports:
       - "14000:80"
     depends_on:

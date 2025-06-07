@@ -154,7 +154,7 @@ XIPONA_OTEL_API_KEY_HEADER_PREFIX: X-Seq-ApiKey=
 
 ### Frontend Logging
 
-It is possible to collect client-side logs (e.g. exceptions). The docker compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
+It is possible to collect client-side logs (e.g. exceptions). The docker compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's config by setting `XIPONA_LOGS_ENABLED` (disabled by default) and `XIPONA_LOGS_HOST_URL` (the LogCollector's base address).
 
 ### Authentication & Authorization
 
@@ -206,3 +206,7 @@ To get everything running at your dev machine, at least a running dev DB is nece
 ### API
 
 The Xipona.Api.WebApp has user secret support. Add all the needed env variables (that were described above) to this file and fill them with the correct values. The api's CORS config should probably point towards localhost, but the DB connection to your dev stack.
+
+### Frontend
+
+Blazor does not support user secrets, so you have to create an appsettings.Local.json under Xipona.Frontend.WebApp/wwwroot and fill it at least with `"XIPONA_API_URL": "https://localhost:5050/v1"` to connect to the local api.
