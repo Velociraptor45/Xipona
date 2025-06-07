@@ -80,6 +80,16 @@ services:
       # uncomment this for log collection
       # XIPONA_LOGS_ENABLED: false
       # XIPONA_LOGS_HOST_URL: http://LogCollector:80
+      # uncomment this for OIDC integration
+      # XIPONA_AUTH_ENABLED: false
+      # XIPONA_AUTH_AUTHORITY: 
+      # XIPONA_AUTH_CLIENT_ID: 
+      # XIPONA_AUTH_DEFAULT_SCOPES__0: 
+      # XIPONA_AUTH_RESPONSE_TYPE: code
+      # XIPONA_AUTH_ROLE_NAME_USER: User
+      # XIPONA_AUTH_CLAIM_NAME: given_name
+      # XIPONA_AUTH_CLAIM_ROLE: role
+      # XIPONA_AUTH_CLAIM_SCOPE: scope
     ports:
       - "14000:80"
     depends_on:

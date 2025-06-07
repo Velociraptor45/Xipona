@@ -141,8 +141,8 @@ If you don't want to run the application behind a reverse proxy that handles the
 The backend logging has OTEL support. In order to enable it, fill the following env variables:
 - `XIPONA_OTEL_ENDPOINT_LOGS`
 - `XIPONA_OTEL_ENDPOINT_TRACES`
-- `XIPONA_OTEL_API_KEY_FILE` (only if you're not using the Vault and need an api key)
-- `XIPONA_OTEL_API_KEY_HEADER_PREFIX` (only if you need an api key)
+- `XIPONA_OTEL_API_KEY_FILE` (optional, only if you're not using the Vault and need an api key)
+- `XIPONA_OTEL_API_KEY_HEADER_PREFIX` (optional, only if you need an api key)
 
 An example for a seq instance with API key requirement could be
 ```
@@ -163,7 +163,16 @@ Currently, there is only one user role that decides over full access or no acces
 
 #### Frontend
 
-Set the `Auth` section in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) to `"Enabled": true` and fill the `Provider` and `User` sections.
+Fill the following env variables. As long as you don't set `XIPONA_AUTH_ENABLED` to `true`, the authentication is disabled.
+- `XIPONA_AUTH_ENABLED` (default: false)
+- `XIPONA_AUTH_AUTHORITY` (the URL of the authority, **without** the well-known part)
+- `XIPONA_AUTH_CLIENT_ID`
+- `XIPONA_AUTH_DEFAULT_SCOPES__0` (optional, only if you need additional scopes, openid and profile are always active, default: empty)
+- `XIPONA_AUTH_RESPONSE_TYPE` (optional, default: code)
+- `XIPONA_AUTH_ROLE_NAME_USER` (optional, default: User)
+- `XIPONA_AUTH_CLAIM_NAME` (optional, default: given_name)
+- `XIPONA_AUTH_CLAIM_ROLE` (optional, the claim name where the user's roles are located, default: role)
+- `XIPONA_AUTH_CLAIM_SCOPE` (optional, default: scope)
 
 #### API
 
@@ -172,9 +181,9 @@ Fill the following env variables. As long as you don't set `XIPONA_AUTH_ENABLED`
 - `XIPONA_AUTH_AUTHORITY` (the URL of the authority, **without** the well-known part)
 - `XIPONA_AUTH_AUDIENCE`
 - `XIPONA_AUTH_VALID_TYPES__0`
-- `XIPONA_AUTH_CLAIM_NAME` (default: given_name)
-- `XIPONA_AUTH_CLAIM_ROLE` (the claim name where the user's roles are located, default: role)
-- `XIPONA_AUTH_ROLE_NAME_USER` (default: User)
+- `XIPONA_AUTH_CLAIM_NAME` (optional, default: given_name)
+- `XIPONA_AUTH_CLAIM_ROLE` (optional, the claim name where the user's roles are located, default: role)
+- `XIPONA_AUTH_ROLE_NAME_USER` (optional, default: User)
 
 ### Key Vault
 Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
@@ -192,7 +201,7 @@ Instead of providing the database credentials via docker secrets for the api, it
   - `XIPONA_VAULT_URI`
   - `XIPONA_VAULT_MOUNT_POINT`
   - `XIPONA_VAULT_PATHS_DATABASE`
-  - `XIPONA_VAULT_PATHS_LOGGING` (only if you're using [backend logging](#backend-logging))
+  - `XIPONA_VAULT_PATHS_LOGGING` (optional, only if you're using [backend logging](#backend-logging))
 - The default mount point (xipona) & secret names (database, logging) can be changed at will. But the key names inside the respective secrets must be as follows
   - Secret "database"
     - `username`: the username with which you want to log in to the database

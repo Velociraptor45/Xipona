@@ -32,7 +32,8 @@ public static class Program
         builder.RootComponents.Add<App>("app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        var authConfig = builder.Configuration.GetSection("Auth").Get<AuthConfig>();
+        var authConfig = new AuthConfig();
+        builder.Configuration.Bind(authConfig);
         builder.Services.AddSingleton(authConfig);
         AddSecurity(builder, authConfig);
 
@@ -136,9 +137,17 @@ public static class Program
 
         builder.Services.AddOidcAuthentication(opt =>
         {
-            builder.Configuration.Bind("Auth:Provider", opt.ProviderOptions);
-            builder.Configuration.Bind("Auth:User", opt.UserOptions);
+            opt.ProviderOptions.Authority = authConfig.Authority;
             opt.ProviderOptions.MetadataUrl = $"{opt.ProviderOptions.Authority}/.well-known/openid-configuration";
+            opt.ProviderOptions.ClientId = authConfig.ClientId;
+            opt.ProviderOptions.ResponseType = authConfig.ResponseType;
+            foreach (var scope in authConfig.DefaultScopes)
+                opt.ProviderOptions.DefaultScopes.Add(scope);
+
+            opt.UserOptions.NameClaim = authConfig.NameClaimIdentifier;
+            opt.UserOptions.RoleClaim = authConfig.RoleClaimIdentifier;
+            opt.UserOptions.ScopeClaim = authConfig.ScopeClaimIdentifier;
+
         }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>();
 
         builder.Services.AddAuthorizationCore(cfg =>
