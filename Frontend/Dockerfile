@@ -15,5 +15,6 @@ FROM nginxinc/nginx-unprivileged:1.25 AS final
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish .
 COPY Docker/nginx.conf /etc/nginx/nginx.conf
+COPY Docker/xipona.conf /etc/nginx/conf.d/xipona.conf
 
 CMD ["nginx", "-g", "daemon off;"]

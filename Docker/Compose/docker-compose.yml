@@ -37,7 +37,7 @@ services:
       # XIPONA_VAULT_PATHS_DATABASE: database
       # XIPONA_VAULT_PATHS_LOGGING: logging
       # uncomment this for OIDC integration
-      # XIPONA_AUTH_ENABLED: false
+      # XIPONA_AUTH_ENABLED: "false"
       # XIPONA_AUTH_AUTHORITY: 
       # XIPONA_AUTH_AUDIENCE:
       # XIPONA_AUTH_VALID_TYPES__0: JWT
@@ -48,9 +48,8 @@ services:
       - "12489:80"
     depends_on:
       - Database
-    volumes:
+    # volumes:
       # - xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
-      - xipona-api-config:/app/config:ro
     networks:
       - xipona
 
@@ -69,10 +68,10 @@ services:
     environment:
       XIPONA_API_URL: http://Api:80
       # uncomment this for log collection
-      # XIPONA_LOGS_ENABLED: false
+      # XIPONA_LOGS_ENABLED: "false"
       # XIPONA_LOGS_HOST_URL: http://LogCollector:80
       # uncomment this for OIDC integration
-      # XIPONA_AUTH_ENABLED: false
+      # XIPONA_AUTH_ENABLED: "false"
       # XIPONA_AUTH_AUTHORITY: 
       # XIPONA_AUTH_CLIENT_ID: 
       # XIPONA_AUTH_DEFAULT_SCOPES__0: 
@@ -85,7 +84,7 @@ services:
       - "14000:80"
     depends_on:
       - Api
-    volumes:
+    # volumes:
       # - xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks:
       - xipona
@@ -95,8 +94,6 @@ volumes:
   #   external: true
   # xipona-api-tls:
   #   external: true
-  xipona-api-config:
-    external: true
   xipona-database:
     external: true
   # xipona-log-collector-config: # uncomment this for frontend log support
