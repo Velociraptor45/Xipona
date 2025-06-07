@@ -87,7 +87,6 @@ services:
       - Api
     volumes:
       - xipona-frontend-config:/etc/nginx/conf.d:ro
-      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
       # - xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks:
       - xipona
