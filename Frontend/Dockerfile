@@ -9,7 +9,7 @@ RUN dotnet build "Xipona.Frontend.WebApp/Xipona.Frontend.WebApp.csproj" -c Relea
 ################# PUBLISH #################
 FROM build AS publish
 RUN dotnet publish "Xipona.Frontend.WebApp/Xipona.Frontend.WebApp.csproj" -c Release -o /app/publish --no-restore -a $TARGETARCH
-RUN chmod 666 /app/publish/wwwroot/appsetting.json
+RUN chmod 666 /app/publish/wwwroot/appsettings.json
 
 ############ PREPARE EXECUTION ############
 FROM build AS prep-execution
@@ -26,4 +26,4 @@ COPY Docker/nginx.conf /etc/nginx/nginx.conf
 COPY Docker/xipona.conf /etc/nginx/conf.d/xipona.conf
 COPY --from=prep-execution /app/script .
 
-CMD ["start-engine.sh"]
+CMD ["/usr/share/nginx/html/start-engine.sh"]

@@ -32,6 +32,8 @@ public static class Program
         builder.RootComponents.Add<App>("app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
+        await LoadVariables(builder);
+
         var authConfig = new AuthConfig();
         builder.Configuration.Bind(authConfig);
         builder.Services.AddSingleton(authConfig);
@@ -44,6 +46,14 @@ public static class Program
         builder.Services.AddAntDesign();
 
         await builder.Build().RunAsync();
+    }
+
+    private static async Task LoadVariables(WebAssemblyHostBuilder builder)
+    {
+        var client = new HttpClient();
+        client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+        var stream = await client.GetStreamAsync("variables.json").ConfigureAwait(false);
+        builder.Configuration.AddJsonStream(stream);
     }
 
     private static void ConfigureHttpClient(WebAssemblyHostBuilder builder, AuthConfig authConfig)
