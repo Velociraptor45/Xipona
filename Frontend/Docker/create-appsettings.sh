@@ -4,11 +4,11 @@ add_to_json() {
     local var_name="$1"
     local var_value="${!var_name}"
     if [ -n "$var_value" ]; then
-        echo "  \"$var_name\": \"$var_value\"," >> /usr/share/nginx/html/appsettings.json
+        echo "  \"$var_name\": \"$var_value\"," >> /usr/share/nginx/html/wwwroot/appsettings.json
     fi
 }
 
-echo "{" > /usr/share/nginx/html/appsettings.json
+echo "{" > /usr/share/nginx/html/wwwroot/appsettings.json
 
 add_to_json "XIPONA_API_URL"
 add_to_json "XIPONA_LOGS_ENABLED"
@@ -32,4 +32,4 @@ add_to_json "XIPONA_AUTH_CLAIM_NAME"
 add_to_json "XIPONA_AUTH_CLAIM_ROLE"
 add_to_json "XIPONA_AUTH_CLAIM_SCOPE"
 
-echo "}" >> /usr/share/nginx/html/appsettings.json
+echo "}" >> /usr/share/nginx/html/wwwroot/appsettings.json

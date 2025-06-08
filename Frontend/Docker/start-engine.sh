@@ -1,5 +1,6 @@
 #!/bin/bash
 
-./create-appsettings.sh
+DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+"$DIR/create-appsettings.sh"
 
-nginx -g daemon off;
+nginx -g 'daemon off;'
