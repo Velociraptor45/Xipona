@@ -17,4 +17,8 @@ COPY --from=publish /app/publish .
 COPY Docker/nginx.conf /etc/nginx/nginx.conf
 COPY Docker/xipona.conf /etc/nginx/conf.d/xipona.conf
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY Docker/create-appsettings.sh ./create-appsettings.sh
+COPY Docker/start-engine.sh ./start-engine.sh
+RUN chmod +x start-engine.sh create-appsettings.sh
+
+CMD ["start-engine.sh"]
