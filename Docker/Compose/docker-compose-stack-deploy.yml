@@ -93,8 +93,10 @@ services:
       - "14000:80"
     depends_on:
       - Api
+    # uncomment this for https support, see readme
     # volumes:
-      # - xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
+      # - {CONFIG_FOLDER_PATH}/xipona.conf:/etc/nginx/conf.d/xipona.conf:ro
+      # - xipona-frontend-tls:/etc/nginx/ssl:ro
     networks:
       - xipona
 

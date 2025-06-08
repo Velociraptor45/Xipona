@@ -48,8 +48,10 @@ services:
       - "12489:80"
     depends_on:
       - Database
+    # uncomment this for https support, see readme
     # volumes:
-      # - xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
+      # - {CONFIG_FOLDER_PATH}/xipona.conf:/etc/nginx/conf.d/xipona.conf:ro
+      # - xipona-api-tls:/app/ssl:ro
     networks:
       - xipona
 

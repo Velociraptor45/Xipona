@@ -88,45 +88,35 @@ If you don't want to run the application behind a reverse proxy that handles the
 #### Api
 1. Create the docker volume xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-api-**tls** volume.
-3. Replace the existing kestrel http endpoint in your *appsettings.{env}.json* with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
-    ```
-    "Kestrel": {
-      "Endpoints": {
-        "HttpsInlineCertAndKeyFile": {
-          "Url": "https://localhost:5002",
-          "Certificate": {
-            "Path": "ssl/<cert-name>.crt",
-            "KeyPath": "ssl/<cert-key-name>.key"
-          }
-        }
-      }
-    }
-    ```
+3. Add the following env variables (or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration)):
+- `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Url: https://0.0.0.0:12489`
+- `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Certificate__Path: ssl/<cert-name>.crt`
+- `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Certificate__KeyPath: ssl/<cert-key-name>.key`
 
 #### Frontend
 
 1. Create the docker volume xipona-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-frontend-**tls** volume.
-3. Replace the *xipona.conf* (under *Frontend/Docker*) with:
+3. Save the following as *xipona.conf* on your host and fill the directory placeholder in the Frontend's volumes in the provided compose file:
     ```
     server {
         listen 80 default_server;
-        server_name <webserver-address>; # set your webserver address here (without port)
+        server_name _;
         return 301 https://$server_name$request_uri;
     }
 
     server {
         listen 443 ssl;
-        server_name <webserver-address>; # set your webserver address here (without port)
+        server_name _;
         
         ssl_certificate /etc/nginx/ssl/<cert-name>.crt;
         ssl_certificate_key /etc/nginx/ssl/<cert-key-name>.key;
+        
+        root /usr/share/nginx/html/wwwroot;
+        index index.html index.htm;
 
-        add_header blazor-environment "Development"; # set this to Development or Production
-
-        location / {
-            root /usr/share/nginx/html/wwwroot;
-            index index.html index.htm;
+        location / {          
+          try_files $uri $uri/ /index.html =404;
         }
     }
     ```
@@ -213,4 +203,4 @@ The Xipona.Api.WebApp has user secret support. Add all the needed env variables 
 
 ### Frontend
 
-Blazor does not support user secrets, so you have to create an appsettings.Local.json under Xipona.Frontend.WebApp/wwwroot and fill it at least with `"XIPONA_API_URL": "https://localhost:5050/v1"` to connect to the local api.
+Blazor does not support user secrets, so you have to use the `variables.json` under Xipona.Frontend.WebApp/wwwroot. `XIPONA_API_URL` is already defined, if you want to use the others, they must be set by you either in `variables.json` as well or you create an `appsettings.Local.json`.
