@@ -67,8 +67,7 @@ To run all required services in containers, Docker images and docker-compose fil
 ### Prerequisits
 Prepare the following things:
 - Docker Volumes
-  - Database
-    - xipona-database
+  - xipona-database
 - Docker Secrets (if you're using stack deploy)
   - xipona-db-username
   - xipona-db-password
@@ -76,6 +75,10 @@ Prepare the following things:
 ### Api
 
 - In order to not get CORS issues, fill `XIPONA_CORS_ORIGIN__0` with the frontend's base URL. In the unlikely case that you have multiple URLs, duplicate the env variable and increment the number at the end.
+
+### Frontend
+
+Set the correct `XIPONA_API_URL`. Keep in mind that the frontend is a Webassembly application and runs fully on the client, thus `http://Api:80/v1` will not work.
 
 Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`.
 And now you're done. Happy shopping!
@@ -88,7 +91,7 @@ If you don't want to run the application behind a reverse proxy that handles the
 #### Api
 1. Create the docker volume xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-api-**tls** volume.
-3. Add the following env variables (or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration)):
+3. Add the following env variables (or [any other valid ones](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration)):
 - `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Url: https://0.0.0.0:12489`
 - `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Certificate__Path: ssl/<cert-name>.crt`
 - `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Certificate__KeyPath: ssl/<cert-key-name>.key`
@@ -203,4 +206,4 @@ The Xipona.Api.WebApp has user secret support. Add all the needed env variables 
 
 ### Frontend
 
-Blazor does not support user secrets, so you have to use the `variables.json` under Xipona.Frontend.WebApp/wwwroot. `XIPONA_API_URL` is already defined, if you want to use the others, they must be set by you either in `variables.json` as well or you create an `appsettings.Local.json`.
+Blazor Webassembly does not support user secrets, so you have to use the `variables.json` under Xipona.Frontend.WebApp/wwwroot. `XIPONA_API_URL` is already defined, if you want to use the others, they must be set by you in `variables.json` as well or you create an `appsettings.Local.json` in the same directory.

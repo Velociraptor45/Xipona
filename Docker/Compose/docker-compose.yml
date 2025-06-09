@@ -55,7 +55,7 @@ services:
     networks:
       - xipona
 
-  # LogCollector: # uncomment this for frontend log support
+  # LogCollector: # uncomment this for frontend log collection
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
   #   ports:
   #     - "13880:80"
@@ -68,10 +68,10 @@ services:
   Frontend:
     image: velocir4ptor/xipona-frontend:0.13.1
     environment:
-      XIPONA_API_URL: http://Api:80
+      XIPONA_API_URL: http://<api-url>:12489/v1
       # uncomment this for log collection
       # XIPONA_LOGS_ENABLED: "false"
-      # XIPONA_LOGS_HOST_URL: http://LogCollector:80
+      # XIPONA_LOGS_HOST_URL: http://<log-collector-url>:13880
       # uncomment this for OIDC integration
       # XIPONA_AUTH_ENABLED: "false"
       # XIPONA_AUTH_AUTHORITY: 
