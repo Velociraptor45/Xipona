@@ -212,9 +212,9 @@ public class SecretLoadingServiceTests
         {
             List<KeyValuePair<string, string?>> collection =
             [
-                new("Database:Name", _dbName),
-                new("Database:Address", _dbAddress),
-                new("Database:Port", _dbPort)
+                new("XIPONA_DB_NAME", _dbName),
+                new("XIPONA_DB_ADDRESS", _dbAddress),
+                new("XIPONA_DB_PORT", _dbPort)
             ];
 
             _configurationBuilder.AddInMemoryCollection(collection);
