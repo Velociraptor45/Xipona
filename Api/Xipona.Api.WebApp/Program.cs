@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Scalar.AspNetCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Reflection;
 using Xipona.Api.ApplicationServices;
 using Xipona.Api.Core;
 using Xipona.Api.Core.Files;
@@ -22,11 +24,6 @@ using Xipona.Api.WebApp.BackgroundServices;
 using Xipona.Api.WebApp.Configs;
 using Xipona.Api.WebApp.Extensions;
 using Xipona.Api.WebApp.Serialization;
-using Scalar.AspNetCore;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder();
 builder.Host.UseDefaultServiceProvider((_, opt) =>
@@ -39,8 +36,6 @@ if (builder.Environment.IsEnvironment("Local"))
 {
     builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
 }
-
-AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
@@ -73,7 +68,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors();
 
 var authOptions = new AuthenticationOptions();
-configuration.GetSection("Auth").Bind(authOptions);
+configuration.Bind(authOptions);
 
 builder.Services.AddSingleton(authOptions);
 
@@ -107,8 +102,7 @@ app.MapScalarApiReference(opt => opt.Title = "Xipona API");
 app.UseCors(policyBuilder =>
 {
     var corsConfig = new CorsConfig();
-    // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
-    app.Configuration.GetSection("Cors").Bind(corsConfig, opt => opt.ErrorOnUnknownConfiguration = true);
+    app.Configuration.Bind(corsConfig);
 
     policyBuilder
         .WithOrigins(corsConfig.AllowedOrigins)
@@ -135,22 +129,6 @@ app.RegisterRecipeTagEndpoints();
 app.RegisterStoreEndpoints();
 
 await app.RunAsync();
-
-static void AddAppsettingsSourceTo(IList<IConfigurationSource> sources)
-{
-    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-    var basePath = env == "Local"
-        ? Directory.GetCurrentDirectory()
-        : Path.Combine(Directory.GetCurrentDirectory(), "config");
-    var jsonSource = new JsonConfigurationSource
-    {
-        FileProvider = new PhysicalFileProvider(basePath),
-        Path = $"appsettings.{env}.json",
-        Optional = false,
-        ReloadOnChange = true
-    };
-    sources.Add(jsonSource);
-}
 
 void SetupSecurity()
 {

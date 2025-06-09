@@ -31,7 +31,7 @@ public static class SecretStoreRegister
             };
 
             var vaultConfig = new VaultConfig();
-            configuration.GetSection("KeyVault").Bind(vaultConfig, opt => opt.ErrorOnUnknownConfiguration = true);
+            configuration.Bind(vaultConfig);
 
             services.AddSingleton(vaultConfig);
             services.AddSingleton(vaultCredentials);

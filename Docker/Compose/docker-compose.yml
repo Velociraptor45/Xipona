@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: xipona
       POSTGRES_DB: xipona
     ports:
-      - "15909:3306"
+      - "15909:5432"
     networks: 
       - xipona
     volumes:
@@ -18,20 +18,44 @@ services:
     image: velocir4ptor/xipona-api:0.13.1
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      XIPONA_CORS_ORIGIN__0: 
       XIPONA_DB_USERNAME: xipona
       XIPONA_DB_PASSWORD: change_me
-      #XIPONA_OTEL_API_KEY: XXX # uncomment this for backend OTEL API key support
+      XIPONA_DB_NAME: xipona
+      XIPONA_DB_ADDRESS: Database
+      XIPONA_DB_PORT: 5432
+      # uncomment this for backend OTEL API key support:
+      # XIPONA_OTEL_API_KEY: 
+      # XIPONA_OTEL_ENDPOINT_LOGS: 
+      # XIPONA_OTEL_ENDPOINT_TRACES: 
+      # XIPONA_OTEL_API_KEY_HEADER_PREFIX: 
+      # uncomment this for vault support:
+      # XIPONA_VAULT_USERNAME: /run/secrets/xipona-vault-api-username
+      # XIPONA_VAULT_PASSWORD: /run/secrets/xipona-vault-api-password
+      # XIPONA_VAULT_URI: https://myvault.example
+      # XIPONA_VAULT_MOUNT_POINT: xipona
+      # XIPONA_VAULT_PATHS_DATABASE: database
+      # XIPONA_VAULT_PATHS_LOGGING: logging
+      # uncomment this for OIDC integration
+      # XIPONA_AUTH_ENABLED: "false"
+      # XIPONA_AUTH_AUTHORITY: 
+      # XIPONA_AUTH_AUDIENCE:
+      # XIPONA_AUTH_VALID_TYPES__0: JWT
+      # XIPONA_AUTH_CLAIM_NAME: given_name
+      # XIPONA_AUTH_CLAIM_ROLE: role
+      # XIPONA_AUTH_ROLE_NAME_USER: User
     ports:
       - "12489:80"
     depends_on:
       - Database
-    volumes:
-      # - xipona-api-tls:/app/ssl:ro # uncomment this for https support, see readme
-      - xipona-api-config:/app/config:ro
+    # uncomment this for https support, see readme
+    # volumes:
+      # - {CONFIG_FOLDER_PATH}/xipona.conf:/etc/nginx/conf.d/xipona.conf:ro
+      # - xipona-api-tls:/app/ssl:ro
     networks:
       - xipona
 
-  # LogCollector: # uncomment this for frontend log support
+  # LogCollector: # uncomment this for frontend log collection
   #   image: velocir4ptor/web-assembly-log-collector:1.0.0
   #   ports:
   #     - "13880:80"
@@ -43,13 +67,26 @@ services:
 
   Frontend:
     image: velocir4ptor/xipona-frontend:0.13.1
+    environment:
+      XIPONA_API_URL: http://<api-url>:12489/v1
+      # uncomment this for log collection
+      # XIPONA_LOGS_ENABLED: "false"
+      # XIPONA_LOGS_HOST_URL: http://<log-collector-url>:13880
+      # uncomment this for OIDC integration
+      # XIPONA_AUTH_ENABLED: "false"
+      # XIPONA_AUTH_AUTHORITY: 
+      # XIPONA_AUTH_CLIENT_ID: 
+      # XIPONA_AUTH_DEFAULT_SCOPES__0: 
+      # XIPONA_AUTH_RESPONSE_TYPE: code
+      # XIPONA_AUTH_ROLE_NAME_USER: User
+      # XIPONA_AUTH_CLAIM_NAME: given_name
+      # XIPONA_AUTH_CLAIM_ROLE: role
+      # XIPONA_AUTH_CLAIM_SCOPE: scope
     ports:
       - "14000:80"
     depends_on:
       - Api
-    volumes:
-      - xipona-frontend-config:/etc/nginx/conf.d:ro
-      - {CONFIG_FOLDER_PATH}/appsettings.Production.json:/usr/share/nginx/html/wwwroot/appsettings.Production.json:ro
+    # volumes:
       # - xipona-frontend-tls:/etc/nginx/ssl:ro # uncomment this for https support, see readme
     networks:
       - xipona
@@ -59,12 +96,6 @@ volumes:
   #   external: true
   # xipona-api-tls:
   #   external: true
-  xipona-frontend-config:
-    external: true
-  xipona-api-logs:
-    external: true
-  xipona-api-config:
-    external: true
   xipona-database:
     external: true
   # xipona-log-collector-config: # uncomment this for frontend log support

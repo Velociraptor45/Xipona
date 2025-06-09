@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using Xipona.Api.ApplicationServices.Users.Commands.Login;
 using Xipona.Api.Contracts.Users.Commands.Login;
 using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Endpoint.Middleware;
 using Xipona.Api.Endpoint.v1.Endpoints;
 using Xipona.Api.Endpoints.Tests.Common;
 using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using Xipona.Api.TestTools.Exceptions;
-using Xipona.Api.WebApp.Auth;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 
 namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.UserTests;
 

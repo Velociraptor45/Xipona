@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AuthenticationOptions = Xipona.Api.Endpoint.Middleware.AuthenticationOptions;
 
 namespace Xipona.Api.WebApp.Auth;
 

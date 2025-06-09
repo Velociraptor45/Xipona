@@ -62,34 +62,25 @@ But what if you're missing some ingredients? It's tedious to add all of them to 
 And there is more on the horizon! Check out the [GitHub Milestones](https://github.com/Velociraptor45/Xipona/milestones) to get a glimps at what's coming soon 👀
 
 ## Setup in Docker
-To run all required services in containers, Dockerfiles and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
+To run all required services in containers, Docker images and docker-compose files are provided for both `docker compose` and `docker stack deploy`. They can be found under *Docker/Compose*.
 
 ### Prerequisits
 Prepare the following things:
 - Docker Volumes
-  - Api
-    - xipona-api-config
-  - Frontend
-    - xipona-frontend-config
-  - Database
-    - xipona-database
+  - xipona-database
 - Docker Secrets (if you're using stack deploy)
   - xipona-db-username
   - xipona-db-password
 
 ### Api
-- The appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) will not be delivered with the docker image and must be placed inside the xipona-api-**config** volume. Specify the following things there:
-  - The DB's address and port
-  - The frontend's address as an allowed origin for CORS (e.g. https://localhost:5000)
+
+- In order to not get CORS issues, fill `XIPONA_CORS_ORIGIN__0` with the frontend's base URL. In the unlikely case that you have multiple URLs, duplicate the env variable and increment the number at the end.
 
 ### Frontend
-- Configure the webserver address & the frontend's environment in *xipona.conf* under *Frontend/Docker* and copy it into the root directory of the xipona-frontend-**config**.
-- Set the api's address in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) and copy it into a directory of your choice on your host.
 
-### yml files
-- Under *Docker/Compose/* is a compose yml file. You have to replace the `{CONFIG_FOLDER_PATH}` placeholder with the absolute path of the directory where your frontend's appsettings file is
-- Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`
+Set the correct `XIPONA_API_URL`. Keep in mind that the frontend is a Webassembly application and runs fully on the client, thus `http://Api:80/v1` will not work.
 
+Start the containers via e.g. `docker stack deploy --compose-file docker-compose-stack-deploy.yml xipona` or `docker compose -f docker-compose.yml -p xipona up -d`.
 And now you're done. Happy shopping!
 
 ## Optional Setup
@@ -100,94 +91,106 @@ If you don't want to run the application behind a reverse proxy that handles the
 #### Api
 1. Create the docker volume xipona-api-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-api-**tls** volume.
-3. Replace the existing kestrel http endpoint in your *appsettings.{env}.json* with an https configuration like the following or [any other valid one](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration). Just make sure the certificate's folder matches the one to which the tls volume is mapped (Default: ssl).
-    ```
-    "Kestrel": {
-      "Endpoints": {
-        "HttpsInlineCertAndKeyFile": {
-          "Url": "https://localhost:5002",
-          "Certificate": {
-            "Path": "ssl/<cert-name>.crt",
-            "KeyPath": "ssl/<cert-key-name>.key"
-          }
-        }
-      }
-    }
-    ```
+3. Add the following env variables (or [any other valid ones](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel/endpoints?view=aspnetcore-7.0#replace-the-default-certificate-from-configuration)):
+- `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Url: https://0.0.0.0:12489`
+- `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Certificate__Path: ssl/<cert-name>.crt`
+- `Kestrel__Endpoints__HttpsInlineCertAndKeyFile__Certificate__KeyPath: ssl/<cert-key-name>.key`
 
 #### Frontend
 
 1. Create the docker volume xipona-frontend-**tls** and uncomment the line in the docker compose file where it's mapped as a volume.
 2. Generate the certificate and copy the files (\<cert-name\>.crt & \<cert-key-name\>.key) into the root directory of the xipona-frontend-**tls** volume.
-3. Replace the *xipona.conf* (under *Frontend/Docker*) with:
+3. Save the following as *xipona.conf* on your host and fill the directory placeholder in the Frontend's volumes in the provided compose file:
     ```
     server {
         listen 80 default_server;
-        server_name <webserver-address>; # set your webserver address here (without port)
+        server_name _;
         return 301 https://$server_name$request_uri;
     }
 
     server {
         listen 443 ssl;
-        server_name <webserver-address>; # set your webserver address here (without port)
+        server_name _;
         
         ssl_certificate /etc/nginx/ssl/<cert-name>.crt;
         ssl_certificate_key /etc/nginx/ssl/<cert-key-name>.key;
+        
+        root /usr/share/nginx/html/wwwroot;
+        index index.html index.htm;
 
-        add_header blazor-environment "Development"; # set this to Development or Production
-
-        location / {
-            root /usr/share/nginx/html/wwwroot;
-            index index.html index.htm;
+        location / {          
+          try_files $uri $uri/ /index.html =404;
         }
     }
     ```
 
 ### Backend Logging
 
-The backend logging has OTEL support. In order to enable it, fill the `LogsEndpoint` and `TracesEndpoint` entries in the `OpenTelemetry` section in the appsettings file you copied into the xipona-api-**config** volume.<br/>
-In case you need to provide an API key, you can also fill the `ApiKeyHeaderPrefix` entry with the header prefix for the API key, whereas the API key itself can be provided over the environment variable XIPONA_OTEL_API_KEY(_FILE). See the provided docker compose files (*Docker/Compose/*).<br/>
-An example for a local seq instance with API key requirement could be
+The backend logging has OTEL support. In order to enable it, fill the following env variables:
+- `XIPONA_OTEL_ENDPOINT_LOGS`
+- `XIPONA_OTEL_ENDPOINT_TRACES`
+- `XIPONA_OTEL_API_KEY_FILE` (optional, only if you're not using the Vault and need an api key)
+- `XIPONA_OTEL_API_KEY_HEADER_PREFIX` (optional, only if you need an api key)
 
-```json
-"OpenTelemetry": {
-  "LogsEndpoint": "http://localhost:5341/ingest/otlp/v1/logs",
-  "TracesEndpoint": "http://localhost:5341/ingest/otlp/v1/traces",
-  "ApiKeyHeaderPrefix": "X-Seq-ApiKey="
-}
+An example for a seq instance with API key requirement could be
+```
+XIPONA_OTEL_API_KEY_FILE: /run/secrets/xipona-otel-api-key
+XIPONA_OTEL_ENDPOINT_LOGS: http://myhost.example:5341/ingest/otlp/v1/logs
+XIPONA_OTEL_ENDPOINT_TRACES: http://myhost.example:5341/ingest/otlp/v1/traces
+XIPONA_OTEL_API_KEY_HEADER_PREFIX: X-Seq-ApiKey=
 ```
 
 ### Frontend Logging
 
-It is possible to collect client-side logs (e.g. exceptions). The docker compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's appsettings (`CollectRemoteLogs` section; disabled by default) and set the LogCollector's address.
+It is possible to collect client-side logs (e.g. exceptions). The docker compose files have an additional service LogCollector that must be uncommented (plus the two corresponding docker volumes). Additionally, you have to enable the LogCollector in the frontend's config by setting `XIPONA_LOGS_ENABLED` (disabled by default) and `XIPONA_LOGS_HOST_URL` (the LogCollector's base address).
 
 ### Authentication & Authorization
 
 In order to only grant access to this application for certain users, it's possible to enable authentication & authorization with OIDC. This must be done in both frontend and api. It's disabled by default.<br/>
-Currently, there is only one user role that decides over full access or no access for authenticated users. By default, it's called `User` but can be overridden by the `UserRoleName` setting in the frontend & api's `Auth` section. This role must be returned by the role claim in the ID **and** access token.
+Currently, there is only one user role that decides over full access or no access for authenticated users. By default, it's called `User` but can be overridden by the `XIPONA_AUTH_ROLE_NAME_USER` env variable. This role must be returned by the role claim in the ID **and** access token.
 
 #### Frontend
 
-Set the `Auth` section in the respective appsettings file (*Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.\*.json*) to `"Enabled": true` and fill the `Provider` and `User` sections.
+Fill the following env variables. As long as you don't set `XIPONA_AUTH_ENABLED` to `true`, the authentication is disabled.
+- `XIPONA_AUTH_ENABLED` (default: false)
+- `XIPONA_AUTH_AUTHORITY` (the URL of the authority, **without** the well-known part)
+- `XIPONA_AUTH_CLIENT_ID`
+- `XIPONA_AUTH_DEFAULT_SCOPES__0` (optional, only if you need additional scopes, openid and profile are always active, default: empty)
+- `XIPONA_AUTH_RESPONSE_TYPE` (optional, default: code)
+- `XIPONA_AUTH_ROLE_NAME_USER` (optional, default: User)
+- `XIPONA_AUTH_CLAIM_NAME` (optional, default: given_name)
+- `XIPONA_AUTH_CLAIM_ROLE` (optional, the claim name where the user's roles are located, default: role)
+- `XIPONA_AUTH_CLAIM_SCOPE` (optional, default: scope)
 
 #### API
 
-Set the `Auth` section in the respective appsettings file (*Api/Xipona.Api.WebApp/appsettings.\*.json*) to `"Enabled": true` and fill the remaining properties.
+Fill the following env variables. As long as you don't set `XIPONA_AUTH_ENABLED` to `true`, the authentication is disabled.
+- `XIPONA_AUTH_ENABLED` (default: false)
+- `XIPONA_AUTH_AUTHORITY` (the URL of the authority, **without** the well-known part)
+- `XIPONA_AUTH_AUDIENCE`
+- `XIPONA_AUTH_VALID_TYPES__0`
+- `XIPONA_AUTH_CLAIM_NAME` (optional, default: given_name)
+- `XIPONA_AUTH_CLAIM_ROLE` (optional, the claim name where the user's roles are located, default: role)
+- `XIPONA_AUTH_ROLE_NAME_USER` (optional, default: User)
 
 ### Key Vault
-Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault. If you're using the docker compose, remove the _FILE suffix from all capitalized env variables and provide the values directly in the compose file instead of using secrets):
+Instead of providing the database credentials via docker secrets for the api, it's also possible to retrieve them from a [HashiCorp Vault](https://www.vaultproject.io/). To do so, you need the following setup (this assumes that you already have a running Vault):
 
 > If the Vault is configured, all other secret configurations (DB credentials, ...) that are supplied via env variables are ignored
 
-- (optional, but recommended) Remove all environment variables starting with XIPONA and their respective docker secrets from the Api service in the compose file
-- Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
+- (optional, but recommended) Remove the `XIPONA_DB_USERNAME_FILE` & `XIPONA_DB_PASSWORD_FILE` environment variables and their respective docker secrets from the Api service in the compose file
+- (if using docker secrets) Create new docker secrets that contain the username/password with which the api will authenticate agains the vault:
   - xipona-vault-api-username 
   - xipona-vault-api-password
-- Import both secrets in the docker compose file and replace the api's two DB environment variables with
-  - XIPONA_VAULT_USERNAME_FILE: /run/secrets/xipona-vault-api-username
-  - XIPONA_VAULT_PASSWORD_FILE: /run/secrets/xipona-vault-api-password
-- Set the vault's URI in the api's appsettings files (*Api/Xipona.Api.WebApp/appsettings.\*.json*)
-- The default mount point (xipona) & secret names (database, logging) are defined in the same appsettings file and can be changed at will. But the key names inside the respective secrets must be as follows
+- Import both secrets in the docker compose file (If you're using docker compose, remove the _FILE suffix from both env variables and provide the values directly in the compose file instead)
+  - `XIPONA_VAULT_USERNAME_FILE`: /run/secrets/xipona-vault-api-username
+  - `XIPONA_VAULT_PASSWORD_FILE`: /run/secrets/xipona-vault-api-password
+- Set the following env variables in the compose file:
+  - `XIPONA_VAULT_URI`
+  - `XIPONA_VAULT_MOUNT_POINT`
+  - `XIPONA_VAULT_PATHS_DATABASE`
+  - `XIPONA_VAULT_PATHS_LOGGING` (optional, only if you're using [backend logging](#backend-logging))
+- The default mount point (xipona) & secret names (database, logging) can be changed at will. But the key names inside the respective secrets must be as follows
   - Secret "database"
     - `username`: the username with which you want to log in to the database
     - `password`: the password for the database user
@@ -195,11 +198,12 @@ Instead of providing the database credentials via docker secrets for the api, it
     - `apiKey`: the api key for the OTEL collector platform
 
 ## Local Development Setup
-To get everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the dev database.
+To get everything running at your dev machine, at least a running dev DB is necessary. However, it's recommended to start the whole dev stack in Docker. You'll then be able to start the api & frontend locally where the frontend connects to the api and the api to the persisted dev database.
 
 ### API
 
-#### Database connection
-To mimic Docker Secrets, there are two variables in the *Api/Xipona.Api.WebApp/Properties/launchSettings.json*: XIPONA_DB_USERNAME_FILE & XIPONA_DB_PASSWORD_FILE. Create two files with only username and password respectively and specify their full absolute file path in mentioned variables. A normal .txt is enough. [If you want to use the Vault, create XIPONA_VAULT_USERNAME_FILE & XIPONA_VAULT_PASSWORD_FILE variables instead in the launchSettings.json file, remove the other two and specify the location of the files holding the key vault username & password. Then, set the Vault's URI in the *Api/Xipona.Api.WebApp/appsettings.Local.json*.]
+The Xipona.Api.WebApp has user secret support. Add all the needed env variables (that were described above) to this file and fill them with the correct values. The api's CORS config should probably point towards localhost, but the DB connection to your dev stack.
 
-Also, set the DB's address and port in your *Api/Xipona.Api.WebApp/appsettings.Local.json* or use the environment secrets of the WebApi project (recommended).
+### Frontend
+
+Blazor Webassembly does not support user secrets, so you have to use the `variables.json` under Xipona.Frontend.WebApp/wwwroot. `XIPONA_API_URL` is already defined, if you want to use the others, they must be set by you in `variables.json` as well or you create an `appsettings.Local.json` in the same directory.

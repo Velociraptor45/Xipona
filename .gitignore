@@ -12,3 +12,6 @@ obj/
 # logs
 **/[Ll]ogs/
 **/[Ll]og/
+
+# local dev
+Frontend/Xipona.Frontend.WebApp/wwwroot/appsettings.Local.json

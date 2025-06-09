@@ -29,7 +29,7 @@ public class SecretLoadingService : ISecretLoadingService
     private ConnectionStrings GetConnectionString(string username, string password)
     {
         var dbConfig = new DatabaseConfig();
-        _configuration.GetSection("Database").Bind(dbConfig, opt => opt.ErrorOnUnknownConfiguration = true);
+        _configuration.Bind(dbConfig);
 
         var connectionString =
             $"server={dbConfig.Address};port={dbConfig.Port};database={dbConfig.Name};userid={username};password={password}";
@@ -39,8 +39,13 @@ public class SecretLoadingService : ISecretLoadingService
 
     internal class DatabaseConfig
     {
+        [ConfigurationKeyName("XIPONA_DB_NAME")]
         public string Name { get; set; } = string.Empty;
+
+        [ConfigurationKeyName("XIPONA_DB_ADDRESS")]
         public string Address { get; set; } = string.Empty;
+
+        [ConfigurationKeyName("XIPONA_DB_PORT")]
         public string Port { get; set; } = string.Empty;
     }
 }

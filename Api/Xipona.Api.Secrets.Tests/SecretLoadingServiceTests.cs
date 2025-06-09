@@ -212,9 +212,9 @@ public class SecretLoadingServiceTests
         {
             List<KeyValuePair<string, string?>> collection =
             [
-                new("Database:Name", _dbName),
-                new("Database:Address", _dbAddress),
-                new("Database:Port", _dbPort)
+                new("XIPONA_DB_NAME", _dbName),
+                new("XIPONA_DB_ADDRESS", _dbAddress),
+                new("XIPONA_DB_PORT", _dbPort)
             ];
 
             _configurationBuilder.AddInMemoryCollection(collection);
@@ -232,7 +232,7 @@ public class SecretLoadingServiceTests
 
         public void SetupRetrievingDbCredentials()
         {
-            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.Paths.Database}")
+            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.DatabasePath}")
                 .With(msg =>
                 {
                     var token = msg.Headers.GetValues("X-Vault-Token").First();
@@ -254,7 +254,7 @@ public class SecretLoadingServiceTests
 
         public void SetupRetrievingApiKey()
         {
-            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.Paths.Logging}")
+            _handlerMock.When($"{_baseAddress}/v1/{_config.MountPoint}/data/{_config.LoggingPath}")
                 .With(msg =>
                 {
                     var token = msg.Headers.GetValues("X-Vault-Token").First();
