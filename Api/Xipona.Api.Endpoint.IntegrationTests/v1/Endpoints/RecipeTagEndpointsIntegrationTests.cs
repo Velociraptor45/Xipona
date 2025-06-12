@@ -24,7 +24,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class RecipeTagEndpointsIntegrationTests
 {
-    public sealed class CreateRecipeTagAsync : IAssemblyFixture<DockerFixture>
+    public sealed class CreateRecipeTagAsync
     {
         private readonly CreateRecipeTagAsyncFixture _fixture;
 

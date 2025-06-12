@@ -11,7 +11,7 @@ using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
 using Xipona.Api.Domain.TestKit.ShoppingLists.Services;
 using Xipona.Api.TestTools.Exceptions;
-using Xunit.Abstractions;
+
 
 namespace Xipona.Api.Domain.Tests.ShoppingLists.Services;
 

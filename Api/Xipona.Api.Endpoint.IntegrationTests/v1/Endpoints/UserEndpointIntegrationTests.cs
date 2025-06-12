@@ -46,7 +46,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class UserEndpointIntegrationTests
 {
-    public sealed class Login : IAssemblyFixture<DockerFixture>
+    public sealed class Login
     {
         private readonly LoginFixture _fixture;
         public Login(DockerFixture dockerFixture)
@@ -136,7 +136,7 @@ public class UserEndpointIntegrationTests
         }
     }
 
-    public sealed class UpdateGeneralSettings(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateGeneralSettings(DockerFixture dockerFixture)
     {
         private readonly UpdateGeneralSettingsFixture _fixture = new(dockerFixture);
 
@@ -306,7 +306,7 @@ public class UserEndpointIntegrationTests
         }
     }
 
-    public sealed class GetAllCurrencies(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetAllCurrencies(DockerFixture dockerFixture)
     {
         private readonly GetAllCurrenciesFixture _fixture = new(dockerFixture);
 
@@ -367,7 +367,7 @@ public class UserEndpointIntegrationTests
         }
     }
 
-    public sealed class GetGeneralSettings(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetGeneralSettings(DockerFixture dockerFixture)
     {
         private readonly GetGeneralSettingsFixture _fixture = new(dockerFixture);
 

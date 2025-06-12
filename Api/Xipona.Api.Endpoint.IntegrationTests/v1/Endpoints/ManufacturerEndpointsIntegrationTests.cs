@@ -26,7 +26,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ManufacturerEndpointsIntegrationTests
 {
-    public class DeleteManufacturerAsync : IAssemblyFixture<DockerFixture>
+    public class DeleteManufacturerAsync
     {
         private readonly DeleteManufacturerAsyncFixture _fixture;
 

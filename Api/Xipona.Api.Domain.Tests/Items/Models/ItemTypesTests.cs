@@ -16,7 +16,7 @@ public class ItemTypesTests
     {
         private readonly UpdateFixture _fixture = new();
 
-        public static IEnumerable<object?[]> UpdatePriceItemTypeIdCombinations
+        public static TheoryData<ItemTypeId?, ItemTypeId> UpdatePriceItemTypeIdCombinations
         {
             get
             {
@@ -34,7 +34,7 @@ public class ItemTypesTests
             {
                 return new TheoryData<ItemTypeId?>()
                 {
-                    null,
+                    (ItemTypeId?)null,
                     ItemTypeId.New
                 };
             }

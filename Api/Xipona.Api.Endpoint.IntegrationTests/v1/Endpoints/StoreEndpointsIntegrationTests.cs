@@ -38,7 +38,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class StoreEndpointsIntegrationTests
 {
-    public class GetStoreByIdAsync : IAssemblyFixture<DockerFixture>
+    public class GetStoreByIdAsync
     {
         private readonly GetStoreByIdAsyncFixture _fixture;
 
@@ -160,7 +160,7 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    public class GetActiveStoresForShoppingAsync : IAssemblyFixture<DockerFixture>
+    public class GetActiveStoresForShoppingAsync
     {
         private readonly GetActiveStoresForShoppingAsyncFixture _fixture;
 
@@ -256,7 +256,7 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    public class GetActiveStoresForItemAsync : IAssemblyFixture<DockerFixture>
+    public class GetActiveStoresForItemAsync
     {
         private readonly GetActiveStoresForItemAsyncFixture _fixture;
 
@@ -352,7 +352,7 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    public class GetActiveStoresOverviewAsync : IAssemblyFixture<DockerFixture>
+    public class GetActiveStoresOverviewAsync
     {
         private readonly GetActiveStoresOverviewAsyncFixture _fixture;
 
@@ -442,7 +442,7 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    public class CreateStoreAsync : IAssemblyFixture<DockerFixture>
+    public class CreateStoreAsync
     {
         private readonly CreateStoreAsyncFixture _fixture;
 
@@ -565,7 +565,7 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    public class UpdateStoreAsync : IAssemblyFixture<DockerFixture>
+    public class UpdateStoreAsync
     {
         private readonly UpdateStoreAsyncFixture _fixture;
 

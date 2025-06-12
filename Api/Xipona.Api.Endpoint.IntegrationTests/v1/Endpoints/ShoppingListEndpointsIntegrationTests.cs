@@ -61,7 +61,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ShoppingListEndpointsIntegrationTests
 {
-    public sealed class GetActiveShoppingListByStoreId(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetActiveShoppingListByStoreId(DockerFixture dockerFixture)
     {
         private readonly GetActiveShoppingListByStoreIdFixture _fixture = new(dockerFixture);
 
@@ -342,7 +342,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveItemFromShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemFromShoppingList(DockerFixture dockerFixture)
     {
         private readonly RemoveItemFromShoppingListFixture _fixture = new(dockerFixture);
 
@@ -573,7 +573,7 @@ public class ShoppingListEndpointsIntegrationTests
     }
 
     public sealed class AddTemporaryItemToShoppingList(DockerFixture dockerFixture)
-        : IAssemblyFixture<DockerFixture>
+       
     {
         private readonly AddTemporaryItemToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -757,7 +757,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddItemToShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemToShoppingList(DockerFixture dockerFixture)
     {
         private readonly AddItemToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -926,7 +926,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddItemWithTypeToShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemWithTypeToShoppingList(DockerFixture dockerFixture)
     {
         private readonly AddItemWithTypeToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -1160,7 +1160,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class PutItemInBasket(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class PutItemInBasket(DockerFixture dockerFixture)
     {
         private readonly PutItemInBasketFixture _fixture = new(dockerFixture);
 
@@ -1381,7 +1381,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveItemFromBasket(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemFromBasket(DockerFixture dockerFixture)
     {
         private readonly RemoveItemFromBasketFixture _fixture = new(dockerFixture);
 
@@ -1598,7 +1598,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class ChangeItemQuantityOnShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ChangeItemQuantityOnShoppingList(DockerFixture dockerFixture)
     {
         private readonly ChangeItemQuantityOnShoppingListFixture _fixture = new(dockerFixture);
 
@@ -1814,7 +1814,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class FinishList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class FinishList(DockerFixture dockerFixture)
     {
         private readonly FinishListFixture _fixture = new(dockerFixture);
 
@@ -1968,7 +1968,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddItemDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemDiscount(DockerFixture dockerFixture)
     {
         private readonly AddItemDiscountFixture _fixture = new(dockerFixture);
 
@@ -2057,7 +2057,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveShoppingListDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveShoppingListDiscount(DockerFixture dockerFixture)
     {
         private readonly RemoveShoppingListDiscountFixture _fixture = new(dockerFixture);
 
@@ -2131,7 +2131,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveItemDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemDiscount(DockerFixture dockerFixture)
     {
         private readonly RemoveItemDiscountFixture _fixture = new(dockerFixture);
 
@@ -2220,7 +2220,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddShoppingListDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddShoppingListDiscount(DockerFixture dockerFixture)
     {
         private readonly AddShoppingListDiscountFixture _fixture = new(dockerFixture);
 

@@ -72,7 +72,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ItemEndpointsIntegrationTests
 {
-    public sealed class GetItemTypePricesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetItemTypePricesAsync(DockerFixture dockerFixture)
     {
         private readonly GetItemTypePricesAsyncFixture _fixture = new(dockerFixture);
 
@@ -227,7 +227,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class GetTotalSearchResultCount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetTotalSearchResultCount(DockerFixture dockerFixture)
     {
         private readonly GetTotalSearchResultCountFixture _fixture = new(dockerFixture);
 
@@ -337,7 +337,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsAsync(DockerFixture dockerFixture)
     {
         private readonly SearchItemsAsyncFixture _fixture = new(dockerFixture);
 
@@ -566,7 +566,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsForShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsForShoppingListAsync(DockerFixture dockerFixture)
     {
         private readonly SearchItemsForShoppingListAsyncFixture _fixture = new(dockerFixture);
 
@@ -1098,7 +1098,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsByItemCategoryAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsByItemCategoryAsync(DockerFixture dockerFixture)
     {
         private readonly SearchItemsByItemCategoryAsyncFixture _fixture = new(dockerFixture);
 
@@ -1262,7 +1262,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class CreateItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class CreateItemAsync(DockerFixture dockerFixture)
     {
         private readonly CreateItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -1476,7 +1476,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class CreateItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class CreateItemWithTypesAsync(DockerFixture dockerFixture)
     {
         private readonly CreateItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
@@ -1709,7 +1709,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class ModifyItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ModifyItemAsync(DockerFixture dockerFixture)
     {
         private readonly ModifyItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -1866,7 +1866,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class ModifyItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ModifyItemWithTypesAsync(DockerFixture dockerFixture)
     {
         private readonly ModifyItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
@@ -2056,7 +2056,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class UpdateItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemWithTypesAsync(DockerFixture dockerFixture)
     {
         private readonly UpdateItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
@@ -2380,7 +2380,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class UpdateItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemAsync(DockerFixture dockerFixture)
     {
         private readonly UpdateItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -2552,7 +2552,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class UpdateItemPriceAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemPriceAsync(DockerFixture dockerFixture)
     {
         private readonly UpdateItemPriceAsyncFixture _fixture = new(dockerFixture);
 
@@ -2938,7 +2938,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class DeleteItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class DeleteItemAsync(DockerFixture dockerFixture)
     {
         private readonly DeleteItemAsyncFixture _fixture = new(dockerFixture);
 

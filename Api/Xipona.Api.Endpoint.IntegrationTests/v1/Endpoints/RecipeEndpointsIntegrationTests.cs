@@ -53,7 +53,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class RecipeEndpointsIntegrationTests
 {
-    public class CreateRecipeAsync : IAssemblyFixture<DockerFixture>
+    public class CreateRecipeAsync
     {
         private readonly CreateRecipeAsyncFixture _fixture;
 
@@ -318,7 +318,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class SearchRecipesByNameAsync : IAssemblyFixture<DockerFixture>
+    public class SearchRecipesByNameAsync
     {
         private readonly SearchRecipesByNameAsyncFixture _fixture;
 
@@ -461,7 +461,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class ModifyRecipeAsync : IAssemblyFixture<DockerFixture>
+    public class ModifyRecipeAsync
     {
         private readonly ModifyRecipeAsyncFixture _fixture;
 
@@ -759,7 +759,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class GetItemAmountsForOneServingAsync : IAssemblyFixture<DockerFixture>
+    public class GetItemAmountsForOneServingAsync
     {
         private readonly GetItemAmountsForOneServingAsyncFixture _fixture;
 
