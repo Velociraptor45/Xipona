@@ -72,7 +72,7 @@ public class AddTemporaryItemToShoppingListTests : EndpointCommandWithReturnType
                 ErrorConverterMock.Object,
                 CommandConverterMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

@@ -43,7 +43,7 @@ public class CreateRecipeTagTests : EndpointCommandWithReturnTypeTestsBase<Creat
                 ErrorConverterMock.Object,
                 CommandConverterMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

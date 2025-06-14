@@ -64,7 +64,7 @@ public class GetItemCategoryByIdTests : EndpointQueryNoConverterTestsBase<
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
                 ErrorConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

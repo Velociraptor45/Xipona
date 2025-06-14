@@ -40,7 +40,7 @@ public class SearchItemsTests :
             return await ItemEndpoints.SearchItems(_searchString,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default,
+                TestContext.Current.CancellationToken,
                 _page,
                 _pageSize);
         }

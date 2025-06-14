@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Text.RegularExpressions;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Items.Commands;
@@ -57,8 +59,6 @@ using Xipona.Api.Repositories.TestKit.Stores.Entities;
 using Xipona.Api.TestTools.AutoFixture;
 using Xipona.Api.TestTools.Exceptions;
 using Xipona.Api.TestTools.Extensions;
-using System;
-using System.Text.RegularExpressions;
 using Xunit;
 using Item = Xipona.Api.Repositories.Items.Entities.Item;
 using ItemAvailabilityContract = Xipona.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
@@ -168,7 +168,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<ItemTypePricesReadModel, ItemTypePricesContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -287,7 +287,7 @@ public class ItemEndpointsIntegrationTests
                 return await ItemEndpoints.GetTotalSearchResultCount(
                     SearchInput,
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupSearchInput()
@@ -415,7 +415,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
-                    default,
+                    TestContext.Current.CancellationToken,
                     Page.Value,
                     PageSize.Value);
             }
@@ -431,7 +431,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task SetupDatabaseAsync()
@@ -796,7 +796,7 @@ public class ItemEndpointsIntegrationTests
                         IToContractConverter<SearchItemForShoppingResultReadModel,
                             SearchItemForShoppingListResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupStore()
@@ -1148,7 +1148,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItemCategory()
@@ -1326,7 +1326,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateItemContract, ItemCreation>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<ItemReadModel, ItemContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1542,7 +1542,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateItemWithTypesContract, IItem>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<ItemReadModel, ItemContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1773,7 +1773,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, ModifyItemContract), ModifyItemCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExistingItem()
@@ -1933,7 +1933,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
             public void SetupExistingItem()
             {
@@ -2221,7 +2221,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupCurrentItem()
@@ -2455,7 +2455,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<(Guid, UpdateItemContract), UpdateItemCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedItems()
@@ -2704,7 +2704,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItemId()
@@ -3011,7 +3011,7 @@ public class ItemEndpointsIntegrationTests
                 return await ItemEndpoints.DeleteItem(Item.Id,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItem()

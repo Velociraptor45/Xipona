@@ -66,7 +66,7 @@ public class AddItemDiscountTests : EndpointCommandTestsBase<(Guid, AddItemDisco
                 CommandDispatcherMock.Object,
                 ErrorConverterMock.Object,
                 CommandConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

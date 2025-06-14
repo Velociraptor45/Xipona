@@ -108,7 +108,7 @@ public class UserEndpointIntegrationTests
                     {
                         NameClaimType = "given_name"
                     },
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -218,7 +218,7 @@ public class UserEndpointIntegrationTests
                     _contract,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -301,7 +301,7 @@ public class UserEndpointIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
         }
     }
@@ -345,7 +345,7 @@ public class UserEndpointIntegrationTests
                 return await UserEndpoints.GetAllCurrencies(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<CurrencyReadModel, CurrencyContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -415,7 +415,7 @@ public class UserEndpointIntegrationTests
                 return await UserEndpoints.GetGeneralSettings(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()

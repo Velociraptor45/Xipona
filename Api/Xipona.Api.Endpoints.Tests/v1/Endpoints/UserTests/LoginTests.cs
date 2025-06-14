@@ -69,7 +69,7 @@ public class LoginTests : EndpointCommandWithReturnTypeTestsBase<Guid, LoginComm
                 CommandDispatcherMock.Object,
                 ErrorConverterMock.Object,
                 _authOptions,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

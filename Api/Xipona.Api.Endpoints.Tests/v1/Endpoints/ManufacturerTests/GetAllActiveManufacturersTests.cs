@@ -32,7 +32,7 @@ public class GetAllActiveManufacturersTests : EndpointEnumerableQueryNoConverter
             return await ManufacturerEndpoints.GetAllActiveManufacturers(
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

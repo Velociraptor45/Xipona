@@ -92,7 +92,7 @@ public class RecipeTagEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateRecipeTagContract, CreateRecipeTagCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IRecipeTag, RecipeTagContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupContract()

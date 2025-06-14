@@ -41,7 +41,7 @@ public class SearchItemCategoriesByNameTests : EndpointEnumerableQueryNoConverte
                 _searchInput, _includeDeleted.Value,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

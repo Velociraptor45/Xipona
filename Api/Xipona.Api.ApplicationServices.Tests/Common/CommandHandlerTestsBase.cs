@@ -27,7 +27,7 @@ public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturn
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        await sut.HandleAsync(_fixture.Command, default);
+        await sut.HandleAsync(_fixture.Command, TestContext.Current.CancellationToken);
 
         // Assert
         _fixture.VerifyCallingService();
@@ -45,7 +45,7 @@ public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturn
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        await sut.HandleAsync(_fixture.Command, default);
+        await sut.HandleAsync(_fixture.Command, TestContext.Current.CancellationToken);
 
         // Assert
         _fixture.VerifyCommittingTransaction();
@@ -63,7 +63,7 @@ public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturn
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        var result = await sut.HandleAsync(_fixture.Command, default);
+        var result = await sut.HandleAsync(_fixture.Command, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);

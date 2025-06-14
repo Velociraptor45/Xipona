@@ -31,7 +31,7 @@ public class GetAllRecipeTagsTests : EndpointEnumerableQueryNoConverterTestsBase
             return await RecipeTagEndpoints.GetAllRecipeTags(
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

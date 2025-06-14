@@ -62,7 +62,7 @@ public class GetManufacturerByIdTests : EndpointQueryNoConverterTestsBase<
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
                 ErrorConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

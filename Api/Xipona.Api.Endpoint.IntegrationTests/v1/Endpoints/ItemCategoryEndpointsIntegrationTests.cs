@@ -83,7 +83,7 @@ public class ItemCategoryEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<Guid, DeleteItemCategoryCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItemCategory()

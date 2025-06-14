@@ -26,7 +26,7 @@ public abstract class DomainEventHandlerTestsBase<TDomainEvent, TDomainEventHand
         TestPropertyNotSetException.ThrowIfNull(_fixture.DomainEvent);
 
         // Act
-        await sut.HandleAsync(_fixture.DomainEvent, default);
+        await sut.HandleAsync(_fixture.DomainEvent, TestContext.Current.CancellationToken);
 
         // Assert
         _fixture.VerifyCallingService();

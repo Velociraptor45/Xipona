@@ -32,7 +32,7 @@ public class GetAllActiveItemCategoriesTests : EndpointEnumerableQueryNoConverte
             return await ItemCategoryEndpoints.GetAllActiveItemCategories(
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()
