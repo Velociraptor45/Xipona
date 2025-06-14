@@ -24,7 +24,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class RecipeTagEndpointsIntegrationTests
 {
-    public sealed class CreateRecipeTagAsync : IAssemblyFixture<DockerFixture>
+    public sealed class CreateRecipeTagAsync
     {
         private readonly CreateRecipeTagAsyncFixture _fixture;
 
@@ -92,7 +92,7 @@ public class RecipeTagEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateRecipeTagContract, CreateRecipeTagCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IRecipeTag, RecipeTagContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupContract()

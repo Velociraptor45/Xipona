@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
+using System;
 using Xipona.Api.ApplicationServices;
 using Xipona.Api.Core;
 using Xipona.Api.Core.Constants;
@@ -23,7 +24,7 @@ using Xipona.Api.Repositories.ShoppingLists.Contexts;
 using Xipona.Api.Repositories.Stores.Contexts;
 using Xipona.Api.Repositories.Users.Contexts;
 using Xipona.Api.Repositories.Users.Entities;
-using System;
+using Xunit;
 
 namespace Xipona.Api.Endpoint.IntegrationTests;
 
@@ -109,7 +110,7 @@ public abstract class DatabaseFixture : IDisposable
     public static async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
     {
         var generator = scope.ServiceProvider.GetRequiredService<ITransactionGenerator>();
-        return await generator.GenerateAsync(CancellationToken.None);
+        return await generator.GenerateAsync(TestContext.Current.CancellationToken);
     }
 
     public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync(IServiceScope assertionScope)

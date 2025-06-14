@@ -29,13 +29,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         Fixture = fixture;
     }
 
-    [SkippableFact]
+    [Fact]
     public virtual async Task EndpointCall_WithValidData_ShouldReturnOk()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.OK);
 
-        Skip.If(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParameters();
@@ -50,13 +50,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         result.Should().BeOfType<Ok>();
     }
 
-    [SkippableFact]
+    [Fact]
     public async Task EndpointCall_WithValidData_ShouldReturnNoContent()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.NoContent);
 
-        Skip.If(statusResult is null, $"Status code 204 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 204 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParameters();
@@ -71,13 +71,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         result.Should().BeOfType<NoContent>();
     }
 
-    [SkippableFact]
+    [Fact]
     public async Task EndpointCall_WithMalformedInput_ShouldReturnBadRequest()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.BadRequest);
 
-        Skip.If(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParametersForBadRequest();
@@ -92,13 +92,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         badRequestResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedBadRequestMessage);
     }
 
-    [SkippableFact]
+    [Fact]
     public async Task EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.UnprocessableEntity);
 
-        Skip.If(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParameters();
@@ -120,13 +120,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
 
     #region ResponseTypes
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveUnprocessableEntityResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.UnprocessableEntity);
 
-        Skip.If(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();
@@ -138,13 +138,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         unprocessableEntity.Type.Should().Be<ErrorContract>();
     }
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveOkResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.OK);
 
-        Skip.If(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();
@@ -156,13 +156,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         ok.Type.Should().Be(Fixture.OkResultReturnType);
     }
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveNotFoundResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.NotFound);
 
-        Skip.If(statusResult is null, $"Status code 404 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 404 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();
@@ -174,13 +174,13 @@ public abstract class EndpointCommandTestsBase<TCommandConverterInputType, TComm
         notFound.Type.Should().Be<ErrorContract>();
     }
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveBadRequestResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.BadRequest);
 
-        Skip.If(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.TestKit.Common.Queries;
 using Xipona.Api.Contracts.Common;
@@ -12,9 +15,6 @@ using Xipona.Api.Domain.Common.Exceptions;
 using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.TestKit.Common;
 using Xipona.Api.TestTools.Exceptions;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
 
 namespace Xipona.Api.Endpoints.Tests.Common;
 
@@ -51,13 +51,13 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         okResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedResult);
     }
 
-    [SkippableFact]
+    [Fact]
     public async Task EndpointCall_WithMalformedInput_ShouldReturnBadRequest()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.BadRequest);
 
-        Skip.If(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParametersForBadRequest();
@@ -72,13 +72,13 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         badRequestResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedBadRequestMessage);
     }
 
-    [SkippableFact]
+    [Fact]
     public async Task EndpointCall_WithDomainException_ShouldReturnUnprocessableEntity()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.UnprocessableEntity);
 
-        Skip.If(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParameters();
@@ -100,13 +100,13 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
 
     #region ResponseTypes
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveUnprocessableEntityResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.UnprocessableEntity);
 
-        Skip.If(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 422 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();
@@ -131,13 +131,13 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         ok.Type.Should().Be<TReturnType>();
     }
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveNotFoundResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.NotFound);
 
-        Skip.If(statusResult is null, $"Status code 404 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 404 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();
@@ -149,13 +149,13 @@ public abstract class EndpointQueryTestsBase<TQueryConverterInputType, TQuery, T
         notFound.Type.Should().Be<ErrorContract>();
     }
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveBadRequestResponseTypeMetadata()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.BadRequest);
 
-        Skip.If(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 400 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();

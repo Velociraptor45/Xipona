@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 using Xipona.Api.ApplicationServices.ItemCategories.Commands.CreateItemCategory;
 using Xipona.Api.Contracts.Common.Queries;
 using Xipona.Api.Domain.ItemCategories.Models;
@@ -8,7 +9,6 @@ using Xipona.Api.Endpoint.v1.Endpoints;
 using Xipona.Api.Endpoints.Tests.Common;
 using Xipona.Api.Endpoints.Tests.Common.StatusResults;
 using Xipona.Api.TestTools.Exceptions;
-using System.Net.Http;
 
 namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
 
@@ -40,7 +40,7 @@ public class CreateItemCategoryTests : EndpointCommandWithReturnTypeTestsBase<st
                 CommandDispatcherMock.Object,
                 ContractConverterMock.Object,
                 CommandConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupCommand()

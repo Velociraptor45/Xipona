@@ -42,7 +42,7 @@ public class GetManufacturerSearchResultsTests : EndpointEnumerableQueryNoConver
                 _searchInput,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default,
+                TestContext.Current.CancellationToken,
                 _includeDeleted.Value);
         }
 

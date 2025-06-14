@@ -72,7 +72,7 @@ public class ModifyRecipeTests : EndpointCommandTestsBase<(Guid, ModifyRecipeCon
                 CommandDispatcherMock.Object,
                 CommandConverterMock.Object,
                 ErrorConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

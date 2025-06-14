@@ -38,7 +38,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class StoreEndpointsIntegrationTests
 {
-    public class GetStoreByIdAsync : IAssemblyFixture<DockerFixture>
+    public class GetStoreByIdAsync
     {
         private readonly GetStoreByIdAsyncFixture _fixture;
 
@@ -106,7 +106,7 @@ public class StoreEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupStoreId()
@@ -155,12 +155,12 @@ public class StoreEndpointsIntegrationTests
                 await dbContext.AddAsync(_existingStore);
                 await dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync(default);
+                await transaction.CommitAsync(TestContext.Current.CancellationToken);
             }
         }
     }
 
-    public class GetActiveStoresForShoppingAsync : IAssemblyFixture<DockerFixture>
+    public class GetActiveStoresForShoppingAsync
     {
         private readonly GetActiveStoresForShoppingAsyncFixture _fixture;
 
@@ -206,7 +206,7 @@ public class StoreEndpointsIntegrationTests
                 return await StoreEndpoints.GetActiveStoresForShopping(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreForShoppingContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExistingStores()
@@ -251,12 +251,12 @@ public class StoreEndpointsIntegrationTests
 
                 await dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync(default);
+                await transaction.CommitAsync(TestContext.Current.CancellationToken);
             }
         }
     }
 
-    public class GetActiveStoresForItemAsync : IAssemblyFixture<DockerFixture>
+    public class GetActiveStoresForItemAsync
     {
         private readonly GetActiveStoresForItemAsyncFixture _fixture;
 
@@ -302,7 +302,7 @@ public class StoreEndpointsIntegrationTests
                 return await StoreEndpoints.GetActiveStoresForItem(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreForItemContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExistingStores()
@@ -347,12 +347,12 @@ public class StoreEndpointsIntegrationTests
 
                 await dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync(default);
+                await transaction.CommitAsync(TestContext.Current.CancellationToken);
             }
         }
     }
 
-    public class GetActiveStoresOverviewAsync : IAssemblyFixture<DockerFixture>
+    public class GetActiveStoresOverviewAsync
     {
         private readonly GetActiveStoresOverviewAsyncFixture _fixture;
 
@@ -398,7 +398,7 @@ public class StoreEndpointsIntegrationTests
                 return await StoreEndpoints.GetActiveStoresOverview(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreSearchResultContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExistingStores()
@@ -437,12 +437,12 @@ public class StoreEndpointsIntegrationTests
 
                 await dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync(default);
+                await transaction.CommitAsync(TestContext.Current.CancellationToken);
             }
         }
     }
 
-    public class CreateStoreAsync : IAssemblyFixture<DockerFixture>
+    public class CreateStoreAsync
     {
         private readonly CreateStoreAsyncFixture _fixture;
 
@@ -513,7 +513,7 @@ public class StoreEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateStoreContract, CreateStoreCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IStore, StoreContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupContract()
@@ -565,7 +565,7 @@ public class StoreEndpointsIntegrationTests
         }
     }
 
-    public class UpdateStoreAsync : IAssemblyFixture<DockerFixture>
+    public class UpdateStoreAsync
     {
         private readonly UpdateStoreAsyncFixture _fixture;
 
@@ -727,7 +727,7 @@ public class StoreEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<ModifyStoreContract, ModifyStoreCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupContractWithSameSortingIndexAsDeletedSection()
@@ -776,7 +776,7 @@ public class StoreEndpointsIntegrationTests
                 shoppingListContext.Add(ExistingShoppingList);
                 await shoppingListContext.SaveChangesAsync();
 
-                await transaction.CommitAsync(default);
+                await transaction.CommitAsync(TestContext.Current.CancellationToken);
             }
 
             public void SetupExistingItem()
@@ -949,7 +949,7 @@ public class StoreEndpointsIntegrationTests
         public async Task<IList<IStore>> LoadPersistedStoresAsync()
         {
             using var scope = CreateServiceScope();
-            var repo = scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(default);
+            var repo = scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(TestContext.Current.CancellationToken);
 
             using (await CreateTransactionAsync(scope))
             {

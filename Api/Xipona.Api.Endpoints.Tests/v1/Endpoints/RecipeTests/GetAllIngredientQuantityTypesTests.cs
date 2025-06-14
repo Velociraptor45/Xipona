@@ -32,7 +32,7 @@ public class GetAllIngredientQuantityTypesTests : EndpointEnumerableQueryNoConve
             return await RecipeEndpoints.GetAllIngredientQuantityTypes(
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

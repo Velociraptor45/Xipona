@@ -58,7 +58,7 @@ public class GetItemTypePricesTests() :
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
                 ErrorConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

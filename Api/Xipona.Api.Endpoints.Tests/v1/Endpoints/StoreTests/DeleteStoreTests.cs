@@ -61,7 +61,7 @@ public class DeleteStoreTests : EndpointCommandTestsBase<bool,
                 _storeId,
                 CommandDispatcherMock.Object,
                 ErrorConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

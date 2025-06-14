@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Text.RegularExpressions;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Items.Commands;
@@ -57,8 +59,6 @@ using Xipona.Api.Repositories.TestKit.Stores.Entities;
 using Xipona.Api.TestTools.AutoFixture;
 using Xipona.Api.TestTools.Exceptions;
 using Xipona.Api.TestTools.Extensions;
-using System;
-using System.Text.RegularExpressions;
 using Xunit;
 using Item = Xipona.Api.Repositories.Items.Entities.Item;
 using ItemAvailabilityContract = Xipona.Api.Contracts.Items.Commands.Shared.ItemAvailabilityContract;
@@ -72,7 +72,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ItemEndpointsIntegrationTests
 {
-    public sealed class GetItemTypePricesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetItemTypePricesAsync(DockerFixture dockerFixture)
     {
         private readonly GetItemTypePricesAsyncFixture _fixture = new(dockerFixture);
 
@@ -168,7 +168,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<ItemTypePricesReadModel, ItemTypePricesContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -227,7 +227,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class GetTotalSearchResultCount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetTotalSearchResultCount(DockerFixture dockerFixture)
     {
         private readonly GetTotalSearchResultCountFixture _fixture = new(dockerFixture);
 
@@ -287,7 +287,7 @@ public class ItemEndpointsIntegrationTests
                 return await ItemEndpoints.GetTotalSearchResultCount(
                     SearchInput,
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupSearchInput()
@@ -337,7 +337,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsAsync(DockerFixture dockerFixture)
     {
         private readonly SearchItemsAsyncFixture _fixture = new(dockerFixture);
 
@@ -415,7 +415,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
-                    default,
+                    TestContext.Current.CancellationToken,
                     Page.Value,
                     PageSize.Value);
             }
@@ -431,7 +431,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task SetupDatabaseAsync()
@@ -566,7 +566,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsForShoppingListAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsForShoppingListAsync(DockerFixture dockerFixture)
     {
         private readonly SearchItemsForShoppingListAsyncFixture _fixture = new(dockerFixture);
 
@@ -796,7 +796,7 @@ public class ItemEndpointsIntegrationTests
                         IToContractConverter<SearchItemForShoppingResultReadModel,
                             SearchItemForShoppingListResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupStore()
@@ -1098,7 +1098,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsByItemCategoryAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class SearchItemsByItemCategoryAsync(DockerFixture dockerFixture)
     {
         private readonly SearchItemsByItemCategoryAsyncFixture _fixture = new(dockerFixture);
 
@@ -1148,7 +1148,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItemCategory()
@@ -1262,7 +1262,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class CreateItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class CreateItemAsync(DockerFixture dockerFixture)
     {
         private readonly CreateItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -1326,7 +1326,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateItemContract, ItemCreation>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<ItemReadModel, ItemContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1476,7 +1476,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class CreateItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class CreateItemWithTypesAsync(DockerFixture dockerFixture)
     {
         private readonly CreateItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
@@ -1542,7 +1542,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<CreateItemWithTypesContract, IItem>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<ItemReadModel, ItemContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1709,7 +1709,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class ModifyItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ModifyItemAsync(DockerFixture dockerFixture)
     {
         private readonly ModifyItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -1773,7 +1773,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, ModifyItemContract), ModifyItemCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExistingItem()
@@ -1866,7 +1866,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class ModifyItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ModifyItemWithTypesAsync(DockerFixture dockerFixture)
     {
         private readonly ModifyItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
@@ -1933,7 +1933,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, ModifyItemWithTypesContract), ModifyItemWithTypesCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
             public void SetupExistingItem()
             {
@@ -2056,7 +2056,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class UpdateItemWithTypesAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemWithTypesAsync(DockerFixture dockerFixture)
     {
         private readonly UpdateItemWithTypesAsyncFixture _fixture = new(dockerFixture);
 
@@ -2221,7 +2221,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, UpdateItemWithTypesContract), UpdateItemWithTypesCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupCurrentItem()
@@ -2380,7 +2380,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class UpdateItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemAsync(DockerFixture dockerFixture)
     {
         private readonly UpdateItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -2455,7 +2455,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<(Guid, UpdateItemContract), UpdateItemCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedItems()
@@ -2552,7 +2552,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class UpdateItemPriceAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateItemPriceAsync(DockerFixture dockerFixture)
     {
         private readonly UpdateItemPriceAsyncFixture _fixture = new(dockerFixture);
 
@@ -2704,7 +2704,7 @@ public class ItemEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<(Guid, UpdateItemPriceContract), UpdateItemPriceCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItemId()
@@ -2938,7 +2938,7 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class DeleteItemAsync(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class DeleteItemAsync(DockerFixture dockerFixture)
     {
         private readonly DeleteItemAsyncFixture _fixture = new(dockerFixture);
 
@@ -3011,7 +3011,7 @@ public class ItemEndpointsIntegrationTests
                 return await ItemEndpoints.DeleteItem(Item.Id,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItem()

@@ -39,7 +39,7 @@ public class CreateManufacturerTests : EndpointCommandWithReturnTypeTestsBase<st
                 CommandDispatcherMock.Object,
                 ContractConverterMock.Object,
                 CommandConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

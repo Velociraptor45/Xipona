@@ -46,7 +46,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class UserEndpointIntegrationTests
 {
-    public sealed class Login : IAssemblyFixture<DockerFixture>
+    public sealed class Login
     {
         private readonly LoginFixture _fixture;
         public Login(DockerFixture dockerFixture)
@@ -108,7 +108,7 @@ public class UserEndpointIntegrationTests
                     {
                         NameClaimType = "given_name"
                     },
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -136,7 +136,7 @@ public class UserEndpointIntegrationTests
         }
     }
 
-    public sealed class UpdateGeneralSettings(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class UpdateGeneralSettings(DockerFixture dockerFixture)
     {
         private readonly UpdateGeneralSettingsFixture _fixture = new(dockerFixture);
 
@@ -218,7 +218,7 @@ public class UserEndpointIntegrationTests
                     _contract,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -301,12 +301,12 @@ public class UserEndpointIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
         }
     }
 
-    public sealed class GetAllCurrencies(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetAllCurrencies(DockerFixture dockerFixture)
     {
         private readonly GetAllCurrenciesFixture _fixture = new(dockerFixture);
 
@@ -345,7 +345,7 @@ public class UserEndpointIntegrationTests
                 return await UserEndpoints.GetAllCurrencies(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<CurrencyReadModel, CurrencyContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -367,7 +367,7 @@ public class UserEndpointIntegrationTests
         }
     }
 
-    public sealed class GetGeneralSettings(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetGeneralSettings(DockerFixture dockerFixture)
     {
         private readonly GetGeneralSettingsFixture _fixture = new(dockerFixture);
 
@@ -415,7 +415,7 @@ public class UserEndpointIntegrationTests
                 return await UserEndpoints.GetGeneralSettings(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()

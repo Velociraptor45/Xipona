@@ -26,7 +26,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ManufacturerEndpointsIntegrationTests
 {
-    public class DeleteManufacturerAsync : IAssemblyFixture<DockerFixture>
+    public class DeleteManufacturerAsync
     {
         private readonly DeleteManufacturerAsyncFixture _fixture;
 
@@ -119,7 +119,7 @@ public class ManufacturerEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<Guid, DeleteManufacturerCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupManufacturerId()
@@ -195,12 +195,12 @@ public class ManufacturerEndpointsIntegrationTests
 
         protected IManufacturerRepository CreateManufacturerRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(default);
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(TestContext.Current.CancellationToken);
         }
 
         protected IItemRepository CreateItemRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(default);
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(TestContext.Current.CancellationToken);
         }
 
         public async Task<IList<Manufacturer>> LoadPersistedManufacturersAsync()

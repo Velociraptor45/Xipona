@@ -32,7 +32,7 @@ public class GetActiveStoresOverviewTests : EndpointEnumerableQueryNoConverterTe
             return await StoreEndpoints.GetActiveStoresOverview(
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

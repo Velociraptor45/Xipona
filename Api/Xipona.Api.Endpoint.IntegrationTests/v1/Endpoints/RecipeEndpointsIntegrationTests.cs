@@ -53,7 +53,7 @@ namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class RecipeEndpointsIntegrationTests
 {
-    public class CreateRecipeAsync : IAssemblyFixture<DockerFixture>
+    public class CreateRecipeAsync
     {
         private readonly CreateRecipeAsyncFixture _fixture;
 
@@ -151,7 +151,7 @@ public class RecipeEndpointsIntegrationTests
                         .GetRequiredService<IToDomainConverter<CreateRecipeContract, CreateRecipeCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<RecipeReadModel, RecipeContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -318,7 +318,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class SearchRecipesByNameAsync : IAssemblyFixture<DockerFixture>
+    public class SearchRecipesByNameAsync
     {
         private readonly SearchRecipesByNameAsyncFixture _fixture;
 
@@ -370,7 +370,7 @@ public class RecipeEndpointsIntegrationTests
                     scope.ServiceProvider
                         .GetRequiredService<IToContractConverter<RecipeSearchResult, RecipeSearchResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -461,7 +461,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class ModifyRecipeAsync : IAssemblyFixture<DockerFixture>
+    public class ModifyRecipeAsync
     {
         private readonly ModifyRecipeAsyncFixture _fixture;
 
@@ -578,7 +578,7 @@ public class RecipeEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, ModifyRecipeContract), ModifyRecipeCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupRecipeId()
@@ -759,7 +759,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class GetItemAmountsForOneServingAsync : IAssemblyFixture<DockerFixture>
+    public class GetItemAmountsForOneServingAsync
     {
         private readonly GetItemAmountsForOneServingAsyncFixture _fixture;
 
@@ -812,7 +812,7 @@ public class RecipeEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupRecipeId()

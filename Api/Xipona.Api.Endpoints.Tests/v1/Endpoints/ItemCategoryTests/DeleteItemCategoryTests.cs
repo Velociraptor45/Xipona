@@ -67,7 +67,7 @@ public class DeleteItemCategoryTests : EndpointCommandTestsBase<Guid, DeleteItem
                 CommandDispatcherMock.Object,
                 ErrorConverterMock.Object,
                 CommandConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

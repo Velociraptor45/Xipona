@@ -12,7 +12,7 @@ using Xipona.Api.Domain.TestKit.Recipes.Ports;
 using Xipona.Api.Domain.TestKit.Stores.Ports;
 using Xipona.Api.Domain.Tests.Recipes.Services.Shared;
 using Xipona.Api.TestTools.Exceptions;
-using Xunit.Abstractions;
+
 
 namespace Xipona.Api.Domain.Tests.Recipes.Services.Queries;
 

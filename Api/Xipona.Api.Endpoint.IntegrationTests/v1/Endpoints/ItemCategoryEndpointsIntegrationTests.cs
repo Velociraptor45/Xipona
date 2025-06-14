@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.ItemCategories.Commands.DeleteItemCategory;
 using Xipona.Api.Contracts.Common;
@@ -17,14 +18,13 @@ using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
 using Xipona.Api.Repositories.TestKit.Recipes.Entities;
 using Xipona.Api.TestTools.AutoFixture;
 using Xipona.Api.TestTools.Exceptions;
-using System;
 using Xunit;
 
 namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ItemCategoryEndpointsIntegrationTests
 {
-    public sealed class DeleteItemCategoryAsync : IAssemblyFixture<DockerFixture>
+    public sealed class DeleteItemCategoryAsync
     {
         private readonly DeleteItemCategoryAsyncFixture _fixture;
 
@@ -83,7 +83,7 @@ public class ItemCategoryEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<Guid, DeleteItemCategoryCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupItemCategory()

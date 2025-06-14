@@ -25,7 +25,7 @@ public abstract class QueryHandlerTestsBase<TQueryHandler, TQuery, TReturnType>
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        var result = await sut.HandleAsync(_fixture.Query, default);
+        var result = await sut.HandleAsync(_fixture.Query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);

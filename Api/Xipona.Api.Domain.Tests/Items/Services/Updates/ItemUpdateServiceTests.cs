@@ -20,7 +20,7 @@ public class ItemUpdateServiceTests
 
         public static TheoryData<ItemTypeId?> GetItemTypeIds()
         {
-            return new TheoryData<ItemTypeId?> { null, ItemTypeId.New };
+            return [(ItemTypeId?)null, ItemTypeId.New];
         }
 
         [Theory]

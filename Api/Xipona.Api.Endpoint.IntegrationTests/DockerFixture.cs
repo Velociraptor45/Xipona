@@ -2,7 +2,10 @@
 using Ductus.FluentDocker.Services;
 using System;
 using System.IO;
+using Xipona.Api.Endpoint.IntegrationTests;
+using Xunit;
 
+[assembly: AssemblyFixture(typeof(DockerFixture))]
 namespace Xipona.Api.Endpoint.IntegrationTests;
 
 public sealed class DockerFixture : IDisposable
