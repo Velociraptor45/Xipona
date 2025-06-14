@@ -114,7 +114,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<ShoppingListReadModel, ShoppingListContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -483,7 +483,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -573,7 +573,7 @@ public class ShoppingListEndpointsIntegrationTests
     }
 
     public sealed class AddTemporaryItemToShoppingList(DockerFixture dockerFixture)
-       
+
     {
         private readonly AddTemporaryItemToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -654,7 +654,7 @@ public class ShoppingListEndpointsIntegrationTests
                         IToDomainConverter<(Guid, AddTemporaryItemToShoppingListContract), AddTemporaryItemToShoppingListCommand>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<TemporaryShoppingListItemReadModel, TemporaryShoppingListItemContract>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupContract()
@@ -842,7 +842,7 @@ public class ShoppingListEndpointsIntegrationTests
                     Contract,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1043,7 +1043,7 @@ public class ShoppingListEndpointsIntegrationTests
                     Contract,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1279,7 +1279,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1496,7 +1496,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1713,7 +1713,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1913,7 +1913,7 @@ public class ShoppingListEndpointsIntegrationTests
                     FinishedAt,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupShoppingListId()
@@ -2016,7 +2016,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, AddItemDiscountContract), AddItemDiscountCommand>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -2103,7 +2103,7 @@ public class ShoppingListEndpointsIntegrationTests
                     _listDiscountId,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupShoppingListWithDiscount()
@@ -2182,7 +2182,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, RemoveItemDiscountContract), RemoveItemDiscountCommand>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupShoppingListWithDiscount()
@@ -2297,7 +2297,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, AddShoppingListDiscountContract), AddShoppingListDiscountCommand>>(),
-                    CancellationToken.None);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task SetupDatabase()
