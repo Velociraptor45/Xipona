@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using System.Threading;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Items.Commands;
@@ -10,6 +11,7 @@ using Xipona.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.DeleteItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.ApplicationServices.Items.Commands.MergeItems;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
@@ -26,6 +28,7 @@ using Xipona.Api.Contracts.Common;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -48,7 +51,6 @@ using Xipona.Api.Domain.Items.Services.Queries.Quantities;
 using Xipona.Api.Domain.Items.Services.Searches;
 using Xipona.Api.Domain.Manufacturers.Models;
 using Xipona.Api.Domain.Stores.Models;
-using System.Threading;
 
 namespace Xipona.Api.Endpoint.v1.Endpoints;
 
@@ -76,7 +78,8 @@ public static class ItemEndpoints
             .RegisterUpdateItemPrice()
             .RegisterUpdateItemWithTypes()
             .RegisterMakeTemporaryItemPermanent()
-            .RegisterDeleteItem();
+            .RegisterDeleteItem()
+            .RegisterMergeItems();
     }
 
     private static IEndpointRouteBuilder RegisterGetItemById(this IEndpointRouteBuilder builder)
@@ -752,5 +755,41 @@ public static class ItemEndpoints
         }
 
         return Results.NoContent();
+    }
+
+    private static IEndpointRouteBuilder RegisterMergeItems(this IEndpointRouteBuilder builder)
+    {
+        builder.MapDelete($"/{_routeBase}/merge", MergeItems)
+            .WithName("MergeItems")
+            .Produces<Guid>(StatusCodes.Status201Created)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> MergeItems(
+        [FromBody] MergeItemsContract contract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToDomainConverter<MergeItemsContract, MergeItemsCommand> commandConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = commandConverter.ToDomain(contract);
+            var itemId = await commandDispatcher.DispatchAsync(command, cancellationToken);
+            return Results.CreatedAtRoute("GetItemById", new { id = itemId.Value });
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return Results.NotFound(errorContract);
+
+            return Results.UnprocessableEntity(errorContract);
+        }
+
     }
 }
