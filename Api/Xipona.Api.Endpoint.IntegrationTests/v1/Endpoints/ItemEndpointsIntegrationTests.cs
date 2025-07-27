@@ -3123,8 +3123,9 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupItem1();
             _fixture.SetupItem2();
             _fixture.SetupExpectedItem();
-            _fixture.SetupInitialShoppingLists();
+            _fixture.SetupExistingShoppingLists();
             _fixture.SetupContract();
+            _fixture.SetupExistingRecipe();
             await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem1);
@@ -3201,6 +3202,17 @@ public class ItemEndpointsIntegrationTests
             var currentStore1Sl = shoppingLists.Single();
             currentStore1Sl.Should().BeEquivalentTo(_fixture.ExpectedCurrentStore1ShoppingList,
                 opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId());
+
+            // recipes
+            var typeOnRecipe = newItem.ItemTypes.First(t => _fixture.ExpectedItem2.Name.StartsWith(t.Name));
+            _fixture.SetupExpectedRecipe(newItem.Id, typeOnRecipe.Id);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
+            recipes.Should().HaveCount(1);
+            var recipe = recipes.Single();
+            recipe.Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef().WithCreatedAtPrecision());
         }
 
         private sealed class CombineItemsAsyncFixture : ItemEndpointFixture
@@ -3214,6 +3226,7 @@ public class ItemEndpointsIntegrationTests
             private ShoppingList? _currentStore1ShoppingList;
             private readonly string _newItemName = new Fixture().Create<string>();
             private MergeItemsContract? _contract;
+            private Recipe? _existingRecipe;
 
             public Item? Item1Predecessor { get; private set; }
             public Item? Item2Predecessor { get; private set; }
@@ -3223,6 +3236,7 @@ public class ItemEndpointsIntegrationTests
             public ShoppingList? PreviousStore1ShoppingList { get; private set; }
             public ShoppingList? ExpectedCurrentStore1ShoppingList { get; private set; }
             public ShoppingList? CurrentStore2ShoppingList { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
 
             public CombineItemsAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -3339,7 +3353,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedItem2.Deleted = true;
             }
 
-            public void SetupInitialShoppingLists()
+            public void SetupExistingShoppingLists()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item1);
                 TestPropertyNotSetException.ThrowIfNull(_item2);
@@ -3365,7 +3379,6 @@ public class ItemEndpointsIntegrationTests
 
                 // store 2
                 CurrentStore2ShoppingList = _sl2Context.FillShoppingList(ShoppingListEntityMother.Active()).Create();
-
             }
 
             public void SetupExpectedShoppingList(Guid itemId, Guid itemTypeId)
@@ -3377,6 +3390,30 @@ public class ItemEndpointsIntegrationTests
                 ExpectedCurrentStore1ShoppingList.ItemsOnList.ElementAt(0).ItemTypeId = itemTypeId;
             }
 
+            public void SetupExistingRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item2);
+
+                var ingredient = new IngredientEntityBuilder()
+                    .WithDefaultItemId(_item2.Id)
+                    .WithoutDefaultItemTypeId()
+                    .Create();
+                _existingRecipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
+                    .WithoutSideDish()
+                    .WithIngredient(ingredient)
+                    .Create();
+            }
+
+            public void SetupExpectedRecipe(Guid newItemId, Guid newItemTypeId)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+
+                ExpectedRecipe = _existingRecipe.DeepClone();
+                ExpectedRecipe.Ingredients.ElementAt(0).DefaultItemId = newItemId;
+                ExpectedRecipe.Ingredients.ElementAt(0).DefaultItemTypeId = newItemTypeId;
+            }
+
             public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item1);
@@ -3386,6 +3423,7 @@ public class ItemEndpointsIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_currentStore1ShoppingList);
                 TestPropertyNotSetException.ThrowIfNull(CurrentStore2ShoppingList);
                 TestPropertyNotSetException.ThrowIfNull(PreviousStore1ShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
 
                 await ApplyMigrationsAsync(ArrangeScope);
 
@@ -3407,6 +3445,13 @@ public class ItemEndpointsIntegrationTests
                 shoppingListContext.Add(PreviousStore1ShoppingList);
 
                 await shoppingListContext.SaveChangesAsync();
+
+                // recipe
+                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                recipeContext.Add(_existingRecipe);
+
+                await recipeContext.SaveChangesAsync();
             }
         }
     }

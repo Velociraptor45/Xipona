@@ -289,7 +289,7 @@ public class ShoppingListModificationService : IShoppingListModificationService
         await _shoppingListRepository.StoreAsync(shoppingList);
     }
 
-    public async Task ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    public async Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
     {
         var newItem = await _itemRepository.FindActiveByAsync(newItemId);
         if (newItem is null)

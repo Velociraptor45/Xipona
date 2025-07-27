@@ -24,4 +24,5 @@ public interface IIngredient
     IIngredient ChangeDefaultStore(IItem item);
 
     IIngredient ModifyAfterAvailabilitiesChanged(IEnumerable<ItemAvailability> newAvailabilities);
+    IIngredient ReplaceDefaultItem(ItemId newItemId, ItemTypeId? newItemTypeId);
 }

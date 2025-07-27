@@ -19,4 +19,5 @@ public interface IRecipeModificationService
         IEnumerable<ItemAvailability> newAvailabilities);
 
     Task RemoveIngredientsOfItemCategoryAsync(ItemCategoryId itemCategoryId);
+    Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }

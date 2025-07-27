@@ -31,4 +31,5 @@ public interface IRecipe
         IEnumerable<ItemAvailability> newAvailabilities);
 
     void RemoveIngredientsOfItemCategory(ItemCategoryId itemCategoryId);
+    void ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }

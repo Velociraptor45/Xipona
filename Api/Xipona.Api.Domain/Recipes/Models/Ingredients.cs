@@ -107,6 +107,16 @@ public class Ingredients : IEnumerable<IIngredient>
         }
     }
 
+    public void ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        var ingredientsWithItem = _ingredients.Values
+            .Where(i => i.DefaultItemId == originalItemId && i.DefaultItemTypeId is null);
+        foreach (var ingredient in ingredientsWithItem)
+        {
+            _ingredients[ingredient.Id] = ingredient.ReplaceDefaultItem(newItemId, newItemTypeId);
+        }
+    }
+
     public void ModifyAfterItemUpdate(ItemId oldItemId, IItem newItem)
     {
         var ingredientsWithItem = _ingredients.Values.Where(i => i.DefaultItemId == oldItemId);

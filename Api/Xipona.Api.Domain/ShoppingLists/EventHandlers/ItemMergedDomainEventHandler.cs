@@ -17,6 +17,6 @@ public class ItemMergedDomainEventHandler : IDomainEventHandler<ItemMergedDomain
     public async Task HandleAsync(ItemMergedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var service = _shoppingListModificationServiceDelegate(cancellationToken);
-        await service.ReplaceMergedItem(domainEvent.OriginalItemId, domainEvent.NewItemId, domainEvent.NewItemTypeId);
+        await service.ReplaceMergedItemAsync(domainEvent.OriginalItemId, domainEvent.NewItemId, domainEvent.NewItemTypeId);
     }
 }

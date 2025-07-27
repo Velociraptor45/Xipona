@@ -49,6 +49,23 @@ public class Ingredient : IIngredient
             null);
     }
 
+    public IIngredient ReplaceDefaultItem(ItemId newItemId, ItemTypeId? newItemTypeId)
+    {
+        if (ShoppingListProperties is null)
+            return this;
+
+        return new Ingredient(
+            Id,
+            ItemCategoryId,
+            QuantityType,
+            Quantity,
+            ShoppingListProperties! with
+            {
+                DefaultItemId = newItemId,
+                DefaultItemTypeId = newItemTypeId
+            });
+    }
+
     public IIngredient ChangeDefaultItem(ItemId oldItemId, IItem newItem)
     {
         if (ShoppingListProperties is null || DefaultItemId != oldItemId)
