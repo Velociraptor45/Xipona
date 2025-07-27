@@ -23,4 +23,9 @@ public record ShoppingListItem(ItemId Id, ItemTypeId? TypeId, bool IsInBasket, Q
     {
         return this with { Quantity = Quantity + quantity };
     }
+
+    public ShoppingListItem WithNewId(ItemId id, ItemTypeId? typeId)
+    {
+        return this with { Id = id, TypeId = typeId };
+    }
 }

@@ -33,4 +33,5 @@ public interface IShoppingListModificationService
     Task AddDiscountAsync(ShoppingListId id, ListDiscount discount);
     Task RemoveDiscountAsync(ShoppingListId id, ItemId itemId, ItemTypeId? itemTypeId);
     Task RemoveDiscountAsync(ShoppingListId shoppingListId, ListDiscountId listDiscountId);
+    Task ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }

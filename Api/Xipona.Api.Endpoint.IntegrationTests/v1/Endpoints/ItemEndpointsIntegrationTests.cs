@@ -3124,7 +3124,6 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupItem2();
             _fixture.SetupExpectedItem();
             _fixture.SetupInitialShoppingLists();
-            _fixture.SetupExpectedShoppingList();
             _fixture.SetupContract();
             await _fixture.PrepareDatabaseAsync();
 
@@ -3132,10 +3131,11 @@ public class ItemEndpointsIntegrationTests
             TestPropertyNotSetException.ThrowIfNull(_fixture.Item1Predecessor);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem2);
             TestPropertyNotSetException.ThrowIfNull(_fixture.Item2Predecessor);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PreviousStore1ShoppingList);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentStore2ShoppingList);
 
             // Act
             var result = await _fixture.ActAsync();
-
 
             // Assert
             result.Should().BeOfType<CreatedAtRoute>();
@@ -3176,18 +3176,43 @@ public class ItemEndpointsIntegrationTests
                     .ExcludeItemCycleRef().ExcludeItemTypeId()
                     .Excluding(info => info.Path == "Id" || info.Path == "Comment"));
             newItem.Comment.Should().ContainAll(_fixture.ExpectedItem1.Comment, _fixture.ExpectedItem2.Comment);
+
+            // shopping lists
+            var typeOnShoppingList = newItem.ItemTypes.First(t => _fixture.ExpectedItem1.Name.StartsWith(t.Name));
+            _fixture.SetupExpectedShoppingList(newItem.Id, typeOnShoppingList.Id);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedCurrentStore1ShoppingList);
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionScope)).ToList();
+            shoppingLists.Should().HaveCount(3);
+
+            // current store 2 shopping list
+            var currentStore2Sl = shoppingLists.Should().Contain(s => s.Id == _fixture.CurrentStore2ShoppingList.Id).Subject;
+            currentStore2Sl.Should().BeEquivalentTo(_fixture.CurrentStore2ShoppingList,
+                opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion());
+            shoppingLists.Remove(currentStore2Sl);
+
+            // previous store 1 shopping list
+            var previousSl = shoppingLists.Should().Contain(s => s.Id == _fixture.PreviousStore1ShoppingList.Id).Subject;
+            previousSl.Should().BeEquivalentTo(_fixture.PreviousStore1ShoppingList,
+                opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion().WithCompletionDatePrecision());
+            shoppingLists.Remove(previousSl);
+
+            // current store 1 shopping list
+            var currentStore1Sl = shoppingLists.Single();
+            currentStore1Sl.Should().BeEquivalentTo(_fixture.ExpectedCurrentStore1ShoppingList,
+                opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId());
         }
 
         private sealed class CombineItemsAsyncFixture : ItemEndpointFixture
         {
             private readonly ItemEntityCreationContext _item1Context = new();
             private readonly ItemEntityCreationContext _item2Context = new();
+            private readonly ShoppingListEntityCreationContext _sl1Context = new();
+            private readonly ShoppingListEntityCreationContext _sl2Context = new();
             private Item? _item1;
             private Item? _item2;
-            private ShoppingList? _currentShoppingList;
-            private ShoppingList? _previousShoppingList;
-            private ShoppingList? _expectedCurrentShoppingList;
-            private readonly string _newName = new Fixture().Create<string>();
+            private ShoppingList? _currentStore1ShoppingList;
+            private readonly string _newItemName = new Fixture().Create<string>();
             private MergeItemsContract? _contract;
 
             public Item? Item1Predecessor { get; private set; }
@@ -3195,6 +3220,9 @@ public class ItemEndpointsIntegrationTests
             public Item? ExpectedItem1 { get; private set; }
             public Item? ExpectedItem2 { get; private set; }
             public Item? ExpectedItem { get; private set; }
+            public ShoppingList? PreviousStore1ShoppingList { get; private set; }
+            public ShoppingList? ExpectedCurrentStore1ShoppingList { get; private set; }
+            public ShoppingList? CurrentStore2ShoppingList { get; private set; }
 
             public CombineItemsAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
@@ -3213,6 +3241,9 @@ public class ItemEndpointsIntegrationTests
                 _item2Context.AddItemCategory(category);
                 _item2Context.AddManufacturer(manufacturer);
                 _item2Context.AddQuantity(QuantityType.Unit, QuantityTypeInPacket.Weight, quantityInPacket);
+
+                _sl1Context.AddStore(store1);
+                _sl2Context.AddStore(store2);
             }
 
             public async Task<IResult> ActAsync()
@@ -3234,7 +3265,7 @@ public class ItemEndpointsIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_item2);
 
                 _contract = new MergeItemsContract(
-                    new MergedItemContract(_newName,
+                    new MergedItemContract(_newItemName,
                     [
                         new MergedItemTypeContract(_item1.Id, ExpectedItem.ItemTypes.ElementAt(0).Name),
                         new MergedItemTypeContract(_item2.Id, ExpectedItem.ItemTypes.ElementAt(1).Name),
@@ -3284,7 +3315,7 @@ public class ItemEndpointsIntegrationTests
                         .Create(),
                     ItemTypeEntityMother.Initial()
                         .WithAvailableAt(item2Avs)
-                        .WithName(_item2.Name[..5])
+                        .WithName(_item2.Name[..7])
                         .WithCreatedAt(DateTimeOffset.UtcNow)
                         .Create()
                 ];
@@ -3292,7 +3323,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedItem = ItemEntityMother.InitialWithTypes()
                     .WithItemTypes(types)
                     .WithComment($"{_item1.Comment}{Environment.NewLine}{_item2.Comment}")
-                    .WithName(_newName)
+                    .WithName(_newItemName)
                     .WithItemCategoryId(_item1.ItemCategoryId)
                     .WithManufacturerId(_item1.ManufacturerId)
                     .WithQuantityType(_item1.QuantityType)
@@ -3315,9 +3346,12 @@ public class ItemEndpointsIntegrationTests
 
                 var shoppingListId = Guid.NewGuid();
 
+                // store 1
                 // current
                 var currentItemsOnList = ItemsOnListEntityMother.ItemInBasket(_item1.Id, shoppingListId).Create();
-                _currentShoppingList = ShoppingListEntityMother.Active().WithItemsOnList([currentItemsOnList]).Create();
+                _currentStore1ShoppingList = _sl1Context.FillShoppingList(
+                        ShoppingListEntityMother.Active().WithItemsOnList([currentItemsOnList]))
+                    .Create();
 
                 // previous
                 ItemsOnList[] previousItemsOnList =
@@ -3325,20 +3359,22 @@ public class ItemEndpointsIntegrationTests
                     ItemsOnListEntityMother.ItemInBasket(_item1.Id, shoppingListId).Create(),
                     ItemsOnListEntityMother.ItemInBasket(_item2.Id, shoppingListId).Create()
                 ];
-                _previousShoppingList = ShoppingListEntityMother.Completed()
-                    .WithEmptyDiscounts()
-                    .WithItemsOnList(previousItemsOnList)
+                PreviousStore1ShoppingList = _sl1Context.FillShoppingList(
+                        ShoppingListEntityMother.Completed().WithEmptyDiscounts().WithItemsOnList(previousItemsOnList))
                     .Create();
+
+                // store 2
+                CurrentStore2ShoppingList = _sl2Context.FillShoppingList(ShoppingListEntityMother.Active()).Create();
+
             }
 
-            public void SetupExpectedShoppingList()
+            public void SetupExpectedShoppingList(Guid itemId, Guid itemTypeId)
             {
-                TestPropertyNotSetException.ThrowIfNull(_currentShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_currentStore1ShoppingList);
 
-                _expectedCurrentShoppingList = _currentShoppingList.DeepClone();
-                _expectedCurrentShoppingList.ItemsOnList.ElementAt(0).ItemTypeId =
-                    _currentShoppingList.ItemsOnList.ElementAt(0).ItemId;
-                _expectedCurrentShoppingList.ItemsOnList.ElementAt(0).ItemId = Guid.NewGuid();
+                ExpectedCurrentStore1ShoppingList = _currentStore1ShoppingList.DeepClone();
+                ExpectedCurrentStore1ShoppingList.ItemsOnList.ElementAt(0).ItemId = itemId;
+                ExpectedCurrentStore1ShoppingList.ItemsOnList.ElementAt(0).ItemTypeId = itemTypeId;
             }
 
             public async Task PrepareDatabaseAsync()
@@ -3347,8 +3383,9 @@ public class ItemEndpointsIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(Item1Predecessor);
                 TestPropertyNotSetException.ThrowIfNull(_item2);
                 TestPropertyNotSetException.ThrowIfNull(Item2Predecessor);
-                TestPropertyNotSetException.ThrowIfNull(_currentShoppingList);
-                TestPropertyNotSetException.ThrowIfNull(_previousShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_currentStore1ShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(CurrentStore2ShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(PreviousStore1ShoppingList);
 
                 await ApplyMigrationsAsync(ArrangeScope);
 
@@ -3365,8 +3402,9 @@ public class ItemEndpointsIntegrationTests
                 // shoppingList
                 await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
 
-                shoppingListContext.Add(_currentShoppingList);
-                shoppingListContext.Add(_previousShoppingList);
+                shoppingListContext.Add(_currentStore1ShoppingList);
+                shoppingListContext.Add(CurrentStore2ShoppingList);
+                shoppingListContext.Add(PreviousStore1ShoppingList);
 
                 await shoppingListContext.SaveChangesAsync();
             }

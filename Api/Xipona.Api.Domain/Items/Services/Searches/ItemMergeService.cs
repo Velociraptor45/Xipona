@@ -30,6 +30,7 @@ public class ItemMergeService : IItemMergeService
         var originalItemIds = item.Types.Select(t => t.OriginatingItemId).ToList();
         var originalItems = (await _itemRepository.FindByAsync(originalItemIds)).ToList();
 
+        // validate selected items
         foreach (var originalItem in originalItems)
         {
             if (originalItem.IsDeleted)
@@ -44,18 +45,27 @@ public class ItemMergeService : IItemMergeService
         EnsureSameManufacturer(originalItems);
         EnsureSameQuantity(originalItems);
 
+        // build new merged item
+        Dictionary<ItemId, ItemTypeId> itemMergeMap = new();
         var types = item.Types
-            .Select(t => _itemTypeFactory.CreateNew(t.Name, GetOriginalItem(t.OriginatingItemId).Availabilities))
+            .Select(t =>
+            {
+                var originalItem = GetOriginalItem(t.OriginatingItemId);
+                var type = _itemTypeFactory.CreateNew(t.Name, originalItem.Availabilities);
+                itemMergeMap[originalItem.Id] = type.Id;
+                return type;
+            })
             .ToList();
 
         var newItem = _itemFactory.CreateNew(item.Name, BuildComment(originalItems), originalItems[0].ItemQuantity,
             originalItems[0].ItemCategoryId!.Value, originalItems[0].ManufacturerId, null, types);
-
-
         await _itemRepository.StoreAsync(newItem);
+
+        // mark original items as merged
         foreach (var originalItem in originalItems)
         {
-            originalItem.Delete();
+            var newItemTypeId = itemMergeMap[originalItem.Id];
+            originalItem.MarkAsMerged(newItem.Id, newItemTypeId);
             await _itemRepository.StoreAsync(originalItem);
         }
 
@@ -68,7 +78,7 @@ public class ItemMergeService : IItemMergeService
         }
     }
 
-    private void EnsureSameQuantity(List<IItem> originalItems)
+    private static void EnsureSameQuantity(List<IItem> originalItems)
     {
         var firstItemQuantity = originalItems[0].ItemQuantity;
         foreach (var item in originalItems.Skip(1))
@@ -78,7 +88,7 @@ public class ItemMergeService : IItemMergeService
         }
     }
 
-    private void EnsureSameItemCategory(List<IItem> originalItems)
+    private static void EnsureSameItemCategory(List<IItem> originalItems)
     {
         var firstItemCategoryId = originalItems[0].ItemCategoryId;
         foreach (var item in originalItems.Skip(1))
@@ -88,7 +98,7 @@ public class ItemMergeService : IItemMergeService
         }
     }
 
-    private void EnsureSameManufacturer(List<IItem> originalItems)
+    private static void EnsureSameManufacturer(List<IItem> originalItems)
     {
         var firstItemCategoryId = originalItems[0].ItemCategoryId;
         foreach (var item in originalItems.Skip(1))
@@ -98,7 +108,7 @@ public class ItemMergeService : IItemMergeService
         }
     }
 
-    private Comment BuildComment(List<IItem> originalItems)
+    private static Comment BuildComment(List<IItem> originalItems)
     {
         var originalItemsWithComments = originalItems.Where(i => !string.IsNullOrWhiteSpace(i.Comment.Value)).ToList();
         if (originalItemsWithComments.Count == 0)

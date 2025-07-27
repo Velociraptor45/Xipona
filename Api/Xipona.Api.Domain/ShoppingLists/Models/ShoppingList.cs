@@ -181,6 +181,18 @@ public class ShoppingList : AggregateRoot, IShoppingList
         _listDiscounts.Remove(discountId);
     }
 
+    public bool ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        foreach (var section in _sections.Values)
+        {
+            var replaced = section.ReplaceMergedItem(originalItemId, newItemId, newItemTypeId);
+            if (replaced)
+                return true;
+        }
+
+        return false;
+    }
+
     private bool IsItemOnShoppingList(ItemId itemId, ItemTypeId? itemTypeId)
     {
         return GetItemSection(itemId, itemTypeId) is not null;

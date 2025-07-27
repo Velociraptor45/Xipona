@@ -31,4 +31,5 @@ public interface IShoppingListSection
     bool ContainsItemOrItsTypes(ItemId itemId);
 
     IShoppingListSection RemoveItemAndItsTypes(ItemId itemId);
+    bool ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }

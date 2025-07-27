@@ -30,6 +30,16 @@ public class ShoppingListSection : IShoppingListSection
         return new ShoppingListSection(Id, items.Values);
     }
 
+    public bool ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        if (!_shoppingListItems.TryGetValue((originalItemId, null), out var item))
+            return false;
+
+        _shoppingListItems.Remove((originalItemId, null));
+        _shoppingListItems[(newItemId, newItemTypeId)] = item.WithNewId(newItemId, newItemTypeId);
+        return true;
+    }
+
     public IShoppingListSection RemoveItem(ItemId itemId)
     {
         return RemoveItem(itemId, null);
