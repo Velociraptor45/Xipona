@@ -8,6 +8,7 @@ using Xipona.Api.Contracts.ItemCategories.Queries;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -132,6 +133,9 @@ namespace Xipona.Api.WebApp.Serialization;
 [JsonSerializable(typeof(CreateItemContract))]
 [JsonSerializable(typeof(CreateItemTypeContract))]
 [JsonSerializable(typeof(CreateItemWithTypesContract))]
+[JsonSerializable(typeof(MergeItemsContract))]
+[JsonSerializable(typeof(MergedItemContract))]
+[JsonSerializable(typeof(IEnumerable<MergedItemTypeContract>))]
 // ItemCategory
 [JsonSerializable(typeof(List<ItemCategorySearchResultContract>))]
 [JsonSerializable(typeof(ModifyItemCategoryContract))]

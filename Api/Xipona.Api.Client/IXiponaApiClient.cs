@@ -1,9 +1,15 @@
-﻿using Xipona.Api.Contracts.Common.Queries;
+﻿using RestEase;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Xipona.Api.Contracts.Common.Queries;
 using Xipona.Api.Contracts.ItemCategories.Commands;
 using Xipona.Api.Contracts.ItemCategories.Queries;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -45,11 +51,6 @@ using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using Xipona.Api.Contracts.Users.Commands.Login;
 using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
-using RestEase;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using AddItemToShoppingListContract = Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 
 namespace Xipona.Api.Client
@@ -294,6 +295,15 @@ namespace Xipona.Api.Client
         [Post("items/with-types")]
         Task CreateItemWithTypesAsync([Body] CreateItemWithTypesContract contract,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Merges multiple items into one item with types.
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Post("items/merge")]
+        Task<Guid> MergeItemsAsync([Body] MergeItemsContract contract, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets an item by its ID. Does not include temporary items.

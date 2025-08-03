@@ -759,7 +759,7 @@ public static class ItemEndpoints
 
     private static IEndpointRouteBuilder RegisterMergeItems(this IEndpointRouteBuilder builder)
     {
-        builder.MapDelete($"/{_routeBase}/merge", MergeItems)
+        builder.MapPost($"/{_routeBase}/merge", MergeItems)
             .WithName("MergeItems")
             .Produces<Guid>(StatusCodes.Status201Created)
             .Produces<ErrorContract>(StatusCodes.Status404NotFound)
@@ -780,7 +780,7 @@ public static class ItemEndpoints
         {
             var command = commandConverter.ToDomain(contract);
             var itemId = await commandDispatcher.DispatchAsync(command, cancellationToken);
-            return Results.CreatedAtRoute("GetItemById", new { id = itemId.Value });
+            return Results.CreatedAtRoute("GetItemById", new { id = itemId.Value }, itemId.Value);
         }
         catch (DomainException e)
         {
