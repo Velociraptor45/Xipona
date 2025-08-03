@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.States.Merges;
 using Xipona.Frontend.Redux.Manufacturers.States;
 using Xipona.Frontend.Redux.Shared.States;
 
@@ -10,7 +11,8 @@ public record ItemState(
     IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket,
     ActiveStores Stores,
     ItemSearch Search,
-    ItemEditor Editor);
+    ItemEditor Editor,
+    ItemMerge Merge);
 
 public class ItemFeatureState : Feature<ItemState>
 {
@@ -44,6 +46,7 @@ public class ItemFeatureState : Feature<ItemState>
                 false,
                 false,
                 false,
-                new()));
+                new()),
+            new ItemMerge(null, false));
     }
 }

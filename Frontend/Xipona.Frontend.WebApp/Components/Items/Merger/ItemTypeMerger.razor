@@ -1,0 +1,24 @@
+﻿@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions.Merges
+@using Xipona.Frontend.Redux.Items.States.Merges
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IDispatcher Dispatcher
+
+<div>
+    <Input TValue="string" OnInput="OnNameChanged" Value="MergedItemType.Name"
+           Placeholder="@(MergedItemType.OriginalItem.Name)...">
+    </Input>
+</div>
+
+@code
+{
+    [Parameter]
+    public required MergedItemType MergedItemType { get; set; }
+
+    private void OnNameChanged(ChangeEventArgs args)
+    {
+        Dispatcher.Dispatch(new ItemTypeNameChangedAction(MergedItemType.Id, args.Value?.ToString() ?? string.Empty));
+    }
+}
