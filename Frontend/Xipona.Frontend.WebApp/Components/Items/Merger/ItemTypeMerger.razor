@@ -20,6 +20,6 @@
 
     private void OnNameChanged(ChangeEventArgs args)
     {
-        Dispatcher.Dispatch(new ItemTypeNameChangedAction(MergedItemType.Id, args.Value?.ToString() ?? string.Empty));
+        Dispatcher.Dispatch(new ItemTypeNameChangedAction(MergedItemType.Key, args.Value?.ToString() ?? string.Empty));
     }
 }
