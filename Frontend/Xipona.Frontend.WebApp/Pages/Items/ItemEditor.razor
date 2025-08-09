@@ -26,7 +26,12 @@
                     <div class="validation-error-message">@State.Value.Editor.ValidationResult.Name</div>
                 }
             </div>
-            <DeleteItem></DeleteItem>
+            @if (State.Value.Editor.Item.Id != Guid.Empty)
+            {
+                <div class="ml-auto">
+                    <ItemOptions></ItemOptions>
+                </div>
+            }
         </div>
         <hr class="my-3" />
         <div class="d-flex pb-2">

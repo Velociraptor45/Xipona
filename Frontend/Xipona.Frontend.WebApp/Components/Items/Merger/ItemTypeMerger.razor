@@ -8,8 +8,9 @@
 
 <div>
     <Input TValue="string" OnInput="OnNameChanged" Value="MergedItemType.Name"
-           Placeholder="@(MergedItemType.OriginalItem.Name)...">
+           Placeholder="@(MergedItemType.OriginalItem.Name + " ...")" Class="item-type-name-input">
     </Input>
+    <div class="previous-item-name">Previous: @MergedItemType.OriginalItem.Name</div>
 </div>
 
 @code

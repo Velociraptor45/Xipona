@@ -9,12 +9,15 @@ namespace Xipona.Frontend.Redux.Items.Effects;
 public class ItemMergeEffects
 {
     private readonly IApiClient _client;
+    private readonly IState<ItemState> _state;
 
-    public ItemMergeEffects(IApiClient client)
+    public ItemMergeEffects(IApiClient client, IState<ItemState> state)
     {
         _client = client;
+        _state = state;
     }
 
+    [EffectMethod]
     public async Task HandleInitializeMergingAction(InitializeMergingAction action, IDispatcher dispatcher)
     {
         List<EditedItem> items = new();
@@ -40,5 +43,28 @@ public class ItemMergeEffects
         }
 
         dispatcher.Dispatch(new InitializeMergingFinishedAction(items));
+    }
+
+    [EffectMethod(typeof(MergeItemsAction))]
+    public async Task HandleMergeItemsAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Merge.Item is null)
+            return;
+
+        dispatcher.Dispatch(new MergeItemsStartedAction());
+
+        try
+        {
+            await _client.MergeItemsAsync(_state.Value.Merge.Item);
+            dispatcher.Dispatch(new MergeItemsFinishedAction());
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Merging items failed", e));
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Merging items failed", e.Message));
+        }
     }
 }

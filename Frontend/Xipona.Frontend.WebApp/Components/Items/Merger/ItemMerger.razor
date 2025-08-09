@@ -7,14 +7,24 @@
 @inject IDispatcher Dispatcher
 
 <div>
-    <Input TValue="string" Value="MergedItem.Name" OnInput="OnItemNameChanged" Placeholder="New item name...">
+    <div class="mb-4">
+        <h1>Merge Items</h1>
+        <hr/>
+    </div>
+
+    <Input TValue="string" Value="MergedItem.Name" OnInput="OnItemNameChanged" Placeholder="New item name ..."
+           Class="mb-2 name-input">
     </Input>
+
+    <h2 class="font-weight-bold mt-2">Types</h2>
 
     @foreach (var type in MergedItem.Types)
     {
-        <ItemTypeMerger MergedItemType="type"></ItemTypeMerger>
+        <div class="mb-3">
+            <ItemTypeMerger MergedItemType="type"></ItemTypeMerger>
+        </div>
     }
-    <Button OnClick="OnSaveButtonClicked" Type="@ButtonType.Primary">Save</Button>
+    <Button Class="mt-2 d-flex ml-auto" OnClick="OnSaveButtonClicked" Type="@ButtonType.Primary">Save</Button>
 </div>
 
 @code

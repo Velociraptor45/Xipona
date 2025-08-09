@@ -9,11 +9,11 @@
 
 @if (State.Value.Editor.Item!.Id != Guid.Empty)
 {
-    <Button Danger="true"
+    @* <Button Danger="true"
             Class="ml-auto"
             OnClick="@OnOpenDeleteDialogButtonClicked">
         <i class="bi bi-trash"></i>
-    </Button>
+    </Button> *@
     <Modal Title="@($"Delete {State.Value.Editor.Item.Name}")"
            Visible="@State.Value.Editor.IsDeleteDialogOpen"
            OnCancel="OnCloseDeleteDialogButtonClicked"
@@ -26,10 +26,6 @@
 }
 
 @code {
-    private void OnOpenDeleteDialogButtonClicked()
-    {
-        Dispatcher.Dispatch(new OpenDeleteItemDialogAction());
-    }
 
     private void OnCloseDeleteDialogButtonClicked()
     {

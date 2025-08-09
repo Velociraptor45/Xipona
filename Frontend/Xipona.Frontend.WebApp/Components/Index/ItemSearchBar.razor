@@ -13,17 +13,17 @@
 
 <div class="d-flex">
     <Select Class="mr-1 cursor-text"
-    Placeholder="Search for item"
-    ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
-    LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
-    DataSource="State.Value.SearchBar.Results"
-    TItem="SearchItemForShoppingListResult"
-    TItemValue="string"
-    OnSelectedItemChanged="OnSearchItemSelectedAsync"
-    EnableSearch
-    Value="State.Value.SearchBar.Input"
-    Disabled="@(!SharedState.Value.IsOnline)"
-    OnSearch="OnSearchInputChanged">
+        Placeholder="Search for item"
+        ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
+        LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
+        DataSource="State.Value.SearchBar.Results"
+        TItem="SearchItemForShoppingListResult"
+        TItemValue="string"
+        OnSelectedItemChanged="OnSearchItemSelectedAsync"
+        EnableSearch
+        Value="State.Value.SearchBar.Input"
+        Disabled="@(!SharedState.Value.IsOnline)"
+        OnSearch="OnSearchInputChanged">
     </Select>
     <Dropdown Placement="Placement.BottomRight" Trigger="@(new[] { Trigger.Click })">
         <Overlay>
