@@ -2,11 +2,11 @@
 
 @using Fluxor
 @using Xipona.Frontend.Redux.Items.Actions.Editor
+@using Xipona.Frontend.Redux.Items.Actions.Merges
 @using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.WebApp.Components.Items.Merger
 
-@inject IState<ItemState> State
 @inject IDispatcher Dispatcher
-@inject NavigationManager NavigationManager
 
 <Dropdown Placement="Placement.BottomRight" Trigger="@(new[] { Trigger.Click })">
     <Overlay>
@@ -29,16 +29,13 @@
 </Dropdown>
 
 <DeleteItem></DeleteItem>
+<MergeItemSelectionDialog></MergeItemSelectionDialog>
 
 @code
 {
     private void OnMergeItemButtonClicked()
     {
-        var uri = NavigationManager.GetUriWithQueryParameters("/items/merge", new Dictionary<string, object>
-        {
-            { "itemId", State.Value.Editor.ItemId!.Value }
-        });
-        NavigationManager.NavigateTo(uri);
+        Dispatcher.Dispatch(new OpenMergeItemSelectorAction());
     }
 
     private void OnOpenDeleteDialogButtonClicked()

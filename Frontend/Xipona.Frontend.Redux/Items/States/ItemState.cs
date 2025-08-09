@@ -47,6 +47,6 @@ public class ItemFeatureState : Feature<ItemState>
                 false,
                 false,
                 new()),
-            new ItemMerge(null, false));
+            new ItemMerge(new(false, string.Empty, []), null, false));
     }
 }

@@ -1,0 +1,55 @@
+﻿@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions.Merges
+@using Xipona.Frontend.Redux.Items.States
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+<Modal Title="Select items for merging"
+       Visible="@State.Value.Merge.Selector.IsOpen"
+       OnCancel="OnCloseDialogButtonClicked"
+       Footer="GetFooter()">
+
+    <Input TValue="string" Value="State.Value.Merge.Selector.Input" OnInput="OnSearchInputChanged"
+           Placeholder="Search for item ...">
+    </Input>
+    
+    <div class="mt-2">
+        @foreach (var searchResult in State.Value.Merge.Selector.SelectedItems)
+        {
+            <div>@searchResult.Name</div>
+        }
+    </div>
+</Modal>
+
+@code
+{
+    private void OnCloseDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new CloseMergeItemSelectorAction());
+    }
+
+    private void OnEnterMergerButtonClicked()
+    {
+        Dispatcher.Dispatch(new EnterMergerAction());
+    }
+
+    private void OnSearchInputChanged(ChangeEventArgs args)
+    {
+        Dispatcher.Dispatch(new MergeItemSearchInputChangedAction(args.Value?.ToString() ?? string.Empty));
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template>
+            <Button Class="ml-auto"
+                OnClick="OnEnterMergerButtonClicked"
+                    @key="@("submit")"
+                    Type="@ButtonType.Primary"
+                    Disabled="@(!State.Value.Merge.Selector.SelectedItems.Any())">
+                Start Merge
+            </Button>
+        </Template>;
+    }
+}

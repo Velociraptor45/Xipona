@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using Microsoft.AspNetCore.Components;
 using RestEase;
 using Xipona.Frontend.Redux.Items.Actions.Merges;
 using Xipona.Frontend.Redux.Items.States;
@@ -10,11 +11,28 @@ public class ItemMergeEffects
 {
     private readonly IApiClient _client;
     private readonly IState<ItemState> _state;
+    private readonly NavigationManager _navigationManager;
 
-    public ItemMergeEffects(IApiClient client, IState<ItemState> state)
+    public ItemMergeEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager)
     {
         _client = client;
         _state = state;
+        _navigationManager = navigationManager;
+    }
+
+    [EffectMethod(typeof(EnterMergerAction))]
+    public Task HandleEnterMergerAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Merge.Selector.SelectedItems.Count == 0)
+            return Task.CompletedTask;
+
+        var uri = _navigationManager.GetUriWithQueryParameters("/items/merge", new Dictionary<string, object?>
+        {
+            { "itemId", _state.Value.Merge.Selector.SelectedItems.Select(i => i.Id) }
+        });
+        _navigationManager.NavigateTo(uri);
+
+        return Task.CompletedTask;
     }
 
     [EffectMethod]
@@ -22,10 +40,9 @@ public class ItemMergeEffects
     {
         List<EditedItem> items = new();
 
-        var tasks = action.ItemIds.Select(_client.GetItemByIdAsync).ToList();
-
         try
         {
+            var tasks = action.ItemIds.Distinct().Select(_client.GetItemByIdAsync).ToList();
             await Task.WhenAll(tasks);
             foreach (var task in tasks)
             {

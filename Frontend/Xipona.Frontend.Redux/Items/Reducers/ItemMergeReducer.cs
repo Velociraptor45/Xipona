@@ -39,11 +39,13 @@ public static class ItemMergeReducer
 
         return state with
         {
-            Merge = new ItemMerge(
-                new MergedItem(
+            Merge = state.Merge with
+            {
+                Item = new MergedItem(
                     prefix,
                     action.Items.Select(i => new MergedItemType(Guid.NewGuid(), i, i.Name.Remove(0, prefix.Length).Trim())).ToList()),
-                false)
+                IsSaving = false
+            }
         };
     }
 
@@ -85,6 +87,36 @@ public static class ItemMergeReducer
                 Item = state.Merge.Item with
                 {
                     Name = action.NewName
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(OpenMergeItemSelectorAction))]
+    public static ItemState OnOpenMergeItemSelector(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    IsOpen = true
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CloseMergeItemSelectorAction))]
+    public static ItemState OnCloseMergeItemSelector(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    IsOpen = false
                 }
             }
         };
