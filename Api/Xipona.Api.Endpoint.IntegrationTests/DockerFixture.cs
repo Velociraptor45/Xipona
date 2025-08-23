@@ -24,7 +24,7 @@ public sealed class DockerFixture : IDisposable
             .Start();
 
         // wait for DB to initialize
-        Task.Delay(2000).GetAwaiter().GetResult();
+        Task.Delay(3000).GetAwaiter().GetResult();
     }
 
     public const string ConnectionStringWithoutDb =

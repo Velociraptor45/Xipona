@@ -5,7 +5,7 @@ using Xipona.Api.Domain.Items.Models.Factories;
 using Xipona.Api.Domain.Items.Ports;
 using Xipona.Api.Domain.Items.Reasons;
 
-namespace Xipona.Api.Domain.Items.Services.Searches;
+namespace Xipona.Api.Domain.Items.Services.Updates;
 
 public interface IItemMergeService
 {
@@ -28,6 +28,11 @@ public class ItemMergeService : IItemMergeService
     public async Task<ItemId> MergeAsync(MergedItem item)
     {
         var originalItemIds = item.Types.Select(t => t.OriginatingItemId).ToList();
+        var distinctOriginalItemIds = originalItemIds.Distinct().ToList();
+
+        if (originalItemIds.Count != distinctOriginalItemIds.Count)
+            throw new DomainException(new CannotMergeItemWithItselfReason());
+
         var originalItems = (await _itemRepository.FindByAsync(originalItemIds)).ToList();
 
         // validate selected items

@@ -21,6 +21,7 @@ using Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Contracts.Manufacturers.Commands;
@@ -348,6 +349,13 @@ namespace Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             return await _apiClient.MergeItemsAsync(contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
+            SearchItemsForMergeContract contract, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.SearchItemsForMergeAsync(contract, cancellationToken);
         }
 
         #endregion Item

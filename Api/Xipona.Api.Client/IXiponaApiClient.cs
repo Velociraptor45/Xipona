@@ -19,6 +19,7 @@ using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Contracts.Manufacturers.Commands;
@@ -390,6 +391,16 @@ namespace Xipona.Api.Client
         [Get("items/quantity-types-in-packet")]
         Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacketAsync(
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Searches for items that can be merged into one item with types.
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Get("items/merge/search")]
+        Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
+            SearchItemsForMergeContract contract, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Modifies an existing item.

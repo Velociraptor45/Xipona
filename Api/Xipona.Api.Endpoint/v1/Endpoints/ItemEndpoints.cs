@@ -22,6 +22,7 @@ using Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
 using Xipona.Api.Contracts.Common;
@@ -38,6 +39,7 @@ using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Core.Converter;
@@ -79,7 +81,8 @@ public static class ItemEndpoints
             .RegisterUpdateItemWithTypes()
             .RegisterMakeTemporaryItemPermanent()
             .RegisterDeleteItem()
-            .RegisterMergeItems();
+            .RegisterMergeItems()
+            .RegisterSearchItemsForMerge();
     }
 
     private static IEndpointRouteBuilder RegisterGetItemById(this IEndpointRouteBuilder builder)
@@ -790,6 +793,43 @@ public static class ItemEndpoints
 
             return Results.UnprocessableEntity(errorContract);
         }
+    }
 
+    private static IEndpointRouteBuilder RegisterSearchItemsForMerge(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/merge/search", SearchItemsForMerge)
+            .WithName("MergeItems")
+            .Produces<List<SearchItemsForMergeResultContract>>()
+            .Produces<string>(StatusCodes.Status400BadRequest)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> SearchItemsForMerge(
+        [FromBody] SearchItemsForMergeContract contract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToDomainConverter<SearchItemsForMergeContract, SearchItemsForMergeCommand> commandConverter,
+        [FromServices] IToContractConverter<SearchItemsForMergeResult, SearchItemsForMergeResultContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+    {
+        if ((contract.Quantity is null && contract.QuantityTypeInPacket is not null)
+            || (contract.Quantity is not null && contract.QuantityTypeInPacket is null))
+            return Results.BadRequest("Quantity and QuantityTypeInPacket must either both be null or both not be null");
+
+        try
+        {
+            var command = commandConverter.ToDomain(contract);
+            var results = await commandDispatcher.DispatchAsync(command, cancellationToken);
+            var contracts = contractConverter.ToContract(results).ToList();
+            return Results.Ok(contracts);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            return Results.UnprocessableEntity(errorContract);
+        }
     }
 }

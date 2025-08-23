@@ -39,4 +39,7 @@ public interface IItemRepository
     Task<int> GetTotalCountByAsync(string searchInput);
 
     Task<IItem> StoreAsync(IItem item);
+
+    Task<IEnumerable<IItem>> FindForMergeByAsync(ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
+        ItemQuantity itemQuantity, IEnumerable<ItemId> excludedItemIds);
 }

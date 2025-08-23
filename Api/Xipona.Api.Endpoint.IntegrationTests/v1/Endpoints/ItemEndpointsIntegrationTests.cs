@@ -3112,12 +3112,12 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class CombineItemsAsync(DockerFixture dockerFixture)
+    public sealed class MergeItems(DockerFixture dockerFixture)
     {
-        private readonly CombineItemsAsyncFixture _fixture = new(dockerFixture);
+        private readonly MergeItemsFixture _fixture = new(dockerFixture);
 
         [Fact]
-        public async Task CombineItemsAsync_WithTwoItems_ShouldCombineItems()
+        public async Task MergeItems_WithTwoItems_ShouldCombineItems()
         {
             // Arrange
             _fixture.SetupItem1();
@@ -3139,7 +3139,7 @@ public class ItemEndpointsIntegrationTests
             var result = await _fixture.ActAsync();
 
             // Assert
-            result.Should().BeOfType<CreatedAtRoute>();
+            result.Should().BeOfType<CreatedAtRoute<Guid>>();
 
             using var assertionScope = _fixture.CreateServiceScope();
 
@@ -3177,6 +3177,8 @@ public class ItemEndpointsIntegrationTests
                     .ExcludeItemCycleRef().ExcludeItemTypeId()
                     .Excluding(info => info.Path == "Id" || info.Path == "Comment"));
             newItem.Comment.Should().ContainAll(_fixture.ExpectedItem1.Comment, _fixture.ExpectedItem2.Comment);
+            var returnedId = ((CreatedAtRoute<Guid>)result).Value;
+            returnedId.Should().Be(newItem.Id);
 
             // shopping lists
             var typeOnShoppingList = newItem.ItemTypes.First(t => _fixture.ExpectedItem1.Name.StartsWith(t.Name));
@@ -3215,7 +3217,28 @@ public class ItemEndpointsIntegrationTests
                 opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef().WithCreatedAtPrecision());
         }
 
-        private sealed class CombineItemsAsyncFixture : ItemEndpointFixture
+        [Fact]
+        public async Task MergeItems_WithOneItemTwice_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItem1();
+            _fixture.SetupItem2();
+            _fixture.SetupExistingShoppingLists();
+            _fixture.SetupExistingRecipe();
+            _fixture.SetupContractWithDuplicatedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntity = (UnprocessableEntity<ErrorContract>)result;
+            unprocessableEntity.Value.Should().NotBeNull();
+            unprocessableEntity.Value.ErrorCode.Should().Be(ErrorReasonCode.CannotMergeItemWithItself.ToInt());
+        }
+
+        private sealed class MergeItemsFixture : ItemEndpointFixture
         {
             private readonly ItemEntityCreationContext _item1Context = new();
             private readonly ItemEntityCreationContext _item2Context = new();
@@ -3238,7 +3261,7 @@ public class ItemEndpointsIntegrationTests
             public ShoppingList? CurrentStore2ShoppingList { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
 
-            public CombineItemsAsyncFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            public MergeItemsFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
                 var store1 = StoreEntityMother.Active().Create();
                 var store2 = StoreEntityMother.Active().Create();
@@ -3283,6 +3306,18 @@ public class ItemEndpointsIntegrationTests
                     [
                         new MergedItemTypeContract(_item1.Id, ExpectedItem.ItemTypes.ElementAt(0).Name),
                         new MergedItemTypeContract(_item2.Id, ExpectedItem.ItemTypes.ElementAt(1).Name),
+                    ]));
+            }
+
+            public void SetupContractWithDuplicatedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item1);
+
+                _contract = new MergeItemsContract(
+                    new MergedItemContract(_newItemName,
+                    [
+                        new MergedItemTypeContract(_item1.Id, "test"),
+                        new MergedItemTypeContract(_item1.Id, "test2"),
                     ]));
             }
 
@@ -3453,6 +3488,16 @@ public class ItemEndpointsIntegrationTests
 
                 await recipeContext.SaveChangesAsync();
             }
+        }
+    }
+
+    public sealed class SearchItemsForMerge(DockerFixture dockerFixture)
+    {
+        private readonly SearchItemsForMergeFixture _fixture = new(dockerFixture);
+
+        private class SearchItemsForMergeFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+
         }
     }
 

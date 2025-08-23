@@ -80,4 +80,5 @@ public enum ErrorReasonCode
     CannotMergeItemsWithDifferentItemCategories = 77,
     CannotMergeItemsWithDifferentManufacturers = 78,
     CannotMergeTemporaryItem = 79,
+    CannotMergeItemWithItself = 80,
 }

@@ -2,7 +2,7 @@
 using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Core.Converter;
 using Xipona.Api.Domain.Items.Models;
-using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Items.Services.Updates;
 
 namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
 

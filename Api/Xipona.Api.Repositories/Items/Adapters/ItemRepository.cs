@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Xipona.Api.Core.Converter;
 using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Core.Extensions;
 using Xipona.Api.Domain.Common.Exceptions;
 using Xipona.Api.Domain.Common.Models;
 using Xipona.Api.Domain.Common.Reasons;
@@ -41,6 +42,28 @@ public class ItemRepository : IItemRepository
     }
 
     #region public methods
+
+    public async Task<IEnumerable<IItem>> FindForMergeByAsync(ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
+        ItemQuantity itemQuantity, IEnumerable<ItemId> excludedItemIds)
+    {
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
+        var quantity = itemQuantity.InPacket?.Quantity.Value;
+        var quantityTypeInPacket = itemQuantity.InPacket?.Type.ToInt();
+
+        var entities = await GetItemQuery()
+            .Where(item => item.ItemCategoryId == itemCategoryId
+                && item.ManufacturerId == manufacturerId
+                && item.QuantityType == itemQuantity.Type.ToInt()
+                && item.QuantityInPacket == quantity
+                && item.QuantityTypeInPacket == quantityTypeInPacket
+                && !excludedRawItemIds.Contains(item.Id)
+                && !item.ItemTypes.Any()
+                && !item.IsTemporary
+                && !item.Deleted)
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
+    }
 
     public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds)
     {

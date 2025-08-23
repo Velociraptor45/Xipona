@@ -1,6 +1,6 @@
 ﻿using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.Domain.Items.Models;
-using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Items.Services.Updates;
 using Xipona.Api.Repositories.Common.Transactions;
 
 namespace Xipona.Api.ApplicationServices.Items.Commands.MergeItems;
