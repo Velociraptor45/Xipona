@@ -1,8 +1,10 @@
-﻿namespace Xipona.Frontend.Redux.Shared.States.Validators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Xipona.Frontend.Redux.Shared.States.Validators;
 
 public class NameValidator : IValidator<string?>
 {
-    public bool Validate(string? property, out string? errorMessage)
+    public bool Validate(string? property, [NotNullWhen(false)] out string? errorMessage)
     {
         if (string.IsNullOrWhiteSpace(property))
         {

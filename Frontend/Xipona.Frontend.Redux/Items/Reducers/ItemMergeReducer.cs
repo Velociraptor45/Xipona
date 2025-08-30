@@ -2,11 +2,14 @@
 using Xipona.Frontend.Redux.Items.Actions.Merges;
 using Xipona.Frontend.Redux.Items.States;
 using Xipona.Frontend.Redux.Items.States.Merges;
+using Xipona.Frontend.Redux.Shared.States.Validators;
 
 namespace Xipona.Frontend.Redux.Items.Reducers;
 
 public static class ItemMergeReducer
 {
+    private static readonly NameValidator _nameValidator = new();
+
     [ReducerMethod]
     public static ItemState OnInitializeMergingFinished(ItemState state, InitializeMergingFinishedAction action)
     {
@@ -62,6 +65,12 @@ public static class ItemMergeReducer
 
         types[typeIndex] = types[typeIndex] with { Name = action.NewName };
 
+        var typeNameErrors = state.Merge.ValidationResult.TypeNames.ToDictionary();
+        if (_nameValidator.Validate(action.NewName, out var typeNameError))
+            typeNameErrors.Remove(action.MergedItemTypeKey);
+        else
+            typeNameErrors[action.MergedItemTypeKey] = typeNameError;
+
         return state with
         {
             Merge = state.Merge with
@@ -69,6 +78,10 @@ public static class ItemMergeReducer
                 Item = state.Merge.Item with
                 {
                     Types = types
+                },
+                ValidationResult = state.Merge.ValidationResult with
+                {
+                    TypeNames = typeNameErrors
                 }
             }
         };
@@ -80,6 +93,8 @@ public static class ItemMergeReducer
         if (state.Merge.Item is null)
             return state;
 
+        _nameValidator.Validate(action.NewName, out var nameError);
+
         return state with
         {
             Merge = state.Merge with
@@ -87,6 +102,10 @@ public static class ItemMergeReducer
                 Item = state.Merge.Item with
                 {
                     Name = action.NewName
+                },
+                ValidationResult = state.Merge.ValidationResult with
+                {
+                    Name = nameError
                 }
             }
         };
@@ -182,7 +201,8 @@ public static class ItemMergeReducer
                 {
                     SelectedItems = [],
                     SearchResults = [],
-                }
+                },
+                ValidationResult = new()
             }
         };
     }
@@ -223,6 +243,30 @@ public static class ItemMergeReducer
             Merge = state.Merge with
             {
                 IsSaving = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MergeItemsAction))]
+    public static ItemState OnMergeItemsAction(ItemState state)
+    {
+        if (state.Merge.Item is null)
+            return state;
+
+        _nameValidator.Validate(state.Merge.Item.Name, out var typeNameError);
+
+        Dictionary<Guid, string> typeNameErrors = new();
+        foreach (var type in state.Merge.Item.Types)
+        {
+            if (!_nameValidator.Validate(type.Name, out var error))
+                typeNameErrors[type.Key] = error!;
+        }
+
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                ValidationResult = new ItemMergeValidationResult(typeNameError, typeNameErrors)
             }
         };
     }

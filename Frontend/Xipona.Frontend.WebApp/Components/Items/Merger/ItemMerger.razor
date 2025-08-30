@@ -22,6 +22,10 @@
     <Input TValue="string" Value="MergedItem.Name" OnInput="OnItemNameChanged" Placeholder="New item name ..."
            Class="mb-2 name-input">
     </Input>
+    @if (State.Value.Merge.ValidationResult.Name is not null)
+    {
+        <div class="validation-error-message">@State.Value.Merge.ValidationResult.Name</div>
+    }
 
     <h2 class="font-weight-bold mt-2">Types</h2>
 

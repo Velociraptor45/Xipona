@@ -47,6 +47,10 @@ public class ItemFeatureState : Feature<ItemState>
                 false,
                 false,
                 new()),
-            new ItemMerge(new(false, false, [], []), null, false));
+            new ItemMerge(
+                new MergeItemSelector(false, false, [], []),
+                null,
+                false,
+                new ItemMergeValidationResult()));
     }
 }

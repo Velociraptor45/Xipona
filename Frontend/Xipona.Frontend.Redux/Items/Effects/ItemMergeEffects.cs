@@ -69,7 +69,7 @@ public class ItemMergeEffects
     [EffectMethod(typeof(MergeItemsAction))]
     public async Task HandleMergeItemsAction(IDispatcher dispatcher)
     {
-        if (_state.Value.Merge.Item is null)
+        if (_state.Value.Merge.Item is null || _state.Value.Merge.ValidationResult.HasErrors)
             return;
 
         dispatcher.Dispatch(new MergeItemsStartedAction());

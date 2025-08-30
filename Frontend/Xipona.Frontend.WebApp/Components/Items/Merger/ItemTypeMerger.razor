@@ -1,9 +1,11 @@
 ﻿@using Fluxor
 @using Xipona.Frontend.Redux.Items.Actions.Merges
+@using Xipona.Frontend.Redux.Items.States
 @using Xipona.Frontend.Redux.Items.States.Merges
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
+@inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
 <div>
@@ -11,6 +13,10 @@
            Placeholder="@(MergedItemType.OriginalItem.Name + " ...")" Class="item-type-name-input">
     </Input>
     <div class="previous-item-name">Previous: @MergedItemType.OriginalItem.Name</div>
+    @if (State.Value.Merge.ValidationResult.TypeNames.TryGetValue(MergedItemType.Key, out var errorMessage))
+    {
+        <div class="validation-error-message">@errorMessage</div>
+    }
 </div>
 
 @code
