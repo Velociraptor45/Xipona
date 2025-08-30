@@ -6,7 +6,7 @@
     <RootNamespace>Xipona.Api.Contracts</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>Xipona Api Contracts</Title>
-    <Version>0.14.0-alpha.11</Version>
+    <Version>0.14.0-alpha.15</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/Xipona</RepositoryUrl>
@@ -21,7 +21,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="Stores\Queries\GetActiveStoresForShopping\StoreForShoppingContract.cs" />
   </ItemGroup>
 
 </Project>

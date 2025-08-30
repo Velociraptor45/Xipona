@@ -11,18 +11,18 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge
         /// </summary>
         /// <param name="itemId"></param>
         /// <param name="name"></param>
-        /// <param name="itemCategory"></param>
-        /// <param name="manufacturer"></param>
+        /// <param name="itemCategoryId"></param>
+        /// <param name="manufacturerId"></param>
         /// <param name="quantityType"></param>
         /// <param name="quantity"></param>
         /// <param name="quantityTypeInPacket"></param>
-        public SearchItemsForMergeResultContract(Guid itemId, string name, Guid itemCategory, Guid? manufacturer,
+        public SearchItemsForMergeResultContract(Guid itemId, string name, Guid itemCategoryId, Guid? manufacturerId,
             int quantityType, float? quantity, int? quantityTypeInPacket)
         {
             ItemId = itemId;
             Name = name;
-            ItemCategory = itemCategory;
-            Manufacturer = manufacturer;
+            ItemCategoryId = itemCategoryId;
+            ManufacturerId = manufacturerId;
             QuantityType = quantityType;
             Quantity = quantity;
             QuantityTypeInPacket = quantityTypeInPacket;
@@ -41,12 +41,12 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge
         /// <summary>
         /// The ID of the item's item category.
         /// </summary>
-        public Guid ItemCategory { get; set; }
+        public Guid ItemCategoryId { get; set; }
 
         /// <summary>
         /// The ID of the item's manufacturer. <code>null</code> if it has no manufacturer.
         /// </summary>
-        public Guid? Manufacturer { get; set; }
+        public Guid? ManufacturerId { get; set; }
 
         /// <summary>
         /// The quantity type of the item.

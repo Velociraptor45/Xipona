@@ -11,9 +11,9 @@ public record SearchItemsForMergeCommand(ItemCategoryId ItemCategoryId, Manufact
 
 public class SearchItemsForMergeCommandHandler : ICommandHandler<SearchItemsForMergeCommand, IEnumerable<SearchItemsForMergeResult>>
 {
-    private readonly Func<CancellationToken, ItemMergeSearchService> _serviceDelegate;
+    private readonly Func<CancellationToken, IItemMergeSearchService> _serviceDelegate;
 
-    public SearchItemsForMergeCommandHandler(Func<CancellationToken, ItemMergeSearchService> serviceDelegate)
+    public SearchItemsForMergeCommandHandler(Func<CancellationToken, IItemMergeSearchService> serviceDelegate)
     {
         _serviceDelegate = serviceDelegate;
     }

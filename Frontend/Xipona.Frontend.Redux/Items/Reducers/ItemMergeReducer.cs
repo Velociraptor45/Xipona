@@ -101,7 +101,10 @@ public static class ItemMergeReducer
             {
                 Selector = state.Merge.Selector with
                 {
-                    IsOpen = true
+                    SearchResults = [],
+                    SelectedItems = [],
+                    IsOpen = true,
+                    IsSearching = false,
                 }
             }
         };
@@ -118,6 +121,108 @@ public static class ItemMergeReducer
                 {
                     IsOpen = false
                 }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(SearchItemsForMergeStartedAction))]
+    public static ItemState OnSearchItemsForMergeStarted(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    IsSearching = true
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ItemState OnSearchItemsForMergeFinished(ItemState state, SearchItemsForMergeFinishedAction action)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    SearchResults = action.SearchResults,
+                    IsSearching = false
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ItemState OnSelectedMergeItemsChanged(ItemState state, SelectedMergeItemsChangedAction action)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    SelectedItems = action.Items
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(InitializeMergingAction))]
+    public static ItemState OnInitializeMerging(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    SelectedItems = [],
+                    SearchResults = [],
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(EnterMergerAction))]
+    public static ItemState OnEnterMergerAction(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                Selector = state.Merge.Selector with
+                {
+                    IsOpen = false,
+                    IsSearching = false,
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MergeItemsStartedAction))]
+    public static ItemState OnMergeItemsStarted(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                IsSaving = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MergeItemsFinishedAction))]
+    public static ItemState OnMergeItemsFinished(ItemState state)
+    {
+        return state with
+        {
+            Merge = state.Merge with
+            {
+                IsSaving = false
             }
         };
     }

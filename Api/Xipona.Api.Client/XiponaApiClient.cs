@@ -353,9 +353,11 @@ namespace Xipona.Api.Client
 
         /// <inheritdoc/>
         public async Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
-            SearchItemsForMergeContract contract, CancellationToken cancellationToken = default)
+            Guid itemCategory, Guid? manufacturer, int quantityType, float? quantity,
+            int? quantityTypeInPacket, Guid[] excludedItemIds, CancellationToken cancellationToken = default)
         {
-            return await _apiClient.SearchItemsForMergeAsync(contract, cancellationToken);
+            return await _apiClient.SearchItemsForMergeAsync(itemCategory, manufacturer, quantityType, quantity,
+                quantityTypeInPacket, excludedItemIds, cancellationToken);
         }
 
         #endregion Item

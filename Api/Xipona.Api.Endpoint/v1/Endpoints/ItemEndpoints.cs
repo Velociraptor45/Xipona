@@ -43,6 +43,7 @@ using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
 using Xipona.Api.Domain.Common.Exceptions;
 using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.ItemCategories.Models;
@@ -798,7 +799,7 @@ public static class ItemEndpoints
     private static IEndpointRouteBuilder RegisterSearchItemsForMerge(this IEndpointRouteBuilder builder)
     {
         builder.MapGet($"/{_routeBase}/merge/search", SearchItemsForMerge)
-            .WithName("MergeItems")
+            .WithName("SearchItemsForMerge")
             .Produces<List<SearchItemsForMergeResultContract>>()
             .Produces<string>(StatusCodes.Status400BadRequest)
             .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
@@ -808,20 +809,37 @@ public static class ItemEndpoints
     }
 
     internal static async Task<IResult> SearchItemsForMerge(
-        [FromBody] SearchItemsForMergeContract contract,
+        [FromQuery] Guid itemCategory,
+        [FromQuery] Guid? manufacturer,
+        [FromQuery] int quantityType,
+        [FromQuery] float? quantity,
+        [FromQuery] int? quantityTypeInPacket,
+        [FromQuery] Guid[] excludedItemIds,
         [FromServices] ICommandDispatcher commandDispatcher,
-        [FromServices] IToDomainConverter<SearchItemsForMergeContract, SearchItemsForMergeCommand> commandConverter,
         [FromServices] IToContractConverter<SearchItemsForMergeResult, SearchItemsForMergeResultContract> contractConverter,
         [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
         CancellationToken cancellationToken)
     {
-        if ((contract.Quantity is null && contract.QuantityTypeInPacket is not null)
-            || (contract.Quantity is not null && contract.QuantityTypeInPacket is null))
+        if ((quantity is null && quantityTypeInPacket is not null)
+            || (quantity is not null && quantityTypeInPacket is null))
             return Results.BadRequest("Quantity and QuantityTypeInPacket must either both be null or both not be null");
 
         try
         {
-            var command = commandConverter.ToDomain(contract);
+            ItemQuantityInPacket? itemQuantityInPacket = null;
+            if (quantity is not null && quantityTypeInPacket is not null)
+                itemQuantityInPacket = new ItemQuantityInPacket(
+                    new Quantity(quantity.Value),
+                    quantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+
+            var command = new SearchItemsForMergeCommand(
+                new ItemCategoryId(itemCategory),
+                manufacturer is null ? null : new ManufacturerId(manufacturer.Value),
+                new ItemQuantity(
+                    quantityType.ToEnum<QuantityType>(),
+                    itemQuantityInPacket),
+                excludedItemIds.Select(i => new ItemId(i)).ToList());
+
             var results = await commandDispatcher.DispatchAsync(command, cancellationToken);
             var contracts = contractConverter.ToContract(results).ToList();
             return Results.Ok(contracts);

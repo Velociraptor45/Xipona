@@ -1,6 +1,7 @@
 ﻿@using Fluxor
 @using Xipona.Frontend.Redux.Items.Actions.Merges
 @using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.Redux.Items.States.Merges
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @inject IState<ItemState> State
@@ -11,16 +12,15 @@
        OnCancel="OnCloseDialogButtonClicked"
        Footer="GetFooter()">
 
-    <Input TValue="string" Value="State.Value.Merge.Selector.Input" OnInput="OnSearchInputChanged"
-           Placeholder="Search for item ...">
-    </Input>
-    
-    <div class="mt-2">
-        @foreach (var searchResult in State.Value.Merge.Selector.SelectedItems)
-        {
-            <div>@searchResult.Name</div>
-        }
-    </div>
+    <Select DataSource="@State.Value.Merge.Selector.SearchResults"
+            TItem="MergeItemSearchResult"
+            TItemValue="Guid"
+            ValueName="@nameof(MergeItemSearchResult.Id)"
+            LabelName="@nameof(MergeItemSearchResult.Name)"
+            OnSelectedItemsChanged="OnItemsSelected"
+            Mode="SelectMode.Multiple"
+            Values="@State.Value.Merge.Selector.SelectedItems.Select(i => i.Id)">
+    </Select>
 </Modal>
 
 @code
@@ -35,9 +35,9 @@
         Dispatcher.Dispatch(new EnterMergerAction());
     }
 
-    private void OnSearchInputChanged(ChangeEventArgs args)
+    private void OnItemsSelected(IEnumerable<MergeItemSearchResult> searchResults)
     {
-        Dispatcher.Dispatch(new MergeItemSearchInputChangedAction(args.Value?.ToString() ?? string.Empty));
+        Dispatcher.Dispatch(new SelectedMergeItemsChangedAction(searchResults.ToList()));
     }
 
     private RenderFragment GetFooter()
@@ -47,7 +47,7 @@
                 OnClick="OnEnterMergerButtonClicked"
                     @key="@("submit")"
                     Type="@ButtonType.Primary"
-                    Disabled="@(!State.Value.Merge.Selector.SelectedItems.Any())">
+                    Disabled="@(State.Value.Merge.Selector.SelectedItems.Count == 0)">
                 Start Merge
             </Button>
         </Template>;

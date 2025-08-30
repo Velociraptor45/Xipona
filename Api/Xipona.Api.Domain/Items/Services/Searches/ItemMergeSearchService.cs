@@ -24,7 +24,9 @@ public class ItemMergeSearchService : IItemMergeSearchService
     public async Task<IEnumerable<SearchItemsForMergeResult>> SearchAsync(ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, ItemQuantity itemQuantity, IEnumerable<ItemId> excludedItemIds)
     {
-        return [];
+        var items = await _itemRepository.FindForMergeByAsync(itemCategoryId, manufacturerId, itemQuantity, excludedItemIds);
+        return items.Select(i => new SearchItemsForMergeResult(
+            i.Id, i.Name, i.ItemCategoryId!.Value, i.ManufacturerId, i.ItemQuantity));
     }
 }
 

@@ -20,6 +20,7 @@ using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Contracts.Manufacturers.Commands;
@@ -505,5 +506,14 @@ public class ApiClient : IApiClient
         var contract = _converters.ToContract<MergedItem, MergeItemsContract>(mergedItem);
         var result = await _client.MergeItemsAsync(contract);
         return result;
+    }
+
+    public async Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems)
+    {
+        var contracts = await _client.SearchItemsForMergeAsync(item.ItemCategoryId!.Value, item.ManufacturerId,
+            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType?.Id, alreadySelectedItems);
+        return contracts is null
+            ? []
+            : _converters.ToDomain<SearchItemsForMergeResultContract, MergeItemSearchResult>(contracts);
     }
 }

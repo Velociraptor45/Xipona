@@ -2,4 +2,4 @@
 
 namespace Xipona.Frontend.Redux.Items.Actions.Merges;
 
-public record SelectedMergeItemsChangedAction(IReadOnlyCollection<MergeItemSearchResult> Items);
+public record SearchItemsForMergeFinishedAction(IReadOnlyCollection<MergeItemSearchResult> SearchResults);

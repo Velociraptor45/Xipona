@@ -4,6 +4,7 @@ using RestEase;
 using Xipona.Frontend.Redux.Items.Actions.Merges;
 using Xipona.Frontend.Redux.Items.States;
 using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
 using Xipona.Frontend.Redux.Shared.Ports;
 
 namespace Xipona.Frontend.Redux.Items.Effects;
@@ -23,12 +24,15 @@ public class ItemMergeEffects
     [EffectMethod(typeof(EnterMergerAction))]
     public Task HandleEnterMergerAction(IDispatcher dispatcher)
     {
-        if (_state.Value.Merge.Selector.SelectedItems.Count == 0)
+        if (_state.Value.Merge.Selector.SelectedItems.Count == 0 || _state.Value.Editor.Item is null)
             return Task.CompletedTask;
+
+        var itemIds = _state.Value.Merge.Selector.SelectedItems.Select(i => i.Id).ToList();
+        itemIds.Add(_state.Value.Editor.Item.Id);
 
         var uri = _navigationManager.GetUriWithQueryParameters("/items/merge", new Dictionary<string, object?>
         {
-            { "itemId", _state.Value.Merge.Selector.SelectedItems.Select(i => i.Id) }
+            { "itemId", itemIds.ToArray() }
         });
         _navigationManager.NavigateTo(uri);
 
@@ -70,18 +74,69 @@ public class ItemMergeEffects
 
         dispatcher.Dispatch(new MergeItemsStartedAction());
 
+        Guid newItemId;
         try
         {
-            await _client.MergeItemsAsync(_state.Value.Merge.Item);
-            dispatcher.Dispatch(new MergeItemsFinishedAction());
+            newItemId = await _client.MergeItemsAsync(_state.Value.Merge.Item);
         }
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Merging items failed", e));
+            return;
         }
         catch (HttpRequestException e)
         {
             dispatcher.Dispatch(new DisplayErrorNotificationAction("Merging items failed", e.Message));
+            return;
+        }
+        finally
+        {
+            dispatcher.Dispatch(new MergeItemsFinishedAction());
+        }
+
+        dispatcher.Dispatch(new LeaveItemMergerAction(newItemId));
+    }
+
+    [EffectMethod]
+    public Task HandleLeaveItemMergerAction(LeaveItemMergerAction action, IDispatcher dispatcher)
+    {
+        if (action.NewItemId is null)
+        {
+            var item = _state.Value.Editor.Item;
+            _navigationManager.NavigateTo(item is null
+                ? PageRoutes.Items
+                : $"{PageRoutes.Items}/{item.Id}");
+        }
+        else
+        {
+            _navigationManager.NavigateTo($"{PageRoutes.Items}/{action.NewItemId.Value}");
+        }
+
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(OpenMergeItemSelectorAction))]
+    public async Task HandleOpenMergeItemSelectorAction(IDispatcher dispatcher)
+    {
+        if (_state.Value.Editor.Item is null)
+            return;
+
+        var item = _state.Value.Editor.Item;
+
+        dispatcher.Dispatch(new SearchItemsForMergeStartedAction());
+
+        try
+        {
+            var searchResults = await _client.SearchItemsForMergeAsync(item, [item.Id]);
+            dispatcher.Dispatch(new SearchItemsForMergeFinishedAction(searchResults.ToList()));
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for mergable items failed", e));
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for mergable items failed", e.Message));
         }
     }
 }

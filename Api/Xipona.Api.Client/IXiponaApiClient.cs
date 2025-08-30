@@ -395,12 +395,18 @@ namespace Xipona.Api.Client
         /// <summary>
         /// Searches for items that can be merged into one item with types.
         /// </summary>
-        /// <param name="contract"></param>
+        /// <param name="itemCategory"></param>
+        /// <param name="manufacturer"></param>
+        /// <param name="quantityType"></param>
+        /// <param name="quantity"></param>
+        /// <param name="quantityTypeInPacket"></param>
+        /// <param name="excludedItemIds"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("items/merge/search")]
         Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
-            SearchItemsForMergeContract contract, CancellationToken cancellationToken = default);
+            [Query] Guid itemCategory, [Query] Guid? manufacturer, [Query] int quantityType, [Query] float? quantity,
+            [Query] int? quantityTypeInPacket, [Query] Guid[] excludedItemIds, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Modifies an existing item.
