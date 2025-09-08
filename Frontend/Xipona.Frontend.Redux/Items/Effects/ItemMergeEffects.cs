@@ -30,7 +30,7 @@ public class ItemMergeEffects
         var itemIds = _state.Value.Merge.Selector.SelectedItems.Select(i => i.Id).ToList();
         itemIds.Add(_state.Value.Editor.Item.Id);
 
-        var uri = _navigationManager.GetUriWithQueryParameters("/items/merge", new Dictionary<string, object?>
+        var uri = _navigationManager.GetUriWithQueryParameters($"/{PageRoutes.Items}/merge", new Dictionary<string, object?>
         {
             { "itemId", itemIds.ToArray() }
         });
