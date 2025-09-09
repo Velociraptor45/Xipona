@@ -57,10 +57,12 @@ public class ItemMergeEffects
         catch (ApiException e)
         {
             dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Loading item failed", e));
+            return;
         }
         catch (HttpRequestException e)
         {
             dispatcher.Dispatch(new DisplayErrorNotificationAction("Loading item failed", e.Message));
+            return;
         }
 
         dispatcher.Dispatch(new InitializeMergingFinishedAction(items));
@@ -121,12 +123,11 @@ public class ItemMergeEffects
         if (_state.Value.Editor.Item is null)
             return;
 
-        var item = _state.Value.Editor.Item;
-
         dispatcher.Dispatch(new SearchItemsForMergeStartedAction());
 
         try
         {
+            var item = _state.Value.Editor.Item;
             var searchResults = await _client.SearchItemsForMergeAsync(item, [item.Id]);
             dispatcher.Dispatch(new SearchItemsForMergeFinishedAction(searchResults.ToList()));
         }
