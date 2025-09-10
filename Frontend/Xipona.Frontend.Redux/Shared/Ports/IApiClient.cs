@@ -1,5 +1,6 @@
 ﻿using Xipona.Frontend.Redux.ItemCategories.States;
 using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Merges;
 using Xipona.Frontend.Redux.Manufacturers.States;
 using Xipona.Frontend.Redux.Recipes.States;
 using Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
@@ -134,4 +135,6 @@ public interface IApiClient
     Task<GeneralSettings> GetGeneralSettingsAsync();
     Task AddShoppingListDiscountAsync(Guid shoppingListId, decimal discount, ShoppingListDiscountType type);
     Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId);
+    Task<Guid> MergeItemsAsync(MergedItem mergedItem);
+    Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems);
 }

@@ -73,5 +73,12 @@ public enum ErrorReasonCode
     CannotModifyDeletedSection = 70,
     CannotChangeStoreOfIngredientWithoutShoppingListProperties = 71,
     CannotModifyItemWithTypesAsItem = 72,
-    GeneralSettingsNotLoaded = 73
+    GeneralSettingsNotLoaded = 73,
+    CannotMergeItemWithTypes = 74,
+    CannotMergeDeletedItem = 75,
+    CannotMergeItemsWithDifferentQuantities = 76,
+    CannotMergeItemsWithDifferentItemCategories = 77,
+    CannotMergeItemsWithDifferentManufacturers = 78,
+    CannotMergeTemporaryItem = 79,
+    CannotMergeItemWithItself = 80,
 }

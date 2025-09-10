@@ -107,4 +107,15 @@ public class RecipeModificationService : IRecipeModificationService
             await _recipeRepository.StoreAsync(recipe);
         }
     }
+
+    public async Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        var recipes = await _recipeRepository.FindByAsync(originalItemId);
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ReplaceMergedItem(originalItemId, newItemId, newItemTypeId);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
 }

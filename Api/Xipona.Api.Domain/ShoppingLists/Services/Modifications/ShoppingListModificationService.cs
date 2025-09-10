@@ -288,4 +288,24 @@ public class ShoppingListModificationService : IShoppingListModificationService
 
         await _shoppingListRepository.StoreAsync(shoppingList);
     }
+
+    public async Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        var newItem = await _itemRepository.FindActiveByAsync(newItemId);
+        if (newItem is null)
+            throw new DomainException(new ItemNotFoundReason(newItemId));
+        if (!newItem.TryGetType(newItemTypeId, out var newItemType))
+            throw new DomainException(new ItemTypeNotFoundReason(newItemTypeId));
+
+        foreach (var availability in newItemType.Availabilities)
+        {
+            var shoppingList = await _shoppingListRepository.FindActiveByAsync(availability.StoreId);
+            if (shoppingList is null)
+                throw new DomainException(new ShoppingListNotFoundReason(availability.StoreId));
+
+            var replaced = shoppingList.ReplaceMergedItem(originalItemId, newItemId, newItemTypeId);
+            if (replaced)
+                await _shoppingListRepository.StoreAsync(shoppingList);
+        }
+    }
 }

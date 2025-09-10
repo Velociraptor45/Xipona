@@ -1,4 +1,5 @@
-﻿using Xipona.Api.Core.DomainEventHandlers;
+﻿using System.Diagnostics.CodeAnalysis;
+using Xipona.Api.Core.DomainEventHandlers;
 using Xipona.Api.Core.Services;
 using Xipona.Api.Domain.Common.Exceptions;
 using Xipona.Api.Domain.Common.Models;
@@ -105,6 +106,15 @@ public class Item : AggregateRoot, IItem
         PublishDomainEvent(new ItemDeletedDomainEvent());
     }
 
+    public void MarkAsMerged(ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        if (IsDeleted)
+            return;
+
+        IsDeleted = true;
+        PublishDomainEvent(new ItemMergedDomainEvent(Id, newItemId, newItemTypeId));
+    }
+
     public bool IsAvailableInStore(StoreId storeId)
     {
         return Availabilities.Any(av => av.StoreId == storeId);
@@ -200,7 +210,7 @@ public class Item : AggregateRoot, IItem
         return availability.DefaultSectionId;
     }
 
-    public bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType)
+    public bool TryGetType(ItemTypeId itemTypeId, [NotNullWhen(true)] out IItemType? itemType)
     {
         if (_itemTypes is not null)
             return _itemTypes.TryGetValue(itemTypeId, out itemType);

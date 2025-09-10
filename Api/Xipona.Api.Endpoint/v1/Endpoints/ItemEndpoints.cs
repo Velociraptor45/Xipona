@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using System.Threading;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Items.Commands;
@@ -10,6 +11,7 @@ using Xipona.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.DeleteItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.ApplicationServices.Items.Commands.MergeItems;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
@@ -20,12 +22,14 @@ using Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.ApplicationServices.Items.Queries.TotalSearchResultCounts;
 using Xipona.Api.Contracts.Common;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -35,9 +39,11 @@ using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
 using Xipona.Api.Domain.Common.Exceptions;
 using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.ItemCategories.Models;
@@ -48,7 +54,6 @@ using Xipona.Api.Domain.Items.Services.Queries.Quantities;
 using Xipona.Api.Domain.Items.Services.Searches;
 using Xipona.Api.Domain.Manufacturers.Models;
 using Xipona.Api.Domain.Stores.Models;
-using System.Threading;
 
 namespace Xipona.Api.Endpoint.v1.Endpoints;
 
@@ -76,7 +81,9 @@ public static class ItemEndpoints
             .RegisterUpdateItemPrice()
             .RegisterUpdateItemWithTypes()
             .RegisterMakeTemporaryItemPermanent()
-            .RegisterDeleteItem();
+            .RegisterDeleteItem()
+            .RegisterMergeItems()
+            .RegisterSearchItemsForMerge();
     }
 
     private static IEndpointRouteBuilder RegisterGetItemById(this IEndpointRouteBuilder builder)
@@ -752,5 +759,100 @@ public static class ItemEndpoints
         }
 
         return Results.NoContent();
+    }
+
+    private static IEndpointRouteBuilder RegisterMergeItems(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost($"/{_routeBase}/merge", MergeItems)
+            .WithName("MergeItems")
+            .Produces<Guid>(StatusCodes.Status201Created)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> MergeItems(
+        [FromBody] MergeItemsContract contract,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToDomainConverter<MergeItemsContract, MergeItemsCommand> commandConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = commandConverter.ToDomain(contract);
+            var itemId = await commandDispatcher.DispatchAsync(command, cancellationToken);
+            return Results.CreatedAtRoute("GetItemById", new { id = itemId.Value }, itemId.Value);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return Results.NotFound(errorContract);
+
+            return Results.UnprocessableEntity(errorContract);
+        }
+    }
+
+    private static IEndpointRouteBuilder RegisterSearchItemsForMerge(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet($"/{_routeBase}/merge/search", SearchItemsForMerge)
+            .WithName("SearchItemsForMerge")
+            .Produces<List<SearchItemsForMergeResultContract>>()
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<string>(StatusCodes.Status400BadRequest)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> SearchItemsForMerge(
+        [FromQuery] Guid itemCategory,
+        [FromQuery] Guid? manufacturer,
+        [FromQuery] int quantityType,
+        [FromQuery] float? quantity,
+        [FromQuery] int? quantityTypeInPacket,
+        [FromQuery] Guid[] excludedItemIds,
+        [FromServices] IQueryDispatcher queryDispatcher,
+        [FromServices] IToContractConverter<SearchItemsForMergeResult, SearchItemsForMergeResultContract> contractConverter,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+    {
+        if ((quantity is null && quantityTypeInPacket is not null)
+            || (quantity is not null && quantityTypeInPacket is null))
+            return Results.BadRequest("Quantity and QuantityTypeInPacket must either both be null or both not be null");
+
+        try
+        {
+            ItemQuantityInPacket? itemQuantityInPacket = null;
+            if (quantity is not null && quantityTypeInPacket is not null)
+                itemQuantityInPacket = new ItemQuantityInPacket(
+                    new Quantity(quantity.Value),
+                    quantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
+
+            var command = new SearchItemsForMergeQuery(
+                new ItemCategoryId(itemCategory),
+                manufacturer is null ? null : new ManufacturerId(manufacturer.Value),
+                new ItemQuantity(
+                    quantityType.ToEnum<QuantityType>(),
+                    itemQuantityInPacket),
+                excludedItemIds.Select(i => new ItemId(i)).ToList());
+
+            var results = (await queryDispatcher.DispatchAsync(command, cancellationToken)).ToList();
+            
+            if (results.Count == 0)
+                return Results.NoContent();
+            
+            var contracts = contractConverter.ToContract(results).ToList();
+            return Results.Ok(contracts);
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            return Results.UnprocessableEntity(errorContract);
+        }
     }
 }

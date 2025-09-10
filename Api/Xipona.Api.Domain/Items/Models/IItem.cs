@@ -1,4 +1,5 @@
-﻿using Xipona.Api.Core.Services;
+﻿using System.Diagnostics.CodeAnalysis;
+using Xipona.Api.Core.Services;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.Items.Services.Modifications;
 using Xipona.Api.Domain.Items.Services.TemporaryItems;
@@ -28,6 +29,7 @@ public interface IItem
     DateTimeOffset CreatedAt { get; }
 
     void Delete();
+    void MarkAsMerged(ItemId newItemId, ItemTypeId newItemTypeId);
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
@@ -41,7 +43,7 @@ public interface IItem
 
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 
-    bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType);
+    bool TryGetType(ItemTypeId itemTypeId, [NotNullWhen(true)] out IItemType? itemType);
 
     IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId);
 

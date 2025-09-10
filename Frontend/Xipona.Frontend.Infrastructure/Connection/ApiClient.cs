@@ -1,10 +1,16 @@
-﻿using Xipona.Api.Client;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Xipona.Api.Client;
 using Xipona.Api.Contracts.Common.Queries;
 using Xipona.Api.Contracts.ItemCategories.Commands;
 using Xipona.Api.Contracts.ItemCategories.Queries;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -14,6 +20,7 @@ using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Contracts.Manufacturers.Commands;
@@ -49,6 +56,7 @@ using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using Xipona.Frontend.Infrastructure.Converters.Common;
 using Xipona.Frontend.Redux.ItemCategories.States;
 using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Merges;
 using Xipona.Frontend.Redux.Manufacturers.States;
 using Xipona.Frontend.Redux.Recipes.States;
 using Xipona.Frontend.Redux.Shared.Ports;
@@ -59,11 +67,6 @@ using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using Xipona.Frontend.Redux.Shared.States;
 using Xipona.Frontend.Redux.ShoppingList.States;
 using Xipona.Frontend.Redux.Stores.States;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AddItemToShoppingListContract = Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 using IngredientQuantityType = Xipona.Frontend.Redux.Recipes.States.IngredientQuantityType;
 using ItemStore = Xipona.Frontend.Redux.Items.States.ItemStore;
@@ -496,5 +499,21 @@ public class ApiClient : IApiClient
         var settings = await _client.GetGeneralSettingsAsync();
         return _converters
             .ToDomain<Api.Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract, GeneralSettings>(settings);
+    }
+
+    public async Task<Guid> MergeItemsAsync(MergedItem mergedItem)
+    {
+        var contract = _converters.ToContract<MergedItem, MergeItemsContract>(mergedItem);
+        var result = await _client.MergeItemsAsync(contract);
+        return result;
+    }
+
+    public async Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems)
+    {
+        var contracts = await _client.SearchItemsForMergeAsync(item.ItemCategoryId!.Value, item.ManufacturerId,
+            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType?.Id, alreadySelectedItems);
+        return contracts is null
+            ? []
+            : _converters.ToDomain<SearchItemsForMergeResultContract, MergeItemSearchResult>(contracts);
     }
 }

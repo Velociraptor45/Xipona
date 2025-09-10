@@ -1,4 +1,6 @@
-﻿namespace Xipona.Frontend.Redux.Shared.States.Validators;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Xipona.Frontend.Redux.Shared.States.Validators;
 
 public interface IValidator<in TProperty>
 {
@@ -8,5 +10,5 @@ public interface IValidator<in TProperty>
     /// <param name="property"></param>
     /// <param name="errorMessage"></param>
     /// <returns></returns>
-    bool Validate(TProperty property, out string? errorMessage);
+    bool Validate(TProperty property, [NotNullWhen(false)] out string? errorMessage);
 }

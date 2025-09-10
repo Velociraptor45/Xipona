@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoFixture;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,12 +9,14 @@ using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Items.Commands;
 using Xipona.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
+using Xipona.Api.ApplicationServices.Items.Commands.MergeItems;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 using Xipona.Api.Contracts.Common;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -779,7 +782,7 @@ public class ItemEndpointsIntegrationTests
             private readonly List<Item> _items = new();
             private readonly List<ItemCategory> _itemCategories = new();
             private Store? _store;
-            private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
+            private ShoppingList? _shoppingList;
 
             public string SearchInput { get; } = new DomainTestBuilder<string>().Create();
             public Guid StoreId { get; } = Guid.NewGuid();
@@ -2994,13 +2997,13 @@ public class ItemEndpointsIntegrationTests
 
         private sealed class DeleteItemAsyncFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
         {
-            private Repositories.ShoppingLists.Entities.ShoppingList? _shoppingList;
+            private ShoppingList? _shoppingList;
             private Store? _store;
             private Recipe? _recipe;
 
             public Item? Item { get; private set; }
             public Item? ExpectedItem { get; private set; }
-            public Repositories.ShoppingLists.Entities.ShoppingList? ExpectedShoppingList { get; private set; }
+            public ShoppingList? ExpectedShoppingList { get; private set; }
             public Recipe? ExpectedRecipe { get; private set; }
 
             public async Task<IResult> ActAsync()
@@ -3106,6 +3109,395 @@ public class ItemEndpointsIntegrationTests
                 await shoppingListContext.SaveChangesAsync();
                 await recipeContext.SaveChangesAsync();
             }
+        }
+    }
+
+    public sealed class MergeItems(DockerFixture dockerFixture)
+    {
+        private readonly MergeItemsFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task MergeItems_WithTwoItems_ShouldCombineItems()
+        {
+            // Arrange
+            _fixture.SetupItem1();
+            _fixture.SetupItem2();
+            _fixture.SetupExpectedItem();
+            _fixture.SetupExistingShoppingLists();
+            _fixture.SetupContract();
+            _fixture.SetupExistingRecipe();
+            await _fixture.PrepareDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem1);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item1Predecessor);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem2);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Item2Predecessor);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.PreviousStore1ShoppingList);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentStore2ShoppingList);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<CreatedAtRoute<Guid>>();
+
+            using var assertionScope = _fixture.CreateServiceScope();
+
+            var items = (await _fixture.LoadAllItemsAsync(assertionScope)).ToList();
+            items.Should().HaveCount(5);
+
+            //item 1
+            var item1 = items.Should().Contain(i => i.Id == _fixture.ExpectedItem1.Id).Subject;
+            item1.Should().BeEquivalentTo(_fixture.ExpectedItem1,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision().ExcludeItemCycleRef());
+            items.Remove(item1);
+
+            //item 1 predecessor
+            var item1Predecessor = items.Should().Contain(i => i.Id == _fixture.Item1Predecessor.Id).Subject;
+            item1Predecessor.Should().BeEquivalentTo(_fixture.Item1Predecessor,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision().ExcludeItemCycleRef());
+            items.Remove(item1Predecessor);
+
+            // item 2
+            var item2 = items.Should().Contain(i => i.Id == _fixture.ExpectedItem2.Id).Subject;
+            item2.Should().BeEquivalentTo(_fixture.ExpectedItem2,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision().ExcludeItemCycleRef());
+            items.Remove(item2);
+
+            //item 2 predecessor
+            var item2Predecessor = items.Should().Contain(i => i.Id == _fixture.Item2Predecessor.Id).Subject;
+            item2Predecessor.Should().BeEquivalentTo(_fixture.Item2Predecessor,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision().ExcludeItemCycleRef());
+            items.Remove(item2Predecessor);
+
+            // new item
+            var newItem = items.Single();
+            newItem.Should().BeEquivalentTo(_fixture.ExpectedItem,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision(TimeSpan.FromMinutes(1))
+                    .ExcludeItemCycleRef().ExcludeItemTypeId()
+                    .Excluding(info => info.Path == "Id" || info.Path == "Comment"));
+            newItem.Comment.Should().ContainAll(_fixture.ExpectedItem1.Comment, _fixture.ExpectedItem2.Comment);
+            var returnedId = ((CreatedAtRoute<Guid>)result).Value;
+            returnedId.Should().Be(newItem.Id);
+
+            // shopping lists
+            var typeOnShoppingList = newItem.ItemTypes.First(t => _fixture.ExpectedItem1.Name.StartsWith(t.Name));
+            _fixture.SetupExpectedShoppingList(newItem.Id, typeOnShoppingList.Id);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedCurrentStore1ShoppingList);
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertionScope)).ToList();
+            shoppingLists.Should().HaveCount(3);
+
+            // current store 2 shopping list
+            var currentStore2Sl = shoppingLists.Should().Contain(s => s.Id == _fixture.CurrentStore2ShoppingList.Id).Subject;
+            currentStore2Sl.Should().BeEquivalentTo(_fixture.CurrentStore2ShoppingList,
+                opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion());
+            shoppingLists.Remove(currentStore2Sl);
+
+            // previous store 1 shopping list
+            var previousSl = shoppingLists.Should().Contain(s => s.Id == _fixture.PreviousStore1ShoppingList.Id).Subject;
+            previousSl.Should().BeEquivalentTo(_fixture.PreviousStore1ShoppingList,
+                opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion().WithCompletionDatePrecision());
+            shoppingLists.Remove(previousSl);
+
+            // current store 1 shopping list
+            var currentStore1Sl = shoppingLists.Single();
+            currentStore1Sl.Should().BeEquivalentTo(_fixture.ExpectedCurrentStore1ShoppingList,
+                opt => opt.WithCreatedAtPrecision().ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId());
+
+            // recipes
+            var typeOnRecipe = newItem.ItemTypes.First(t => _fixture.ExpectedItem2.Name.StartsWith(t.Name));
+            _fixture.SetupExpectedRecipe(newItem.Id, typeOnRecipe.Id);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedRecipe);
+
+            var recipes = (await _fixture.LoadAllRecipesAsync(assertionScope)).ToList();
+            recipes.Should().HaveCount(1);
+            var recipe = recipes.Single();
+            recipe.Should().BeEquivalentTo(_fixture.ExpectedRecipe,
+                opt => opt.ExcludeRowVersion().ExcludeRecipeCycleRef().WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task MergeItems_WithOneItemTwice_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItem1();
+            _fixture.SetupItem2();
+            _fixture.SetupExistingShoppingLists();
+            _fixture.SetupExistingRecipe();
+            _fixture.SetupContractWithDuplicatedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<UnprocessableEntity<ErrorContract>>();
+            var unprocessableEntity = (UnprocessableEntity<ErrorContract>)result;
+            unprocessableEntity.Value.Should().NotBeNull();
+            unprocessableEntity.Value.ErrorCode.Should().Be(ErrorReasonCode.CannotMergeItemWithItself.ToInt());
+        }
+
+        private sealed class MergeItemsFixture : ItemEndpointFixture
+        {
+            private readonly ItemEntityCreationContext _item1Context = new();
+            private readonly ItemEntityCreationContext _item2Context = new();
+            private readonly ShoppingListEntityCreationContext _sl1Context = new();
+            private readonly ShoppingListEntityCreationContext _sl2Context = new();
+            private Item? _item1;
+            private Item? _item2;
+            private ShoppingList? _currentStore1ShoppingList;
+            private readonly string _newItemName = new Fixture().Create<string>();
+            private MergeItemsContract? _contract;
+            private Recipe? _existingRecipe;
+
+            public Item? Item1Predecessor { get; private set; }
+            public Item? Item2Predecessor { get; private set; }
+            public Item? ExpectedItem1 { get; private set; }
+            public Item? ExpectedItem2 { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+            public ShoppingList? PreviousStore1ShoppingList { get; private set; }
+            public ShoppingList? ExpectedCurrentStore1ShoppingList { get; private set; }
+            public ShoppingList? CurrentStore2ShoppingList { get; private set; }
+            public Recipe? ExpectedRecipe { get; private set; }
+
+            public MergeItemsFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+                var store1 = StoreEntityMother.Active().Create();
+                var store2 = StoreEntityMother.Active().Create();
+                var category = ItemCategoryEntityMother.Active().Create();
+                var manufacturer = ManufacturerEntityMother.Active().Create();
+                var quantityInPacket = new Fixture().Create<float>();
+
+                _item1Context.AddStores(store1);
+                _item1Context.AddItemCategory(category);
+                _item1Context.AddManufacturer(manufacturer);
+                _item1Context.AddQuantity(QuantityType.Unit, QuantityTypeInPacket.Weight, quantityInPacket);
+
+                _item2Context.AddStores(store2);
+                _item2Context.AddItemCategory(category);
+                _item2Context.AddManufacturer(manufacturer);
+                _item2Context.AddQuantity(QuantityType.Unit, QuantityTypeInPacket.Weight, quantityInPacket);
+
+                _sl1Context.AddStore(store1);
+                _sl2Context.AddStore(store2);
+            }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_contract);
+
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.MergeItems(_contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<MergeItemsContract, MergeItemsCommand>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item1);
+                TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
+                TestPropertyNotSetException.ThrowIfNull(_item2);
+
+                _contract = new MergeItemsContract(
+                    new MergedItemContract(_newItemName,
+                    [
+                        new MergedItemTypeContract(_item1.Id, ExpectedItem.ItemTypes.ElementAt(0).Name),
+                        new MergedItemTypeContract(_item2.Id, ExpectedItem.ItemTypes.ElementAt(1).Name),
+                    ]));
+            }
+
+            public void SetupContractWithDuplicatedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item1);
+
+                _contract = new MergeItemsContract(
+                    new MergedItemContract(_newItemName,
+                    [
+                        new MergedItemTypeContract(_item1.Id, "test"),
+                        new MergedItemTypeContract(_item1.Id, "test2"),
+                    ]));
+            }
+
+            public void SetupItem1()
+            {
+                Item1Predecessor = ItemEntityMother.Initial().WithDeleted(true).Create();
+                _item1 = _item1Context.FillItem(
+                        ItemEntityMother.Initial()
+                            .WithPredecessor(Item1Predecessor)
+                            .WithPredecessorId(Item1Predecessor.Id))
+                    .Create();
+            }
+
+            public void SetupItem2()
+            {
+                Item2Predecessor = ItemEntityMother.Initial().WithDeleted(true).Create();
+                _item2 = _item2Context.FillItem(
+                        ItemEntityMother.Initial()
+                            .WithPredecessor(Item2Predecessor)
+                            .WithPredecessorId(Item2Predecessor.Id))
+                    .Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item1);
+                TestPropertyNotSetException.ThrowIfNull(_item2);
+                TestPropertyNotSetException.ThrowIfNull(Item1Predecessor);
+                TestPropertyNotSetException.ThrowIfNull(Item2Predecessor);
+
+                var item1Avs = _item1.AvailableAt
+                    .Select(av => ItemTypeAvailableAtEntityMother.InitialForStore(av.StoreId).WithPrice(av.Price).WithDefaultSectionId(av.DefaultSectionId).Create())
+                    .ToList();
+                var item2Avs = _item2.AvailableAt
+                    .Select(av => ItemTypeAvailableAtEntityMother.InitialForStore(av.StoreId).WithPrice(av.Price).WithDefaultSectionId(av.DefaultSectionId).Create())
+                    .ToList();
+
+                ItemType[] types =
+                [
+                    ItemTypeEntityMother.Initial()
+                        .WithAvailableAt(item1Avs)
+                        .WithName(_item1.Name[..10])
+                        .WithCreatedAt(DateTimeOffset.UtcNow)
+                        .Create(),
+                    ItemTypeEntityMother.Initial()
+                        .WithAvailableAt(item2Avs)
+                        .WithName(_item2.Name[..7])
+                        .WithCreatedAt(DateTimeOffset.UtcNow)
+                        .Create()
+                ];
+
+                ExpectedItem = ItemEntityMother.InitialWithTypes()
+                    .WithItemTypes(types)
+                    .WithComment($"{_item1.Comment}{Environment.NewLine}{_item2.Comment}")
+                    .WithName(_newItemName)
+                    .WithItemCategoryId(_item1.ItemCategoryId)
+                    .WithManufacturerId(_item1.ManufacturerId)
+                    .WithQuantityType(_item1.QuantityType)
+                    .WithQuantityTypeInPacket(_item1.QuantityTypeInPacket)
+                    .WithQuantityInPacket(_item1.QuantityInPacket)
+                    .WithCreatedAt(DateTimeOffset.UtcNow)
+                    .Create();
+
+                ExpectedItem1 = _item1.DeepClone();
+                ExpectedItem1.Deleted = true;
+
+                ExpectedItem2 = _item2.DeepClone();
+                ExpectedItem2.Deleted = true;
+            }
+
+            public void SetupExistingShoppingLists()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item1);
+                TestPropertyNotSetException.ThrowIfNull(_item2);
+
+                var shoppingListId = Guid.NewGuid();
+
+                // store 1
+                // current
+                var currentItemsOnList = ItemsOnListEntityMother.ItemInBasket(_item1.Id, shoppingListId).Create();
+                _currentStore1ShoppingList = _sl1Context.FillShoppingList(
+                        ShoppingListEntityMother.Active().WithItemsOnList([currentItemsOnList]))
+                    .Create();
+
+                // previous
+                ItemsOnList[] previousItemsOnList =
+                [
+                    ItemsOnListEntityMother.ItemInBasket(_item1.Id, shoppingListId).Create(),
+                    ItemsOnListEntityMother.ItemInBasket(_item2.Id, shoppingListId).Create()
+                ];
+                PreviousStore1ShoppingList = _sl1Context.FillShoppingList(
+                        ShoppingListEntityMother.Completed().WithEmptyDiscounts().WithItemsOnList(previousItemsOnList))
+                    .Create();
+
+                // store 2
+                CurrentStore2ShoppingList = _sl2Context.FillShoppingList(ShoppingListEntityMother.Active()).Create();
+            }
+
+            public void SetupExpectedShoppingList(Guid itemId, Guid itemTypeId)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_currentStore1ShoppingList);
+
+                ExpectedCurrentStore1ShoppingList = _currentStore1ShoppingList.DeepClone();
+                ExpectedCurrentStore1ShoppingList.ItemsOnList.ElementAt(0).ItemId = itemId;
+                ExpectedCurrentStore1ShoppingList.ItemsOnList.ElementAt(0).ItemTypeId = itemTypeId;
+            }
+
+            public void SetupExistingRecipe()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item2);
+
+                var ingredient = new IngredientEntityBuilder()
+                    .WithDefaultItemId(_item2.Id)
+                    .WithoutDefaultItemTypeId()
+                    .Create();
+                _existingRecipe = new RecipeEntityBuilder()
+                    .WithoutSideDishId()
+                    .WithoutSideDish()
+                    .WithIngredient(ingredient)
+                    .Create();
+            }
+
+            public void SetupExpectedRecipe(Guid newItemId, Guid newItemTypeId)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+
+                ExpectedRecipe = _existingRecipe.DeepClone();
+                ExpectedRecipe.Ingredients.ElementAt(0).DefaultItemId = newItemId;
+                ExpectedRecipe.Ingredients.ElementAt(0).DefaultItemTypeId = newItemTypeId;
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item1);
+                TestPropertyNotSetException.ThrowIfNull(Item1Predecessor);
+                TestPropertyNotSetException.ThrowIfNull(_item2);
+                TestPropertyNotSetException.ThrowIfNull(Item2Predecessor);
+                TestPropertyNotSetException.ThrowIfNull(_currentStore1ShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(CurrentStore2ShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(PreviousStore1ShoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_existingRecipe);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                // item
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+
+                itemContext.Add(_item1);
+                itemContext.Add(Item1Predecessor);
+                itemContext.Add(_item2);
+                itemContext.Add(Item2Predecessor);
+
+                await itemContext.SaveChangesAsync();
+
+                // shoppingList
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+
+                shoppingListContext.Add(_currentStore1ShoppingList);
+                shoppingListContext.Add(CurrentStore2ShoppingList);
+                shoppingListContext.Add(PreviousStore1ShoppingList);
+
+                await shoppingListContext.SaveChangesAsync();
+
+                // recipe
+                await using var recipeContext = GetContextInstance<RecipeContext>(ArrangeScope);
+
+                recipeContext.Add(_existingRecipe);
+
+                await recipeContext.SaveChangesAsync();
+            }
+        }
+    }
+
+    public sealed class SearchItemsForMerge(DockerFixture dockerFixture)
+    {
+        private readonly SearchItemsForMergeFixture _fixture = new(dockerFixture);
+
+        private class SearchItemsForMergeFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+
         }
     }
 

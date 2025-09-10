@@ -1,9 +1,15 @@
-﻿using Xipona.Api.Contracts.Common.Queries;
+﻿using RestEase;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Xipona.Api.Contracts.Common.Queries;
 using Xipona.Api.Contracts.ItemCategories.Commands;
 using Xipona.Api.Contracts.ItemCategories.Queries;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -13,6 +19,7 @@ using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Contracts.Manufacturers.Commands;
@@ -45,11 +52,6 @@ using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using Xipona.Api.Contracts.Users.Commands.Login;
 using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
-using RestEase;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using AddItemToShoppingListContract = Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 
 namespace Xipona.Api.Client
@@ -296,6 +298,15 @@ namespace Xipona.Api.Client
             CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Merges multiple items into one item with types.
+        /// </summary>
+        /// <param name="contract"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Post("items/merge")]
+        Task<Guid> MergeItemsAsync([Body] MergeItemsContract contract, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Gets an item by its ID. Does not include temporary items.
         /// </summary>
         /// <param name="id">The item's ID</param>
@@ -380,6 +391,22 @@ namespace Xipona.Api.Client
         [Get("items/quantity-types-in-packet")]
         Task<IEnumerable<QuantityTypeInPacketContract>> GetAllQuantityTypesInPacketAsync(
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Searches for items that can be merged into one item with types.
+        /// </summary>
+        /// <param name="itemCategory"></param>
+        /// <param name="manufacturer"></param>
+        /// <param name="quantityType"></param>
+        /// <param name="quantity"></param>
+        /// <param name="quantityTypeInPacket"></param>
+        /// <param name="excludedItemIds"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Get("items/merge/search")]
+        Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
+            [Query] Guid itemCategory, [Query] Guid? manufacturer, [Query] int quantityType, [Query] float? quantity,
+            [Query] int? quantityTypeInPacket, [Query] Guid[] excludedItemIds, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Modifies an existing item.

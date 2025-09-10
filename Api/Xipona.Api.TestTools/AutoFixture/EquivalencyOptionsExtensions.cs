@@ -37,6 +37,16 @@ public static partial class EquivalencyOptionsExtensions
             .When(info => info.Path.EndsWith("CreatedAt"));
     }
 
+    public static EquivalencyOptions<T> WithCompletionDatePrecision<T>(this EquivalencyOptions<T> options,
+        TimeSpan? precision = null)
+    {
+        precision ??= 1.Milliseconds();
+
+        return options
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, precision.Value))
+            .When(info => info.Path.EndsWith("CompletionDate"));
+    }
+
     public static EquivalencyOptions<T> WithUpdatedOnPrecision<T>(this EquivalencyOptions<T> options)
     {
         return options

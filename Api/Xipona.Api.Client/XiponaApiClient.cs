@@ -1,11 +1,18 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using RestEase;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using Xipona.Api.Contracts.Common.Queries;
 using Xipona.Api.Contracts.ItemCategories.Commands;
 using Xipona.Api.Contracts.ItemCategories.Queries;
 using Xipona.Api.Contracts.Items.Commands.CreateItem;
 using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
 using Xipona.Api.Contracts.Items.Commands.ModifyItem;
 using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
 using Xipona.Api.Contracts.Items.Commands.UpdateItem;
@@ -14,6 +21,7 @@ using Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
 using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
 using Xipona.Api.Contracts.Items.Queries.Shared;
 using Xipona.Api.Contracts.Manufacturers.Commands;
@@ -46,12 +54,6 @@ using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
 using Xipona.Api.Contracts.Users.Commands.Login;
 using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
-using RestEase;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using AddItemToShoppingListContract = Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
 using ItemContract = Xipona.Api.Contracts.Items.Queries.Get.ItemContract;
 
@@ -340,6 +342,22 @@ namespace Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetAllQuantityTypesInPacketAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Guid> MergeItemsAsync(MergeItemsContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.MergeItemsAsync(contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
+            Guid itemCategory, Guid? manufacturer, int quantityType, float? quantity,
+            int? quantityTypeInPacket, Guid[] excludedItemIds, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.SearchItemsForMergeAsync(itemCategory, manufacturer, quantityType, quantity,
+                quantityTypeInPacket, excludedItemIds, cancellationToken);
         }
 
         #endregion Item

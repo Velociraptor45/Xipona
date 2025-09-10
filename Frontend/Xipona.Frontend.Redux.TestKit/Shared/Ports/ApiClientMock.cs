@@ -2,6 +2,7 @@
 using Moq.Contrib.InOrder.Extensions;
 using Xipona.Frontend.Redux.ItemCategories.States;
 using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Merges;
 using Xipona.Frontend.Redux.Manufacturers.States;
 using Xipona.Frontend.Redux.Recipes.States;
 using Xipona.Frontend.Redux.Shared.Ports;
@@ -646,6 +647,35 @@ public class ApiClientMock : Mock<IApiClient>
     public void SetupRemoveShoppingListDiscountAsyncThrowing(Guid shoppingListId, Guid discountId, Exception ex)
     {
         this.SetupInOrder(m => m.RemoveShoppingListDiscountAsync(shoppingListId, discountId))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupMergeItemsAsync(MergedItem item, Guid returnValue)
+    {
+        this.SetupInOrder(m => m.MergeItemsAsync(It.Is<MergedItem>(i => i.IsEquivalentTo(item))))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupMergeItemsAsyncThrowing(MergedItem item, Exception ex)
+    {
+        this.SetupInOrder(m => m.MergeItemsAsync(It.Is<MergedItem>(i => i.IsEquivalentTo(item))))
+            .ThrowsAsync(ex);
+    }
+
+    public void SetupSearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems,
+        IEnumerable<MergeItemSearchResult> returnValue)
+    {
+        this.SetupInOrder(m => m.SearchItemsForMergeAsync(
+                It.Is<EditedItem>(i => i.IsEquivalentTo(item)),
+                It.Is<Guid[]>(ids => ids.IsEquivalentTo(alreadySelectedItems))))
+            .ReturnsAsync(returnValue);
+    }
+
+    public void SetupSearchItemsForMergeAsyncThrowing(EditedItem item, Guid[] alreadySelectedItems, Exception ex)
+    {
+        this.SetupInOrder(m => m.SearchItemsForMergeAsync(
+                It.Is<EditedItem>(i => i.IsEquivalentTo(item)),
+                It.Is<Guid[]>(ids => ids.IsEquivalentTo(alreadySelectedItems))))
             .ThrowsAsync(ex);
     }
 }

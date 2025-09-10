@@ -43,4 +43,5 @@ public interface IShoppingList
     void AddDiscount(ListDiscount discount);
     void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId);
     void RemoveDiscount(ListDiscountId discountId);
+    bool ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }
