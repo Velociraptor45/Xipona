@@ -801,6 +801,7 @@ public static class ItemEndpoints
         builder.MapGet($"/{_routeBase}/merge/search", SearchItemsForMerge)
             .WithName("SearchItemsForMerge")
             .Produces<List<SearchItemsForMergeResultContract>>()
+            .Produces(StatusCodes.Status204NoContent)
             .Produces<string>(StatusCodes.Status400BadRequest)
             .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
             .RequireAuthorization("User");
@@ -815,7 +816,7 @@ public static class ItemEndpoints
         [FromQuery] float? quantity,
         [FromQuery] int? quantityTypeInPacket,
         [FromQuery] Guid[] excludedItemIds,
-        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IQueryDispatcher queryDispatcher,
         [FromServices] IToContractConverter<SearchItemsForMergeResult, SearchItemsForMergeResultContract> contractConverter,
         [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
         CancellationToken cancellationToken)
@@ -832,7 +833,7 @@ public static class ItemEndpoints
                     new Quantity(quantity.Value),
                     quantityTypeInPacket.Value.ToEnum<QuantityTypeInPacket>());
 
-            var command = new SearchItemsForMergeCommand(
+            var command = new SearchItemsForMergeQuery(
                 new ItemCategoryId(itemCategory),
                 manufacturer is null ? null : new ManufacturerId(manufacturer.Value),
                 new ItemQuantity(
@@ -840,7 +841,11 @@ public static class ItemEndpoints
                     itemQuantityInPacket),
                 excludedItemIds.Select(i => new ItemId(i)).ToList());
 
-            var results = await commandDispatcher.DispatchAsync(command, cancellationToken);
+            var results = (await queryDispatcher.DispatchAsync(command, cancellationToken)).ToList();
+            
+            if (results.Count == 0)
+                return Results.NoContent();
+            
             var contracts = contractConverter.ToContract(results).ToList();
             return Results.Ok(contracts);
         }

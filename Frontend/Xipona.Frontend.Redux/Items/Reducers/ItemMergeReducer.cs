@@ -20,13 +20,13 @@ public static class ItemMergeReducer
             var firstName = action.Items.First().Name;
             var prefixLength = firstName.Length;
 
-            foreach (var item in action.Items.Skip(1))
+            foreach (var name in action.Items.Skip(1).Select(i => i.Name))
             {
-                prefixLength = Math.Min(prefixLength, item.Name.Length);
+                prefixLength = Math.Min(prefixLength, name.Length);
 
                 for (var i = 0; i < prefixLength; i++)
                 {
-                    if (firstName[i] != item.Name[i])
+                    if (firstName[i] != name[i])
                     {
                         prefixLength = i;
                         break;
