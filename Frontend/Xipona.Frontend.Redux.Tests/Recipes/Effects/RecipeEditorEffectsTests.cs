@@ -23,12 +23,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleInitializeRecipe_WithQuantityTypesAlreadyInState_ShouldNotLoadQuantityTypes()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupActionForLoadingRecipe();
                 _fixture.SetupStateWithQuantityTypes();
-                _fixture.SetupDispatchingLoadRecipeTagsAction();
-                _fixture.SetupDispatchingLoadRecipeAction();
+                _fixture.SetupDispatchingLoadRecipeTagsAction(x0);
+                _fixture.SetupDispatchingLoadRecipeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -44,15 +44,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleInitializeRecipe_WithApiCallSuccessful_WithRecipeId_ShouldLoadQuantityTypesAndDispatchActionForExistingRecipe()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupActionForLoadingRecipe();
                 _fixture.SetupQuantityTypes();
                 _fixture.SetupStateWithoutQuantityTypes();
-                _fixture.SetupDispatchingLoadRecipeTagsAction();
-                _fixture.SetupGettingQuantityTypes();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLoadRecipeAction();
+                _fixture.SetupDispatchingLoadRecipeTagsAction(x0);
+                _fixture.SetupGettingQuantityTypes(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLoadRecipeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -68,15 +68,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleInitializeRecipe_WithApiCallSuccessful_WithEmptyRecipeId_ShouldLoadQuantityTypesAndDispatchActionForNewRecipe()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupActionForNewRecipe();
                 _fixture.SetupQuantityTypes();
                 _fixture.SetupStateWithoutQuantityTypes();
-                _fixture.SetupDispatchingLoadRecipeTagsAction();
-                _fixture.SetupGettingQuantityTypes();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingSetNewRecipeAction();
+                _fixture.SetupDispatchingLoadRecipeTagsAction(x0);
+                _fixture.SetupGettingQuantityTypes(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingSetNewRecipeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -92,15 +92,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleInitializeRecipe_WithWithApiException_ShouldDispatchApiExceptionAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupActionForLoadingRecipe();
                 _fixture.SetupQuantityTypes();
                 _fixture.SetupStateWithoutQuantityTypes();
-                _fixture.SetupDispatchingLoadRecipeTagsAction();
-                _fixture.SetupGettingQuantityTypesThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingLoadRecipeAction();
+                _fixture.SetupDispatchingLoadRecipeTagsAction(x0);
+                _fixture.SetupGettingQuantityTypesThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingLoadRecipeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -116,15 +116,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleInitializeRecipe_WithWithHttpRequestException_ShouldDispatchErrorAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupActionForLoadingRecipe();
                 _fixture.SetupQuantityTypes();
                 _fixture.SetupStateWithoutQuantityTypes();
-                _fixture.SetupDispatchingLoadRecipeTagsAction();
-                _fixture.SetupGettingQuantityTypesThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingLoadRecipeAction();
+                _fixture.SetupDispatchingLoadRecipeTagsAction(x0);
+                _fixture.SetupGettingQuantityTypesThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingLoadRecipeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -156,11 +156,11 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupGettingQuantityTypes()
+            public void SetupGettingQuantityTypes(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
-                ApiClientMock.SetupGetAllIngredientQuantityTypes(_quantityTypes);
+                ApiClientMock.SetupGetAllIngredientQuantityTypes(_quantityTypes, component);
             }
 
             public void SetupQuantityTypes()
@@ -168,39 +168,39 @@ public class RecipeEditorEffectsTests
                 _quantityTypes = new DomainTestBuilder<IngredientQuantityType>().CreateMany(2).ToList();
             }
 
-            public void SetupGettingQuantityTypesThrowsApiException()
+            public void SetupGettingQuantityTypesThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingQuantityTypesThrowsHttpRequestException()
+            public void SetupGettingQuantityTypesThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 ApiClientMock.SetupGetAllIngredientQuantityTypesThrowing(
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
-                SetupDispatchingAction(new LoadIngredientQuantityTypesFinishedAction(_quantityTypes));
+                SetupDispatchingAction(new LoadIngredientQuantityTypesFinishedAction(_quantityTypes), component);
             }
 
-            public void SetupDispatchingLoadRecipeTagsAction()
+            public void SetupDispatchingLoadRecipeTagsAction(IQueueComponent component)
             {
-                SetupDispatchingAnyAction<LoadRecipeTagsAction>();
+                SetupDispatchingAnyAction<LoadRecipeTagsAction>(component);
             }
 
-            public void SetupDispatchingSetNewRecipeAction()
+            public void SetupDispatchingSetNewRecipeAction(IQueueComponent component)
             {
-                SetupDispatchingAnyAction<SetNewRecipeAction>();
+                SetupDispatchingAnyAction<SetNewRecipeAction>(component);
             }
 
-            public void SetupDispatchingLoadRecipeAction()
+            public void SetupDispatchingLoadRecipeAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LoadRecipeForEditingAction(_recipeId));
+                SetupDispatchingAction(new LoadRecipeForEditingAction(_recipeId), component);
             }
 
             public void SetupActionForLoadingRecipe()
@@ -223,12 +223,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleLoadRecipeForEditing_WithApiCallSuccessful_ShouldDispatchFinishAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
-                _fixture.SetupGettingRecipeById();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupGettingRecipeById(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -244,12 +244,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleLoadRecipeForEditing_WithWithApiException_ShouldDispatchApiExceptionAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
-                _fixture.SetupGettingRecipeByIdThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingRecipeByIdThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -265,12 +265,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleLoadRecipeForEditing_WithWithHttpRequestException_ShouldDispatchErrorAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction();
                 _fixture.SetupRecipe();
-                _fixture.SetupGettingRecipeByIdThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingRecipeByIdThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -288,11 +288,11 @@ public class RecipeEditorEffectsTests
 
             public LoadRecipeForEditingAction? Action { get; private set; }
 
-            public void SetupGettingRecipeById()
+            public void SetupGettingRecipeById(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ApiClientMock.SetupGetRecipeByIdAsync(Action.RecipeId, _recipe);
+                ApiClientMock.SetupGetRecipeByIdAsync(Action.RecipeId, _recipe, component);
             }
 
             public void SetupRecipe()
@@ -300,26 +300,26 @@ public class RecipeEditorEffectsTests
                 _recipe = new DomainTestBuilder<EditedRecipe>().Create();
             }
 
-            public void SetupGettingRecipeByIdThrowsApiException()
+            public void SetupGettingRecipeByIdThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 ApiClientMock.SetupGetRecipeByIdAsyncThrowing(
                     Action.RecipeId,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingRecipeByIdThrowsHttpRequestException()
+            public void SetupGettingRecipeByIdThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 ApiClientMock.SetupGetRecipeByIdAsyncThrowing(
                     Action.RecipeId,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                SetupDispatchingAction(new LoadRecipeForEditingFinishedAction(_recipe));
+                SetupDispatchingAction(new LoadRecipeForEditingFinishedAction(_recipe), component);
             }
 
             public void SetupAction()
@@ -353,15 +353,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleModifyRecipeAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipe();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingRecipe();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingRecipe(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
 
             // Act
@@ -375,14 +375,14 @@ public class RecipeEditorEffectsTests
         public async Task HandleModifyRecipeAction_WithWithApiException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipe();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingRecipeThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingRecipeThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -396,14 +396,14 @@ public class RecipeEditorEffectsTests
         public async Task HandleModifyRecipeAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipe();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingRecipeThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingRecipeThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -417,10 +417,10 @@ public class RecipeEditorEffectsTests
         {
             private EditedRecipe? _recipe;
 
-            public void SetupModifyingRecipe()
+            public void SetupModifyingRecipe(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ApiClientMock.SetupModifyRecipeAsync(_recipe);
+                ApiClientMock.SetupModifyRecipeAsync(_recipe, component);
             }
 
             public void SetupRecipe()
@@ -428,20 +428,22 @@ public class RecipeEditorEffectsTests
                 _recipe = new DomainTestBuilder<EditedRecipe>().Create();
             }
 
-            public void SetupModifyingRecipeThrowsApiException()
+            public void SetupModifyingRecipeThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
                 ApiClientMock.SetupModifyRecipeAsyncThrowing(
                     _recipe,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(),
+                    component);
             }
 
-            public void SetupModifyingRecipeThrowsHttpRequestException()
+            public void SetupModifyingRecipeThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
                 ApiClientMock.SetupModifyRecipeAsyncThrowing(
                     _recipe,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(),
+                    component);
             }
 
             public void SetupState()
@@ -455,25 +457,26 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ModifyRecipeStartedAction>();
+                SetupDispatchingAction<ModifyRecipeStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ModifyRecipeFinishedAction>();
+                SetupDispatchingAction<ModifyRecipeFinishedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveRecipeEditorAction(true));
+                SetupDispatchingAction(new LeaveRecipeEditorAction(true), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified recipe {_recipe.Name}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully modified recipe {_recipe.Name}", 2f, component);
             }
         }
     }
@@ -502,15 +505,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleCreateRecipeAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipe();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingRecipe();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingRecipe(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
 
             // Act
@@ -524,14 +527,14 @@ public class RecipeEditorEffectsTests
         public async Task HandleCreateRecipeAction_WithWithApiException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipe();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingRecipeThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingRecipeThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -545,14 +548,14 @@ public class RecipeEditorEffectsTests
         public async Task HandleCreateRecipeAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipe();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingRecipeThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingRecipeThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -566,10 +569,10 @@ public class RecipeEditorEffectsTests
         {
             private EditedRecipe? _recipe;
 
-            public void SetupCreatingRecipe()
+            public void SetupCreatingRecipe(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ApiClientMock.SetupCreateRecipeAsync(_recipe, _recipe);
+                ApiClientMock.SetupCreateRecipeAsync(_recipe, _recipe, component);
             }
 
             public void SetupRecipe()
@@ -577,20 +580,20 @@ public class RecipeEditorEffectsTests
                 _recipe = new DomainTestBuilder<EditedRecipe>().Create();
             }
 
-            public void SetupCreatingRecipeThrowsApiException()
+            public void SetupCreatingRecipeThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
                 ApiClientMock.SetupCreateRecipeAsyncThrowing(
                     _recipe,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupCreatingRecipeThrowsHttpRequestException()
+            public void SetupCreatingRecipeThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
                 ApiClientMock.SetupCreateRecipeAsyncThrowing(
                     _recipe,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
             public void SetupState()
@@ -605,25 +608,26 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<CreateRecipeStartedAction>();
+                SetupDispatchingAction<CreateRecipeStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<CreateRecipeFinishedAction>();
+                SetupDispatchingAction<CreateRecipeFinishedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveRecipeEditorAction(true));
+                SetupDispatchingAction(new LeaveRecipeEditorAction(true), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipe);
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created recipe {_recipe.Name}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully created recipe {_recipe.Name}", 2f, component);
             }
         }
     }
@@ -654,12 +658,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleCreateNewRecipeTagAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
-                _fixture.SetupCreatingRecipeTag();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupCreatingRecipeTag(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -674,12 +678,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleCreateNewRecipeTagAction_WithWithApiException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
-                _fixture.SetupCreatingRecipeTagThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupCreatingRecipeTagThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -694,12 +698,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleCreateNewRecipeTagAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
-                _fixture.SetupCreatingRecipeTagThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupCreatingRecipeTagThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -715,12 +719,12 @@ public class RecipeEditorEffectsTests
             private string? _recipeTagInput;
             private RecipeTag? _recipeTag;
 
-            public void SetupCreatingRecipeTag()
+            public void SetupCreatingRecipeTag(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeTagInput);
 
                 _recipeTag = new DomainTestBuilder<RecipeTag>().Create();
-                ApiClientMock.SetupCreateRecipeTagAsync(_recipeTagInput, _recipeTag);
+                ApiClientMock.SetupCreateRecipeTagAsync(_recipeTagInput, _recipeTag, component);
             }
 
             public void SetupRecipeTagInput()
@@ -733,20 +737,22 @@ public class RecipeEditorEffectsTests
                 _recipeTagInput = string.Empty;
             }
 
-            public void SetupCreatingRecipeTagThrowsApiException()
+            public void SetupCreatingRecipeTagThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeTagInput);
                 ApiClientMock.SetupCreateRecipeTagAsyncThrowing(
                     _recipeTagInput,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(),
+                    component);
             }
 
-            public void SetupCreatingRecipeTagThrowsHttpRequestException()
+            public void SetupCreatingRecipeTagThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeTagInput);
                 ApiClientMock.SetupCreateRecipeTagAsyncThrowing(
                     _recipeTagInput,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(),
+                    component);
             }
 
             public void SetupState()
@@ -761,10 +767,10 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeTag);
-                SetupDispatchingAction(new CreateNewRecipeTagFinishedAction(_recipeTag));
+                SetupDispatchingAction(new CreateNewRecipeTagFinishedAction(_recipeTag), component);
             }
         }
     }
@@ -793,12 +799,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleLoadAddToShoppingListAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
-                _fixture.SetupGettingItemAmounts();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupGettingItemAmounts(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -812,12 +818,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleLoadAddToShoppingListAction_WithWithApiException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
-                _fixture.SetupGettingItemAmountsThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingItemAmountsThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
 
             // Act
@@ -831,12 +837,12 @@ public class RecipeEditorEffectsTests
         public async Task HandleLoadAddToShoppingListAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupRecipeTagInput();
                 _fixture.SetupState();
-                _fixture.SetupGettingItemAmountsThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingItemAmountsThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
 
             // Act
@@ -851,12 +857,12 @@ public class RecipeEditorEffectsTests
             private Guid? _recipeId;
             private IReadOnlyCollection<AddToShoppingListItem>? _itemAmounts;
 
-            public void SetupGettingItemAmounts()
+            public void SetupGettingItemAmounts(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeId);
 
                 _itemAmounts = new DomainTestBuilder<AddToShoppingListItem>().CreateMany(3).ToList();
-                ApiClientMock.SetupGetItemAmountsForOneServingAsync(_recipeId.Value, _itemAmounts);
+                ApiClientMock.SetupGetItemAmountsForOneServingAsync(_recipeId.Value, _itemAmounts, component);
             }
 
             public void SetupRecipeTagInput()
@@ -875,20 +881,22 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupGettingItemAmountsThrowsApiException()
+            public void SetupGettingItemAmountsThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeId);
                 ApiClientMock.SetupGetItemAmountsForOneServingAsyncThrowing(
                     _recipeId.Value,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(),
+                    component);
             }
 
-            public void SetupGettingItemAmountsThrowsHttpRequestException()
+            public void SetupGettingItemAmountsThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_recipeId);
                 ApiClientMock.SetupGetItemAmountsForOneServingAsyncThrowing(
                     _recipeId.Value,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), 
+                    component);
             }
 
             public void SetupState()
@@ -906,10 +914,10 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemAmounts);
-                SetupDispatchingAction(new LoadAddToShoppingListFinishedAction(_itemAmounts));
+                SetupDispatchingAction(new LoadAddToShoppingListFinishedAction(_itemAmounts), component);
             }
         }
     }
@@ -922,15 +930,15 @@ public class RecipeEditorEffectsTests
         public async Task HandleAddItemsToShoppingListAction_WithApiCallSuccessful_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupItems();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupAddingToShoppingList();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingCloseAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupAddingToShoppingList(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingCloseAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
 
             // Act
@@ -960,14 +968,14 @@ public class RecipeEditorEffectsTests
         public async Task HandleAddItemsToShoppingListAction_WithWithApiException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupItems();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupAddingToShoppingListThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupAddingToShoppingListThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -981,14 +989,14 @@ public class RecipeEditorEffectsTests
         public async Task HandleAddItemsToShoppingListAction_WithWithHttpRequestException_ShouldDispatchCorrectActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupItems();
                 _fixture.SetupState();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupAddingToShoppingListThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupAddingToShoppingListThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
 
             // Act
@@ -1002,10 +1010,10 @@ public class RecipeEditorEffectsTests
         {
             private IReadOnlyCollection<AddToShoppingListItem>? _items;
 
-            public void SetupAddingToShoppingList()
+            public void SetupAddingToShoppingList(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_items);
-                ApiClientMock.SetupAddItemsToShoppingListsAsync(_items.Take(2));
+                ApiClientMock.SetupAddItemsToShoppingListsAsync(_items.Take(2), component);
             }
 
             public void SetupItems()
@@ -1018,20 +1026,22 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupAddingToShoppingListThrowsApiException()
+            public void SetupAddingToShoppingListThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_items);
                 ApiClientMock.SetupAddItemsToShoppingListsAsyncThrowing(
                     _items.Take(2),
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(),
+                    component);
             }
 
-            public void SetupAddingToShoppingListThrowsHttpRequestException()
+            public void SetupAddingToShoppingListThrowsHttpRequestException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_items);
                 ApiClientMock.SetupAddItemsToShoppingListsAsyncThrowing(
                     _items.Take(2),
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(),
+                    component);
             }
 
             public void SetupState()
@@ -1061,24 +1071,25 @@ public class RecipeEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<AddItemsToShoppingListStartedAction>();
+                SetupDispatchingAction<AddItemsToShoppingListStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<AddItemsToShoppingListFinishedAction>();
+                SetupDispatchingAction<AddItemsToShoppingListFinishedAction>(component);
             }
 
-            public void SetupDispatchingCloseAction()
+            public void SetupDispatchingCloseAction(IQueueComponent component)
             {
-                SetupDispatchingAction<AddToShoppingListModalClosedAction>();
+                SetupDispatchingAction<AddToShoppingListModalClosedAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess("Successfully added items to shopping lists");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess("Successfully added items to shopping lists", 2f, component);
             }
         }
     }

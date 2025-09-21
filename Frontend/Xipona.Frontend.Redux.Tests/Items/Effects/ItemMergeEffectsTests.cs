@@ -133,10 +133,10 @@ public class ItemMergeEffectsTests
             _fixture.SetupExpectedItems();
             _fixture.SetupAction();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingItems();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupLoadingItems(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
             
@@ -144,7 +144,7 @@ public class ItemMergeEffectsTests
 
             // Act
             await sut.HandleInitializeMergingAction(_fixture.Action, _fixture.DispatcherMock.Object);
-
+            
             // Assert
             queue.VerifyOrder();
         }
@@ -156,10 +156,10 @@ public class ItemMergeEffectsTests
             _fixture.SetupExpectedItems();
             _fixture.SetupActionWithDuplicatedId();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingItems();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupLoadingItems(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
             
@@ -179,10 +179,10 @@ public class ItemMergeEffectsTests
             _fixture.SetupExpectedItems();
             _fixture.SetupAction();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingItemsFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupLoadingItemsFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
             
@@ -202,10 +202,10 @@ public class ItemMergeEffectsTests
             _fixture.SetupExpectedItems();
             _fixture.SetupAction();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingItemsFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupLoadingItemsFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
             
@@ -230,16 +230,16 @@ public class ItemMergeEffectsTests
                 _itemIds = _expectedItems.Select(i => i.Id).ToList();
             }
             
-            public void SetupLoadingItems()
+            public void SetupLoadingItems(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedItems);
                 foreach (var expectedItem in _expectedItems)
                 {
-                    ApiClientMock.SetupGetItemByIdAsync(expectedItem.Id, expectedItem);
+                    ApiClientMock.SetupGetItemByIdAsync(expectedItem.Id, expectedItem, component);
                 }
             }
             
-            public void SetupLoadingItemsFailedWithErrorInApi()
+            public void SetupLoadingItemsFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedItems);
                 for (var i = 0; i < _expectedItems.Count; i++)
@@ -248,14 +248,14 @@ public class ItemMergeEffectsTests
                     if (i == _expectedItems.Count - 1)
                     {
                         ApiClientMock.SetupGetItemByIdAsyncThrowing(item.Id,
-                            new DomainTestBuilder<ApiException>().Create());
+                            new DomainTestBuilder<ApiException>().Create(), component);
                         continue;
                     }
-                    ApiClientMock.SetupGetItemByIdAsync(item.Id, item);
+                    ApiClientMock.SetupGetItemByIdAsync(item.Id, item, component);
                 }
             }
             
-            public void SetupLoadingItemsFailedWithErrorWhileTransmittingRequest()
+            public void SetupLoadingItemsFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedItems);
                 for (var i = 0; i < _expectedItems.Count; i++)
@@ -264,17 +264,17 @@ public class ItemMergeEffectsTests
                     if (i == 0)
                     {
                         ApiClientMock.SetupGetItemByIdAsyncThrowing(item.Id,
-                            new DomainTestBuilder<HttpRequestException>().Create());
+                            new DomainTestBuilder<HttpRequestException>().Create(), component);
                         continue;
                     }
-                    ApiClientMock.SetupGetItemByIdAsync(item.Id, item);
+                    ApiClientMock.SetupGetItemByIdAsync(item.Id, item, component);
                 }
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedItems);
-                DispatcherMock.SetupDispatch(new InitializeMergingFinishedAction(_expectedItems));
+                DispatcherMock.SetupDispatch(new InitializeMergingFinishedAction(_expectedItems), component);
             }
 
             public void SetupAction()
@@ -335,12 +335,12 @@ public class ItemMergeEffectsTests
         {
             // Arrange
             _fixture.SetupNoValidationErrors();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMergingItemSuccessfully();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveMergerAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMergingItemSuccessfully(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveMergerAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -356,12 +356,12 @@ public class ItemMergeEffectsTests
         {
             // Arrange
             _fixture.SetupNoValidationErrors();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMergingItemFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMergingItemFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -377,12 +377,12 @@ public class ItemMergeEffectsTests
         {
             // Arrange
             _fixture.SetupNoValidationErrors();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMergingItemFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMergingItemFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -432,38 +432,38 @@ public class ItemMergeEffectsTests
                 };
             }
             
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatchAny<MergeItemsStartedAction>();
+                DispatcherMock.SetupDispatchAny<MergeItemsStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatchAny<MergeItemsFinishedAction>();
+                DispatcherMock.SetupDispatchAny<MergeItemsFinishedAction>(component);
             }
 
-            public void SetupDispatchingLeaveMergerAction()
+            public void SetupDispatchingLeaveMergerAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_newItemId);
-                DispatcherMock.SetupDispatch(new LeaveItemMergerAction(_newItemId.Value));
+                DispatcherMock.SetupDispatch(new LeaveItemMergerAction(_newItemId.Value), component);
             }
 
-            public void SetupMergingItemSuccessfully()
+            public void SetupMergingItemSuccessfully(IQueueComponent component)
             {
                 _newItemId = Guid.NewGuid();
-                ApiClientMock.SetupMergeItemsAsync(State.Merge.Item!, _newItemId.Value);
+                ApiClientMock.SetupMergeItemsAsync(State.Merge.Item!, _newItemId.Value, component);
             }
 
-            public void SetupMergingItemFailedWithErrorInApi()
+            public void SetupMergingItemFailedWithErrorInApi(IQueueComponent component)
             {
                 ApiClientMock.SetupMergeItemsAsyncThrowing(State.Merge.Item!,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupMergingItemFailedWithErrorWhileTransmittingRequest()
+            public void SetupMergingItemFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupMergeItemsAsyncThrowing(State.Merge.Item!,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
         }
     }
@@ -609,11 +609,11 @@ public class ItemMergeEffectsTests
         public async Task HandleOpenMergeItemSelectorAction_WithSearchingSuccessful_ShouldDispatchExpectedActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchingForItemsSuccessfully();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchingForItemsSuccessfully(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -628,11 +628,11 @@ public class ItemMergeEffectsTests
         public async Task HandleOpenMergeItemSelectorAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchingForItemsFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchingForItemsFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -647,11 +647,11 @@ public class ItemMergeEffectsTests
         public async Task HandleOpenMergeItemSelectorAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchingForItemsFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchingForItemsFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -677,33 +677,34 @@ public class ItemMergeEffectsTests
                 };
             }
             
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatchAny<SearchItemsForMergeStartedAction>();
+                DispatcherMock.SetupDispatchAny<SearchItemsForMergeStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResults);
-                DispatcherMock.SetupDispatch(new SearchItemsForMergeFinishedAction(_searchResults));
+                DispatcherMock.SetupDispatch(new SearchItemsForMergeFinishedAction(_searchResults), component);
             }
 
-            public void SetupSearchingForItemsSuccessfully()
+            public void SetupSearchingForItemsSuccessfully(IQueueComponent component)
             {
                 _searchResults = new DomainTestBuilder<MergeItemSearchResult>().CreateMany(3).ToList();
-                ApiClientMock.SetupSearchItemsForMergeAsync(State.Editor.Item!, [State.Editor.Item!.Id], _searchResults);
+                ApiClientMock.SetupSearchItemsForMergeAsync(State.Editor.Item!, [State.Editor.Item!.Id], _searchResults,
+                    component);
             }
 
-            public void SetupSearchingForItemsFailedWithErrorInApi()
+            public void SetupSearchingForItemsFailedWithErrorInApi(IQueueComponent component)
             {
                 ApiClientMock.SetupSearchItemsForMergeAsyncThrowing(State.Editor.Item!, [State.Editor.Item!.Id],
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchingForItemsFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchingForItemsFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupSearchItemsForMergeAsyncThrowing(State.Editor.Item!, [State.Editor.Item!.Id],
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
         }
     }

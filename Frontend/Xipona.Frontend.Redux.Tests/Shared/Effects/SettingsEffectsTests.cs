@@ -34,11 +34,11 @@ public class SettingsEffectsTests
         {
             // Arrange
             _fixture.SetupStateWithoutGeneralSettings();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupExpectedGeneralSettings();
-                _fixture.SetupGettingGeneralSettings();
-                _fixture.SetupDispatchingLoadedAction();
+                _fixture.SetupGettingGeneralSettings(x0);
+                _fixture.SetupDispatchingLoadedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -54,10 +54,10 @@ public class SettingsEffectsTests
         {
             // Arrange
             _fixture.SetupStateWithoutGeneralSettings();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingGeneralSettingsThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingGeneralSettingsThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -73,10 +73,10 @@ public class SettingsEffectsTests
         {
             // Arrange
             _fixture.SetupStateWithoutGeneralSettings();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingGeneralSettingsThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingGeneralSettingsThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -96,28 +96,28 @@ public class SettingsEffectsTests
                 _expectedGeneralSettings = new DomainTestBuilder<GeneralSettings>().Create();
             }
 
-            public void SetupGettingGeneralSettings()
+            public void SetupGettingGeneralSettings(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedGeneralSettings);
-                ApiClientMock.SetupGetGeneralSettingsAsync(_expectedGeneralSettings);
+                ApiClientMock.SetupGetGeneralSettingsAsync(_expectedGeneralSettings, component);
             }
 
-            public void SetupGettingGeneralSettingsThrowsApiException()
+            public void SetupGettingGeneralSettingsThrowsApiException(IQueueComponent component)
             {
                 ApiClientMock.SetupGetGeneralSettingsAsyncThrowing(
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingGeneralSettingsThrowsHttpRequestException()
+            public void SetupGettingGeneralSettingsThrowsHttpRequestException(IQueueComponent component)
             {
                 ApiClientMock.SetupGetGeneralSettingsAsyncThrowing(
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingLoadedAction()
+            public void SetupDispatchingLoadedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedGeneralSettings);
-                SetupDispatchingAction(new GeneralSettingsLoadedAction(_expectedGeneralSettings));
+                SetupDispatchingAction(new GeneralSettingsLoadedAction(_expectedGeneralSettings), component);
             }
 
             public void SetupStateWithGeneralSettings()
@@ -152,11 +152,11 @@ public class SettingsEffectsTests
         public async Task HandleOpenSettingsAction_WithSuccessfulRequest_ShouldDispatchLoadedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupExpectedCurrencies();
-                _fixture.SetupGettingCurrencies();
-                _fixture.SetupDispatchingLoadedAction();
+                _fixture.SetupGettingCurrencies(x0);
+                _fixture.SetupDispatchingLoadedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -171,10 +171,10 @@ public class SettingsEffectsTests
         public async Task HandleOpenSettingsAction_WithApiException_ShouldDispatchExceptionNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingCurrenciesThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingCurrenciesThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -189,10 +189,10 @@ public class SettingsEffectsTests
         public async Task HandleOpenSettingsAction_WithHttpRequestException_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingCurrenciesThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingCurrenciesThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -212,28 +212,28 @@ public class SettingsEffectsTests
                 _expectedCurrencies = new DomainTestBuilder<Currency>().CreateMany(3).ToList();
             }
 
-            public void SetupGettingCurrencies()
+            public void SetupGettingCurrencies(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedCurrencies);
-                ApiClientMock.SetupGetAllCurrenciesAsync(_expectedCurrencies);
+                ApiClientMock.SetupGetAllCurrenciesAsync(_expectedCurrencies, component);
             }
 
-            public void SetupGettingCurrenciesThrowsApiException()
+            public void SetupGettingCurrenciesThrowsApiException(IQueueComponent component)
             {
                 ApiClientMock.SetupGetAllCurrenciesAsyncThrowing(
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingCurrenciesThrowsHttpRequestException()
+            public void SetupGettingCurrenciesThrowsHttpRequestException(IQueueComponent component)
             {
                 ApiClientMock.SetupGetAllCurrenciesAsyncThrowing(
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingLoadedAction()
+            public void SetupDispatchingLoadedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedCurrencies);
-                SetupDispatchingAction(new SettingsLoadedAction(_expectedCurrencies));
+                SetupDispatchingAction(new SettingsLoadedAction(_expectedCurrencies), component);
             }
         }
     }
@@ -261,14 +261,14 @@ public class SettingsEffectsTests
         public async Task HandleSaveSettingsAction_WithValidState_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStateWithEditor();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingGeneralSettings();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingCloseAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingGeneralSettings(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingCloseAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -283,13 +283,13 @@ public class SettingsEffectsTests
         public async Task HandleSaveSettingsAction_WithApiException_ShouldDispatchExceptionNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStateWithEditor();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingGeneralSettingsThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingGeneralSettingsThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -304,13 +304,13 @@ public class SettingsEffectsTests
         public async Task HandleSaveSettingsAction_WithHttpRequestException_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStateWithEditor();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingGeneralSettingsThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingGeneralSettingsThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -353,46 +353,46 @@ public class SettingsEffectsTests
                 };
             }
 
-            public void SetupUpdatingGeneralSettings()
+            public void SetupUpdatingGeneralSettings(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedCurrency);
-                ApiClientMock.SetupUpdateGeneralSettingsAsync(_expectedCurrency);
+                ApiClientMock.SetupUpdateGeneralSettingsAsync(_expectedCurrency, component);
             }
 
-            public void SetupUpdatingGeneralSettingsThrowsApiException()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_expectedCurrency);
-                ApiClientMock.SetupUpdateGeneralSettingsAsyncThrowing(
-                    _expectedCurrency,
-                    new DomainTestBuilder<ApiException>().Create());
-            }
-
-            public void SetupUpdatingGeneralSettingsThrowsHttpRequestException()
+            public void SetupUpdatingGeneralSettingsThrowsApiException(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedCurrency);
                 ApiClientMock.SetupUpdateGeneralSettingsAsyncThrowing(
                     _expectedCurrency,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupUpdatingGeneralSettingsThrowsHttpRequestException(IQueueComponent component)
             {
-                SetupDispatchingAction<SaveSettingsStartedAction>();
+                TestPropertyNotSetException.ThrowIfNull(_expectedCurrency);
+                ApiClientMock.SetupUpdateGeneralSettingsAsyncThrowing(
+                    _expectedCurrency,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SaveSettingsFinishedAction>();
+                SetupDispatchingAction<SaveSettingsStartedAction>(component);
             }
 
-            public void SetupDispatchingCloseAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<CloseSettingsAction>();
+                SetupDispatchingAction<SaveSettingsFinishedAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupDispatchingCloseAction(IQueueComponent component)
             {
-                NotificationServiceMock.SetupNotifySuccess("Successfully saved general settings");
+                SetupDispatchingAction<CloseSettingsAction>(component);
+            }
+
+            public void SetupSuccessNotification(IQueueComponent component)
+            {
+                NotificationServiceMock.SetupNotifySuccess("Successfully saved general settings", 2f, component);
             }
         }
     }

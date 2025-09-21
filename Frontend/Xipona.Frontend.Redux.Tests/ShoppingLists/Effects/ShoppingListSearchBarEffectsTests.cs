@@ -32,7 +32,7 @@ public class ShoppingListSearchBarEffectsTests
 
             // Act
             await sut.HandleItemForShoppingListSearchInputChangedAction(_fixture.Action, _fixture.DispatcherMock.Object);
-            await Task.Delay(1000);
+            await Task.Delay(1000, TestContext.Current.CancellationToken);
 
             // Assert
             _fixture.VerifyNotDispatchingSearchAction();
@@ -43,9 +43,12 @@ public class ShoppingListSearchBarEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
-            _fixture.SetupCreatingTimer();
-            _fixture.SetupDisposingTimer();
-            _fixture.SetupDispatchingSearchAction();
+            var queue = CallQueue.Create(x0 =>
+            {
+                _fixture.SetupCreatingTimer();
+                _fixture.SetupDisposingTimer(x0);
+                _fixture.SetupDispatchingSearchAction(x0);
+            });
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -55,8 +58,7 @@ public class ShoppingListSearchBarEffectsTests
             _fixture.TimeProviderMock.CapturedCallback?.Invoke(null);
 
             // Assert
-            _fixture.VerifyDispatchingSearchAction();
-            _fixture.VerifyDisposingTimer();
+            queue.VerifyOrder();
         }
 
         private sealed class HandleItemForShoppingListSearchInputChangedActionFixture :
@@ -75,14 +77,14 @@ public class ShoppingListSearchBarEffectsTests
                 Action = new ItemForShoppingListSearchInputChangedAction(input);
             }
 
-            public void SetupDispatchingSearchAction()
+            public void SetupDispatchingSearchAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SearchItemForShoppingListAction>();
+                SetupDispatchingAction<SearchItemForShoppingListAction>(component);
             }
 
-            public void SetupDisposingTimer()
+            public void SetupDisposingTimer(IQueueComponent component)
             {
-                _timerMock.SetupDispose();
+                _timerMock.SetupDispose(component);
             }
 
             public void SetupCreatingTimer()
@@ -91,19 +93,9 @@ public class ShoppingListSearchBarEffectsTests
                     _timerMock.Object);
             }
 
-            public void VerifyDispatchingSearchAction()
-            {
-                VerifyDispatchingAction<SearchItemForShoppingListAction>();
-            }
-
             public void VerifyNotDispatchingSearchAction()
             {
                 VerifyNotDispatchingAction<SearchItemForShoppingListAction>();
-            }
-
-            public void VerifyDisposingTimer()
-            {
-                _timerMock.VerifyDispose(Times.Once);
             }
         }
     }
@@ -137,13 +129,13 @@ public class ShoppingListSearchBarEffectsTests
         public async Task HandleSearchItemForShoppingListAction_WithValidInput_ShouldDispatchExpectedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupInput();
                 _fixture.SetupAction();
                 _fixture.SetupSearchResult();
-                _fixture.SetupSearchingForItems();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupSearchingForItems(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -162,9 +154,9 @@ public class ShoppingListSearchBarEffectsTests
         {
             private string? _input;
             private List<SearchItemForShoppingListResult>? _searchResult;
+            private SearchItemForShoppingListFinishedAction? _expectedAction;
 
             public SearchItemForShoppingListAction? Action { get; private set; }
-            public SearchItemForShoppingListFinishedAction? ExpectedAction { get; private set; }
 
             public void SetupInput()
             {
@@ -193,20 +185,20 @@ public class ShoppingListSearchBarEffectsTests
                 _searchResult = new DomainTestBuilder<SearchItemForShoppingListResult>().CreateMany(2).ToList();
             }
 
-            public void SetupSearchingForItems()
+            public void SetupSearchingForItems(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_input);
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                ApiClientMock.SetupSearchItemsForShoppingListAsync(_input, State.SelectedStoreId, _searchResult);
+                ApiClientMock.SetupSearchItemsForShoppingListAsync(_input, State.SelectedStoreId, _searchResult, component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                ExpectedAction = new SearchItemForShoppingListFinishedAction(_searchResult);
-                SetupDispatchingAction(ExpectedAction);
+                _expectedAction = new SearchItemForShoppingListFinishedAction(_searchResult);
+                SetupDispatchingAction(_expectedAction, component);
             }
 
             public void VerifyNotDispatchingFinishAction()
@@ -224,13 +216,13 @@ public class ShoppingListSearchBarEffectsTests
         public async Task HandleItemForShoppingListSearchResultSelectedAction_WithoutType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupExpectedRequestWithoutType();
                 _fixture.SetupActionWithoutType();
                 _fixture.SetupStateWithoutType();
-                _fixture.SetupAddingItemWithoutType();
-                _fixture.SetupDispatchingReloadShoppingListAction();
+                _fixture.SetupAddingItemWithoutType(x0);
+                _fixture.SetupDispatchingReloadShoppingListAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -250,13 +242,13 @@ public class ShoppingListSearchBarEffectsTests
         public async Task HandleItemForShoppingListSearchResultSelectedAction_WithType_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupExpectedRequestWithType();
                 _fixture.SetupActionWithType();
                 _fixture.SetupStateWithType();
-                _fixture.SetupAddingItemWithType();
-                _fixture.SetupDispatchingReloadShoppingListAction();
+                _fixture.SetupAddingItemWithType(x0);
+                _fixture.SetupDispatchingReloadShoppingListAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -352,16 +344,16 @@ public class ShoppingListSearchBarEffectsTests
                         _expectedRequestWithType.SectionId!.Value));
             }
 
-            public void SetupAddingItemWithoutType()
+            public void SetupAddingItemWithoutType(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithoutType);
-                ApiClientMock.SetupAddItemToShoppingListAsync(_expectedRequestWithoutType);
+                ApiClientMock.SetupAddItemToShoppingListAsync(_expectedRequestWithoutType, component);
             }
 
-            public void SetupAddingItemWithType()
+            public void SetupAddingItemWithType(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRequestWithType);
-                ApiClientMock.SetupAddItemWithTypeToShoppingListAsync(_expectedRequestWithType);
+                ApiClientMock.SetupAddItemWithTypeToShoppingListAsync(_expectedRequestWithType, component);
             }
 
             public void VerifyAddingItemWithoutType()
@@ -376,9 +368,9 @@ public class ShoppingListSearchBarEffectsTests
                 ApiClientMock.VerifyAddItemWithTypeToShoppingListAsync(_expectedRequestWithType, Times.Once);
             }
 
-            public void SetupDispatchingReloadShoppingListAction()
+            public void SetupDispatchingReloadShoppingListAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>(component);
             }
         }
     }

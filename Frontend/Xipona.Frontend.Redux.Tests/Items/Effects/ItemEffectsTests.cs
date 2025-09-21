@@ -20,11 +20,11 @@ public class ItemEffectsTests
         public async Task HandleEnterItemSearchPageAction_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingLoadingQuantityTypes();
-                _fixture.SetupDispatchingLoadingQuantityTypesInPacket();
-                _fixture.SetupDispatchingLoadingActiveStores();
+                _fixture.SetupDispatchingLoadingQuantityTypes(x0);
+                _fixture.SetupDispatchingLoadingQuantityTypesInPacket(x0);
+                _fixture.SetupDispatchingLoadingActiveStores(x0);
             });
 
             // Act
@@ -36,19 +36,19 @@ public class ItemEffectsTests
 
         private sealed class HandleEnterItemSearchPageActionFixture : ItemEffectsFixture
         {
-            public void SetupDispatchingLoadingQuantityTypes()
+            public void SetupDispatchingLoadingQuantityTypes(IQueueComponent component)
             {
-                SetupDispatchingAction<LoadQuantityTypesAction>();
+                SetupDispatchingAction<LoadQuantityTypesAction>(component);
             }
 
-            public void SetupDispatchingLoadingQuantityTypesInPacket()
+            public void SetupDispatchingLoadingQuantityTypesInPacket(IQueueComponent component)
             {
-                SetupDispatchingAction<LoadQuantityTypesInPacketAction>();
+                SetupDispatchingAction<LoadQuantityTypesInPacketAction>(component);
             }
 
-            public void SetupDispatchingLoadingActiveStores()
+            public void SetupDispatchingLoadingActiveStores(IQueueComponent component)
             {
-                SetupDispatchingAction<LoadActiveStoresAction>();
+                SetupDispatchingAction<LoadActiveStoresAction>(component);
             }
         }
     }
@@ -62,11 +62,11 @@ public class ItemEffectsTests
             HandleRetrieveSearchResultCountAction_WithSearchInputEmpty_ShouldDispatchDefaultFinishedAndPageChangeAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInputEmpty();
-                _fixture.SetupDispatchingFinishActionWithZeroResults();
-                _fixture.SetupDispatchingPageChangeActionWithPageOne();
+                _fixture.SetupDispatchingFinishActionWithZeroResults(x0);
+                _fixture.SetupDispatchingPageChangeActionWithPageOne(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -81,13 +81,13 @@ public class ItemEffectsTests
         public async Task HandleRetrieveSearchResultCountAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingTotalSearchResultCount();
-                _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingPageChangeActionWithPageOne();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupGettingTotalSearchResultCount(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
+                _fixture.SetupDispatchingPageChangeActionWithPageOne(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -102,12 +102,12 @@ public class ItemEffectsTests
         public async Task HandleRetrieveSearchResultCountAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingTotalSearchResultCountFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupGettingTotalSearchResultCountFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -122,12 +122,12 @@ public class ItemEffectsTests
         public async Task HandleRetrieveSearchResultCountAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingTotalSearchResultCountFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupGettingTotalSearchResultCountFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -167,46 +167,46 @@ public class ItemEffectsTests
                 };
             }
 
-            public void SetupGettingTotalSearchResultCount()
+            public void SetupGettingTotalSearchResultCount(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 _totalSearchResultCount = new DomainTestBuilder<int>().Create();
-                ApiClientMock.SetupGetTotalSearchResultCountAsync(_searchInput, _totalSearchResultCount.Value);
+                ApiClientMock.SetupGetTotalSearchResultCountAsync(_searchInput, _totalSearchResultCount.Value, component);
             }
 
-            public void SetupGettingTotalSearchResultCountFailedWithErrorInApi()
+            public void SetupGettingTotalSearchResultCountFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 ApiClientMock.SetupGetTotalSearchResultCountAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingTotalSearchResultCountFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingTotalSearchResultCountFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 ApiClientMock.SetupGetTotalSearchResultCountAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartAction()
+            public void SetupDispatchingStartAction(IQueueComponent component)
             {
-                SetupDispatchingAction<RetrieveSearchResultCountStartedAction>();
+                SetupDispatchingAction<RetrieveSearchResultCountStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_totalSearchResultCount);
-                SetupDispatchingAction(new RetrieveSearchResultCountFinishedAction(_totalSearchResultCount.Value));
+                SetupDispatchingAction(new RetrieveSearchResultCountFinishedAction(_totalSearchResultCount.Value), component);
             }
 
-            public void SetupDispatchingFinishActionWithZeroResults()
+            public void SetupDispatchingFinishActionWithZeroResults(IQueueComponent component)
             {
-                SetupDispatchingAction(new RetrieveSearchResultCountFinishedAction(0));
+                SetupDispatchingAction(new RetrieveSearchResultCountFinishedAction(0), component);
             }
 
-            public void SetupDispatchingPageChangeActionWithPageOne()
+            public void SetupDispatchingPageChangeActionWithPageOne(IQueueComponent component)
             {
-                SetupDispatchingAction(new SearchPageChangedAction(1));
+                SetupDispatchingAction(new SearchPageChangedAction(1), component);
             }
         }
     }
@@ -219,11 +219,11 @@ public class ItemEffectsTests
         public async Task HandleSearchPageChangedAction_WithSearchInputEmpty_ShouldDispatchFinishedActionWithEmptyResult()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupTotalResultCountZero();
                 _fixture.SetupSearchResultEmpty();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -238,14 +238,14 @@ public class ItemEffectsTests
         public async Task HandleSearchPageChangedAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchResult();
                 _fixture.SetupPageAndSize();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -260,13 +260,13 @@ public class ItemEffectsTests
         public async Task HandleSearchPageChangedAction_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupPageAndSize();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -281,13 +281,13 @@ public class ItemEffectsTests
         public async Task HandleSearchPageChangedAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupPageAndSize();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -353,46 +353,46 @@ public class ItemEffectsTests
                 _searchResult = [];
             }
 
-            public void SetupSearchSucceeded()
+            public void SetupSearchSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
                 TestPropertyNotSetException.ThrowIfNull(_page);
                 TestPropertyNotSetException.ThrowIfNull(_pageSize);
 
-                ApiClientMock.SetupSearchItemsAsync(_searchInput, _page.Value, _pageSize.Value, _searchResult);
+                ApiClientMock.SetupSearchItemsAsync(_searchInput, _page.Value, _pageSize.Value, _searchResult, component);
             }
 
-            public void SetupSearchFailedWithErrorInApi()
+            public void SetupSearchFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 TestPropertyNotSetException.ThrowIfNull(_page);
                 TestPropertyNotSetException.ThrowIfNull(_pageSize);
 
                 ApiClientMock.SetupSearchItemsAsyncThrowing(_searchInput, _page.Value, _pageSize.Value,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 TestPropertyNotSetException.ThrowIfNull(_page);
                 TestPropertyNotSetException.ThrowIfNull(_pageSize);
 
                 ApiClientMock.SetupSearchItemsAsyncThrowing(_searchInput, _page.Value, _pageSize.Value,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                SetupDispatchingAction(new SearchItemsFinishedAction(_searchResult));
+                SetupDispatchingAction(new SearchItemsFinishedAction(_searchResult), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SearchItemsStartedAction>();
+                SetupDispatchingAction<SearchItemsStartedAction>(component);
             }
         }
     }
@@ -422,10 +422,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupQuantityTypesNotLoaded();
             _fixture.SetupQuantityTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupLoadingQuantityTypesSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -442,10 +442,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupQuantityTypesNotLoaded();
             _fixture.SetupQuantityTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupLoadingQuantityTypesFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -462,10 +462,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupQuantityTypesNotLoaded();
             _fixture.SetupQuantityTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupLoadingQuantityTypesFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -501,28 +501,28 @@ public class ItemEffectsTests
                 _quantityTypes = new DomainTestBuilder<QuantityType>().CreateMany(2).ToList();
             }
 
-            public void SetupLoadingQuantityTypesSucceeded()
+            public void SetupLoadingQuantityTypesSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
-                ApiClientMock.SetupGetAllQuantityTypesAsync(_quantityTypes);
+                ApiClientMock.SetupGetAllQuantityTypesAsync(_quantityTypes, component);
             }
 
-            public void SetupLoadingQuantityTypesFailedWithErrorInApi()
+            public void SetupLoadingQuantityTypesFailedWithErrorInApi(IQueueComponent component)
             {
-                ApiClientMock.SetupGetAllQuantityTypesAsyncThrowing(new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupGetAllQuantityTypesAsyncThrowing(new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupLoadingQuantityTypesFailedWithErrorWhileTransmittingRequest()
+            public void SetupLoadingQuantityTypesFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupGetAllQuantityTypesAsyncThrowing(
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
 
-                SetupDispatchingAction(new LoadQuantityTypesFinishedAction(_quantityTypes));
+                SetupDispatchingAction(new LoadQuantityTypesFinishedAction(_quantityTypes), component);
             }
         }
     }
@@ -552,10 +552,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupQuantityTypesInPacketNotLoaded();
             _fixture.SetupQuantityTypesInPacket();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesInPacketSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupLoadingQuantityTypesInPacketSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -572,10 +572,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupQuantityTypesInPacketNotLoaded();
             _fixture.SetupQuantityTypesInPacket();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -592,10 +592,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupQuantityTypesInPacketNotLoaded();
             _fixture.SetupQuantityTypesInPacket();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -631,28 +631,28 @@ public class ItemEffectsTests
                 _quantityTypes = new DomainTestBuilder<QuantityTypeInPacket>().CreateMany(2).ToList();
             }
 
-            public void SetupLoadingQuantityTypesInPacketSucceeded()
+            public void SetupLoadingQuantityTypesInPacketSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
-                ApiClientMock.SetupGetAllQuantityTypesInPacketAsync(_quantityTypes);
+                ApiClientMock.SetupGetAllQuantityTypesInPacketAsync(_quantityTypes, component);
             }
 
-            public void SetupLoadingQuantityTypesInPacketFailedWithErrorInApi()
+            public void SetupLoadingQuantityTypesInPacketFailedWithErrorInApi(IQueueComponent component)
             {
-                ApiClientMock.SetupGetAllQuantityTypesInPacketAsyncThrowing(new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupGetAllQuantityTypesInPacketAsyncThrowing(new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest()
+            public void SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupGetAllQuantityTypesInPacketAsyncThrowing(
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_quantityTypes);
 
-                SetupDispatchingAction(new LoadQuantityTypesInPacketFinishedAction(_quantityTypes));
+                SetupDispatchingAction(new LoadQuantityTypesInPacketFinishedAction(_quantityTypes), component);
             }
         }
     }
@@ -682,10 +682,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupStoresNotLoaded();
             _fixture.SetupStores();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesInPacketSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupLoadingQuantityTypesInPacketSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -702,10 +702,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupStoresNotLoaded();
             _fixture.SetupStores();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -722,10 +722,10 @@ public class ItemEffectsTests
             // Arrange
             _fixture.SetupStoresNotLoaded();
             _fixture.SetupStores();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -767,28 +767,28 @@ public class ItemEffectsTests
                 _stores = new DomainTestBuilder<ItemStore>().CreateMany(2).ToList();
             }
 
-            public void SetupLoadingQuantityTypesInPacketSucceeded()
+            public void SetupLoadingQuantityTypesInPacketSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_stores);
-                ApiClientMock.SetupGetAllActiveStoresForItemAsync(_stores);
+                ApiClientMock.SetupGetAllActiveStoresForItemAsync(_stores, component);
             }
 
-            public void SetupLoadingQuantityTypesInPacketFailedWithErrorInApi()
+            public void SetupLoadingQuantityTypesInPacketFailedWithErrorInApi(IQueueComponent component)
             {
-                ApiClientMock.SetupGetAllActiveStoresForItemAsyncThrowing(new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupGetAllActiveStoresForItemAsyncThrowing(new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest()
+            public void SetupLoadingQuantityTypesInPacketFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupGetAllActiveStoresForItemAsyncThrowing(
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_stores);
 
-                SetupDispatchingAction(new LoadActiveStoresFinishedAction(new ActiveStores(_stores)));
+                SetupDispatchingAction(new LoadActiveStoresFinishedAction(new ActiveStores(_stores)), component);
             }
         }
     }

@@ -22,10 +22,10 @@ public class ShoppingListItemEffectsTests
         public async Task HandleOpenPriceUpdaterAction_WithSuccessfulApiCall_ShouldDispatchFinishAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingItemTypePrices();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupGettingItemTypePrices(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             _fixture.SetupAction();
 
@@ -44,10 +44,10 @@ public class ShoppingListItemEffectsTests
         public async Task HandleOpenPriceUpdaterAction_WithApiException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingItemTypePricesThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingItemTypePricesThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             _fixture.SetupAction();
 
@@ -66,10 +66,10 @@ public class ShoppingListItemEffectsTests
         public async Task HandleOpenPriceUpdaterAction_WithHttpRequestException_ShouldCallEndpointAndDispatchActionInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingItemTypePricesThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingItemTypePricesThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             _fixture.SetupAction();
 
@@ -123,23 +123,23 @@ public class ShoppingListItemEffectsTests
                 };
             }
 
-            public void SetupGettingItemTypePrices()
+            public void SetupGettingItemTypePrices(IQueueComponent component)
             {
                 _expectedPrices = new DomainTestBuilder<ItemTypePrice>().CreateMany(2).ToList();
                 ApiClientMock.SetupGetItemTypePricesAsync(State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    State.SelectedStoreId, _expectedPrices);
+                    State.SelectedStoreId, _expectedPrices, component);
             }
 
-            public void SetupGettingItemTypePricesThrowsApiException()
+            public void SetupGettingItemTypePricesThrowsApiException(IQueueComponent component)
             {
                 ApiClientMock.SetupGetItemTypePricesAsyncThrowing(State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    State.SelectedStoreId, new DomainTestBuilder<ApiException>().Create());
+                    State.SelectedStoreId, new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingItemTypePricesThrowsHttpRequestException()
+            public void SetupGettingItemTypePricesThrowsHttpRequestException(IQueueComponent component)
             {
                 ApiClientMock.SetupGetItemTypePricesAsyncThrowing(State.PriceUpdate.Item!.Id.ActualId!.Value,
-                    State.SelectedStoreId, new DomainTestBuilder<HttpRequestException>().Create());
+                    State.SelectedStoreId, new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
             public void SetupAction()
@@ -147,10 +147,10 @@ public class ShoppingListItemEffectsTests
                 Action = new OpenPriceUpdaterAction(State.PriceUpdate.Item!);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedPrices);
-                SetupDispatchingAction(new LoadingPriceUpdaterPricesFinishedAction(_expectedPrices));
+                SetupDispatchingAction(new LoadingPriceUpdaterPricesFinishedAction(_expectedPrices), component);
             }
         }
     }
@@ -163,12 +163,12 @@ public class ShoppingListItemEffectsTests
         public async Task HandleChangeItemQuantityAction_WithChangeTypeDiff_QuantityAtLeast1_ShouldChangeQuantityAsync()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedItem();
                 _fixture.SetupActionWithChangeTypeDiffAndQuantityAtLeast1();
-                _fixture.SetupEnqueuingRequest();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupEnqueuingRequest(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -188,12 +188,12 @@ public class ShoppingListItemEffectsTests
         public async Task HandleChangeItemQuantityAction_WithChangeTypeDiff_QuantityBelow1_ShouldChangeQuantityAsync()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedItem();
                 _fixture.SetupActionWithChangeTypeDiffAndQuantityBelow1();
-                _fixture.SetupEnqueuingRequest();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupEnqueuingRequest(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -213,12 +213,12 @@ public class ShoppingListItemEffectsTests
         public async Task HandleChangeItemQuantityAction_WithChangeTypeAbsolute_QuantityAtLeast1_ShouldChangeQuantityAsync()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedItem();
                 _fixture.SetupActionWithChangeTypeAbsoluteAndQuantityAtLeast1();
-                _fixture.SetupEnqueuingRequest();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupEnqueuingRequest(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -238,12 +238,12 @@ public class ShoppingListItemEffectsTests
         public async Task HandleChangeItemQuantityAction_WithChangeTypeAbsolute_QuantityBelow1_ShouldChangeQuantityAsync()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedItem();
                 _fixture.SetupActionWithChangeTypeAbsoluteAndQuantityBelow1();
-                _fixture.SetupEnqueuingRequest();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupEnqueuingRequest(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             _fixture.SetupStateReturningState();
@@ -280,14 +280,14 @@ public class ShoppingListItemEffectsTests
 
         private sealed class HandleChangeItemQuantityActionFixture : ShoppingListItemEffectsFixture
         {
-            public float? ExpectedQuantity { get; private set; }
+            private float? _expectedQuantity;
+            private ShoppingListItem? _item;
+            private ChangeItemQuantityOnShoppingListRequest? _expectedRequest;
             public ChangeItemQuantityAction? Action { get; private set; }
-            public ShoppingListItem? Item { get; private set; }
-            public ChangeItemQuantityOnShoppingListRequest? ExpectedRequest { get; private set; }
 
             public void SetupSelectedItem()
             {
-                Item = State.ShoppingList!.Items.ElementAt(5);
+                _item = State.ShoppingList!.Items.ElementAt(5);
             }
 
             public void SetupActionWithInvalidItemId()
@@ -297,55 +297,55 @@ public class ShoppingListItemEffectsTests
 
             public void SetupActionWithChangeTypeDiffAndQuantityAtLeast1()
             {
-                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_item);
 
                 var quantity = new DomainTestBuilder<float>().Create();
-                ExpectedQuantity = Item.Quantity + quantity;
-                Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, quantity,
-                    ChangeItemQuantityAction.ChangeType.Diff, Item.Name);
+                _expectedQuantity = _item.Quantity + quantity;
+                Action = new ChangeItemQuantityAction(_item.Id, _item.TypeId, quantity,
+                    ChangeItemQuantityAction.ChangeType.Diff, _item.Name);
             }
 
             public void SetupActionWithChangeTypeDiffAndQuantityBelow1()
             {
-                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_item);
 
-                ExpectedQuantity = 1;
-                Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, -Item.Quantity + 0.99f,
-                    ChangeItemQuantityAction.ChangeType.Diff, Item.Name);
+                _expectedQuantity = 1;
+                Action = new ChangeItemQuantityAction(_item.Id, _item.TypeId, -_item.Quantity + 0.99f,
+                    ChangeItemQuantityAction.ChangeType.Diff, _item.Name);
             }
 
             public void SetupActionWithChangeTypeAbsoluteAndQuantityAtLeast1()
             {
-                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_item);
 
-                ExpectedQuantity = new DomainTestBuilder<float>().Create();
-                Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, ExpectedQuantity.Value,
-                    ChangeItemQuantityAction.ChangeType.Absolute, Item.Name);
+                _expectedQuantity = new DomainTestBuilder<float>().Create();
+                Action = new ChangeItemQuantityAction(_item.Id, _item.TypeId, _expectedQuantity.Value,
+                    ChangeItemQuantityAction.ChangeType.Absolute, _item.Name);
             }
 
             public void SetupActionWithChangeTypeAbsoluteAndQuantityBelow1()
             {
-                TestPropertyNotSetException.ThrowIfNull(Item);
+                TestPropertyNotSetException.ThrowIfNull(_item);
 
-                ExpectedQuantity = 1;
-                Action = new ChangeItemQuantityAction(Item.Id, Item.TypeId, 0.99f,
-                    ChangeItemQuantityAction.ChangeType.Absolute, Item.Name);
+                _expectedQuantity = 1;
+                Action = new ChangeItemQuantityAction(_item.Id, _item.TypeId, 0.99f,
+                    ChangeItemQuantityAction.ChangeType.Absolute, _item.Name);
             }
 
-            public void SetupEnqueuingRequest()
+            public void SetupEnqueuingRequest(IQueueComponent component)
             {
-                TestPropertyNotSetException.ThrowIfNull(Item);
-                TestPropertyNotSetException.ThrowIfNull(ExpectedQuantity);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                TestPropertyNotSetException.ThrowIfNull(_expectedQuantity);
 
-                ExpectedRequest = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList!.Id,
-                    Item.Id, Item.TypeId, ExpectedQuantity.Value, Item.Name);
-                CommandQueueMock.SetupEnqueue(ExpectedRequest);
+                _expectedRequest = new ChangeItemQuantityOnShoppingListRequest(Guid.NewGuid(), State.ShoppingList!.Id,
+                    _item.Id, _item.TypeId, _expectedQuantity.Value, _item.Name);
+                CommandQueueMock.SetupEnqueue(_expectedRequest, component);
             }
 
             public void VerifyEnqueuingRequest()
             {
-                TestPropertyNotSetException.ThrowIfNull(ExpectedRequest);
-                CommandQueueMock.VerifyEnqueue(ExpectedRequest, Times.Once);
+                TestPropertyNotSetException.ThrowIfNull(_expectedRequest);
+                CommandQueueMock.VerifyEnqueue(_expectedRequest, Times.Once);
             }
 
             public void VerifyNotEnqueuingRequest()
@@ -353,12 +353,12 @@ public class ShoppingListItemEffectsTests
                 CommandQueueMock.VerifyNoEnqueue<ChangeItemQuantityOnShoppingListRequest>();
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
-                TestPropertyNotSetException.ThrowIfNull(Item);
-                TestPropertyNotSetException.ThrowIfNull(ExpectedQuantity);
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                TestPropertyNotSetException.ThrowIfNull(_expectedQuantity);
 
-                SetupDispatchingAction(new ChangeItemQuantityFinishedAction(Item.Id, Item.TypeId, ExpectedQuantity.Value));
+                SetupDispatchingAction(new ChangeItemQuantityFinishedAction(_item.Id, _item.TypeId, _expectedQuantity.Value), component);
             }
 
             public void VerifyNotDispatchingFinishAction()

@@ -23,9 +23,9 @@ public class NotificationEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupNotifyError();
+                _fixture.SetupNotifyError(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -44,9 +44,9 @@ public class NotificationEffectsTests
             private readonly string _message = new DomainTestBuilder<string>().Create();
             public DisplayErrorNotificationAction? Action { get; private set; }
 
-            public void SetupNotifyError()
+            public void SetupNotifyError(IQueueComponent component)
             {
-                NotificationServiceMock.SetupNotifyError(_title, _message);
+                NotificationServiceMock.SetupNotifyError(_title, _message, component);
             }
 
             public void SetupAction()
@@ -65,9 +65,9 @@ public class NotificationEffectsTests
         {
             // Arrange
             _fixture.SetupActionWithSerializedErrorContract();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupNotifyError();
+                _fixture.SetupNotifyError(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -85,9 +85,9 @@ public class NotificationEffectsTests
         {
             // Arrange
             _fixture.SetupActionWithoutSerializedErrorContract();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupNotifyErrorWithoutSerializedErrorContract();
+                _fixture.SetupNotifyErrorWithoutSerializedErrorContract(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -106,15 +106,15 @@ public class NotificationEffectsTests
             private static readonly string _message = new DomainTestBuilder<string>().Create();
             public DisplayApiExceptionNotificationAction? Action { get; private set; }
 
-            public void SetupNotifyError()
+            public void SetupNotifyError(IQueueComponent component)
             {
-                NotificationServiceMock.SetupNotifyError(_title, _message);
+                NotificationServiceMock.SetupNotifyError(_title, _message, component);
             }
 
-            public void SetupNotifyErrorWithoutSerializedErrorContract()
+            public void SetupNotifyErrorWithoutSerializedErrorContract(IQueueComponent component)
             {
                 NotificationServiceMock.SetupNotifyErrorAsyncContaining(_title,
-                    "failed because response status code does not indicate success");
+                    "failed because response status code does not indicate success", component);
             }
 
             public void SetupActionWithoutSerializedErrorContract()
@@ -163,9 +163,9 @@ public class NotificationEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupNotifyError();
+                _fixture.SetupNotifyError(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -183,9 +183,9 @@ public class NotificationEffectsTests
             private readonly string _message = new DomainTestBuilder<string>().Create();
             public DisplayUnhandledErrorAction? Action { get; private set; }
 
-            public void SetupNotifyError()
+            public void SetupNotifyError(IQueueComponent component)
             {
-                NotificationServiceMock.SetupNotifyError("An error occurred", _message);
+                NotificationServiceMock.SetupNotifyError("An error occurred", _message, component);
             }
 
             public void SetupAction()

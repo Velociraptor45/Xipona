@@ -17,9 +17,9 @@ public class ShoppingListNotificationServiceTests
         public void NotifyAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(q0 =>
             {
-                _fixture.SetupOpeningNotification();
+                _fixture.SetupOpeningNotification(q0);
             });
             var sut = _fixture.CreateSut();
 
@@ -35,13 +35,11 @@ public class ShoppingListNotificationServiceTests
             public string Title { get; } = new DomainTestBuilder<string>().Create();
             public string Message { get; } = new DomainTestBuilder<string>().Create();
 
-            public void SetupOpeningNotification()
+            public void SetupOpeningNotification(IQueueComponent component)
             {
-                NotificationServiceMock.SetupOpen(new NotificationConfig
-                {
-                    Message = Title,
-                    Description = Message
-                });
+                NotificationServiceMock.SetupOpen(
+                    new NotificationConfig { Message = Title, Description = Message },
+                    component);
             }
         }
     }
@@ -54,9 +52,9 @@ public class ShoppingListNotificationServiceTests
         public void NotifySuccessAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupOpeningNotification();
+                _fixture.SetupOpeningNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -72,14 +70,16 @@ public class ShoppingListNotificationServiceTests
             public string Title { get; } = new DomainTestBuilder<string>().Create();
             public string Message { get; } = new DomainTestBuilder<string>().Create();
 
-            public void SetupOpeningNotification()
+            public void SetupOpeningNotification(IQueueComponent component)
             {
-                NotificationServiceMock.SetupOpen(new NotificationConfig
-                {
-                    Message = Title,
-                    Description = Message,
-                    NotificationType = NotificationType.Success
-                });
+                NotificationServiceMock.SetupOpen(
+                    new NotificationConfig
+                    {
+                        Message = Title,
+                        Description = Message,
+                        NotificationType = NotificationType.Success
+                    },
+                    component);
             }
         }
     }
@@ -92,9 +92,9 @@ public class ShoppingListNotificationServiceTests
         public void NotifySuccessAsync_WithDuration_CallsNotificationService()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupOpeningNotification();
+                _fixture.SetupOpeningNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -109,9 +109,9 @@ public class ShoppingListNotificationServiceTests
         public void NotifySuccessAsync_WithoutDuration_CallsNotificationService()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupOpeningNotificationWithDefaultDuration();
+                _fixture.SetupOpeningNotificationWithDefaultDuration(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -127,24 +127,28 @@ public class ShoppingListNotificationServiceTests
             public string Message { get; } = new DomainTestBuilder<string>().Create();
             public double Duration { get; } = new DomainTestBuilder<double>().Create();
 
-            public void SetupOpeningNotification()
+            public void SetupOpeningNotification(IQueueComponent component)
             {
-                NotificationServiceMock.SetupOpen(new NotificationConfig
-                {
-                    Description = Message,
-                    NotificationType = NotificationType.Success,
-                    Duration = Duration
-                });
+                NotificationServiceMock.SetupOpen(
+                    new NotificationConfig
+                    {
+                        Description = Message,
+                        NotificationType = NotificationType.Success,
+                        Duration = Duration
+                    },
+                    component);
             }
 
-            public void SetupOpeningNotificationWithDefaultDuration()
+            public void SetupOpeningNotificationWithDefaultDuration(IQueueComponent component)
             {
-                NotificationServiceMock.SetupOpen(new NotificationConfig
-                {
-                    Description = Message,
-                    NotificationType = NotificationType.Success,
-                    Duration = 2
-                });
+                NotificationServiceMock.SetupOpen(
+                    new NotificationConfig
+                    {
+                        Description = Message,
+                        NotificationType = NotificationType.Success,
+                        Duration = 2
+                    },
+                    component);
             }
         }
     }
@@ -157,9 +161,9 @@ public class ShoppingListNotificationServiceTests
         public void NotifyWarningAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupOpeningNotification();
+                _fixture.SetupOpeningNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -175,14 +179,16 @@ public class ShoppingListNotificationServiceTests
             public string Title { get; } = new DomainTestBuilder<string>().Create();
             public string Message { get; } = new DomainTestBuilder<string>().Create();
 
-            public void SetupOpeningNotification()
+            public void SetupOpeningNotification(IQueueComponent component)
             {
-                NotificationServiceMock.SetupOpen(new NotificationConfig
-                {
-                    Message = Title,
-                    Description = Message,
-                    NotificationType = NotificationType.Warning
-                });
+                NotificationServiceMock.SetupOpen(
+                    new NotificationConfig
+                    {
+                        Message = Title,
+                        Description = Message,
+                        NotificationType = NotificationType.Warning
+                    },
+                    component);
             }
         }
     }
@@ -195,9 +201,9 @@ public class ShoppingListNotificationServiceTests
         public void NotifyErrorAsync_WithMessage_CallsNotificationService()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupOpeningNotification();
+                _fixture.SetupOpeningNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -213,14 +219,16 @@ public class ShoppingListNotificationServiceTests
             public string Title { get; } = new DomainTestBuilder<string>().Create();
             public string Message { get; } = new DomainTestBuilder<string>().Create();
 
-            public void SetupOpeningNotification()
+            public void SetupOpeningNotification(IQueueComponent component)
             {
-                NotificationServiceMock.SetupOpen(new NotificationConfig
-                {
-                    Message = Title,
-                    Description = Message,
-                    NotificationType = NotificationType.Error
-                });
+                NotificationServiceMock.SetupOpen(
+                    new NotificationConfig
+                    {
+                        Message = Title,
+                        Description = Message,
+                        NotificationType = NotificationType.Error
+                    },
+                    component);
             }
         }
     }

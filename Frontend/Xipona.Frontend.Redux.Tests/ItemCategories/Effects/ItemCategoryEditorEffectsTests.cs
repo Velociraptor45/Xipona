@@ -21,14 +21,14 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithValidId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupId();
+            _fixture.SetupItemCategory();
+            _fixture.SetupAction();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupId();
-                _fixture.SetupItemCategory();
-                _fixture.SetupAction();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingItemCategorySucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingItemCategorySucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -45,13 +45,13 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupId();
+            _fixture.SetupAction();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupId();
-                _fixture.SetupAction();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingItemCategoryFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingItemCategoryFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -68,13 +68,13 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupId();
+            _fixture.SetupAction();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupId();
-                _fixture.SetupAction();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -103,28 +103,28 @@ public class ItemCategoryEditorEffectsTests
                 _itemCategory = new DomainTestBuilder<EditedItemCategory>().Create();
             }
 
-            public void SetupGettingItemCategorySucceeded()
+            public void SetupGettingItemCategorySucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
 
-                ApiClientMock.SetupGetItemCategoryByIdAsync(_id.Value, _itemCategory);
+                ApiClientMock.SetupGetItemCategoryByIdAsync(_id.Value, _itemCategory, component);
             }
 
-            public void SetupGettingItemCategoryFailedWithErrorInApi()
+            public void SetupGettingItemCategoryFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
                 ApiClientMock.SetupGetItemCategoryByIdAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
                 ApiClientMock.SetupGetItemCategoryByIdAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
             public void SetupAction()
@@ -134,16 +134,16 @@ public class ItemCategoryEditorEffectsTests
                 Action = new LoadItemCategoryForEditingAction(_id.Value);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
 
-                SetupDispatchingAction(new LoadItemCategoryForEditingFinishedAction(_itemCategory));
+                SetupDispatchingAction(new LoadItemCategoryForEditingFinishedAction(_itemCategory), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<LoadItemCategoryForEditingStartedAction>();
+                SetupDispatchingAction<LoadItemCategoryForEditingStartedAction>(component);
             }
         }
     }
@@ -156,15 +156,15 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithEmptyId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupEmptyId();
+            _fixture.SetupItemCategoryName();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupEmptyId();
-                _fixture.SetupItemCategoryName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreateItemCategorySucceeded();
-                _fixture.SetupSuccessCreateNotification();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreateItemCategorySucceeded(x0);
+                _fixture.SetupSuccessCreateNotification(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -179,14 +179,14 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithEmptyId_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupEmptyId();
+            _fixture.SetupItemCategoryName();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupEmptyId();
-                _fixture.SetupItemCategoryName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreateItemCategoryFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreateItemCategoryFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -201,14 +201,14 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithEmptyId_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupEmptyId();
+            _fixture.SetupItemCategoryName();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupEmptyId();
-                _fixture.SetupItemCategoryName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreateItemCategoryFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreateItemCategoryFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -223,16 +223,16 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithFilledId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupId();
+            _fixture.SetupItemCategoryName();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupId();
-                _fixture.SetupItemCategoryName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyItemCategorySucceeded();
-                _fixture.SetupUpdateSearchResultsAfterSaveAction();
-                _fixture.SetupSuccessModifyNotification();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyItemCategorySucceeded(x0);
+                _fixture.SetupUpdateSearchResultsAfterSaveAction(x0);
+                _fixture.SetupSuccessModifyNotification(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -247,14 +247,14 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithFilledId_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupId();
+            _fixture.SetupItemCategoryName();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupId();
-                _fixture.SetupItemCategoryName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyItemCategoryFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyItemCategoryFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -269,14 +269,14 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithFilledId_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            _fixture.SetupId();
+            _fixture.SetupItemCategoryName();
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupId();
-                _fixture.SetupItemCategoryName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyItemCategoryFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyItemCategoryFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -337,93 +337,96 @@ public class ItemCategoryEditorEffectsTests
                 };
             }
 
-            public void SetupCreateItemCategorySucceeded()
+            public void SetupCreateItemCategorySucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupCreateItemCategoryAsync(_manufacturerName,
-                    new DomainTestBuilder<EditedItemCategory>().Create());
+                    new DomainTestBuilder<EditedItemCategory>().Create(), component);
             }
 
-            public void SetupCreateItemCategoryFailedWithErrorInApi()
+            public void SetupCreateItemCategoryFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupCreateItemCategoryAsyncThrowing(_manufacturerName,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupCreateItemCategoryFailedWithErrorWhileTransmittingRequest()
+            public void SetupCreateItemCategoryFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupCreateItemCategoryAsyncThrowing(_manufacturerName,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupModifyItemCategorySucceeded()
+            public void SetupModifyItemCategorySucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ApiClientMock.SetupModifyItemCategoryAsync(new ModifyItemCategoryRequest(_id.Value, _manufacturerName));
+                ApiClientMock.SetupModifyItemCategoryAsync(new ModifyItemCategoryRequest(_id.Value, _manufacturerName),
+                    component);
             }
 
-            public void SetupModifyItemCategoryFailedWithErrorInApi()
+            public void SetupModifyItemCategoryFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupModifyItemCategoryAsyncThrowing(new ModifyItemCategoryRequest(_id.Value, _manufacturerName),
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupModifyItemCategoryFailedWithErrorWhileTransmittingRequest()
+            public void SetupModifyItemCategoryFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupModifyItemCategoryAsyncThrowing(new ModifyItemCategoryRequest(_id.Value, _manufacturerName),
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupSuccessCreateNotification()
+            public void SetupSuccessCreateNotification(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item category {_manufacturerName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully created item category {_manufacturerName}", 2f, component);
             }
 
-            public void SetupSuccessModifyNotification()
+            public void SetupSuccessModifyNotification(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item category {_manufacturerName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully modified item category {_manufacturerName}", 2f, component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                SetupDispatchingAction<SaveItemCategoryFinishedAction>();
+                SetupDispatchingAction<SaveItemCategoryFinishedAction>(component);
             }
 
-            public void SetupUpdateSearchResultsAfterSaveAction()
+            public void SetupUpdateSearchResultsAfterSaveAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                SetupDispatchingAction(new UpdateItemCategorySearchResultsAfterSaveAction(_id.Value, _manufacturerName));
+                SetupDispatchingAction(new UpdateItemCategorySearchResultsAfterSaveAction(_id.Value, _manufacturerName), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SaveItemCategoryStartedAction>();
+                SetupDispatchingAction<SaveItemCategoryStartedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemCategoryEditorAction(true));
+                SetupDispatchingAction(new LeaveItemCategoryEditorAction(true), component);
             }
         }
     }
@@ -436,14 +439,14 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleDeleteItemCategoryAction_WithValidId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingItemCategorySucceeded();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupCloseDialogAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingItemCategorySucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupCloseDialogAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -458,13 +461,13 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleDeleteItemCategoryAction_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingItemCategoryFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingItemCategoryFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -479,13 +482,13 @@ public class ItemCategoryEditorEffectsTests
         public async Task HandleDeleteItemCategoryAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -515,47 +518,48 @@ public class ItemCategoryEditorEffectsTests
                 };
             }
 
-            public void SetupGettingItemCategorySucceeded()
+            public void SetupGettingItemCategorySucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
-                ApiClientMock.SetupDeleteItemCategoryAsync(_id.Value);
+                ApiClientMock.SetupDeleteItemCategoryAsync(_id.Value, component);
             }
 
-            public void SetupGettingItemCategoryFailedWithErrorInApi()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_id);
-
-                ApiClientMock.SetupDeleteItemCategoryAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<ApiException>().Create());
-            }
-
-            public void SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingItemCategoryFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
                 ApiClientMock.SetupDeleteItemCategoryAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupGettingItemCategoryFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
-                SetupDispatchingAction<DeleteItemCategoryFinishedAction>();
+                TestPropertyNotSetException.ThrowIfNull(_id);
+
+                ApiClientMock.SetupDeleteItemCategoryAsyncThrowing(_id.Value,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<DeleteItemCategoryStartedAction>();
+                SetupDispatchingAction<DeleteItemCategoryFinishedAction>(component);
             }
 
-            public void SetupCloseDialogAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new CloseDeleteItemCategoryDialogAction(true));
+                SetupDispatchingAction<DeleteItemCategoryStartedAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupCloseDialogAction(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted item category {State.Editor.ItemCategory!.Name}");
+                SetupDispatchingAction(new CloseDeleteItemCategoryDialogAction(true), component);
+            }
+
+            public void SetupSuccessNotification(IQueueComponent component)
+            {
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully deleted item category {State.Editor.ItemCategory!.Name}", 2f, component);
             }
         }
     }

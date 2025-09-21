@@ -18,11 +18,11 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByNameAction_WithValidData_ShouldDispatchFinishedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupSearchingSuccessfully();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupSearchingSuccessfully(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -39,10 +39,10 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByNameAction_WithEmptySearchInput_ShouldDispatchEmptyFinishedAction(string searchInput)
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput(searchInput);
-                _fixture.SetupDispatchingEmptyFinishedAction();
+                _fixture.SetupDispatchingEmptyFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -57,11 +57,11 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByNameAction_WithErrorInApi_ShouldDispatchApiExceptionNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupSearchingFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupSearchingFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -76,11 +76,11 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByNameAction_WithErrorWhileTransmittingRequest_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -113,37 +113,37 @@ public class RecipeEffectsTests
                 };
             }
 
-            public void SetupSearchingSuccessfully()
+            public void SetupSearchingSuccessfully(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
 
                 _expectedRecipeSearchResults = new DomainTestBuilder<RecipeSearchResult>().CreateMany(2).ToList();
-                ApiClientMock.SetupSearchRecipesByNameAsync(_searchInput, _expectedRecipeSearchResults);
+                ApiClientMock.SetupSearchRecipesByNameAsync(_searchInput, _expectedRecipeSearchResults, component);
             }
 
-            public void SetupSearchingFailedWithErrorInApi()
+            public void SetupSearchingFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 ApiClientMock.SetupSearchRecipesByNameAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchingFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchingFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 ApiClientMock.SetupSearchRecipesByNameAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingEmptyFinishedAction()
+            public void SetupDispatchingEmptyFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Name));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Name), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Name));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Name), component);
             }
         }
     }
@@ -156,11 +156,11 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByTagsAction_WithValidData_ShouldDispatchFinishedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedTags();
-                _fixture.SetupSearchingSuccessfully();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupSearchingSuccessfully(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -175,10 +175,10 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByTagsAction_WithoutSelectedTags_ShouldDispatchEmptyFinishedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupNoSelectedTags();
-                _fixture.SetupDispatchingEmptyFinishedAction();
+                _fixture.SetupDispatchingEmptyFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -193,11 +193,11 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByTagsAction_WithErrorInApi_ShouldDispatchApiExceptionNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedTags();
-                _fixture.SetupSearchingFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupSearchingFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -212,11 +212,11 @@ public class RecipeEffectsTests
         public async Task HandleSearchRecipeByTagsAction_WithErrorWhileTransmittingRequest_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSelectedTags();
-                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -234,7 +234,7 @@ public class RecipeEffectsTests
 
             public void SetupNoSelectedTags()
             {
-                SetupSelectedTags(Enumerable.Empty<Guid>());
+                SetupSelectedTags([]);
             }
 
             public void SetupSelectedTags()
@@ -255,37 +255,37 @@ public class RecipeEffectsTests
                 SetupStateReturningState();
             }
 
-            public void SetupSearchingSuccessfully()
+            public void SetupSearchingSuccessfully(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_selectedTags);
 
                 _expectedRecipeSearchResults = new DomainTestBuilder<RecipeSearchResult>().CreateMany(2).ToList();
-                ApiClientMock.SetupSearchRecipesByTagsAsync(_selectedTags, _expectedRecipeSearchResults);
+                ApiClientMock.SetupSearchRecipesByTagsAsync(_selectedTags, _expectedRecipeSearchResults, component);
             }
 
-            public void SetupSearchingFailedWithErrorInApi()
+            public void SetupSearchingFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_selectedTags);
                 ApiClientMock.SetupSearchRecipesByTagsAsyncThrowing(_selectedTags,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchingFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchingFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_selectedTags);
                 ApiClientMock.SetupSearchRecipesByTagsAsyncThrowing(_selectedTags,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingEmptyFinishedAction()
+            public void SetupDispatchingEmptyFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Tag));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(new List<RecipeSearchResult>(), SearchType.Tag), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Tag));
+                SetupDispatchingAction(new SearchRecipeFinishedAction(_expectedRecipeSearchResults, SearchType.Tag), component);
             }
         }
     }
@@ -298,10 +298,10 @@ public class RecipeEffectsTests
         public async Task HandleLoadRecipeTagsAction_WithValidData_ShouldDispatchFinishedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupSearchingSuccessfully();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupSearchingSuccessfully(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -316,10 +316,10 @@ public class RecipeEffectsTests
         public async Task HandleLoadRecipeTagsAction_WithErrorInApi_ShouldDispatchApiExceptionNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupSearchingFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupSearchingFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -334,10 +334,10 @@ public class RecipeEffectsTests
         public async Task HandleLoadRecipeTagsAction_WithErrorWhileTransmittingRequest_ShouldDispatchErrorNotificationAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupSearchingFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -352,26 +352,26 @@ public class RecipeEffectsTests
         {
             private List<RecipeTag>? _expectedRecipeSearchResults;
 
-            public void SetupSearchingSuccessfully()
+            public void SetupSearchingSuccessfully(IQueueComponent component)
             {
                 _expectedRecipeSearchResults = new DomainTestBuilder<RecipeTag>().CreateMany(2).ToList();
-                ApiClientMock.SetupGetAllRecipeTagsAsync(_expectedRecipeSearchResults);
+                ApiClientMock.SetupGetAllRecipeTagsAsync(_expectedRecipeSearchResults, component);
             }
 
-            public void SetupSearchingFailedWithErrorInApi()
+            public void SetupSearchingFailedWithErrorInApi(IQueueComponent component)
             {
-                ApiClientMock.SetupGetAllRecipeTagsAsyncThrowing(new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupGetAllRecipeTagsAsyncThrowing(new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchingFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchingFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
-                ApiClientMock.SetupGetAllRecipeTagsAsyncThrowing(new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupGetAllRecipeTagsAsyncThrowing(new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_expectedRecipeSearchResults);
-                SetupDispatchingAction(new LoadRecipeTagsFinishedAction(_expectedRecipeSearchResults));
+                SetupDispatchingAction(new LoadRecipeTagsFinishedAction(_expectedRecipeSearchResults), component);
             }
         }
     }

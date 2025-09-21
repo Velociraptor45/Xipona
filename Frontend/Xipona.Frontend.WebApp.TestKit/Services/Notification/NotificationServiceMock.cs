@@ -1,5 +1,6 @@
 ﻿using AntDesign;
 using Moq;
+using Moq.Contrib.InOrder;
 using Moq.Contrib.InOrder.Extensions;
 
 namespace Xipona.Frontend.WebApp.TestKit.Services.Notification;
@@ -10,7 +11,7 @@ public class NotificationServiceMock : Mock<INotificationService>
     {
     }
 
-    public void SetupOpen(NotificationConfig config)
+    public void SetupOpen(NotificationConfig config, IQueueComponent component)
     {
         this.SetupInOrder(x => x.Open(
             It.Is<NotificationConfig>(cfg =>
@@ -18,7 +19,7 @@ public class NotificationServiceMock : Mock<INotificationService>
                 && cfg.Description.AsT0 == config.Description.AsT0
                 && cfg.Duration == config.Duration
                 && cfg.NotificationType == config.NotificationType
-                )))
+                )), component)
             .ReturnsAsync((NotificationRef)null!);
     }
 }

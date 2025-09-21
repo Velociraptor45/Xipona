@@ -2,6 +2,7 @@
 using AutoFixture.Kernel;
 using Moq;
 using Moq.Contrib.InOrder;
+using System.Runtime.InteropServices.ObjectiveC;
 using Xipona.Frontend.Redux.Shared.Ports.Requests;
 using Xipona.Frontend.Redux.ShoppingList.Actions;
 using Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
@@ -30,10 +31,10 @@ public class ShoppingListProcessingEffectsTests
             Type requestType)
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction(requestType);
-                _fixture.SetupNotifyWarning();
+                _fixture.SetupNotifyWarning(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -50,10 +51,10 @@ public class ShoppingListProcessingEffectsTests
             private IApiRequest? _request;
             public ApiRequestProcessingErrorOccurredAction? Action { get; private set; }
 
-            public void SetupNotifyWarning()
+            public void SetupNotifyWarning(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_request);
-                NotificationServiceMock.SetupNotifyWarningContains("Request failed", _request.ItemName);
+                NotificationServiceMock.SetupNotifyWarningContains("Request failed", _request.ItemName, component);
             }
 
             public void SetupAction(Type requestType)
@@ -73,9 +74,9 @@ public class ShoppingListProcessingEffectsTests
         public async Task HandleApiConnectionDiedAction_WithValidData_ShouldDispatchesWarningNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupNotifyWarning();
+                _fixture.SetupNotifyWarning(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -89,9 +90,10 @@ public class ShoppingListProcessingEffectsTests
 
         private sealed class HandleApiConnectionDiedActionFixture : ShoppingListProcessingEffectsFixture
         {
-            public void SetupNotifyWarning()
+            public void SetupNotifyWarning(IQueueComponent component)
             {
-                NotificationServiceMock.SetupNotifyWarningContains("Connection interrupted", "Connection to the server was interrupted.");
+                NotificationServiceMock
+                    .SetupNotifyWarningContains("Connection interrupted", "Connection to the server was interrupted.", component);
             }
         }
     }
@@ -104,10 +106,10 @@ public class ShoppingListProcessingEffectsTests
         public async Task HandleQueueProcessedAction_WithValidData_ShouldDispatchesSuccessNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupNotifySuccess();
-                _fixture.SetupDispatchingReloadCurrentShoppingListAction();
+                _fixture.SetupNotifySuccess(x0);
+                _fixture.SetupDispatchingReloadCurrentShoppingListAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -121,14 +123,15 @@ public class ShoppingListProcessingEffectsTests
 
         private sealed class HandleQueueProcessedActionFixture : ShoppingListProcessingEffectsFixture
         {
-            public void SetupNotifySuccess()
+            public void SetupNotifySuccess(IQueueComponent component)
             {
-                NotificationServiceMock.SetupNotifySuccess("Sync completed", "Synchronization with the server completed.");
+                NotificationServiceMock
+                    .SetupNotifySuccess("Sync completed", "Synchronization with the server completed.", component);
             }
 
-            public void SetupDispatchingReloadCurrentShoppingListAction()
+            public void SetupDispatchingReloadCurrentShoppingListAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>(component);
             }
         }
     }
@@ -141,9 +144,9 @@ public class ShoppingListProcessingEffectsTests
         public async Task HandleReloadAfterErrorAction_WithValidData_ShouldDispatchesSelectedStoreChangedAction()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingReloadShoppingListAction();
+                _fixture.SetupDispatchingReloadShoppingListAction(x0);
             });
 
             // Act
@@ -155,9 +158,9 @@ public class ShoppingListProcessingEffectsTests
 
         private sealed class HandleReloadAfterErrorActionFixture : ShoppingListProcessingEffectsFixture
         {
-            public void SetupDispatchingReloadShoppingListAction()
+            public void SetupDispatchingReloadShoppingListAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ReloadCurrentShoppingListAction>();
+                SetupDispatchingAction<ReloadCurrentShoppingListAction>(component);
             }
         }
     }
