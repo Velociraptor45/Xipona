@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using FluentAssertions.Equivalency;
+using Microsoft.Extensions.Logging;
 using Xipona.Api.Core.Converter;
 using Xipona.Api.Domain.TestKit.Common;
 
@@ -15,7 +16,7 @@ public abstract class ToDomainConverterTestBase<TSource, TDest, TConverter> wher
         var contract = CreateSource();
         Setup(contract);
 
-        var mapper = new MapperConfiguration(AddMapping).CreateMapper();
+        var mapper = new MapperConfiguration(AddMapping, new LoggerFactory()).CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 

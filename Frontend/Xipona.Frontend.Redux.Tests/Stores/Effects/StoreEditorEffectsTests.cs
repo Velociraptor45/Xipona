@@ -20,11 +20,11 @@ public class StoreEditorEffectsTests
         public async Task HandleLoadStoreForEditingAction_WithValidStoreId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction();
-                _fixture.SetupGettingStore();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupGettingStore(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -41,11 +41,11 @@ public class StoreEditorEffectsTests
         public async Task HandleLoadStoreForEditingAction_WithApiException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction();
-                _fixture.SetupGettingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingStoreThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -62,11 +62,11 @@ public class StoreEditorEffectsTests
         public async Task HandleLoadStoreForEditingAction_WithHttpRequestException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupAction();
-                _fixture.SetupGettingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingStoreThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -86,20 +86,22 @@ public class StoreEditorEffectsTests
 
             public LoadStoreForEditingAction? Action { get; private set; }
 
-            public void SetupGettingStore()
+            public void SetupGettingStore(IQueueComponent component)
             {
                 _store = new DomainTestBuilder<EditedStore>().Create();
-                ApiClientMock.SetupGetStoreByIdAsync(_storeId, _store);
+                ApiClientMock.SetupGetStoreByIdAsync(_storeId, _store, component);
             }
 
-            public void SetupGettingStoreThrowsApiException()
+            public void SetupGettingStoreThrowsApiException(IQueueComponent component)
             {
-                ApiClientMock.SetupGetStoreByIdAsyncThrowing(_storeId, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupGetStoreByIdAsyncThrowing(_storeId,
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingStoreThrowsHttpRequestException()
+            public void SetupGettingStoreThrowsHttpRequestException(IQueueComponent component)
             {
-                ApiClientMock.SetupGetStoreByIdAsyncThrowing(_storeId, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupGetStoreByIdAsyncThrowing(_storeId,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
             public void SetupAction()
@@ -107,10 +109,10 @@ public class StoreEditorEffectsTests
                 Action = new LoadStoreForEditingAction(_storeId);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
-                SetupDispatchingAction(new LoadStoreForEditingFinishedAction(_store));
+                SetupDispatchingAction(new LoadStoreForEditingFinishedAction(_store), component);
             }
         }
     }
@@ -158,14 +160,14 @@ public class StoreEditorEffectsTests
         public async Task HandleSaveStoreAction_WithValidStoreId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStoreId();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupModifyingStore();
-                _fixture.SetupSuccessModifyNotification();
-                _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupModifyingStore(x0);
+                _fixture.SetupSuccessModifyNotification(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -180,13 +182,13 @@ public class StoreEditorEffectsTests
         public async Task HandleSaveStoreAction_WithStoreId_WithApiException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStoreId();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupModifyingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupModifyingStoreThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -201,13 +203,13 @@ public class StoreEditorEffectsTests
         public async Task HandleSaveStoreAction_WithStoreId_WithHttpRequestException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStoreId();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupModifyingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupModifyingStoreThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -222,14 +224,14 @@ public class StoreEditorEffectsTests
         public async Task HandleSaveStoreAction_WithStoreIdEmpty_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStoreIdEmpty();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupCreatingStore();
-                _fixture.SetupSuccessCreateNotification();
-                _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupCreatingStore(x0);
+                _fixture.SetupSuccessCreateNotification(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -244,13 +246,13 @@ public class StoreEditorEffectsTests
         public async Task HandleSaveStoreAction_WithStoreIdEmpty_WithApiException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStoreIdEmpty();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupCreatingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupCreatingStoreThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -265,13 +267,13 @@ public class StoreEditorEffectsTests
         public async Task HandleSaveStoreAction_WithStoreIdEmpty_WithHttpRequestException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStoreIdEmpty();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupCreatingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupCreatingStoreThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -337,59 +339,65 @@ public class StoreEditorEffectsTests
                 };
             }
 
-            public void SetupCreatingStore()
+            public void SetupCreatingStore(IQueueComponent component)
             {
-                ApiClientMock.SetupCreateStoreAsync(State.Editor.Store!);
+                ApiClientMock.SetupCreateStoreAsync(State.Editor.Store!, component);
             }
 
-            public void SetupCreatingStoreThrowsApiException()
+            public void SetupCreatingStoreThrowsApiException(IQueueComponent component)
             {
-                ApiClientMock.SetupCreateStoreAsyncThrowing(State.Editor.Store!, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupCreateStoreAsyncThrowing(State.Editor.Store!,
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupCreatingStoreThrowsHttpRequestException()
+            public void SetupCreatingStoreThrowsHttpRequestException(IQueueComponent component)
             {
-                ApiClientMock.SetupCreateStoreAsyncThrowing(State.Editor.Store!, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupCreateStoreAsyncThrowing(State.Editor.Store!,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupModifyingStore()
+            public void SetupModifyingStore(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyStoreAsync(State.Editor.Store!);
+                ApiClientMock.SetupModifyStoreAsync(State.Editor.Store!, component);
             }
 
-            public void SetupModifyingStoreThrowsApiException()
+            public void SetupModifyingStoreThrowsApiException(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyStoreAsyncThrowing(State.Editor.Store!, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyStoreAsyncThrowing(State.Editor.Store!,
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupModifyingStoreThrowsHttpRequestException()
+            public void SetupModifyingStoreThrowsHttpRequestException(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyStoreAsyncThrowing(State.Editor.Store!, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupModifyStoreAsyncThrowing(State.Editor.Store!,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartAction()
+            public void SetupDispatchingStartAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SaveStoreStartedAction>();
+                SetupDispatchingAction<SaveStoreStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SaveStoreFinishedAction>();
+                SetupDispatchingAction<SaveStoreFinishedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction<LeaveStoreEditorAction>();
+                SetupDispatchingAction<LeaveStoreEditorAction>(component);
             }
 
-            public void SetupSuccessCreateNotification()
+            public void SetupSuccessCreateNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created store {_storeName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully created store {_storeName}", 2f, component);
             }
 
-            public void SetupSuccessModifyNotification()
+            public void SetupSuccessModifyNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified store {_storeName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully modified store {_storeName}", 2f, component);
             }
         }
     }
@@ -419,15 +427,15 @@ public class StoreEditorEffectsTests
         public async Task HandleDeleteStoreConfirmedActionAction_WithValidStoreId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupStore();
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupDeletingStore();
-                _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingCloseDialogAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupDeletingStore(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
+                _fixture.SetupDispatchingCloseDialogAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -442,12 +450,12 @@ public class StoreEditorEffectsTests
         public async Task HandleDeleteStoreConfirmedActionAction_WithStoreId_WithApiException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupDeletingStoreThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupDeletingStoreThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -462,12 +470,12 @@ public class StoreEditorEffectsTests
         public async Task HandleDeleteStoreConfirmedActionAction_WithStoreId_WithHttpRequestException_ShouldDispatchErrorActions()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupDeletingStoreThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupDeletingStoreThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -507,46 +515,47 @@ public class StoreEditorEffectsTests
                 };
             }
 
-            public void SetupDeletingStore()
+            public void SetupDeletingStore(IQueueComponent component)
             {
-                ApiClientMock.SetupDeleteStoreAsync(State.Editor.Store!.Id);
+                ApiClientMock.SetupDeleteStoreAsync(State.Editor.Store!.Id, component);
             }
 
-            public void SetupDeletingStoreThrowsApiException()
+            public void SetupDeletingStoreThrowsApiException(IQueueComponent component)
             {
                 ApiClientMock.SetupDeleteStoreAsyncThrowing(State.Editor.Store!.Id,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupDeletingStoreThrowsHttpRequestException()
+            public void SetupDeletingStoreThrowsHttpRequestException(IQueueComponent component)
             {
                 ApiClientMock.SetupDeleteStoreAsyncThrowing(State.Editor.Store!.Id,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartAction()
+            public void SetupDispatchingStartAction(IQueueComponent component)
             {
-                SetupDispatchingAction<DeleteStoreStartedAction>();
+                SetupDispatchingAction<DeleteStoreStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
-                SetupDispatchingAction<DeleteStoreFinishedAction>();
+                SetupDispatchingAction<DeleteStoreFinishedAction>(component);
             }
 
-            public void SetupDispatchingCloseDialogAction()
+            public void SetupDispatchingCloseDialogAction(IQueueComponent component)
             {
-                SetupDispatchingAction<CloseDeleteStoreDialogAction>();
+                SetupDispatchingAction<CloseDeleteStoreDialogAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction<LeaveStoreEditorAction>();
+                SetupDispatchingAction<LeaveStoreEditorAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted store {_storeName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully deleted store {_storeName}", 2f, component);
             }
         }
     }

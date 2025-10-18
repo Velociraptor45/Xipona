@@ -29,9 +29,9 @@ public class CommandQueueTests
         public async Task RetryConnectionAsync_WithApiNotAlive_ShouldDoNothing()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiNotAlive();
+                _fixture.SetupApiNotAlive(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -48,11 +48,11 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupEmptyQueue();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupDispatchingConnectionRecoverAction();
-                _fixture.SetupDispatchingProcessedAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupDispatchingConnectionRecoverAction(x0);
+                _fixture.SetupDispatchingProcessedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -69,12 +69,12 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupOneQueueItem();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupSendingRequestSucceeded();
-                _fixture.SetupDispatchingConnectionRecoverAction();
-                _fixture.SetupDispatchingProcessedAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupSendingRequestSucceeded(x0);
+                _fixture.SetupDispatchingConnectionRecoverAction(x0);
+                _fixture.SetupDispatchingProcessedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -96,15 +96,15 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupOneQueueItem();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupSendingRequestFailedWithApiException(statusCode);
-                _fixture.SetupDispatchingErrorOccurredAction();
-                _fixture.SetupDispatchingLogAction();
-                _fixture.SetupDispatchingRequestReloadAction();
-                _fixture.SetupDispatchingConnectionRecoverAction();
-                _fixture.SetupDispatchingProcessedAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupSendingRequestFailedWithApiException(statusCode, x0);
+                _fixture.SetupDispatchingErrorOccurredAction(x0);
+                _fixture.SetupDispatchingLogAction(x0);
+                _fixture.SetupDispatchingRequestReloadAction(x0);
+                _fixture.SetupDispatchingConnectionRecoverAction(x0);
+                _fixture.SetupDispatchingProcessedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -125,11 +125,11 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupOneQueueItem();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupSendingRequestFailedWithApiException(statusCode);
-                _fixture.SetupDispatchingConnectionDiedAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupSendingRequestFailedWithApiException(statusCode, x0);
+                _fixture.SetupDispatchingConnectionDiedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -151,15 +151,15 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupOneQueueItem();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupSendingRequestFailedWithHttpRequestException(statusCode);
-                _fixture.SetupDispatchingErrorOccurredAction();
-                _fixture.SetupDispatchingLogAction();
-                _fixture.SetupDispatchingRequestReloadAction();
-                _fixture.SetupDispatchingConnectionRecoverAction();
-                _fixture.SetupDispatchingProcessedAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupSendingRequestFailedWithHttpRequestException(statusCode, x0);
+                _fixture.SetupDispatchingErrorOccurredAction(x0);
+                _fixture.SetupDispatchingLogAction(x0);
+                _fixture.SetupDispatchingRequestReloadAction(x0);
+                _fixture.SetupDispatchingConnectionRecoverAction(x0);
+                _fixture.SetupDispatchingProcessedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -180,11 +180,11 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupOneQueueItem();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupSendingRequestFailedWithHttpRequestException(statusCode);
-                _fixture.SetupDispatchingConnectionDiedAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupSendingRequestFailedWithHttpRequestException(statusCode, x0);
+                _fixture.SetupDispatchingConnectionDiedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -202,11 +202,11 @@ public class CommandQueueTests
             // Arrange
             _fixture.SetupFiveQueueItems();
             _fixture.FillQueueThroughBackdoor();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupApiAlive();
-                _fixture.SetupSendingRequestFailedWithDefaultException();
-                _fixture.SetupDispatchingLogAction();
+                _fixture.SetupApiAlive(x0);
+                _fixture.SetupSendingRequestFailedWithDefaultException(x0);
+                _fixture.SetupDispatchingLogAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -220,53 +220,53 @@ public class CommandQueueTests
 
         private sealed class RetryConnectionAsyncFixture : CommandQueueFixture
         {
-            public void SetupApiAlive()
+            public void SetupApiAlive(IQueueComponent component)
             {
-                ApiClientMock.SetupIsAliveAsync();
+                ApiClientMock.SetupIsAliveAsync(component);
             }
 
-            public void SetupApiNotAlive()
+            public void SetupApiNotAlive(IQueueComponent component)
             {
-                ApiClientMock.SetupIsAliveAsyncThrowing(new TestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupIsAliveAsyncThrowing(new TestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingProcessedAction()
+            public void SetupDispatchingProcessedAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new QueueProcessedAction());
+                DispatcherMock.SetupDispatch(new QueueProcessedAction(), component);
             }
 
-            public void SetupDispatchingConnectionRecoverAction()
+            public void SetupDispatchingConnectionRecoverAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new ApiConnectionRecoveredAction());
+                DispatcherMock.SetupDispatch(new ApiConnectionRecoveredAction(), component);
             }
 
-            public void SetupDispatchingErrorOccurredAction()
-            {
-                TestPropertyNotSetException.ThrowIfNull(Queue);
-                DispatcherMock.SetupDispatch(new ApiRequestProcessingErrorOccurredAction(Queue.First()));
-            }
-
-            public void SetupSendingRequestSucceeded()
+            public void SetupDispatchingErrorOccurredAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Queue);
-                RequestSenderStrategyMock.SetupSendAsync(Queue.First());
+                DispatcherMock.SetupDispatch(new ApiRequestProcessingErrorOccurredAction(Queue.First()), component);
             }
 
-            public void SetupSendingRequestFailedWithApiException(HttpStatusCode statusCode)
+            public void SetupSendingRequestSucceeded(IQueueComponent component)
+            {
+                TestPropertyNotSetException.ThrowIfNull(Queue);
+                RequestSenderStrategyMock.SetupSendAsync(Queue.First(), component);
+            }
+
+            public void SetupSendingRequestFailedWithApiException(HttpStatusCode statusCode, IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Queue);
 
                 var response = new HttpResponseMessage(statusCode);
                 var exception = new TestBuilder<ApiException>().FillConstructorWith("response", response).Create();
-                RequestSenderStrategyMock.SetupSendAsyncThrowing(Queue.First(), exception);
+                RequestSenderStrategyMock.SetupSendAsyncThrowing(Queue.First(), exception, component);
             }
 
-            public void SetupSendingRequestFailedWithHttpRequestException(HttpStatusCode statusCode)
+            public void SetupSendingRequestFailedWithHttpRequestException(HttpStatusCode statusCode, IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Queue);
 
                 var exception = new HttpRequestException(new TestBuilder<string>().Create(), null, statusCode);
-                RequestSenderStrategyMock.SetupSendAsyncThrowing(Queue.First(), exception);
+                RequestSenderStrategyMock.SetupSendAsyncThrowing(Queue.First(), exception, component);
             }
         }
     }
@@ -283,9 +283,9 @@ public class CommandQueueTests
             _fixture.SetupEmptyQueue();
             _fixture.FillQueueThroughBackdoor();
             _fixture.SetupRequest();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupSendingRequestSucceeded();
+                _fixture.SetupSendingRequestSucceeded(x0);
             });
             var sut = _fixture.CreateSut();
             EnqueueFixture.SetupConnectionAlive(sut);
@@ -353,12 +353,12 @@ public class CommandQueueTests
             _fixture.SetupEmptyQueue();
             _fixture.FillQueueThroughBackdoor();
             _fixture.SetupRequest();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupSendingRequestFailedWithApiException(statusCode);
-                _fixture.SetupDispatchingErrorOccurredAction();
-                _fixture.SetupDispatchingLogAction();
-                _fixture.SetupDispatchingRequestReloadAction();
+                _fixture.SetupSendingRequestFailedWithApiException(statusCode, x0);
+                _fixture.SetupDispatchingErrorOccurredAction(x0);
+                _fixture.SetupDispatchingLogAction(x0);
+                _fixture.SetupDispatchingRequestReloadAction(x0);
             });
             var sut = _fixture.CreateSut();
             EnqueueFixture.SetupConnectionAlive(sut);
@@ -384,12 +384,12 @@ public class CommandQueueTests
             _fixture.SetupEmptyQueue();
             _fixture.FillQueueThroughBackdoor();
             _fixture.SetupRequest();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupSendingRequestFailedWithHttpRequestException(statusCode);
-                _fixture.SetupDispatchingErrorOccurredAction();
-                _fixture.SetupDispatchingLogAction();
-                _fixture.SetupDispatchingRequestReloadAction();
+                _fixture.SetupSendingRequestFailedWithHttpRequestException(statusCode, x0);
+                _fixture.SetupDispatchingErrorOccurredAction(x0);
+                _fixture.SetupDispatchingLogAction(x0);
+                _fixture.SetupDispatchingRequestReloadAction(x0);
             });
             var sut = _fixture.CreateSut();
             EnqueueFixture.SetupConnectionAlive(sut);
@@ -413,33 +413,33 @@ public class CommandQueueTests
                 Request = new TestBuilder<PutItemInBasketRequest>().Create();
             }
 
-            public void SetupSendingRequestSucceeded()
+            public void SetupSendingRequestSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Request);
-                RequestSenderStrategyMock.SetupSendAsync(Request);
+                RequestSenderStrategyMock.SetupSendAsync(Request, component);
             }
 
-            public void SetupDispatchingErrorOccurredAction()
+            public void SetupDispatchingErrorOccurredAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Request);
-                DispatcherMock.SetupDispatch(new ApiRequestProcessingErrorOccurredAction(Request));
+                DispatcherMock.SetupDispatch(new ApiRequestProcessingErrorOccurredAction(Request), component);
             }
 
-            public void SetupSendingRequestFailedWithApiException(HttpStatusCode statusCode)
+            public void SetupSendingRequestFailedWithApiException(HttpStatusCode statusCode, IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Request);
 
                 var response = new HttpResponseMessage(statusCode);
                 var exception = new TestBuilder<ApiException>().FillConstructorWith("response", response).Create();
-                RequestSenderStrategyMock.SetupSendAsyncThrowing(Request, exception);
+                RequestSenderStrategyMock.SetupSendAsyncThrowing(Request, exception, component);
             }
 
-            public void SetupSendingRequestFailedWithHttpRequestException(HttpStatusCode statusCode)
+            public void SetupSendingRequestFailedWithHttpRequestException(HttpStatusCode statusCode, IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Request);
 
                 var exception = new HttpRequestException(new TestBuilder<string>().Create(), null, statusCode);
-                RequestSenderStrategyMock.SetupSendAsyncThrowing(Request, exception);
+                RequestSenderStrategyMock.SetupSendAsyncThrowing(Request, exception, component);
             }
 
             public static void SetupConnectionAlive(CommandQueue sut)
@@ -502,27 +502,27 @@ public class CommandQueueTests
             Queue = new DomainTestBuilder<PutItemInBasketRequest>().CreateMany(count).ToList<IApiRequest>();
         }
 
-        public void SetupDispatchingRequestReloadAction()
+        public void SetupDispatchingRequestReloadAction(IQueueComponent component)
         {
-            DispatcherMock.SetupDispatch(new ReloadCurrentShoppingListAction());
+            DispatcherMock.SetupDispatch(new ReloadCurrentShoppingListAction(), component);
         }
 
-        public void SetupDispatchingConnectionDiedAction()
+        public void SetupDispatchingConnectionDiedAction(IQueueComponent component)
         {
-            DispatcherMock.SetupDispatch(new ApiConnectionDiedAction());
+            DispatcherMock.SetupDispatch(new ApiConnectionDiedAction(), component);
         }
 
-        public void SetupDispatchingLogAction()
+        public void SetupDispatchingLogAction(IQueueComponent component)
         {
-            DispatcherMock.SetupDispatchAny<LogAction>();
+            DispatcherMock.SetupDispatchAny<LogAction>(component);
         }
 
-        public void SetupSendingRequestFailedWithDefaultException()
+        public void SetupSendingRequestFailedWithDefaultException(IQueueComponent component)
         {
             TestPropertyNotSetException.ThrowIfNull(Queue);
 
             var exception = new TestBuilder<Exception>().Create();
-            RequestSenderStrategyMock.SetupSendAsyncThrowing(Queue.First(), exception);
+            RequestSenderStrategyMock.SetupSendAsyncThrowing(Queue.First(), exception, component);
         }
 
         public void FillQueueThroughBackdoor()

@@ -18,11 +18,11 @@ public class ItemCategoryEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithSearchInputEmpty_ShouldDispatchFinishedActionWithEmptyResult()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInputEmpty();
                 _fixture.SetupSearchResultEmpty();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -37,13 +37,13 @@ public class ItemCategoryEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchResult();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -58,12 +58,12 @@ public class ItemCategoryEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -78,12 +78,12 @@ public class ItemCategoryEffectsTests
         public async Task HandleSearchItemCategoriesAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -133,40 +133,40 @@ public class ItemCategoryEffectsTests
                 _searchResult = new List<ItemCategorySearchResult>();
             }
 
-            public void SetupSearchSucceeded()
+            public void SetupSearchSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                ApiClientMock.SetupGetItemCategorySearchResultsAsync(_searchInput, _searchResult);
+                ApiClientMock.SetupGetItemCategorySearchResultsAsync(_searchInput, _searchResult, component);
             }
 
-            public void SetupSearchFailedWithErrorInApi()
+            public void SetupSearchFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
 
                 ApiClientMock.SetupGetItemCategorySearchResultsAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
 
                 ApiClientMock.SetupGetItemCategorySearchResultsAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                SetupDispatchingAction(new SearchItemCategoriesFinishedAction(_searchResult));
+                SetupDispatchingAction(new SearchItemCategoriesFinishedAction(_searchResult), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SearchItemCategoriesStartedAction>();
+                SetupDispatchingAction<SearchItemCategoriesStartedAction>(component);
             }
         }
     }

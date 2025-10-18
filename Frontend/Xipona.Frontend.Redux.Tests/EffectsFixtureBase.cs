@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Moq.Contrib.InOrder;
 using Moq.Contrib.InOrder.Extensions;
 using Xipona.Frontend.Redux.Shared.Actions;
 using Xipona.Frontend.Redux.TestKit.Common;
@@ -14,36 +15,26 @@ public abstract class EffectsFixtureBase
 
     public DispatcherMock DispatcherMock { get; } = new(MockBehavior.Strict);
 
-    protected void SetupDispatchingAction<TAction>(TAction action)
+    protected void SetupDispatchingAction<TAction>(TAction action, IQueueComponent component)
     {
         DispatcherMock
-            .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))));
+            .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))), component);
     }
 
-    protected void SetupDispatchingAction<TAction>(Func<TAction, bool> match)
+    protected void SetupDispatchingAction<TAction>(Func<TAction, bool> match, IQueueComponent component)
     {
         DispatcherMock
-            .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => match(a))));
+            .SetupInOrder(m => m.Dispatch(It.Is<TAction>(a => match(a))), component);
     }
 
-    protected void SetupDispatchingAction<TAction>() where TAction : new()
+    protected void SetupDispatchingAction<TAction>(IQueueComponent component) where TAction : new()
     {
-        SetupDispatchingAction(new TAction());
+        SetupDispatchingAction(new TAction(), component);
     }
 
-    protected void SetupDispatchingAnyAction<TAction>()
+    protected void SetupDispatchingAnyAction<TAction>(IQueueComponent component)
     {
-        DispatcherMock.SetupInOrder(m => m.Dispatch(It.IsAny<TAction>()));
-    }
-
-    protected void VerifyDispatchingAction<TAction>(TAction action)
-    {
-        DispatcherMock.Verify(m => m.Dispatch(It.Is<TAction>(a => a.IsEquivalentTo(action))), Times.Once);
-    }
-
-    protected void VerifyDispatchingAction<TAction>() where TAction : new()
-    {
-        VerifyDispatchingAction(new TAction());
+        DispatcherMock.SetupInOrder(m => m.Dispatch(It.IsAny<TAction>()), component);
     }
 
     protected void VerifyNotDispatchingAction<TAction>()
@@ -51,13 +42,13 @@ public abstract class EffectsFixtureBase
         DispatcherMock.Verify(m => m.Dispatch(It.IsAny<TAction>()), Times.Never);
     }
 
-    public void SetupDispatchingExceptionNotificationAction()
+    public void SetupDispatchingExceptionNotificationAction(IQueueComponent component)
     {
-        SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>();
+        SetupDispatchingAnyAction<DisplayApiExceptionNotificationAction>(component);
     }
 
-    public void SetupDispatchingErrorNotificationAction()
+    public void SetupDispatchingErrorNotificationAction(IQueueComponent component)
     {
-        SetupDispatchingAnyAction<DisplayErrorNotificationAction>();
+        SetupDispatchingAnyAction<DisplayErrorNotificationAction>(component);
     }
 }

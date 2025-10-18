@@ -72,9 +72,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSet();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingLoadItemAction();
+                _fixture.SetupDispatchingLoadItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -91,9 +91,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSetEmpty();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingSettingNewItemAction();
+                _fixture.SetupDispatchingSettingNewItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -180,15 +180,15 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingSettingNewItemAction()
+            public void SetupDispatchingSettingNewItemAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SetNewItemAction>();
+                SetupDispatchingAction<SetNewItemAction>(component);
             }
 
-            public void SetupDispatchingLoadItemAction()
+            public void SetupDispatchingLoadItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
-                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value), component);
             }
         }
     }
@@ -251,9 +251,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSet();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingLoadItemAction();
+                _fixture.SetupDispatchingLoadItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -270,9 +270,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSetEmpty();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingSettingNewItemAction();
+                _fixture.SetupDispatchingSettingNewItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -357,15 +357,15 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingSettingNewItemAction()
+            public void SetupDispatchingSettingNewItemAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SetNewItemAction>();
+                SetupDispatchingAction<SetNewItemAction>(component);
             }
 
-            public void SetupDispatchingLoadItemAction()
+            public void SetupDispatchingLoadItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
-                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value), component);
             }
         }
     }
@@ -428,9 +428,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSet();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingLoadItemAction();
+                _fixture.SetupDispatchingLoadItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -447,9 +447,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSetEmpty();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingSettingNewItemAction();
+                _fixture.SetupDispatchingSettingNewItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -534,15 +534,15 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingSettingNewItemAction()
+            public void SetupDispatchingSettingNewItemAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SetNewItemAction>();
+                SetupDispatchingAction<SetNewItemAction>(component);
             }
 
-            public void SetupDispatchingLoadItemAction()
+            public void SetupDispatchingLoadItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
-                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value), component);
             }
         }
     }
@@ -605,9 +605,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSet();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingLoadItemAction();
+                _fixture.SetupDispatchingLoadItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -624,9 +624,9 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupItemIdSetEmpty();
             _fixture.SetupStateWithAllLoaded();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingSettingNewItemAction();
+                _fixture.SetupDispatchingSettingNewItemAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -711,15 +711,15 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupDispatchingSettingNewItemAction()
+            public void SetupDispatchingSettingNewItemAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SetNewItemAction>();
+                SetupDispatchingAction<SetNewItemAction>(component);
             }
 
-            public void SetupDispatchingLoadItemAction()
+            public void SetupDispatchingLoadItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(State.Editor.ItemId);
-                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value));
+                SetupDispatchingAction(new LoadItemForEditingAction(State.Editor.ItemId.Value), component);
             }
         }
     }
@@ -734,11 +734,11 @@ public class ItemEditorEffectsTests
             // Arrange
             _fixture.SetupAction();
             _fixture.SetupReturnedItem();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingItem();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupGettingItem(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -757,11 +757,11 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingItemFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupGettingItemFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -780,11 +780,11 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupAction();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupGettingItemFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupGettingItemFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -813,40 +813,40 @@ public class ItemEditorEffectsTests
                 _item = new DomainTestBuilder<EditedItem>().Create();
             }
 
-            public void SetupGettingItem()
+            public void SetupGettingItem(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
-                ApiClientMock.SetupGetItemByIdAsync(Action.ItemId, _item);
+                ApiClientMock.SetupGetItemByIdAsync(Action.ItemId, _item, component);
             }
 
-            public void SetupGettingItemFailedWithErrorInApi()
+            public void SetupGettingItemFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var exception = new DomainTestBuilder<ApiException>().Create();
-                ApiClientMock.SetupGetItemByIdAsyncThrowing(Action.ItemId, exception);
+                ApiClientMock.SetupGetItemByIdAsyncThrowing(Action.ItemId, exception, component);
             }
 
-            public void SetupGettingItemFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingItemFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var exception = new DomainTestBuilder<HttpRequestException>().Create();
-                ApiClientMock.SetupGetItemByIdAsyncThrowing(Action.ItemId, exception);
+                ApiClientMock.SetupGetItemByIdAsyncThrowing(Action.ItemId, exception, component);
             }
 
-            public void SetupDispatchingStartAction()
+            public void SetupDispatchingStartAction(IQueueComponent component)
             {
-                SetupDispatchingAction<LoadItemForEditingStartedAction>();
+                SetupDispatchingAction<LoadItemForEditingStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
-                SetupDispatchingAction(new LoadItemForEditingFinishedAction(_item));
+                SetupDispatchingAction(new LoadItemForEditingFinishedAction(_item), component);
             }
         }
     }
@@ -860,9 +860,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItem();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingAddedItemAction();
+                _fixture.SetupDispatchingAddedItemAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -879,9 +879,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItemType();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingAddedItemTypeAction();
+                _fixture.SetupDispatchingAddedItemTypeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -897,17 +897,17 @@ public class ItemEditorEffectsTests
         {
             public AddStoreAction? Action { get; private set; }
 
-            public void SetupDispatchingAddedItemAction()
+            public void SetupDispatchingAddedItemAction(IQueueComponent component)
             {
-                SetupDispatchingAction<StoreAddedToItemAction>();
+                SetupDispatchingAction<StoreAddedToItemAction>(component);
             }
 
-            public void SetupDispatchingAddedItemTypeAction()
+            public void SetupDispatchingAddedItemTypeAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Key));
+                SetupDispatchingAction(new StoreAddedToItemTypeAction(itemType!.Key), component);
             }
 
             public void SetupActionForItem()
@@ -931,9 +931,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItem();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemAction();
+                _fixture.SetupDispatchingItemAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -950,9 +950,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItemType();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemTypeAction();
+                _fixture.SetupDispatchingItemTypeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -968,19 +968,20 @@ public class ItemEditorEffectsTests
         {
             public ChangeStoreAction? Action { get; private set; }
 
-            public void SetupDispatchingItemAction()
+            public void SetupDispatchingItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
-                SetupDispatchingAction(new StoreOfItemChangedAction(Action.Availability, Action.StoreId));
+                SetupDispatchingAction(new StoreOfItemChangedAction(Action.Availability, Action.StoreId), component);
             }
 
-            public void SetupDispatchingItemTypeAction()
+            public void SetupDispatchingItemTypeAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new StoreOfItemTypeChangedAction(itemType!, Action.Availability, Action.StoreId));
+                SetupDispatchingAction(new StoreOfItemTypeChangedAction(itemType!, Action.Availability, Action.StoreId),
+                    component);
             }
 
             public void SetupActionForItem()
@@ -1010,9 +1011,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItem();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemAction();
+                _fixture.SetupDispatchingItemAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -1029,9 +1030,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItemType();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemTypeAction();
+                _fixture.SetupDispatchingItemTypeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -1047,19 +1048,19 @@ public class ItemEditorEffectsTests
         {
             public ChangePriceAction? Action { get; private set; }
 
-            public void SetupDispatchingItemAction()
+            public void SetupDispatchingItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
-                SetupDispatchingAction(new PriceOfItemChangedAction(Action.Availability, Action.Price));
+                SetupDispatchingAction(new PriceOfItemChangedAction(Action.Availability, Action.Price), component);
             }
 
-            public void SetupDispatchingItemTypeAction()
+            public void SetupDispatchingItemTypeAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new PriceOfItemTypeChangedAction(itemType!, Action.Availability, Action.Price));
+                SetupDispatchingAction(new PriceOfItemTypeChangedAction(itemType!, Action.Availability, Action.Price), component);
             }
 
             public void SetupActionForItem()
@@ -1089,9 +1090,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItem();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemAction();
+                _fixture.SetupDispatchingItemAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -1108,9 +1109,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItemType();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemTypeAction();
+                _fixture.SetupDispatchingItemTypeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -1126,19 +1127,21 @@ public class ItemEditorEffectsTests
         {
             public ChangeDefaultSectionAction? Action { get; private set; }
 
-            public void SetupDispatchingItemAction()
+            public void SetupDispatchingItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
-                SetupDispatchingAction(new DefaultSectionOfItemChangedAction(Action.Availability, Action.DefaultSectionId));
+                SetupDispatchingAction(new DefaultSectionOfItemChangedAction(Action.Availability, Action.DefaultSectionId),
+                    component);
             }
 
-            public void SetupDispatchingItemTypeAction()
+            public void SetupDispatchingItemTypeAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new DefaultSectionOfItemTypeChangedAction(itemType!, Action.Availability, Action.DefaultSectionId));
+                SetupDispatchingAction(new DefaultSectionOfItemTypeChangedAction(itemType!, Action.Availability, Action.DefaultSectionId),
+                    component);
             }
 
             public void SetupActionForItem()
@@ -1168,9 +1171,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItem();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemAction();
+                _fixture.SetupDispatchingItemAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -1187,9 +1190,9 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupActionForItemType();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingItemTypeAction();
+                _fixture.SetupDispatchingItemTypeAction(x0);
             });
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -1205,19 +1208,19 @@ public class ItemEditorEffectsTests
         {
             public RemoveStoreAction? Action { get; private set; }
 
-            public void SetupDispatchingItemAction()
+            public void SetupDispatchingItemAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
-                SetupDispatchingAction(new StoreOfItemRemovedAction(Action.Availability));
+                SetupDispatchingAction(new StoreOfItemRemovedAction(Action.Availability), component);
             }
 
-            public void SetupDispatchingItemTypeAction()
+            public void SetupDispatchingItemTypeAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(Action);
 
                 var itemType = Action.Available as EditedItemType;
-                SetupDispatchingAction(new StoreOfItemTypeRemovedAction(itemType!, Action.Availability));
+                SetupDispatchingAction(new StoreOfItemTypeRemovedAction(itemType!, Action.Availability), component);
             }
 
             public void SetupActionForItem()
@@ -1261,13 +1264,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItem();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItem(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1283,13 +1286,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypesAndItemModeNotDefined();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItem();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItem(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1305,12 +1308,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItemFailed();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItemFailed(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1326,13 +1329,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItemWithTypes();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItemWithTypes(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1348,13 +1351,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypesAndItemModeNotDefined();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItemWithTypes();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItemWithTypes(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1370,12 +1373,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItemWithTypesFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItemWithTypesFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1391,12 +1394,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1473,52 +1476,53 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupCreatingItem()
+            public void SetupCreatingItem(IQueueComponent component)
             {
-                ApiClientMock.SetupCreateItemAsync(State.Editor.Item!);
+                ApiClientMock.SetupCreateItemAsync(State.Editor.Item!, component);
             }
 
-            public void SetupCreatingItemFailed()
+            public void SetupCreatingItemFailed(IQueueComponent component)
             {
                 ApiClientMock.SetupCreateItemAsyncThrowing(State.Editor.Item!,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupCreatingItemWithTypes()
+            public void SetupCreatingItemWithTypes(IQueueComponent component)
             {
-                ApiClientMock.SetupCreateItemWithTypesAsync(State.Editor.Item!);
+                ApiClientMock.SetupCreateItemWithTypesAsync(State.Editor.Item!, component);
             }
 
-            public void SetupCreatingItemWithTypesFailedWithErrorInApi()
-            {
-                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
-                    new DomainTestBuilder<ApiException>().Create());
-            }
-
-            public void SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest()
+            public void SetupCreatingItemWithTypesFailedWithErrorInApi(IQueueComponent component)
             {
                 ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupCreatingItemWithTypesFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
-                SetupDispatchingAction<CreateItemStartedAction>();
+                ApiClientMock.SetupCreateItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<CreateItemFinishedAction>();
+                SetupDispatchingAction<CreateItemStartedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true));
+                SetupDispatchingAction<CreateItemFinishedAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created item {_itemName}");
+                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
+            }
+
+            public void SetupSuccessNotification(IQueueComponent component)
+            {
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully created item {_itemName}", 2f, component);
             }
         }
     }
@@ -1548,13 +1552,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingItem();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingItem(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1570,12 +1574,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingItemFailed();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingItemFailed(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1591,13 +1595,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingItemWithTypes();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingItemWithTypes(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1613,12 +1617,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingItemWithTypesFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingItemWithTypesFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1634,12 +1638,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1684,51 +1688,53 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupUpdatingItem()
+            public void SetupUpdatingItem(IQueueComponent component)
             {
-                ApiClientMock.SetupUpdateItemAsync(State.Editor.Item!);
+                ApiClientMock.SetupUpdateItemAsync(State.Editor.Item!, component);
             }
 
-            public void SetupUpdatingItemFailed()
+            public void SetupUpdatingItemFailed(IQueueComponent component)
             {
-                ApiClientMock.SetupUpdateItemAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupUpdateItemAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupUpdatingItemWithTypes()
+            public void SetupUpdatingItemWithTypes(IQueueComponent component)
             {
-                ApiClientMock.SetupUpdateItemWithTypesAsync(State.Editor.Item!);
+                ApiClientMock.SetupUpdateItemWithTypesAsync(State.Editor.Item!, component);
             }
 
-            public void SetupUpdatingItemWithTypesFailedWithErrorInApi()
+            public void SetupUpdatingItemWithTypesFailedWithErrorInApi(IQueueComponent component)
             {
                 ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(State.Editor.Item!,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest()
+            public void SetupUpdatingItemWithTypesFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupUpdateItemWithTypesAsyncThrowing(State.Editor.Item!,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<UpdateItemStartedAction>();
+                SetupDispatchingAction<UpdateItemStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<UpdateItemFinishedAction>();
+                SetupDispatchingAction<UpdateItemFinishedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true));
+                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully updated item {_itemName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully updated item {_itemName}", 2f, component);
             }
         }
     }
@@ -1758,13 +1764,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingItem();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingItem(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1780,12 +1786,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingItemFailed();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingItemFailed(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1801,13 +1807,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingItemWithTypes();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingItemWithTypes(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1823,12 +1829,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingItemWithTypesFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingItemWithTypesFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1844,12 +1850,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1894,49 +1900,53 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupModifyingItem()
+            public void SetupModifyingItem(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyItemAsync(State.Editor.Item!);
+                ApiClientMock.SetupModifyItemAsync(State.Editor.Item!, component);
             }
 
-            public void SetupModifyingItemFailed()
+            public void SetupModifyingItemFailed(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyItemAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupModifyingItemWithTypes()
+            public void SetupModifyingItemWithTypes(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyItemWithTypesAsync(State.Editor.Item!);
+                ApiClientMock.SetupModifyItemWithTypesAsync(State.Editor.Item!, component);
             }
 
-            public void SetupModifyingItemWithTypesFailedWithErrorInApi()
+            public void SetupModifyingItemWithTypesFailedWithErrorInApi(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest()
+            public void SetupModifyingItemWithTypesFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
-                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupModifyItemWithTypesAsyncThrowing(State.Editor.Item!,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ModifyItemStartedAction>();
+                SetupDispatchingAction<ModifyItemStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<ModifyItemFinishedAction>();
+                SetupDispatchingAction<ModifyItemFinishedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true));
+                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified item {_itemName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully modified item {_itemName}", 2f, component);
             }
         }
     }
@@ -1966,13 +1976,13 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanent();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMakingItemPermanent(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -1988,12 +1998,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMakingItemPermanentFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -2009,12 +2019,12 @@ public class ItemEditorEffectsTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -2046,7 +2056,7 @@ public class ItemEditorEffectsTests
                 };
             }
 
-            public void SetupMakingItemPermanent()
+            public void SetupMakingItemPermanent(IQueueComponent component)
             {
                 var item = State.Editor.Item!;
                 var request = new MakeTemporaryItemPermanentRequest(
@@ -2059,27 +2069,10 @@ public class ItemEditorEffectsTests
                     item.ItemCategoryId!.Value,
                     item.ManufacturerId,
                     item.Availabilities);
-                ApiClientMock.SetupMakeTemporaryItemPermanent(request);
+                ApiClientMock.SetupMakeTemporaryItemPermanent(request, component);
             }
 
-            public void SetupMakingItemPermanentFailedWithErrorInApi()
-            {
-                var item = State.Editor.Item!;
-                var request = new MakeTemporaryItemPermanentRequest(
-                    item.Id,
-                    item.Name,
-                    item.Comment,
-                    item.QuantityType.Id,
-                    item.QuantityInPacket,
-                    item.QuantityInPacketType?.Id,
-                    item.ItemCategoryId!.Value,
-                    item.ManufacturerId,
-                    item.Availabilities);
-                ApiClientMock.SetupMakeTemporaryItemPermanentThrowing(request,
-                    new DomainTestBuilder<ApiException>().Create());
-            }
-
-            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest()
+            public void SetupMakingItemPermanentFailedWithErrorInApi(IQueueComponent component)
             {
                 var item = State.Editor.Item!;
                 var request = new MakeTemporaryItemPermanentRequest(
@@ -2093,27 +2086,45 @@ public class ItemEditorEffectsTests
                     item.ManufacturerId,
                     item.Availabilities);
                 ApiClientMock.SetupMakeTemporaryItemPermanentThrowing(request,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
-                SetupDispatchingAction<MakeItemPermanentStartedAction>();
+                var item = State.Editor.Item!;
+                var request = new MakeTemporaryItemPermanentRequest(
+                    item.Id,
+                    item.Name,
+                    item.Comment,
+                    item.QuantityType.Id,
+                    item.QuantityInPacket,
+                    item.QuantityInPacketType?.Id,
+                    item.ItemCategoryId!.Value,
+                    item.ManufacturerId,
+                    item.Availabilities);
+                ApiClientMock.SetupMakeTemporaryItemPermanentThrowing(request,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<MakeItemPermanentFinishedAction>();
+                SetupDispatchingAction<MakeItemPermanentStartedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true));
+                SetupDispatchingAction<MakeItemPermanentFinishedAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully made item {_itemName} permanent");
+                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
+            }
+
+            public void SetupSuccessNotification(IQueueComponent component)
+            {
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully made item {_itemName} permanent", 2f, component);
             }
         }
     }
@@ -2126,13 +2137,13 @@ public class ItemEditorEffectsTests
         public async Task HandleDeleteItemAction_WithCallSuccessful_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanent();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingCloseDialogAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMakingItemPermanent(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingCloseDialogAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -2147,12 +2158,12 @@ public class ItemEditorEffectsTests
         public async Task HandleDeleteItemAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMakingItemPermanentFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -2167,12 +2178,12 @@ public class ItemEditorEffectsTests
         public async Task HandleDeleteItemAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -2187,7 +2198,7 @@ public class ItemEditorEffectsTests
         {
             private readonly string _itemName = new DomainTestBuilder<string>().Create();
 
-            public void SetupMakingItemPermanent()
+            public void SetupMakingItemPermanent(IQueueComponent component)
             {
                 State = State with
                 {
@@ -2200,10 +2211,10 @@ public class ItemEditorEffectsTests
                     }
                 };
                 var item = State.Editor.Item!;
-                ApiClientMock.SetupDeleteItemAsync(item.Id);
+                ApiClientMock.SetupDeleteItemAsync(item.Id, component);
             }
 
-            public void SetupMakingItemPermanentFailedWithErrorInApi()
+            public void SetupMakingItemPermanentFailedWithErrorInApi(IQueueComponent component)
             {
                 State = State with
                 {
@@ -2216,10 +2227,10 @@ public class ItemEditorEffectsTests
                     }
                 };
                 var item = State.Editor.Item!;
-                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<ApiException>().Create());
+                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest()
+            public void SetupMakingItemPermanentFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 State = State with
                 {
@@ -2232,27 +2243,28 @@ public class ItemEditorEffectsTests
                     }
                 };
                 var item = State.Editor.Item!;
-                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<HttpRequestException>().Create());
+                ApiClientMock.SetupDeleteItemAsyncThrowing(item.Id, new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<DeleteItemStartedAction>();
+                SetupDispatchingAction<DeleteItemStartedAction>(component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<DeleteItemFinishedAction>();
+                SetupDispatchingAction<DeleteItemFinishedAction>(component);
             }
 
-            public void SetupDispatchingCloseDialogAction()
+            public void SetupDispatchingCloseDialogAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new CloseDeleteItemDialogAction(true));
+                SetupDispatchingAction(new CloseDeleteItemDialogAction(true), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted item {_itemName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully deleted item {_itemName}", 2f, component);
             }
         }
     }

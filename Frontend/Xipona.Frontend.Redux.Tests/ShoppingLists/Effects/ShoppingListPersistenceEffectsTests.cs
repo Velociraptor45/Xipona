@@ -19,10 +19,10 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandlePutItemInBasketAction_WithValidData_ShouldStoreInLocalStorage()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupStoringInLocalStorage();
+            _fixture.SetupStoringInLocalStorage(x0);
         });
         var sut = _fixture.CreateSut();
 
@@ -37,10 +37,10 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleRemoveItemFromBasketAction_WithValidData_ShouldStoreInLocalStorage()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupStoringInLocalStorage();
+            _fixture.SetupStoringInLocalStorage(x0);
         });
         var sut = _fixture.CreateSut();
 
@@ -55,10 +55,10 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleRemoveItemFromShoppingListAction_WithValidData_ShouldStoreInLocalStorage()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupStoringInLocalStorage();
+            _fixture.SetupStoringInLocalStorage(x0);
         });
         var sut = _fixture.CreateSut();
 
@@ -73,10 +73,10 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleChangeItemQuantityAction_WithValidData_ShouldStoreInLocalStorage()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupStoringInLocalStorage();
+            _fixture.SetupStoringInLocalStorage(x0);
         });
         var sut = _fixture.CreateSut();
 
@@ -91,10 +91,10 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleSaveTemporaryItemFinishedAction_WithValidData_ShouldStoreInLocalStorage()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupStoringInLocalStorage();
+            _fixture.SetupStoringInLocalStorage(x0);
         });
         var sut = _fixture.CreateSut();
 
@@ -109,10 +109,10 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleLoadShoppingListFinishedAction_WithValidData_ShouldStoreInLocalStorage()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupStoringInLocalStorage();
+            _fixture.SetupStoringInLocalStorage(x0);
         });
         var sut = _fixture.CreateSut();
 
@@ -127,11 +127,11 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleLoadShoppingListFromLocalStorageAction_WithExistingList_ShouldDispatchCorrectActions()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupLoadingFromLocalStorageSuccess();
-            _fixture.SetupDispatchingFinishAction();
+            _fixture.SetupLoadingFromLocalStorageSuccess(x0);
+            _fixture.SetupDispatchingFinishAction(x0);
             _fixture.SetupAction();
         });
         var sut = _fixture.CreateSut();
@@ -149,11 +149,11 @@ public class ShoppingListPersistenceEffectsTests
     public async Task HandleLoadShoppingListFromLocalStorageAction_WithNoExistingList_ShouldDispatchCorrectActions()
     {
         // Arrange
-        var queue = CallQueue.Create(_ =>
+        var queue = CallQueue.Create(x0 =>
         {
             _fixture.SetupSelectedStore();
-            _fixture.SetupLoadingFromLocalStorageFailure();
-            _fixture.SetupDispatchingErrorNotificationAction();
+            _fixture.SetupLoadingFromLocalStorageFailure(x0);
+            _fixture.SetupDispatchingErrorNotificationAction(x0);
             _fixture.SetupAction();
         });
         var sut = _fixture.CreateSut();
@@ -180,18 +180,18 @@ public class ShoppingListPersistenceEffectsTests
             State = State with { SelectedStoreId = _storeId.Value };
         }
 
-        public void SetupStoringInLocalStorage()
+        public void SetupStoringInLocalStorage(IQueueComponent component)
         {
-            _localStorageServiceMock.SetupSetItemAsStringAsyncForBase64($"list-{_storeId:D}");
+            _localStorageServiceMock.SetupSetItemAsStringAsyncForBase64($"list-{_storeId:D}", component);
         }
 
-        public void SetupLoadingFromLocalStorageFailure()
+        public void SetupLoadingFromLocalStorageFailure(IQueueComponent component)
         {
             var key = $"list-{_storeId:D}";
-            _localStorageServiceMock.SetupContainKeyAsync(key, false);
+            _localStorageServiceMock.SetupContainKeyAsync(key, false, component);
         }
 
-        public void SetupLoadingFromLocalStorageSuccess()
+        public void SetupLoadingFromLocalStorageSuccess(IQueueComponent component)
         {
             var key = $"list-{_storeId:D}";
             _expectedShoppingList = new DomainTestBuilder<ShoppingListModel>().Create();
@@ -205,15 +205,15 @@ public class ShoppingListPersistenceEffectsTests
                             PropertyNameCaseInsensitive = true
                         })));
 
-            _localStorageServiceMock.SetupContainKeyAsync(key, true);
-            _localStorageServiceMock.SetupGetItemAsStringAsync(key, base64);
+            _localStorageServiceMock.SetupContainKeyAsync(key, true, component);
+            _localStorageServiceMock.SetupGetItemAsStringAsync(key, base64, component);
         }
 
-        public void SetupDispatchingFinishAction()
+        public void SetupDispatchingFinishAction(IQueueComponent component)
         {
             // There's a bug in the comparison framework, thus we can only check for the action in general. See:
             // https://github.com/ValeraT1982/ObjectsComparer/issues/57
-            SetupDispatchingAnyAction<LoadShoppingListFinishedAction>();
+            SetupDispatchingAnyAction<LoadShoppingListFinishedAction>(component);
         }
 
         public ShoppingListPersistenceEffects CreateSut()

@@ -37,14 +37,14 @@ public class ItemDiscountEffectsTests
             // Arrange
             _fixture.SetupState();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupAddingDiscount();
-                _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingCloseDialogAction();
-                _fixture.SetupDispatchingReloadAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupAddingDiscount(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
+                _fixture.SetupDispatchingCloseDialogAction(x0);
+                _fixture.SetupDispatchingReloadAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -62,11 +62,11 @@ public class ItemDiscountEffectsTests
             // Arrange
             _fixture.SetupState();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupAddingDiscountThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupAddingDiscountThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -84,11 +84,11 @@ public class ItemDiscountEffectsTests
             // Arrange
             _fixture.SetupState();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupAddingDiscountThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupAddingDiscountThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -140,46 +140,46 @@ public class ItemDiscountEffectsTests
                 };
             }
 
-            public void SetupAddingDiscount()
+            public void SetupAddingDiscount(IQueueComponent component)
             {
-                ApiClientMock.SetupAddItemDiscountAsync(_shoppingListId, _itemId, _itemTypeId, _discount);
+                ApiClientMock.SetupAddItemDiscountAsync(_shoppingListId, _itemId, _itemTypeId, _discount, component);
             }
 
-            public void SetupAddingDiscountThrowsApiException()
+            public void SetupAddingDiscountThrowsApiException(IQueueComponent component)
             {
                 ApiClientMock.SetupAddItemDiscountAsyncThrowing(_shoppingListId, _itemId, _itemTypeId, _discount,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupAddingDiscountThrowsHttpRequestException()
+            public void SetupAddingDiscountThrowsHttpRequestException(IQueueComponent component)
             {
                 ApiClientMock.SetupAddItemDiscountAsyncThrowing(_shoppingListId, _itemId, _itemTypeId, _discount,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartAction()
+            public void SetupDispatchingStartAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new SaveDiscountStartedAction());
+                DispatcherMock.SetupDispatch(new SaveDiscountStartedAction(), component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new SaveDiscountFinishedAction());
+                DispatcherMock.SetupDispatch(new SaveDiscountFinishedAction(), component);
             }
 
-            public void SetupDispatchingCloseDialogAction()
+            public void SetupDispatchingCloseDialogAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new CloseDiscountDialogAction());
+                DispatcherMock.SetupDispatch(new CloseDiscountDialogAction(), component);
             }
 
-            public void SetupDispatchingReloadAction()
+            public void SetupDispatchingReloadAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new ReloadCurrentShoppingListAction());
+                DispatcherMock.SetupDispatch(new ReloadCurrentShoppingListAction(), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully discounted {_itemName}");
+                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully discounted {_itemName}", 2f, component);
             }
         }
     }
@@ -210,14 +210,14 @@ public class ItemDiscountEffectsTests
             // Arrange
             _fixture.SetupState();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupRemovingDiscount();
-                _fixture.SetupDispatchingFinishAction();
-                _fixture.SetupDispatchingCloseDialogAction();
-                _fixture.SetupDispatchingReloadAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupRemovingDiscount(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
+                _fixture.SetupDispatchingCloseDialogAction(x0);
+                _fixture.SetupDispatchingReloadAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -235,11 +235,11 @@ public class ItemDiscountEffectsTests
             // Arrange
             _fixture.SetupState();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupRemovingDiscountThrowsApiException();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupRemovingDiscountThrowsApiException(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -257,11 +257,11 @@ public class ItemDiscountEffectsTests
             // Arrange
             _fixture.SetupState();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupDispatchingStartAction();
-                _fixture.SetupRemovingDiscountThrowsHttpRequestException();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartAction(x0);
+                _fixture.SetupRemovingDiscountThrowsHttpRequestException(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -311,46 +311,47 @@ public class ItemDiscountEffectsTests
                 };
             }
 
-            public void SetupRemovingDiscount()
+            public void SetupRemovingDiscount(IQueueComponent component)
             {
-                ApiClientMock.SetupRemoveItemDiscountAsync(_shoppingListId, _itemId, _itemTypeId);
+                ApiClientMock.SetupRemoveItemDiscountAsync(_shoppingListId, _itemId, _itemTypeId, component);
             }
 
-            public void SetupRemovingDiscountThrowsApiException()
+            public void SetupRemovingDiscountThrowsApiException(IQueueComponent component)
             {
                 ApiClientMock.SetupRemoveItemDiscountAsyncThrowing(_shoppingListId, _itemId, _itemTypeId,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupRemovingDiscountThrowsHttpRequestException()
+            public void SetupRemovingDiscountThrowsHttpRequestException(IQueueComponent component)
             {
                 ApiClientMock.SetupRemoveItemDiscountAsyncThrowing(_shoppingListId, _itemId, _itemTypeId,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartAction()
+            public void SetupDispatchingStartAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new RemoveDiscountStartedAction());
+                DispatcherMock.SetupDispatch(new RemoveDiscountStartedAction(), component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new RemoveDiscountFinishedAction());
+                DispatcherMock.SetupDispatch(new RemoveDiscountFinishedAction(), component);
             }
 
-            public void SetupDispatchingCloseDialogAction()
+            public void SetupDispatchingCloseDialogAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new CloseDiscountDialogAction());
+                DispatcherMock.SetupDispatch(new CloseDiscountDialogAction(), component);
             }
 
-            public void SetupDispatchingReloadAction()
+            public void SetupDispatchingReloadAction(IQueueComponent component)
             {
-                DispatcherMock.SetupDispatch(new ReloadCurrentShoppingListAction());
+                DispatcherMock.SetupDispatch(new ReloadCurrentShoppingListAction(), component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupSuccessNotification(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully removed discount from {_itemName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully removed discount from {_itemName}", 2f, component);
             }
         }
     }

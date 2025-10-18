@@ -37,7 +37,6 @@ public class ShoppingListReducerTests
                 {
                     ItemsInBasketVisible = false,
                     EditModeActive = true,
-                    ShoppingList = new DomainTestBuilder<ShoppingListModel>().Create(),
                     SearchBar = new DomainTestBuilder<SearchBar>().Create()
                 };
             }
@@ -48,7 +47,6 @@ public class ShoppingListReducerTests
                 {
                     ItemsInBasketVisible = true,
                     EditModeActive = false,
-                    ShoppingList = null,
                     SearchBar = ExpectedState.SearchBar with
                     {
                         Input = string.Empty,

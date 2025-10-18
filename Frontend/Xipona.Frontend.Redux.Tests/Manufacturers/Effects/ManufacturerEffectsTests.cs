@@ -21,11 +21,11 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithSearchInputEmpty_ShouldDispatchFinishedActionWithEmptyResult()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInputEmpty();
                 _fixture.SetupSearchResultEmpty();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -40,13 +40,13 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithSearchInput_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
                 _fixture.SetupSearchResult();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -61,12 +61,12 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -81,12 +81,12 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupSearchInput();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupSearchFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -136,40 +136,40 @@ public class ManufacturerEffectsTests
                 _searchResult = new List<ManufacturerSearchResult>();
             }
 
-            public void SetupSearchSucceeded()
+            public void SetupSearchSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                ApiClientMock.SetupGetManufacturerSearchResultsAsync(_searchInput, _searchResult);
+                ApiClientMock.SetupGetManufacturerSearchResultsAsync(_searchInput, _searchResult, component);
             }
 
-            public void SetupSearchFailedWithErrorInApi()
+            public void SetupSearchFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
 
                 ApiClientMock.SetupGetManufacturerSearchResultsAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupSearchFailedWithErrorWhileTransmittingRequest()
+            public void SetupSearchFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchInput);
 
                 ApiClientMock.SetupGetManufacturerSearchResultsAsyncThrowing(_searchInput,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResult);
 
-                SetupDispatchingAction(new SearchManufacturersFinishedAction(_searchResult));
+                SetupDispatchingAction(new SearchManufacturersFinishedAction(_searchResult), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SearchManufacturersStartedAction>();
+                SetupDispatchingAction<SearchManufacturersStartedAction>(component);
             }
         }
     }
@@ -182,14 +182,14 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithValidId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
                 _fixture.SetupManufacturer();
                 _fixture.SetupAction();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingManufacturerSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingManufacturerSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -206,13 +206,13 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
                 _fixture.SetupAction();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingManufacturerFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingManufacturerFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -229,13 +229,13 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
                 _fixture.SetupAction();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -264,28 +264,28 @@ public class ManufacturerEffectsTests
                 _manufacturer = new DomainTestBuilder<EditedManufacturer>().Create();
             }
 
-            public void SetupGettingManufacturerSucceeded()
+            public void SetupGettingManufacturerSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturer);
 
-                ApiClientMock.SetupGetManufacturerByIdAsync(_id.Value, _manufacturer);
+                ApiClientMock.SetupGetManufacturerByIdAsync(_id.Value, _manufacturer, component);
             }
 
-            public void SetupGettingManufacturerFailedWithErrorInApi()
+            public void SetupGettingManufacturerFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
                 ApiClientMock.SetupGetManufacturerByIdAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
                 ApiClientMock.SetupGetManufacturerByIdAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
             public void SetupAction()
@@ -295,16 +295,16 @@ public class ManufacturerEffectsTests
                 Action = new LoadManufacturerForEditingAction(_id.Value);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturer);
 
-                SetupDispatchingAction(new LoadManufacturerForEditingFinishedAction(_manufacturer));
+                SetupDispatchingAction(new LoadManufacturerForEditingFinishedAction(_manufacturer), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<LoadManufacturerForEditingStartedAction>();
+                SetupDispatchingAction<LoadManufacturerForEditingStartedAction>(component);
             }
         }
     }
@@ -317,15 +317,15 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithEmptyId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupEmptyId();
                 _fixture.SetupManufacturerName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreateManufacturerSucceeded();
-                _fixture.SetupSuccessCreateNotification();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreateManufacturerSucceeded(x0);
+                _fixture.SetupSuccessCreateNotification(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -340,14 +340,14 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithEmptyId_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupEmptyId();
                 _fixture.SetupManufacturerName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreateManufacturerFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreateManufacturerFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -362,14 +362,14 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithEmptyId_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupEmptyId();
                 _fixture.SetupManufacturerName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupCreateManufacturerFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupCreateManufacturerFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -384,16 +384,16 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithFilledId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
                 _fixture.SetupManufacturerName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyManufacturerSucceeded();
-                _fixture.SetupUpdateSearchResultsAfterSaveAction();
-                _fixture.SetupSuccessModifyNotification();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupDispatchingLeaveAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyManufacturerSucceeded(x0);
+                _fixture.SetupUpdateSearchResultsAfterSaveAction(x0);
+                _fixture.SetupSuccessModifyNotification(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupDispatchingLeaveAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -408,14 +408,14 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithFilledId_WithWithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
                 _fixture.SetupManufacturerName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyManufacturerFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyManufacturerFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -430,14 +430,14 @@ public class ManufacturerEffectsTests
         public async Task HandleSearchManufacturersAction_WithFilledId_WithWithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
                 _fixture.SetupManufacturerName();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupModifyManufacturerFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupModifyManufacturerFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -498,93 +498,95 @@ public class ManufacturerEffectsTests
                 };
             }
 
-            public void SetupCreateManufacturerSucceeded()
+            public void SetupCreateManufacturerSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupCreateManufacturerAsync(_manufacturerName,
-                    new DomainTestBuilder<EditedManufacturer>().Create());
+                    new DomainTestBuilder<EditedManufacturer>().Create(), component);
             }
 
-            public void SetupCreateManufacturerFailedWithErrorInApi()
+            public void SetupCreateManufacturerFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupCreateManufacturerAsyncThrowing(_manufacturerName,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupCreateManufacturerFailedWithErrorWhileTransmittingRequest()
+            public void SetupCreateManufacturerFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupCreateManufacturerAsyncThrowing(_manufacturerName,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupModifyManufacturerSucceeded()
+            public void SetupModifyManufacturerSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ApiClientMock.SetupModifyManufacturerAsync(new ModifyManufacturerRequest(_id.Value, _manufacturerName));
+                ApiClientMock.SetupModifyManufacturerAsync(new ModifyManufacturerRequest(_id.Value, _manufacturerName), component);
             }
 
-            public void SetupModifyManufacturerFailedWithErrorInApi()
+            public void SetupModifyManufacturerFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupModifyManufacturerAsyncThrowing(new ModifyManufacturerRequest(_id.Value, _manufacturerName),
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupModifyManufacturerFailedWithErrorWhileTransmittingRequest()
+            public void SetupModifyManufacturerFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
                 ApiClientMock.SetupModifyManufacturerAsyncThrowing(new ModifyManufacturerRequest(_id.Value, _manufacturerName),
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupSuccessCreateNotification()
+            public void SetupSuccessCreateNotification(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully created manufacturer {_manufacturerName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully created manufacturer {_manufacturerName}", 2f, component);
             }
 
-            public void SetupSuccessModifyNotification()
+            public void SetupSuccessModifyNotification(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully modified manufacturer {_manufacturerName}");
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully modified manufacturer {_manufacturerName}", 2f, component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                SetupDispatchingAction<SavingManufacturerFinishedAction>();
+                SetupDispatchingAction<SavingManufacturerFinishedAction>(component);
             }
 
-            public void SetupUpdateSearchResultsAfterSaveAction()
+            public void SetupUpdateSearchResultsAfterSaveAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
                 TestPropertyNotSetException.ThrowIfNull(_manufacturerName);
 
-                SetupDispatchingAction(new UpdateSearchResultsAfterSaveAction(_id.Value, _manufacturerName));
+                SetupDispatchingAction(new UpdateSearchResultsAfterSaveAction(_id.Value, _manufacturerName), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<SavingManufacturerStartedAction>();
+                SetupDispatchingAction<SavingManufacturerStartedAction>(component);
             }
 
-            public void SetupDispatchingLeaveAction()
+            public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveManufacturerEditorAction(true));
+                SetupDispatchingAction(new LeaveManufacturerEditorAction(true), component);
             }
         }
     }
@@ -597,14 +599,14 @@ public class ManufacturerEffectsTests
         public async Task HandleDeleteManufacturerAction_WithValidId_ShouldDispatchActionsInCorrectOrder()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingManufacturerSucceeded();
-                _fixture.SetupDispatchingFinishedAction();
-                _fixture.SetupCloseDialogAction();
-                _fixture.SetupSuccessNotification();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingManufacturerSucceeded(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
+                _fixture.SetupCloseDialogAction(x0);
+                _fixture.SetupSuccessNotification(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -619,13 +621,13 @@ public class ManufacturerEffectsTests
         public async Task HandleDeleteManufacturerAction_WithApiException_ShouldDispatchExceptionNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingManufacturerFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingManufacturerFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -640,13 +642,13 @@ public class ManufacturerEffectsTests
         public async Task HandleDeleteManufacturerAction_WithHttpRequestException_ShouldDispatchErrorNotification()
         {
             // Arrange
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
                 _fixture.SetupId();
-                _fixture.SetupDispatchingStartedAction();
-                _fixture.SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
-                _fixture.SetupDispatchingFinishedAction();
+                _fixture.SetupDispatchingStartedAction(x0);
+                _fixture.SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
+                _fixture.SetupDispatchingFinishedAction(x0);
             });
             var sut = _fixture.CreateSut();
 
@@ -676,47 +678,48 @@ public class ManufacturerEffectsTests
                 };
             }
 
-            public void SetupGettingManufacturerSucceeded()
+            public void SetupGettingManufacturerSucceeded(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
-                ApiClientMock.SetupDeleteManufacturerAsync(_id.Value);
+                ApiClientMock.SetupDeleteManufacturerAsync(_id.Value, component);
             }
 
-            public void SetupGettingManufacturerFailedWithErrorInApi()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_id);
-
-                ApiClientMock.SetupDeleteManufacturerAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<ApiException>().Create());
-            }
-
-            public void SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingManufacturerFailedWithErrorInApi(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_id);
 
                 ApiClientMock.SetupDeleteManufacturerAsyncThrowing(_id.Value,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishedAction()
+            public void SetupGettingManufacturerFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
-                SetupDispatchingAction<DeletingManufacturerFinishedAction>();
+                TestPropertyNotSetException.ThrowIfNull(_id);
+
+                ApiClientMock.SetupDeleteManufacturerAsyncThrowing(_id.Value,
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingStartedAction()
+            public void SetupDispatchingFinishedAction(IQueueComponent component)
             {
-                SetupDispatchingAction<DeletingManufacturerStartedAction>();
+                SetupDispatchingAction<DeletingManufacturerFinishedAction>(component);
             }
 
-            public void SetupCloseDialogAction()
+            public void SetupDispatchingStartedAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new CloseDeleteManufacturerDialogAction(true));
+                SetupDispatchingAction<DeletingManufacturerStartedAction>(component);
             }
 
-            public void SetupSuccessNotification()
+            public void SetupCloseDialogAction(IQueueComponent component)
             {
-                ShoppingListNotificationServiceMock.SetupNotifySuccess($"Successfully deleted manufacturer {State.Editor.Manufacturer!.Name}");
+                SetupDispatchingAction(new CloseDeleteManufacturerDialogAction(true), component);
+            }
+
+            public void SetupSuccessNotification(IQueueComponent component)
+            {
+                ShoppingListNotificationServiceMock
+                    .SetupNotifySuccess($"Successfully deleted manufacturer {State.Editor.Manufacturer!.Name}", 2f, component);
             }
         }
     }

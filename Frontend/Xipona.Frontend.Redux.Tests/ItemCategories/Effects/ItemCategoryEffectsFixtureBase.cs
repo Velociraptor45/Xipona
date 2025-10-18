@@ -12,7 +12,7 @@ public class ItemCategoryEffectsFixtureBase : EffectsFixtureBase
     protected readonly NavigationManagerMock NavigationManagerMock = new(MockBehavior.Strict);
     protected ItemCategoryState State = new DomainTestBuilder<ItemCategoryState>().Create();
 
-    public void SetupStateReturningState()
+    protected void SetupStateReturningState()
     {
         ItemCategoryStateMock.SetupValue(State);
     }

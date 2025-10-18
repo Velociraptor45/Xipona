@@ -1,4 +1,5 @@
-﻿using Xipona.Frontend.Infrastructure.Converters.Common;
+﻿using Microsoft.Extensions.Logging;
+using Xipona.Frontend.Infrastructure.Converters.Common;
 using Xipona.Frontend.TestTools;
 using Xipona.Frontend.TestTools.Extensions;
 
@@ -20,7 +21,7 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         {
             AddMapping(cfg);
             AddAdditionalMapping(cfg);
-        });
+        }, new LoggerFactory());
         var mapper = config.CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();

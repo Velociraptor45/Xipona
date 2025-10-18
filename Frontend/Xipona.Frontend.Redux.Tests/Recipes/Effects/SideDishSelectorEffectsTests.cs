@@ -55,10 +55,10 @@ public class SideDishSelectorEffectsTests
             // Arrange
             _fixture.SetupSelector();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingSearchResultSucceeded();
-                _fixture.SetupDispatchingFinishAction();
+                _fixture.SetupGettingSearchResultSucceeded(x0);
+                _fixture.SetupDispatchingFinishAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -77,10 +77,10 @@ public class SideDishSelectorEffectsTests
             // Arrange
             _fixture.SetupSelector();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingSearchResultFailedWithErrorInApi();
-                _fixture.SetupDispatchingExceptionNotificationAction();
+                _fixture.SetupGettingSearchResultFailedWithErrorInApi(x0);
+                _fixture.SetupDispatchingExceptionNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -98,10 +98,10 @@ public class SideDishSelectorEffectsTests
             // Arrange
             _fixture.SetupSelector();
 
-            var queue = CallQueue.Create(_ =>
+            var queue = CallQueue.Create(x0 =>
             {
-                _fixture.SetupGettingSearchResultFailedWithErrorWhileTransmittingRequest();
-                _fixture.SetupDispatchingErrorNotificationAction();
+                _fixture.SetupGettingSearchResultFailedWithErrorWhileTransmittingRequest(x0);
+                _fixture.SetupDispatchingErrorNotificationAction(x0);
             });
 
             var sut = _fixture.CreateSut();
@@ -153,29 +153,29 @@ public class SideDishSelectorEffectsTests
                 };
             }
 
-            public void SetupGettingSearchResultSucceeded()
+            public void SetupGettingSearchResultSucceeded(IQueueComponent component)
             {
                 _searchResults = new RecipeSearchResultBuilder().CreateMany(3).ToList();
-                ApiClientMock.SetupSearchRecipesByNameAsync(State.Editor.SideDishSelector.Input, _searchResults);
+                ApiClientMock.SetupSearchRecipesByNameAsync(State.Editor.SideDishSelector.Input, _searchResults, component);
             }
 
-            public void SetupGettingSearchResultFailedWithErrorInApi()
+            public void SetupGettingSearchResultFailedWithErrorInApi(IQueueComponent component)
             {
                 ApiClientMock.SetupSearchRecipesByNameAsyncThrowing(State.Editor.SideDishSelector.Input,
-                    new DomainTestBuilder<ApiException>().Create());
+                    new DomainTestBuilder<ApiException>().Create(), component);
             }
 
-            public void SetupGettingSearchResultFailedWithErrorWhileTransmittingRequest()
+            public void SetupGettingSearchResultFailedWithErrorWhileTransmittingRequest(IQueueComponent component)
             {
                 ApiClientMock.SetupSearchRecipesByNameAsyncThrowing(State.Editor.SideDishSelector.Input,
-                    new DomainTestBuilder<HttpRequestException>().Create());
+                    new DomainTestBuilder<HttpRequestException>().Create(), component);
             }
 
-            public void SetupDispatchingFinishAction()
+            public void SetupDispatchingFinishAction(IQueueComponent component)
             {
                 TestPropertyNotSetException.ThrowIfNull(_searchResults);
 
-                SetupDispatchingAction(new SearchSideDishesFinishedAction(_searchResults));
+                SetupDispatchingAction(new SearchSideDishesFinishedAction(_searchResults), component);
             }
         }
     }

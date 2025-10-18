@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Xipona.Api.Core.Converter;
 using Xipona.Api.Domain.TestKit.Common;
 
@@ -13,7 +14,7 @@ public abstract class ToContractConverterTestBase<TSource, TDest, TConverter> wh
         // Arrange
         var contract = CreateSource();
 
-        var mapper = new MapperConfiguration(AddMapping).CreateMapper();
+        var mapper = new MapperConfiguration(AddMapping, new LoggerFactory()).CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
