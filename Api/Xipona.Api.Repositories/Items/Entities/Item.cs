@@ -32,6 +32,7 @@ public class Item
     public DateTimeOffset? UpdatedOn { get; set; }
     public Guid? PredecessorId { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public bool IsFavorite { get; set; }
 
     [Timestamp]
     public uint RowVersion { get; set; }

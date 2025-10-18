@@ -28,6 +28,7 @@ public class ItemConverter : IToContractConverter<IItem, Entities.Item>
             AvailableAt = source.Availabilities.Select(av => ToAvailableAt(av, source)).ToList(),
             ItemTypes = source.ItemTypes.Select(type => ToItemType(type, source)).ToList(),
             UpdatedOn = source.UpdatedOn,
+            IsFavorite = source.IsFavorite,
             PredecessorId = source.PredecessorId,
             RowVersion = ((AggregateRoot)source).RowVersion
         };

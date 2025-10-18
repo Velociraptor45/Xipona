@@ -1,4 +1,7 @@
-﻿using AutoFixture.Kernel;
+using AutoFixture.Kernel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.Items.Models;
 using Xipona.Api.Domain.Manufacturers.Models;
@@ -6,7 +9,6 @@ using Xipona.Api.Domain.TestKit.Common;
 using Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
 namespace Xipona.Api.Domain.TestKit.Items.Models;
-
 public class ItemBuilder : DomainTestBuilderBase<Item>
 {
     public ItemBuilder()
@@ -16,6 +18,7 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         Customize(new QuantityCustomization());
     }
 
+    // tcg keep
     public ItemBuilder AsItem()
     {
         Customize<Item>(c => c.FromFactory(new MethodInvoker(new ItemConstructorQuery())));
@@ -24,19 +27,31 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
 
     public ItemBuilder WithId(ItemId id)
     {
-        FillConstructorWith("id", id);
+        FillConstructorWith(nameof(id), id);
+        return this;
+    }
+
+    public ItemBuilder WithName(ItemName name)
+    {
+        FillConstructorWith(nameof(name), name);
         return this;
     }
 
     public ItemBuilder WithIsDeleted(bool isDeleted)
     {
-        FillConstructorWith("isDeleted", isDeleted);
+        FillConstructorWith(nameof(isDeleted), isDeleted);
+        return this;
+    }
+
+    public ItemBuilder WithComment(Comment comment)
+    {
+        FillConstructorWith(nameof(comment), comment);
         return this;
     }
 
     public ItemBuilder WithIsTemporary(bool isTemporary)
     {
-        FillConstructorWith("isTemporary", isTemporary);
+        FillConstructorWith(nameof(isTemporary), isTemporary);
         return this;
     }
 
@@ -48,7 +63,7 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
 
     public ItemBuilder WithItemCategoryId(ItemCategoryId? itemCategoryId)
     {
-        FillConstructorWith("itemCategoryId", itemCategoryId);
+        FillConstructorWith(nameof(itemCategoryId), itemCategoryId);
         return this;
     }
 
@@ -59,7 +74,7 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
 
     public ItemBuilder WithManufacturerId(ManufacturerId? manufacturerId)
     {
-        FillConstructorWith("manufacturerId", manufacturerId);
+        FillConstructorWith(nameof(manufacturerId), manufacturerId);
         return this;
     }
 
@@ -70,7 +85,7 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
 
     public ItemBuilder WithAvailabilities(IEnumerable<ItemAvailability> availabilities)
     {
-        FillConstructorWith("availabilities", availabilities);
+        FillConstructorWith(nameof(availabilities), availabilities);
         return this;
     }
 
@@ -79,27 +94,20 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         return WithAvailabilities([availability]);
     }
 
+    public ItemBuilder WithEmptyAvailabilities()
+    {
+        return WithAvailabilities(Enumerable.Empty<ItemAvailability>());
+    }
+
     public ItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)
     {
-        FillConstructorWith("temporaryId", temporaryId);
+        FillConstructorWith(nameof(temporaryId), temporaryId);
         return this;
     }
 
     public ItemBuilder WithoutTemporaryId()
     {
         return WithTemporaryId(null);
-    }
-
-    public ItemBuilder WithTypes(ItemTypes itemTypes)
-    {
-        FillConstructorWith("itemTypes", itemTypes);
-        return this;
-    }
-
-    public ItemBuilder WithCreatedAt(DateTimeOffset createdAt)
-    {
-        FillConstructorWith(nameof(createdAt), createdAt);
-        return this;
     }
 
     public ItemBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
@@ -122,5 +130,23 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
     public ItemBuilder WithoutPredecessorId()
     {
         return WithPredecessorId(null);
+    }
+
+    public ItemBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillConstructorWith(nameof(createdAt), createdAt);
+        return this;
+    }
+
+    public ItemBuilder WithIsFavorite(bool isFavorite)
+    {
+        FillConstructorWith(nameof(isFavorite), isFavorite);
+        return this;
+    }
+
+    public ItemBuilder WithItemTypes(ItemTypes itemTypes)
+    {
+        FillConstructorWith(nameof(itemTypes), itemTypes);
+        return this;
     }
 }

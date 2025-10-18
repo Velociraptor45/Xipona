@@ -34,6 +34,7 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
             .ForMember(dest => dest.ItemTypes, opt => opt.MapFrom(src => CreateItemTypeTuple(src)))
             .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => src.UpdatedOn))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => src.IsFavorite))
             .ForMember(dest => dest.PredecessorId, opt => opt.MapFrom(src => src.PredecessorId!.Value))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.Predecessor, opt => opt.Ignore());

@@ -12,11 +12,11 @@ public interface IItemFactory
     IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         ItemId? predecessorId, IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId,
-        DateTimeOffset? updatedOn, DateTimeOffset createdAt);
+        DateTimeOffset? updatedOn, DateTimeOffset createdAt, bool isFavorite);
 
     IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, ItemId? predecessorId,
-        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn, DateTimeOffset createdAt);
+        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn, DateTimeOffset createdAt, bool isFavorite);
 
     IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity, ItemCategoryId itemCategoryId,
         ManufacturerId? manufacturerId, ItemId? predecessorId, IEnumerable<IItemType> itemTypes);

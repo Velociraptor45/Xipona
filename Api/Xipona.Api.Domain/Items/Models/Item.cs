@@ -24,7 +24,7 @@ public class Item : AggregateRoot, IItem
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
-        ItemId? predecessorId, DateTimeOffset createdAt)
+        ItemId? predecessorId, DateTimeOffset createdAt, bool isFavorite)
     {
         Id = id;
         Name = name;
@@ -38,6 +38,7 @@ public class Item : AggregateRoot, IItem
         UpdatedOn = updatedOn;
         PredecessorId = predecessorId;
         CreatedAt = createdAt;
+        IsFavorite = isFavorite;
         _itemTypes = null;
         _availabilities = availabilities.ToList();
 
@@ -47,7 +48,7 @@ public class Item : AggregateRoot, IItem
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
         ItemQuantity itemQuantity, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId, DateTimeOffset createdAt)
+        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId, DateTimeOffset createdAt, bool isFavorite)
     {
         Id = id;
         Name = name;
@@ -60,6 +61,7 @@ public class Item : AggregateRoot, IItem
         UpdatedOn = updatedOn;
         PredecessorId = predecessorId;
         CreatedAt = createdAt;
+        IsFavorite = isFavorite;
         TemporaryId = null;
         _itemTypes = itemTypes;
         _availabilities = new List<ItemAvailability>();
@@ -80,6 +82,7 @@ public class Item : AggregateRoot, IItem
     public DateTimeOffset? UpdatedOn { get; private set; }
     public ItemId? PredecessorId { get; }
     public DateTimeOffset CreatedAt { get; }
+    public bool IsFavorite { get; }
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
@@ -271,7 +274,8 @@ public class Item : AggregateRoot, IItem
             types,
             null,
             Id,
-            CreatedAt);
+            CreatedAt,
+            IsFavorite);
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(updatedItem));
         Delete();
@@ -318,7 +322,8 @@ public class Item : AggregateRoot, IItem
             null,
             null,
             Id,
-            CreatedAt);
+            CreatedAt,
+            IsFavorite);
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
@@ -337,7 +342,7 @@ public class Item : AggregateRoot, IItem
         {
             var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
             newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
-                itemTypes, null, Id, CreatedAt);
+                itemTypes, null, Id, CreatedAt, IsFavorite);
         }
         else
         {
@@ -350,7 +355,7 @@ public class Item : AggregateRoot, IItem
                     : av);
 
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
-                ManufacturerId, availabilities, TemporaryId, null, Id, CreatedAt);
+                ManufacturerId, availabilities, TemporaryId, null, Id, CreatedAt, IsFavorite);
         }
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));

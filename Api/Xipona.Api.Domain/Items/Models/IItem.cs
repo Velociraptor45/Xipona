@@ -27,6 +27,7 @@ public interface IItem
     DateTimeOffset? UpdatedOn { get; }
     ItemId? PredecessorId { get; }
     DateTimeOffset CreatedAt { get; }
+    bool IsFavorite { get; }
 
     void Delete();
     void MarkAsMerged(ItemId newItemId, ItemTypeId newItemTypeId);

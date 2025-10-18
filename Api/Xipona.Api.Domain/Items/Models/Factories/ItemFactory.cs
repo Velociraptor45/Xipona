@@ -20,7 +20,7 @@ public class ItemFactory : IItemFactory
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         ItemId? predecessorId, IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId,
-        DateTimeOffset? updatedOn, DateTimeOffset createdAt)
+        DateTimeOffset? updatedOn, DateTimeOffset createdAt, bool isFavorite)
     {
         var item = new Item(
             id,
@@ -35,14 +35,15 @@ public class ItemFactory : IItemFactory
             temporaryId,
             updatedOn,
             predecessorId,
-            createdAt);
+            createdAt,
+            isFavorite);
 
         return item;
     }
 
     public IItem Create(ItemId id, ItemName name, bool isDeleted, Comment comment, ItemQuantity itemQuantity,
         ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId, ItemId? predecessorId,
-        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn, DateTimeOffset createdAt)
+        IEnumerable<IItemType> itemTypes, DateTimeOffset? updatedOn, DateTimeOffset createdAt, bool isFavorite)
     {
         var item = new Item(
             id,
@@ -55,7 +56,8 @@ public class ItemFactory : IItemFactory
             new ItemTypes(itemTypes, _itemTypeFactory),
             updatedOn,
             predecessorId,
-            createdAt);
+            createdAt,
+            isFavorite);
 
         return item;
     }
@@ -75,7 +77,8 @@ public class ItemFactory : IItemFactory
             null,
             null,
             null,
-            _dateTimeService.UtcNow);
+            _dateTimeService.UtcNow,
+            false);
     }
 
     public IItem CreateTemporary(ItemName name, QuantityType quantityType, StoreId storeId, Price price,
@@ -104,7 +107,8 @@ public class ItemFactory : IItemFactory
             temporaryItemId,
             null,
             null,
-            _dateTimeService.UtcNow);
+            _dateTimeService.UtcNow,
+            false);
     }
 
     public IItem CreateNew(ItemName name, Comment comment, ItemQuantity itemQuantity,
@@ -122,7 +126,8 @@ public class ItemFactory : IItemFactory
             new ItemTypes(itemTypes, _itemTypeFactory),
             null,
             predecessorId,
-            _dateTimeService.UtcNow);
+            _dateTimeService.UtcNow,
+            false);
 
         return item;
     }

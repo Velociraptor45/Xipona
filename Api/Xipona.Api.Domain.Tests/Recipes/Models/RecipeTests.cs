@@ -636,7 +636,7 @@ public class RecipeTests
                 };
 
                 Item = ItemMother.InitialWithTypes()
-                    .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                    .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
                     .WithId(ItemId).Create();
             }
 

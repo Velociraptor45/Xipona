@@ -372,7 +372,7 @@ public class ItemSearchServiceTests
             {
                 _foundItemWithTypes = ItemMother
                     .InitialWithTypes()
-                    .WithTypes(new ItemTypes(
+                    .WithItemTypes(new ItemTypes(
                         new ItemTypeBuilder().WithIsDeleted(true).CreateMany(2),
                         ItemTypeFactoryMock.Object))
                     .Create();
