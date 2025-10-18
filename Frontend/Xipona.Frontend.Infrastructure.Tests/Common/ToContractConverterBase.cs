@@ -1,4 +1,5 @@
-﻿using Xipona.Frontend.Infrastructure.Converters.Common;
+﻿using Microsoft.Extensions.Logging;
+using Xipona.Frontend.Infrastructure.Converters.Common;
 using Xipona.Frontend.TestTools;
 
 namespace Xipona.Frontend.Infrastructure.Tests.Common;
@@ -11,7 +12,7 @@ public abstract class ToContractConverterBase<TSource, TDest, TConverter> where 
         // Arrange
         var contract = CreateSource();
 
-        var mapper = new MapperConfiguration(AddMapping).CreateMapper();
+        var mapper = new MapperConfiguration(AddMapping, new LoggerFactory()).CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
