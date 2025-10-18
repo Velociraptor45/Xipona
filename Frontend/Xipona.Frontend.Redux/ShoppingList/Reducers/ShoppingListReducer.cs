@@ -15,7 +15,6 @@ public static class ShoppingListReducer
         {
             ItemsInBasketVisible = true,
             EditModeActive = false,
-            ShoppingList = null,
             SearchBar = state.SearchBar with
             {
                 Input = string.Empty,
