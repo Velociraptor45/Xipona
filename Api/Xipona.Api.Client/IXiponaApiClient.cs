@@ -483,6 +483,24 @@ namespace Xipona.Api.Client
         /// <returns></returns>
         [Delete("items/{id}")]
         Task DeleteItemAsync([Path] Guid id, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Marks an item as favorite
+        /// </summary>
+        /// <param name="id">The item's ID</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Post("items/{id}/favorite")]
+        Task MarkItemAsFavoriteAsync([Path] Guid id, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Unmarks an item as favorite
+        /// </summary>
+        /// <param name="id">The item's ID</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Post("items/{id}/un-favorite")]
+        Task UnmarkItemAsFavoriteAsync([Path] Guid id, CancellationToken cancellationToken = default);
 
         #endregion Item
 

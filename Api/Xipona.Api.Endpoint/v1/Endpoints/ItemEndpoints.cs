@@ -86,7 +86,8 @@ public static class ItemEndpoints
             .RegisterDeleteItem()
             .RegisterMergeItems()
             .RegisterSearchItemsForMerge()
-            .RegisterMarkItemAsFavorite();
+            .RegisterMarkItemAsFavorite()
+            .RegisterUnmarkItemAsFavorite();
     }
 
     private static IEndpointRouteBuilder RegisterGetItemById(this IEndpointRouteBuilder builder)
