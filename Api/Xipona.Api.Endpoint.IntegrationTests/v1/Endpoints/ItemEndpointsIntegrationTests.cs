@@ -3491,13 +3491,253 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsForMerge(DockerFixture dockerFixture)
+    public sealed class MarkItemAsFavorite(DockerFixture dockerFixture)
     {
-        private readonly SearchItemsForMergeFixture _fixture = new(dockerFixture);
+        private readonly MarkItemAsFavoriteFixture _fixture = new(dockerFixture);
 
-        private class SearchItemsForMergeFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        [Fact]
+        public async Task MarkItemAsFavorite_WithValidData_ShouldMarkItemAsFavorite()
         {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupExpectedItem();
+            await _fixture.PrepareDatabaseAsync();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task MarkItemAsFavorite_WithDeletedItem_ShouldReturnNotFound()
+        {
+            // Arrange
+            _fixture.SetupDeletedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.InitialItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task MarkItemAsFavorite_WithItemNotFound_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            await _fixture.ApplyMigrationsAsync(_fixture.CreateServiceScope());
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().BeEmpty();
+        }
+        
+        private class MarkItemAsFavoriteFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+            public Item? InitialItem { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+                
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.MarkItemAsFavorite(InitialItem.Id,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+            
+            public void SetupItem()
+            {
+                InitialItem = ItemEntityMother.Initial().Create();
+            }
+            
+            public void SetupDeletedItem()
+            {
+                InitialItem = ItemEntityMother.Initial().WithDeleted(true).Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                ExpectedItem = InitialItem.DeepClone();
+                ExpectedItem.IsFavorite = true;
+            }
+
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+
+                itemContext.Add(InitialItem);
+
+                await itemContext.SaveChangesAsync();
+            }
+        }
+    }
+
+    public sealed class UnmarkItemAsFavorite(DockerFixture dockerFixture)
+    {
+        private readonly UnmarkItemAsFavoriteFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task UnmarkItemAsFavorite_WithValidData_ShouldUnmarkItemAsFavorite()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupExpectedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task UnmarkItemAsFavorite_WithDeletedItem_ShouldReturnNotFound()
+        {
+            // Arrange
+            _fixture.SetupDeletedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.InitialItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task UnmarkItemAsFavorite_WithItemNotFound_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            await _fixture.ApplyMigrationsAsync(_fixture.CreateServiceScope());
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().BeEmpty();
+        }
+        
+        private class UnmarkItemAsFavoriteFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+            public Item? InitialItem { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+                
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.UnmarkItemAsFavorite(InitialItem.Id,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+            
+            public void SetupItem()
+            {
+                InitialItem = ItemEntityMother.Initial().WithIsFavorite(true).Create();
+            }
+            
+            public void SetupDeletedItem()
+            {
+                InitialItem = ItemEntityMother.Initial().WithDeleted(true).Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                ExpectedItem = InitialItem.DeepClone();
+                ExpectedItem.IsFavorite = false;
+            }
+
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+
+                itemContext.Add(InitialItem);
+
+                await itemContext.SaveChangesAsync();
+            }
         }
     }
 

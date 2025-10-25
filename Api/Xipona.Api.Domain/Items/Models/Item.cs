@@ -82,7 +82,7 @@ public class Item : AggregateRoot, IItem
     public DateTimeOffset? UpdatedOn { get; private set; }
     public ItemId? PredecessorId { get; }
     public DateTimeOffset CreatedAt { get; }
-    public bool IsFavorite { get; }
+    public bool IsFavorite { get; private set; }
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
@@ -416,5 +416,21 @@ public class Item : AggregateRoot, IItem
         {
             Delete();
         }
+    }
+
+    public void MarkAsFavoriteAsync()
+    {
+        if(IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+        
+        IsFavorite = true;
+    }
+
+    public void UnmarkAsFavoriteAsync()
+    {
+        if(IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+        
+        IsFavorite = false;
     }
 }

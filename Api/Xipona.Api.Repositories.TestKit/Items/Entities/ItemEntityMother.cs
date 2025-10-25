@@ -14,6 +14,7 @@ public static class ItemEntityMother
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithEmptyItemTypes()
+            .WithIsFavorite(false)
             .WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
     }
 
@@ -45,6 +46,7 @@ public static class ItemEntityMother
             .WithoutPredecessor()
             .WithEmptyAvailableAt()
             .WithoutUpdatedOn()
+            .WithIsFavorite(false)
             .WithItemTypes(types);
     }
 
@@ -59,13 +61,7 @@ public static class ItemEntityMother
             .Select(_ => ItemTypeEntityMother.Initial().WithAvailableAt(CreateAvailabilities()).Create())
             .ToList();
 
-        return new ItemEntityBuilder()
-            .WithDeleted(false)
-            .WithIsTemporary(false)
-            .WithoutCreatedFrom()
-            .WithoutPredecessorId()
-            .WithoutPredecessor()
-            .WithEmptyAvailableAt()
+        return InitialWithTypes()
             .WithItemTypes(types);
 
         IList<ItemTypeAvailableAt> CreateAvailabilities()

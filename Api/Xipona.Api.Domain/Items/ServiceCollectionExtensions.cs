@@ -149,6 +149,12 @@ public static class ServiceCollectionExtensions
             return ct => new ItemMergeSearchService(itemRepositoryDelegate(ct));
         });
 
+        services.AddTransient<Func<CancellationToken, IFavoriteItemService>>(provider =>
+        {
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            return ct => new FavoriteItemService(itemRepositoryDelegate(ct));
+        });
+
         services.AddTransient<IQuantitiesQueryService, QuantitiesQueryService>();
     }
 }

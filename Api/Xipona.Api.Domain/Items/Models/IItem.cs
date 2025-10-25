@@ -62,4 +62,6 @@ public interface IItem
     void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 
     void RemoveAvailabilitiesFor(StoreId storeId);
+    void MarkAsFavoriteAsync();
+    void UnmarkAsFavoriteAsync();
 }
