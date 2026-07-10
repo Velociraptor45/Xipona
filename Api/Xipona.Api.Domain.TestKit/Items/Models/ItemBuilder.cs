@@ -130,21 +130,9 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         return WithPredecessorId(null);
     }
 
-    public ItemBuilder WithCreatedAt(DateTimeOffset createdAt)
-    {
-        FillConstructorWith(nameof(createdAt), createdAt);
-        return this;
-    }
-
     public ItemBuilder WithIsFavorite(bool isFavorite)
     {
         FillConstructorWith(nameof(isFavorite), isFavorite);
-        return this;
-    }
-
-    public ItemBuilder WithItemCategoryId(ItemCategoryId itemCategoryId)
-    {
-        FillConstructorWith(nameof(itemCategoryId), itemCategoryId);
         return this;
     }
 
