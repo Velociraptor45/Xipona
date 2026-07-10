@@ -4,57 +4,48 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Blazor & UI -->
-    <PackageVersion Include="AntDesign" Version="1.4.3" />
+    <PackageVersion Include="AntDesign" Version="1.6.2" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
-    
     <!-- State Management -->
-    <PackageVersion Include="Fluxor.Blazor.Web" Version="6.8.0" />
-    <PackageVersion Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.8.0" />
-    
+    <PackageVersion Include="Fluxor.Blazor.Web" Version="6.10.0" />
+    <PackageVersion Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.10.0" />
     <!-- AspNetCore -->
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.10" />
-    
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.9" />
     <!-- Extensions -->
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.10" />
-    
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.9" />
     <!-- Testing -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageVersion Include="xunit.v3" Version="3.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    
+    <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <!-- Logging -->
-    <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageVersion Include="Serilog.Sinks.BrowserHttp" Version="1.0.0-dev-00032" />
-    <PackageVersion Include="Neovolve.Logging.Xunit.v3" Version="7.1.0" />
-    
+    <PackageVersion Include="Neovolve.Logging.Xunit.v3" Version="7.2.0" />
     <!-- REST & HTTP -->
     <PackageVersion Include="RestEase" Version="1.6.4" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
-    <PackageVersion Include="System.Net.Http.Json" Version="9.0.10" />
+    <PackageVersion Include="System.Net.Http.Json" Version="10.0.9" />
     <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
-    
     <!-- WebAssembly -->
     <PackageVersion Include="WebAssembly.Bindings" Version="3.0.2" />
-    
     <!-- API Client -->
     <PackageVersion Include="Xipona.Api.Client" Version="0.14.0-alpha.15" />
     <PackageVersion Include="Xipona.Api.Contracts" Version="0.14.0-alpha.15" />
-    
     <!-- Testing Tools -->
     <PackageVersion Include="AutoFixture" Version="4.18.1" />
     <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
-    <PackageVersion Include="AutoMapper" Version="15.0.1" />
+    <PackageVersion Include="AutoMapper" Version="16.2.0" />
     <PackageVersion Include="Castle.Core" Version="5.2.1" />
-    <PackageVersion Include="FluentAssertions" Version="8.7.1" />
+    <PackageVersion Include="FluentAssertions" Version="8.10.0" />
     <PackageVersion Include="Moq" Version="4.18.4" />
-    <PackageVersion Include="Moq.Contrib.InOrder" Version="2.0.1" />
+    <PackageVersion Include="Moq.Contrib.InOrder" Version="2.1.0" />
     <PackageVersion Include="ObjectsComparer" Version="1.4.1" />
   </ItemGroup>
 </Project>
