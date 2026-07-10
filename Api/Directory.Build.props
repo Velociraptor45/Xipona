@@ -1,14 +1,10 @@
 <Project>
     <PropertyGroup>
-        <!-- Default target framework for net9.0 projects -->
-        <TargetFramework>net9.0</TargetFramework>
-        
-        <!-- Default nullable reference type support -->
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     
-    <!-- Enable ImplicitUsings only for net9.0 projects -->
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 </Project>
