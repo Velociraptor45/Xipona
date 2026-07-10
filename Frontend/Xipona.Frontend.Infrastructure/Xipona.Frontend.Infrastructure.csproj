@@ -1,16 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Xipona.Frontend.Infrastructure</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
-    <PackageReference Include="RestEase" Version="1.6.4" />
-    <PackageReference Include="WebAssembly.Bindings" Version="3.0.2" />
-    <PackageReference Include="Xipona.Api.Client" Version="0.14.0-alpha.15" />
+    <PackageReference Include="Blazored.LocalStorage" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="RestEase" />
+    <PackageReference Include="WebAssembly.Bindings" />
+    <PackageReference Include="Xipona.Api.Client" />
   </ItemGroup>
 
   <ItemGroup>
