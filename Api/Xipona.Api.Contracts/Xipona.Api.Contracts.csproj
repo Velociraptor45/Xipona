@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>Xipona.Api.Contracts</RootNamespace>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <RootNamespace>Xipona.Api.Contracts</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>Xipona Api Contracts</Title>
     <Version>0.14.0-alpha.15</Version>
@@ -14,6 +14,8 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageId>Xipona.Api.Contracts</PackageId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>

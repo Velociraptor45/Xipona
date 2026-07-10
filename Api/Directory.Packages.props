@@ -1,0 +1,78 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- Testing and Coverage -->
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageVersion Include="xunit.v3" Version="3.1.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.1.0" />
+    <PackageVersion Include="xunit.analyzers" Version="1.24.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    
+    <!-- Testing Tools and Mocking -->
+    <PackageVersion Include="Castle.Core" Version="5.2.1" />
+    <PackageVersion Include="AutoFixture" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageVersion Include="AutoMapper" Version="15.0.1" />
+    <PackageVersion Include="DeepCloner" Version="0.10.4" />
+    <PackageVersion Include="FluentAssertions" Version="8.7.1" />
+    <PackageVersion Include="Neovolve.Logging.Xunit.v3" Version="7.1.0" />
+    <PackageVersion Include="ObjectsComparer" Version="1.4.1" />
+    <PackageVersion Include="Moq" Version="4.18.4" />
+    <PackageVersion Include="RichardSzalay.MockHttp" Version="7.0.0" />
+    
+    <!-- Architecture Testing -->
+    <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
+    <PackageVersion Include="Ductus.FluentDocker.XUnit" Version="2.85.0" />
+    
+    <!-- Microsoft Extensions -->
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+    
+    <!-- ASP.NET Core and Web -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.9.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    
+    <!-- Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    
+    <!-- OpenTelemetry -->
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+    
+    <!-- Resilience and Utilities -->
+    <PackageVersion Include="Polly" Version="8.6.4" />
+    <PackageVersion Include="RestEase" Version="1.6.4" />
+    
+    <!-- Code Generation -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    
+    <!-- Identity -->
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.14.0" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+  </ItemGroup>
+</Project>
