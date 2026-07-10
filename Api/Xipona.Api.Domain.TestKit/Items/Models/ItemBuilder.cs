@@ -22,6 +22,12 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         return this;
     }
 
+    // tcg keep
+    public ItemBuilder WithAvailability(ItemAvailability availability)
+    {
+        return WithAvailabilities([availability]);
+    }
+
     public ItemBuilder WithId(ItemId id)
     {
         FillConstructorWith("id", id);
@@ -74,9 +80,9 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
         return this;
     }
 
-    public ItemBuilder WithAvailability(ItemAvailability availability)
+    public ItemBuilder WithEmptyAvailabilities()
     {
-        return WithAvailabilities([availability]);
+        return WithAvailabilities(Enumerable.Empty<ItemAvailability>());
     }
 
     public ItemBuilder WithTemporaryId(TemporaryItemId? temporaryId)
@@ -122,5 +128,29 @@ public class ItemBuilder : DomainTestBuilderBase<Item>
     public ItemBuilder WithoutPredecessorId()
     {
         return WithPredecessorId(null);
+    }
+
+    public ItemBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillConstructorWith(nameof(createdAt), createdAt);
+        return this;
+    }
+
+    public ItemBuilder WithIsFavorite(bool isFavorite)
+    {
+        FillConstructorWith(nameof(isFavorite), isFavorite);
+        return this;
+    }
+
+    public ItemBuilder WithItemCategoryId(ItemCategoryId itemCategoryId)
+    {
+        FillConstructorWith(nameof(itemCategoryId), itemCategoryId);
+        return this;
+    }
+
+    public ItemBuilder WithItemTypes(ItemTypes itemTypes)
+    {
+        FillConstructorWith(nameof(itemTypes), itemTypes);
+        return this;
     }
 }
