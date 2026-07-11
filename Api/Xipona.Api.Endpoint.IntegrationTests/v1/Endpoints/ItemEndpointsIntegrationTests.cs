@@ -1351,6 +1351,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedResult = ItemContractMother.Valid()
                     .WithIsDeleted(false)
                     .WithIsTemporary(false)
+                    .WithIsFavorite(false)
                     .WithManufacturer(manufacturer)
                     .WithItemCategory(itemCategory)
                     .WithAvailabilities(availabilities)
@@ -1369,6 +1370,7 @@ public class ItemEndpointsIntegrationTests
                     Deleted = false,
                     Comment = ExpectedResult.Comment,
                     IsTemporary = false,
+                    IsFavorite = false,
                     QuantityType = ExpectedResult.QuantityType.Id,
                     QuantityInPacket = ExpectedResult.QuantityInPacket,
                     QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
@@ -1567,6 +1569,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedResult = ItemContractMother.Valid()
                     .WithIsDeleted(false)
                     .WithIsTemporary(false)
+                    .WithIsFavorite(false)
                     .WithManufacturer(manufacturer)
                     .WithItemCategory(itemCategory)
                     .WithEmptyAvailabilities()
@@ -1585,6 +1588,7 @@ public class ItemEndpointsIntegrationTests
                     Deleted = false,
                     Comment = ExpectedResult.Comment,
                     IsTemporary = false,
+                    IsFavorite = false,
                     QuantityType = ExpectedResult.QuantityType.Id,
                     QuantityInPacket = ExpectedResult.QuantityInPacket,
                     QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,

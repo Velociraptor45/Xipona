@@ -235,6 +235,7 @@ public static class ItemEditorReducer
                     false,
                     string.Empty,
                     false,
+                    false,
                     state.QuantityTypes.First(),
                     1,
                     state.QuantityTypesInPacket.First(),
@@ -855,6 +856,36 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 IsDeleteDialogOpen = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MarkItemAsFavoriteAction))]
+    public static ItemState OnMarkItemAsFavorite(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = state.Editor.Item! with
+                {
+                    IsFavorite = true
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(UnmarkItemAsFavoriteAction))]
+    public static ItemState OnUnmarkItemAsFavorite(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = state.Editor.Item! with
+                {
+                    IsFavorite = false
+                }
             }
         };
     }

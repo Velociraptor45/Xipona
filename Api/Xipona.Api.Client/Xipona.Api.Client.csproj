@@ -5,7 +5,7 @@
     <RootNamespace>Xipona.Api.Client</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>Xipona Api Client</Title>
-    <Version>0.14.0-alpha.15</Version>
+    <Version>0.14.0-alpha.17</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/Xipona</RepositoryUrl>

@@ -137,4 +137,6 @@ public interface IApiClient
     Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId);
     Task<Guid> MergeItemsAsync(MergedItem mergedItem);
     Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems);
+    Task MarkItemAsFavoriteAsync(Guid itemId);
+    Task UnmarkItemAsFavoriteAsync(Guid itemId);
 }

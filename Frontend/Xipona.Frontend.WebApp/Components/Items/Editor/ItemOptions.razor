@@ -7,10 +7,25 @@
 @using Xipona.Frontend.WebApp.Components.Items.Merger
 
 @inject IDispatcher Dispatcher
+@inject IState<ItemState> State
 
-<Dropdown Placement="Placement.BottomRight" Trigger="@(new[] { Trigger.Click })">
+<Dropdown Placement="Placement.BottomRight" Trigger="@([Trigger.Click])">
     <Overlay>
         <Menu Selectable="false">
+            @if (State.Value.Editor.Item!.IsFavorite)
+            {
+                <MenuItem Class="d-flex" OnClick="OnUnStarButtonClicked">
+                    <i class="bi bi-star-fill"></i>
+                    <span>Un-Favorite</span>
+                </MenuItem>
+            }
+            else
+            {
+                <MenuItem Class="d-flex" OnClick="OnStarButtonClicked">
+                    <i class="bi bi-star"></i>
+                    <span>Favorite</span>
+                </MenuItem>
+            }
             <MenuItem Class="d-flex" OnClick="OnMergeItemButtonClicked">
                 <i class="bi bi-sign-merge-right"></i>
                 <span>Merge</span>
@@ -33,6 +48,16 @@
 
 @code
 {
+    private void OnStarButtonClicked()
+    {
+        Dispatcher.Dispatch(new MarkItemAsFavoriteAction());
+    }
+
+    private void OnUnStarButtonClicked()
+    {
+        Dispatcher.Dispatch(new UnmarkItemAsFavoriteAction());
+    }
+
     private void OnMergeItemButtonClicked()
     {
         Dispatcher.Dispatch(new OpenMergeItemSelectorAction());

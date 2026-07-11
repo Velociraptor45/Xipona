@@ -383,4 +383,60 @@ public sealed class ItemEditorEffects
 
         return Task.CompletedTask;
     }
+
+    [EffectMethod(typeof(MarkItemAsFavoriteAction))]
+    public async Task HandleMarkItemAsFavoriteAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new MarkItemAsFavoriteStartedAction());
+
+        var item = _state.Value.Editor.Item!;
+
+        try
+        {
+            await _client.MarkItemAsFavoriteAsync(item.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Marking item as favorite failed", e));
+            dispatcher.Dispatch(new MarkItemAsFavoriteFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Marking item as favorite failed", e.Message));
+            dispatcher.Dispatch(new MarkItemAsFavoriteFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new MarkItemAsFavoriteFinishedAction());
+        _notificationService.NotifySuccess($"Successfully marked item {item.Name} as favorite");
+    }
+
+    [EffectMethod(typeof(UnmarkItemAsFavoriteAction))]
+    public async Task HandleUnmarkItemAsFavoriteAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new UnmarkItemAsFavoriteStartedAction());
+
+        var item = _state.Value.Editor.Item!;
+
+        try
+        {
+            await _client.UnmarkItemAsFavoriteAsync(item.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Unmarking item as favorite failed", e));
+            dispatcher.Dispatch(new UnmarkItemAsFavoriteFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Unmarking item as favorite failed", e.Message));
+            dispatcher.Dispatch(new UnmarkItemAsFavoriteFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new UnmarkItemAsFavoriteFinishedAction());
+        _notificationService.NotifySuccess($"Successfully unmarked item {item.Name} as favorite");
+    }
 }

@@ -448,6 +448,7 @@ public partial class ItemEditorReducerTests
                             false,
                             string.Empty,
                             false,
+                            false,
                             ExpectedState.QuantityTypes.First(),
                             1,
                             ExpectedState.QuantityTypesInPacket.First(),

@@ -1,11 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xipona.Api.Contracts.Common.Queries;
 using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Contracts.TestKit.Common;
 using Xipona.Api.Core.TestKit;
 
 namespace Xipona.Api.Contracts.TestKit.Items.Queries.Get;
-
-public class ItemContractBuilder : TestBuilderBase<ItemContract>
+public class ItemContractBuilder : ContractTestBuilderBase<ItemContract>
 {
     public ItemContractBuilder WithId(Guid id)
     {
@@ -44,6 +47,12 @@ public class ItemContractBuilder : TestBuilderBase<ItemContract>
     public ItemContractBuilder WithIsTemporary(bool isTemporary)
     {
         FillConstructorWith(nameof(isTemporary), isTemporary);
+        return this;
+    }
+
+    public ItemContractBuilder WithIsFavorite(bool isFavorite)
+    {
+        FillConstructorWith(nameof(isFavorite), isFavorite);
         return this;
     }
 

@@ -51,6 +51,7 @@ public class ItemContractConverter :
             source.IsDeleted,
             source.Comment.Value,
             source.IsTemporary,
+            source.IsFavorite,
             _quantityTypeContractConverter.ToContract(source.QuantityType),
             source.QuantityInPacket,
             source.QuantityTypeInPacket is null

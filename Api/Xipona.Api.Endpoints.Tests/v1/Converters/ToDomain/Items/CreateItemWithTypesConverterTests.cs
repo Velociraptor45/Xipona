@@ -51,6 +51,7 @@ public class CreateItemWithTypesConverterTests
                 .ForMember(dest => dest.ItemQuantity, opt => opt.Ignore())
                 .ForMember(dest => dest.Availabilities, opt => opt.Ignore())
                 .ForMember(dest => dest.ItemTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.Ignore())
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
@@ -91,6 +92,7 @@ public class CreateItemWithTypesConverterTests
                 .ForMember(dest => dest.ItemQuantity, opt => opt.Ignore())
                 .ForMember(dest => dest.Availabilities, opt => opt.Ignore())
                 .ForMember(dest => dest.ItemTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.Ignore())
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
@@ -131,6 +133,7 @@ public class CreateItemWithTypesConverterTests
                 .ForMember(dest => dest.ItemQuantity, opt => opt.Ignore())
                 .ForMember(dest => dest.Availabilities, opt => opt.Ignore())
                 .ForMember(dest => dest.ItemTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.Ignore())
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 

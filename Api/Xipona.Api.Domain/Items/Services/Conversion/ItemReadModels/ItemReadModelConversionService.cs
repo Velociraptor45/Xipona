@@ -87,6 +87,7 @@ public class ItemReadModelConversionService : IItemReadModelConversionService
             model.IsDeleted,
             model.Comment,
             model.IsTemporary,
+            model.IsFavorite,
             new QuantityTypeReadModel(model.ItemQuantity.Type, _cache),
             itemQuantityInPacket?.Quantity,
             quantityTypeInPacketReadModel,
