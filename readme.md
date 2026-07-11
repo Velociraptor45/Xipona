@@ -206,4 +206,4 @@ The Xipona.Api.WebApp has user secret support. Add all the needed env variables 
 
 ### Frontend
 
-Blazor Webassembly does not support user secrets, so you have to use the `variables.json` under Xipona.Frontend.WebApp/wwwroot. `XIPONA_API_URL` is already defined, if you want to use the others, they must be set by you in `variables.json` as well or you create an `appsettings.Local.json` in the same directory.
+Blazor Webassembly does not support user secrets, so you have to use the `variables.json` under Xipona.Frontend.WebApp/wwwroot. `XIPONA_API_URL` is already defined, if you want to use the others, they must be set by you in `variables.json` as well.

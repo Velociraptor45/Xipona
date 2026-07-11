@@ -22,10 +22,6 @@
         <PackageReference Include="RestEase"/>
         <PackageReference Include="Serilog.Extensions.Logging"/>
         <PackageReference Include="Serilog.Sinks.BrowserHttp"/>
-        <PackageReference Include="System.Net.Http"/>
-        <PackageReference Include="System.Net.Http.Json"/>
-        <PackageReference Include="System.Private.Uri"/>
-        <PackageReference Include="System.Text.RegularExpressions"/>
     </ItemGroup>
 
     <ItemGroup>
