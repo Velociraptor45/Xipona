@@ -1,5 +1,6 @@
 ﻿using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Searches;
 using Xipona.Api.Domain.Manufacturers.Models;
 using Xipona.Api.Domain.Stores.Models;
 

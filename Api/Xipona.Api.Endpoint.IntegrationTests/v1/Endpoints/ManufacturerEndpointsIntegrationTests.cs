@@ -17,6 +17,8 @@ using Xipona.Api.Repositories.Items.Contexts;
 using Xipona.Api.Repositories.Manufacturers.Contexts;
 using Xipona.Api.TestTools.Exceptions;
 using System;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.Stores.Contexts;
 using Xunit;
 using Item = Xipona.Api.Repositories.Items.Entities.Item;
 using Manufacturer = Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
@@ -179,8 +181,10 @@ public class ManufacturerEndpointsIntegrationTests
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         protected ManufacturerContext CreateManufacturerContext(IServiceScope scope)

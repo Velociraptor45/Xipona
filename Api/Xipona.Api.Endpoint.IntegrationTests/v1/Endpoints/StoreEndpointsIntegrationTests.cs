@@ -31,6 +31,8 @@ using Xipona.Api.Repositories.TestKit.Stores.Entities;
 using Xipona.Api.TestTools.AutoFixture;
 using Xipona.Api.TestTools.Exceptions;
 using System;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
 using Xunit;
 using Section = Xipona.Api.Repositories.Stores.Entities.Section;
 
@@ -942,8 +944,10 @@ public class StoreEndpointsIntegrationTests
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
             yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         public async Task<IList<IStore>> LoadPersistedStoresAsync()

@@ -12,8 +12,10 @@ using Xipona.Api.Endpoint.v1.Endpoints;
 using Xipona.Api.Repositories.ItemCategories.Contexts;
 using Xipona.Api.Repositories.ItemCategories.Entities;
 using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
 using Xipona.Api.Repositories.Recipes.Contexts;
 using Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Repositories.Stores.Contexts;
 using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
 using Xipona.Api.Repositories.TestKit.Recipes.Entities;
 using Xipona.Api.TestTools.AutoFixture;
@@ -145,16 +147,17 @@ public class ItemCategoryEndpointsIntegrationTests
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
+            if (disposing) 
                 ArrangeScope.Dispose();
-            }
+            
             base.Dispose(disposing);
         }
     }

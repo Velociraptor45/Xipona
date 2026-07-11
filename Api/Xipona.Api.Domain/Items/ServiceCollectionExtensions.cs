@@ -6,7 +6,6 @@ using Xipona.Api.Domain.Items.Models.Factories;
 using Xipona.Api.Domain.Items.Ports;
 using Xipona.Api.Domain.Items.Services.Conversion;
 using Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
-using Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
 using Xipona.Api.Domain.Items.Services.Creations;
 using Xipona.Api.Domain.Items.Services.Deletions;
 using Xipona.Api.Domain.Items.Services.Modifications;
@@ -41,13 +40,6 @@ public static class ServiceCollectionExtensions
             return ct => new ItemValidationService(itemRepositoryDelegate(ct));
         });
 
-        services.AddTransient<Func<CancellationToken, IItemSearchReadModelConversionService>>(provider =>
-        {
-            return ct => new ItemSearchReadModelConversionService(
-                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct),
-                provider.GetRequiredService<IMemoryCache>());
-        });
         services.AddTransient<Func<CancellationToken, IItemReadModelConversionService>>(provider =>
         {
             return ct => new ItemReadModelConversionService(
@@ -87,20 +79,14 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemSearchService>>(provider =>
         {
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            var itemReadRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemReadRepository>>();
             var manufacturerRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
-            var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
-            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
-            var itemTypeReadRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemTypeReadRepository>>();
-            var itemCategoryRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
-            var conversionServiceDelegate = provider
-                .GetRequiredService<Func<CancellationToken, IItemSearchReadModelConversionService>>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var availabilityConverterDelegate = provider.GetRequiredService<
                 Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
 
-            return ct => new ItemSearchService(itemRepositoryDelegate(ct), manufacturerRepositoryDelegate(ct),
-                shoppingListRepositoryDelegate(ct), storeRepositoryDelegate(ct), itemTypeReadRepositoryDelegate(ct),
-                itemCategoryRepositoryDelegate(ct), conversionServiceDelegate(ct), validatorDelegate(ct),
+            return ct => new ItemSearchService(itemRepositoryDelegate(ct), itemReadRepositoryDelegate(ct),
+                manufacturerRepositoryDelegate(ct), validatorDelegate(ct),
                 availabilityConverterDelegate(ct));
         });
 

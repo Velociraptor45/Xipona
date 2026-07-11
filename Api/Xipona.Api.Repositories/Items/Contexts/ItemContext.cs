@@ -10,6 +10,7 @@ public class ItemContext : DbContext
     public DbSet<Item> Items { get; set; }
     public DbSet<ItemType> ItemTypes { get; set; }
     public DbSet<ItemTypeAvailableAt> ItemTypeAvailableAts { get; set; }
+    public DbSet<ShoppingListItemViewModel> ShoppingListItems { get; set; }
 
     public ItemContext(DbContextOptions<ItemContext> options)
         : base(options)
@@ -24,6 +25,8 @@ public class ItemContext : DbContext
         modelBuilder.Entity<ItemTypeAvailableAt>()
             .HasKey(av => new { av.ItemTypeId, av.StoreId });
 
+        modelBuilder.Entity<ShoppingListItemViewModel>().HasNoKey().ToView("shoppinglistitemview");
+        
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             foreach (var property in entityType.GetProperties())
