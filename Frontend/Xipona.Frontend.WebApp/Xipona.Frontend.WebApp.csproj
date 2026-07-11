@@ -1,45 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-    <RootNamespace>Xipona.Frontend.WebApp</RootNamespace>
-    <Version>0.13.1</Version>
-    <PublishTrimmed>false</PublishTrimmed>
-  </PropertyGroup>
+    <PropertyGroup>
+        <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+        <RootNamespace>Xipona.Frontend.WebApp</RootNamespace>
+        <Version>0.13.1</Version>
+        <PublishTrimmed>false</PublishTrimmed>
+        <Nullable>disable</Nullable>
+        <UserSecretsId>3fec0ee5-b1d4-47f3-9180-b2d87730c4ec</UserSecretsId>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AntDesign" Version="1.4.3" />
-    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="Fluxor.Blazor.Web" Version="6.8.0" />
-    <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.10" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10" />
-    <PackageReference Include="RestEase" Version="1.6.4" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
-    <PackageReference Include="Serilog.Sinks.BrowserHttp" Version="1.0.0-dev-00032" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.10" />
-    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AntDesign"/>
+        <PackageReference Include="Blazored.LocalStorage"/>
+        <PackageReference Include="Fluxor.Blazor.Web"/>
+        <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities"/>
+        <PackageReference Include="Microsoft.Extensions.Http"/>
+        <PackageReference Include="RestEase"/>
+        <PackageReference Include="Serilog.Extensions.Logging"/>
+        <PackageReference Include="Serilog.Sinks.BrowserHttp"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Xipona.Frontend.Infrastructure\Xipona.Frontend.Infrastructure.csproj" />
-    <ProjectReference Include="..\Xipona.Frontend.Redux\Xipona.Frontend.Redux.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Xipona.Frontend.Infrastructure\Xipona.Frontend.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Xipona.Frontend.Redux\Xipona.Frontend.Redux.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
+    <ItemGroup>
+        <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="wwwroot\variables.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+        <Content Update="wwwroot\variables.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
 </Project>

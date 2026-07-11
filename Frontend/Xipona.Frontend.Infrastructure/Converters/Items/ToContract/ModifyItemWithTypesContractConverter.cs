@@ -24,7 +24,7 @@ public class ModifyItemWithTypesContractConverter :
             item.QuantityType.Id,
             item.QuantityInPacket,
             item.QuantityInPacketType?.Id,
-            item.ItemCategoryId.Value,
+            item.ItemCategoryId!.Value,
             item.ManufacturerId,
             item.ItemTypes.Select(_itemTypeConverter.ToContract));
     }

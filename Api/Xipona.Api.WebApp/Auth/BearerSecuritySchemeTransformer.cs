@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.OpenApi;
 using AuthenticationOptions = Xipona.Api.Endpoint.Middleware.AuthenticationOptions;
 
 namespace Xipona.Api.WebApp.Auth;
@@ -27,7 +24,7 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
         var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
         if (authenticationSchemes.Any(authScheme => authScheme.Name == "Bearer"))
         {
-            var requirements = new Dictionary<string, OpenApiSecurityScheme>
+            var requirements = new Dictionary<string, IOpenApiSecurityScheme>
             {
                 ["Bearer"] = new OpenApiSecurityScheme
                 {
@@ -36,28 +33,19 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
                     Type = SecuritySchemeType.OpenIdConnect,
                     OpenIdConnectUrl = new Uri(_authOptions.OidcUrl),
                     Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Reference = new OpenApiReference
-                    {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
-                    }
+                    BearerFormat = "JWT"
                 }
             };
 
             document.Components ??= new OpenApiComponents();
             document.Components.SecuritySchemes = requirements;
-
-            foreach (var operation in document.Paths.Values.SelectMany(path => path.Operations))
+            
+            foreach (var operation in document.Paths.Values.SelectMany(path => path.Operations ?? []))
             {
+                operation.Value.Security ??= new List<OpenApiSecurityRequirement>();
                 operation.Value.Security.Add(new OpenApiSecurityRequirement
                 {
-                    [
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme }
-                        }
-                    ] = []
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                 });
             }
         }
