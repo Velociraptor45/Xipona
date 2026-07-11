@@ -13,6 +13,8 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageId>Xipona.Api.Client</PackageId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestEase" Version="1.6.4" />
+    <PackageReference Include="RestEase" />
   </ItemGroup>
 
   <ItemGroup>

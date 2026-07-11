@@ -26,7 +26,7 @@ public class CreateItemContractConverter :
             QuantityType = source.QuantityType.Id,
             QuantityInPacket = source.QuantityInPacket,
             QuantityTypeInPacket = source.QuantityInPacketType?.Id,
-            ItemCategoryId = source.ItemCategoryId.Value,
+            ItemCategoryId = source.ItemCategoryId!.Value,
             ManufacturerId = source.ManufacturerId,
             Availabilities = source.Availabilities.Select(_availabilityConverter.ToContract)
         };

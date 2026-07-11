@@ -33,7 +33,7 @@ public static class Program
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         await LoadVariables(builder);
-
+        
         var authConfig = new AuthConfig();
         builder.Configuration.Bind(authConfig);
         builder.Services.AddSingleton(authConfig);
@@ -50,9 +50,11 @@ public static class Program
 
     private static async Task LoadVariables(WebAssemblyHostBuilder builder)
     {
-        var client = new HttpClient();
+        using var client = new HttpClient();
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-        var stream = await client.GetStreamAsync("variables.json").ConfigureAwait(false);
+        var responseMessage = await client.GetAsync("variables.json").ConfigureAwait(false);
+        var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
         builder.Configuration.AddJsonStream(stream);
     }
 
@@ -171,7 +173,7 @@ public static class Program
     private sealed class CollectRemoteLogsConfig
     {
         [ConfigurationKeyName("XIPONA_LOGS_ENABLED")]
-        public bool Enabled { get; init; }
+        public bool Enabled { get; init; } = false;
 
         [ConfigurationKeyName("XIPONA_LOGS_HOST_URL")]
         public string HostUrl { get; init; } = string.Empty;
