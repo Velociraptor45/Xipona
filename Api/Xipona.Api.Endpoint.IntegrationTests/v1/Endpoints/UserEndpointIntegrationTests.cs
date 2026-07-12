@@ -453,11 +453,11 @@ public class UserEndpointIntegrationTests
         {
             yield return scope.ServiceProvider.GetRequiredService<UserContext>();
             yield return scope.ServiceProvider.GetRequiredService<GeneralSettingContext>();
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
             yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         protected override void Dispose(bool disposing)

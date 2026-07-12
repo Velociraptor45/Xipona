@@ -568,14 +568,14 @@ public class ItemTests
             {
                 _existingTypeId = ItemTypeId.New;
                 var types = ItemTypeMother.Initial().WithId(_existingTypeId.Value).CreateMany(1).ToList();
-                Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
             }
 
             public void SetupOneExistingDeletedType()
             {
                 _existingTypeId = ItemTypeId.New;
                 var types = ItemTypeMother.Initial().WithIsDeleted(true).WithId(_existingTypeId.Value).CreateMany(1).ToList();
-                Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
             }
 
             public void SetupValidationSuccess()
@@ -804,7 +804,7 @@ public class ItemTests
                 types.AddRange(ItemTypeMother.Initial().CreateMany(2));
                 types.Shuffle();
 
-                Builder.WithTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(types, ItemTypeFactoryMock.Object));
             }
         }
     }
@@ -1028,7 +1028,7 @@ public class ItemTests
 
                 var types = new ItemTypes([_existingItemTypeMock.Object], _itemTypeFactoryMock.Object);
                 ItemMother.InitialWithTypes(Builder)
-                    .WithTypes(types);
+                    .WithItemTypes(types);
             }
 
             public void SetupOldItemWithoutTypes()
@@ -1040,7 +1040,7 @@ public class ItemTests
             {
                 ExpectedItemType = new ItemTypeBuilder().WithIsDeleted(false).Create();
                 ExpectedResult = ItemMother.InitialWithTypes()
-                    .WithTypes(new ItemTypes([ExpectedItemType], _itemTypeFactoryMock.Object))
+                    .WithItemTypes(new ItemTypes([ExpectedItemType], _itemTypeFactoryMock.Object))
                     .WithPredecessorId(sut.Id)
                     .WithCreatedAt(sut.CreatedAt)
                     .Create();
@@ -1556,7 +1556,7 @@ public class ItemTests
                     .WithIsDeleted(false)
                     .Create();
 
-                Builder.WithTypes(new ItemTypes(new List<IItemType> { type1, type2 }, _itemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(new List<IItemType> { type1, type2 }, _itemTypeFactoryMock.Object));
             }
 
             public void SetupStoreId()
@@ -1596,7 +1596,8 @@ public class ItemTests
                     item.TemporaryId,
                     null,
                     item.Id,
-                    item.CreatedAt);
+                    item.CreatedAt,
+                    item.IsFavorite);
             }
 
             public void SetupExpectedResultWithAllTypesUpdated(Item item)
@@ -1628,7 +1629,8 @@ public class ItemTests
                         _itemTypeFactoryMock.Object),
                     null,
                     item.Id,
-                    item.CreatedAt);
+                    item.CreatedAt,
+                    item.IsFavorite);
             }
 
             public void SetupExpectedResultWithOneTypeUpdated(Item item)
@@ -1661,7 +1663,8 @@ public class ItemTests
                         _itemTypeFactoryMock.Object),
                     null,
                     item.Id,
-                    item.CreatedAt);
+                    item.CreatedAt,
+                    item.IsFavorite);
             }
         }
     }
@@ -1829,7 +1832,7 @@ public class ItemTests
 
                 var types = new ItemTypes(type, ItemTypeFactoryMock.Object);
 
-                Builder.WithTypes(types);
+                Builder.WithItemTypes(types);
             }
 
             public void SetupTypeAvailabilityNotInOldSection()
@@ -1846,7 +1849,7 @@ public class ItemTests
 
                 var types = new ItemTypes(type, ItemTypeFactoryMock.Object);
 
-                Builder.WithTypes(types);
+                Builder.WithItemTypes(types);
             }
 
             public void SetupAvailabilityInOldSection()
@@ -1992,7 +1995,7 @@ public class ItemTests
                     .WithIsDeleted(false)
                     .CreateMany(1);
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
             }
 
             public void SetupNotAvailableAtStore()
@@ -2004,7 +2007,7 @@ public class ItemTests
                     .WithIsDeleted(false)
                     .CreateMany(1);
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
             }
 
             public void SetupNotContainingItemType()
@@ -2013,7 +2016,7 @@ public class ItemTests
                     .WithIsDeleted(false)
                     .CreateMany(1);
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
             }
 
             public void SetupNotHavingItemTypes()
@@ -2266,7 +2269,7 @@ public class ItemTests
                 var availability = ItemAvailabilityMother.ForStore(StoreId.Value).Create();
                 var itemTypes = ItemTypeMother.InitialAvailableAt(availability).CreateMany(1);
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
                 ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
                 ExpectedItemDeletedDomainEvent = new ItemDeletedDomainEvent { ItemId = Id };
@@ -2283,7 +2286,7 @@ public class ItemTests
                     ItemTypeMother.Initial().Create(),
                 };
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
                 ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
                 ExpectedItemTypeDeletedDomainEvents =
@@ -2303,7 +2306,7 @@ public class ItemTests
                     ItemTypeMother.InitialAvailableAt(availability).Create()
                 };
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
                 ExpectedItemAvailabilities = new List<ItemAvailability> { availability };
                 ExpectedItemDeletedDomainEvent = new ItemDeletedDomainEvent { ItemId = Id };
@@ -2318,7 +2321,7 @@ public class ItemTests
                     ItemTypeMother.Initial().Create(),
                 };
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
             }
 
             public void SetupMultipleTypesWithOneNotOnlyAvailableAtStore()
@@ -2336,7 +2339,7 @@ public class ItemTests
                     ItemTypeMother.Initial().Create(),
                 };
 
-                Builder.WithTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
+                Builder.WithItemTypes(new ItemTypes(itemTypes, ItemTypeFactoryMock.Object));
 
                 ExpectedItemAvailabilities = new List<ItemAvailability> { itemTypes.First().Availabilities.Last() };
                 ExpectedItemTypeAvailabilityDeletedDomainEvent =

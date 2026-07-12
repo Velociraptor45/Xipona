@@ -1729,4 +1729,160 @@ public partial class ItemEditorReducerTests
             }
         }
     }
+
+    public class OnMarkItemAsFavorite
+    {
+        private readonly OnMarkItemAsFavoriteFixture _fixture = new();
+
+        [Fact]
+        public void OnMarkItemAsFavorite_WithItemNotFavorite_ShouldMarkItemAsFavorite()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnMarkItemAsFavorite(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnMarkItemAsFavorite_WithItemAlreadyFavorite_ShouldNotChangeFavoriteStatus()
+        {
+            // Arrange
+            _fixture.SetupInitialStateItemAlreadyFavorite();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnMarkItemAsFavorite(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnMarkItemAsFavoriteFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            IsFavorite = false
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateItemAlreadyFavorite()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            IsFavorite = true
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            IsFavorite = true
+                        }
+                    }
+                };
+            }
+        }
+    }
+
+    public class OnUnmarkItemAsFavorite
+    {
+        private readonly OnUnmarkItemAsFavoriteFixture _fixture = new();
+
+        [Fact]
+        public void OnUnmarkItemAsFavorite_WithItemFavorite_ShouldUnmarkItemAsFavorite()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnUnmarkItemAsFavorite(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnUnmarkItemAsFavorite_WithItemNotFavorite_ShouldNotChangeFavoriteStatus()
+        {
+            // Arrange
+            _fixture.SetupInitialStateItemAlreadyNotFavorite();
+            _fixture.SetupExpectedState();
+
+            // Act
+            var result = ItemEditorReducer.OnUnmarkItemAsFavorite(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnUnmarkItemAsFavoriteFixture : ItemEditorReducerFixture
+        {
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            IsFavorite = true
+                        }
+                    }
+                };
+            }
+
+            public void SetupInitialStateItemAlreadyNotFavorite()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            IsFavorite = false
+                        }
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        Item = ExpectedState.Editor.Item! with
+                        {
+                            IsFavorite = false
+                        }
+                    }
+                };
+            }
+        }
+    }
 }

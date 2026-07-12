@@ -735,29 +735,13 @@ public class ItemEndpointsIntegrationTests
         }
 
         [Fact]
-        public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_WithFindingViaCategoryName_ShouldReturnEmptyList()
+        public async Task SearchItemsForShoppingListAsync_WithOneTypeOnShoppingListAndOneNot_ShouldReturnItemTypeNotOnShoppingList()
         {
             // Arrange
             _fixture.SetupStore();
-            _fixture.SetupItemAlreadyOnShoppingListWithFindingViaItemCategory();
-            _fixture.SetupShoppingListContainingItem();
-            await _fixture.SetupDatabaseAsync();
-
-            // Act
-            var result = await _fixture.ActAsync();
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<NoContent>();
-        }
-
-        [Fact]
-        public async Task SearchItemsForShoppingListAsync_WithItemAndCategoryExceedingLimit_ShouldReturnNoItemTypes()
-        {
-            // Arrange
-            _fixture.SetupStore();
-            _fixture.SetupEmptyShoppingList();
-            _fixture.SetupItemsAndItemCategoriesExceedingLimit();
+            _fixture.SetupItemTypeAlreadyOnShoppingList();
+            _fixture.SetupShoppingListContainingItemType();
+            _fixture.SetupExpectedResultForOneTypeOnShoppingListAndOneNot();
             await _fixture.SetupDatabaseAsync();
 
             // Act
@@ -772,8 +756,49 @@ public class ItemEndpointsIntegrationTests
             okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
 
             var contract = okResult.Value!.ToList();
-            contract.Should().HaveCount(20);
-            contract.Should().OnlyContain(c => c.TypeId == null);
+            contract.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithFavoriteItem_ShouldReturnFavoriteItemFirst()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupFavoriteItem();
+            _fixture.SetupEmptyShoppingList();
+            _fixture.SetupExpectedResultForFavoriteItem();
+            await _fixture.SetupDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
+
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
+
+            var contract = okResult.Value!.ToList();
+            contract.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.WithStrictOrdering());
+        }
+
+        [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_WithFindingViaCategoryName_ShouldReturnEmptyList()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupItemAlreadyOnShoppingListWithFindingViaItemCategory();
+            _fixture.SetupShoppingListContainingItem();
+            await _fixture.SetupDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NoContent>();
         }
 
         private sealed class SearchItemsForShoppingListAsyncFixture(DockerFixture dockerFixture)
@@ -823,6 +848,17 @@ public class ItemEndpointsIntegrationTests
                 var item = _items.First();
                 _shoppingList = ShoppingListEntityMother
                     .InitialWithOneItem(item.Id, null, _store.Sections.First().Id)
+                    .WithStoreId(StoreId)
+                    .Create();
+            }
+
+            public void SetupShoppingListContainingItemType()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var item = _items.First();
+                _shoppingList = ShoppingListEntityMother
+                    .InitialWithOneItem(item.Id, item.ItemTypes.First().Id, _store.Sections.First().Id)
                     .WithStoreId(StoreId)
                     .Create();
             }
@@ -921,6 +957,64 @@ public class ItemEndpointsIntegrationTests
                     .Create();
                 _items.Add(item);
             }
+            
+            public void SetupItemTypeAlreadyOnShoppingList()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithName(SearchInput)
+                    .WithDeleted(false)
+                    .Create();
+                var availability = new ItemTypeAvailableAtEntityBuilder()
+                    .WithStoreId(StoreId)
+                    .WithDefaultSectionId(_store.Sections.First().Id)
+                    .Create();
+                List<ItemType> itemTypes =
+                [
+                    ItemTypeEntityMother.Initial()
+                        .WithName("Item Type " + SearchInput)
+                        .WithAvailableAt([availability])
+                        .Create(),
+                    ItemTypeEntityMother.Initial()
+                        .WithName("Item Type " + SearchInput)
+                        .WithAvailableAt([availability.DeepClone()])
+                        .Create()
+                ];
+                
+                var item = ItemEntityMother.InitialWithTypes().WithItemCategoryId(category.Id).WithItemTypes(itemTypes).Create();
+                _items.Add(item);
+                _itemCategories.Add(category);
+            }
+
+            public void SetupFavoriteItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithName(SearchInput)
+                    .WithDeleted(false)
+                    .Create();
+                var availability = new AvailableAtEntityBuilder()
+                    .WithStoreId(StoreId)
+                    .WithDefaultSectionId(_store.Sections.First().Id)
+                    .Create();
+                var item = ItemEntityMother.Initial()
+                    .WithName("Item" + SearchInput)
+                    .WithAvailableAt([availability])
+                    .WithIsFavorite(false)
+                    .WithItemCategoryId(category.Id)
+                    .Create();
+                var favoriteItem = ItemEntityMother.Initial()
+                    .WithName("Item favorite " + SearchInput)
+                    .WithAvailableAt([availability.DeepClone()])
+                    .WithIsFavorite(true)
+                    .WithItemCategoryId(category.Id)
+                    .Create();
+                _items.Add(item);
+                _items.Add(favoriteItem);
+                _itemCategories.Add(category);
+            }
 
             public void SetupItemAlreadyOnShoppingListWithFindingViaItemCategory()
             {
@@ -943,57 +1037,6 @@ public class ItemEndpointsIntegrationTests
                     .Create();
 
                 _itemCategories.Add(category);
-            }
-
-            public void SetupItemsAndItemCategoriesExceedingLimit()
-            {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var itemCategoryWithName = new ItemCategoryEntityBuilder().WithName(SearchInput).WithDeleted(false).Create();
-                var itemCategory = new ItemCategoryEntityBuilder().WithDeleted(false).Create();
-                _itemCategories.Add(itemCategoryWithName);
-                _itemCategories.Add(itemCategory);
-
-                var itemsWithCategory = Enumerable.Range(0, 13)
-                    .Select(_ => ItemEntityMother.Initial().WithAvailableAt(CreateAvailabilities())
-                        .WithoutManufacturerId().WithItemCategoryId(itemCategoryWithName.Id).Create())
-                    .ToList();
-                _items.AddRange(itemsWithCategory);
-
-                var items = Enumerable.Range(0, 8)
-                    .Select(_ => ItemEntityMother.Initial().WithName(SearchInput + "X").WithAvailableAt(CreateAvailabilities())
-                        .WithItemCategoryId(itemCategory.Id).WithoutManufacturerId().Create())
-                    .ToList();
-                var itemsWithTypes = Enumerable.Range(0, 2)
-                    .Select(_ => ItemEntityMother.InitialWithTypes()
-                        .WithItemTypes(CreateItemTypes()).WithItemCategoryId(itemCategory.Id).WithoutManufacturerId().Create())
-                    .ToList();
-                _items.AddRange(items);
-                _items.AddRange(itemsWithTypes);
-
-                IList<AvailableAt> CreateAvailabilities()
-                {
-                    return new AvailableAtEntityBuilder()
-                        .WithStoreId(StoreId)
-                        .WithDefaultSectionId(_store.Sections.First().Id)
-                        .CreateMany(1)
-                        .ToList();
-                }
-
-                IList<ItemType> CreateItemTypes()
-                {
-                    var typeAvailabilities = new ItemTypeAvailableAtEntityBuilder()
-                        .WithStoreId(StoreId)
-                        .WithDefaultSectionId(_store.Sections.First().Id)
-                        .CreateMany(1)
-                        .ToList();
-                    return ItemTypeEntityMother
-                        .Initial()
-                        .WithName(SearchInput + "Y")
-                        .WithAvailableAt(typeAvailabilities)
-                        .CreateMany(1)
-                        .ToList();
-                }
             }
 
             public void SetupItemWithTypeForCategory()
@@ -1032,6 +1075,63 @@ public class ItemEndpointsIntegrationTests
                 _itemCategories.Add(category);
             }
 
+            public void SetupExpectedResultForOneTypeOnShoppingListAndOneNot()
+            {
+                var item = _items.First();
+                var type = item.ItemTypes.Last();
+                var quantityType = item.QuantityType.ToEnum<QuantityType>();
+                ExpectedResult =
+                [
+                    new SearchItemForShoppingListResultContract(
+                        item.Id,
+                        type.Id,
+                        $"{item.Name} {type.Name}",
+                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        type.AvailableAt.First(av => av.StoreId == StoreId).Price,
+                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        _itemCategories.First().Name,
+                        "",
+                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
+                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
+                        item.IsFavorite)
+                ];
+            }
+
+            public void SetupExpectedResultForFavoriteItem()
+            {
+                var favoriteItem = _items.Last();
+                var item = _items.First();
+                var quantityTypeFavorite = favoriteItem.QuantityType.ToEnum<QuantityType>();
+                var quantityType = item.QuantityType.ToEnum<QuantityType>();
+                ExpectedResult =
+                [
+                    new SearchItemForShoppingListResultContract(
+                        favoriteItem.Id,
+                        null,
+                        favoriteItem.Name,
+                        quantityTypeFavorite.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        favoriteItem.AvailableAt.First(av => av.StoreId == StoreId).Price,
+                        CachedCurrencySymbol + quantityTypeFavorite.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        _itemCategories.First().Name,
+                        "",
+                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
+                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
+                        favoriteItem.IsFavorite),
+                    new SearchItemForShoppingListResultContract(
+                        item.Id,
+                        null,
+                        item.Name,
+                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        item.AvailableAt.First(av => av.StoreId == StoreId).Price,
+                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        _itemCategories.First().Name,
+                        "",
+                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
+                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
+                        item.IsFavorite)
+                ];
+            }
+
             public void SetupExpectedResultForItemAndTypeNameMatch()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
@@ -1050,7 +1150,8 @@ public class ItemEndpointsIntegrationTests
                         CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
                         _itemCategories.First().Name,
                         "",
-                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
+                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
+                        item.IsFavorite)
                     ];
             }
 
@@ -1072,7 +1173,8 @@ public class ItemEndpointsIntegrationTests
                         CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
                         _itemCategories.First().Name,
                         "",
-                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
+                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
+                        item.IsFavorite)
                     ];
             }
 
@@ -1351,6 +1453,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedResult = ItemContractMother.Valid()
                     .WithIsDeleted(false)
                     .WithIsTemporary(false)
+                    .WithIsFavorite(false)
                     .WithManufacturer(manufacturer)
                     .WithItemCategory(itemCategory)
                     .WithAvailabilities(availabilities)
@@ -1369,6 +1472,7 @@ public class ItemEndpointsIntegrationTests
                     Deleted = false,
                     Comment = ExpectedResult.Comment,
                     IsTemporary = false,
+                    IsFavorite = false,
                     QuantityType = ExpectedResult.QuantityType.Id,
                     QuantityInPacket = ExpectedResult.QuantityInPacket,
                     QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
@@ -1567,6 +1671,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedResult = ItemContractMother.Valid()
                     .WithIsDeleted(false)
                     .WithIsTemporary(false)
+                    .WithIsFavorite(false)
                     .WithManufacturer(manufacturer)
                     .WithItemCategory(itemCategory)
                     .WithEmptyAvailabilities()
@@ -1585,6 +1690,7 @@ public class ItemEndpointsIntegrationTests
                     Deleted = false,
                     Comment = ExpectedResult.Comment,
                     IsTemporary = false,
+                    IsFavorite = false,
                     QuantityType = ExpectedResult.QuantityType.Id,
                     QuantityInPacket = ExpectedResult.QuantityInPacket,
                     QuantityTypeInPacket = ExpectedResult.QuantityTypeInPacket?.Id,
@@ -3491,13 +3597,253 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    public sealed class SearchItemsForMerge(DockerFixture dockerFixture)
+    public sealed class MarkItemAsFavorite(DockerFixture dockerFixture)
     {
-        private readonly SearchItemsForMergeFixture _fixture = new(dockerFixture);
+        private readonly MarkItemAsFavoriteFixture _fixture = new(dockerFixture);
 
-        private class SearchItemsForMergeFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        [Fact]
+        public async Task MarkItemAsFavorite_WithValidData_ShouldMarkItemAsFavorite()
         {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupExpectedItem();
+            await _fixture.PrepareDatabaseAsync();
 
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task MarkItemAsFavorite_WithDeletedItem_ShouldReturnNotFound()
+        {
+            // Arrange
+            _fixture.SetupDeletedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.InitialItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task MarkItemAsFavorite_WithItemNotFound_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            await _fixture.ApplyMigrationsAsync(_fixture.CreateServiceScope());
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().BeEmpty();
+        }
+        
+        private class MarkItemAsFavoriteFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+            public Item? InitialItem { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+                
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.MarkItemAsFavorite(InitialItem.Id,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+            
+            public void SetupItem()
+            {
+                InitialItem = ItemEntityMother.Initial().Create();
+            }
+            
+            public void SetupDeletedItem()
+            {
+                InitialItem = ItemEntityMother.Initial().WithDeleted(true).Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                ExpectedItem = InitialItem.DeepClone();
+                ExpectedItem.IsFavorite = true;
+            }
+
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+
+                itemContext.Add(InitialItem);
+
+                await itemContext.SaveChangesAsync();
+            }
+        }
+    }
+
+    public sealed class UnmarkItemAsFavorite(DockerFixture dockerFixture)
+    {
+        private readonly UnmarkItemAsFavoriteFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task UnmarkItemAsFavorite_WithValidData_ShouldUnmarkItemAsFavorite()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            _fixture.SetupExpectedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedItem);
+            
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.ExpectedItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task UnmarkItemAsFavorite_WithDeletedItem_ShouldReturnNotFound()
+        {
+            // Arrange
+            _fixture.SetupDeletedItem();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().HaveCount(1);
+            items.First().Should().BeEquivalentTo(_fixture.InitialItem, opt => opt
+                .ExcludeItemCycleRef()
+                .ExcludeRowVersion()
+                .WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task UnmarkItemAsFavorite_WithItemNotFound_ShouldReturnUnprocessableEntity()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            await _fixture.ApplyMigrationsAsync(_fixture.CreateServiceScope());
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NotFound<ErrorContract>>();
+            var notFound = (NotFound<ErrorContract>)result;
+            notFound.Value.Should().NotBeNull();
+            notFound.Value.ErrorCode.Should().Be(ErrorReasonCode.ItemNotFound.ToInt());
+            
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+            var items = (await _fixture.LoadAllItemsAsync(assertionServiceScope)).ToArray();
+            items.Should().BeEmpty();
+        }
+        
+        private class UnmarkItemAsFavoriteFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+            public Item? InitialItem { get; private set; }
+            public Item? ExpectedItem { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+                
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.UnmarkItemAsFavorite(InitialItem.Id,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+            
+            public void SetupItem()
+            {
+                InitialItem = ItemEntityMother.Initial().WithIsFavorite(true).Create();
+            }
+            
+            public void SetupDeletedItem()
+            {
+                InitialItem = ItemEntityMother.Initial().WithDeleted(true).Create();
+            }
+
+            public void SetupExpectedItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                ExpectedItem = InitialItem.DeepClone();
+                ExpectedItem.IsFavorite = false;
+            }
+
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(InitialItem);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+
+                itemContext.Add(InitialItem);
+
+                await itemContext.SaveChangesAsync();
+            }
         }
     }
 
@@ -3512,12 +3858,12 @@ public class ItemEndpointsIntegrationTests
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         protected override void Dispose(bool disposing)

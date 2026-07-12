@@ -34,6 +34,7 @@ public class EditedItemConverter : IToDomainConverter<ItemContract, EditedItem>
             source.IsDeleted,
             source.Comment,
             source.IsTemporary,
+            source.IsFavorite,
             _quantityTypeConverter.ToDomain(source.QuantityType),
             source.QuantityInPacket,
             source.QuantityTypeInPacket is null ?

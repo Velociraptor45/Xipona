@@ -804,7 +804,7 @@ public class ShoppingListExchangeServiceTests
                     .WithPredecessorId(OldShoppingListItem.TypeId.Value)
                     .CreateMany(1).ToList();
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithItemTypes(itemTypes).Create();
             }
 
             public void SetupItemMatchingShoppingListWithNewTypes()
@@ -815,7 +815,7 @@ public class ShoppingListExchangeServiceTests
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithItemTypes(itemTypes).Create();
             }
 
             public void SetupShoppingListWithItemWithoutType()

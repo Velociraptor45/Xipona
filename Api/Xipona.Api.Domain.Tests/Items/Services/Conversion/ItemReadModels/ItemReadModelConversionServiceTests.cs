@@ -278,7 +278,7 @@ public class ItemReadModelConversionServiceTests
                     .Create()
             };
             Item = ItemMother.InitialWithTypes()
-                .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
                 .Create();
         }
 
@@ -373,6 +373,7 @@ public class ItemReadModelConversionServiceTests
                 Item.IsDeleted,
                 Item.Comment,
                 Item.IsTemporary,
+                Item.IsFavorite,
                 new QuantityTypeReadModel(Item.ItemQuantity.Type, _memoryCacheMock.Object),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,
@@ -426,6 +427,7 @@ public class ItemReadModelConversionServiceTests
                 Item.IsDeleted,
                 Item.Comment,
                 Item.IsTemporary,
+                Item.IsFavorite,
                 new QuantityTypeReadModel(Item.ItemQuantity.Type, _memoryCacheMock.Object),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,

@@ -47,7 +47,7 @@ public static class ShoppingListSearchBarReducer
         {
             SearchBar = state.SearchBar with
             {
-                Results = action.Results.OrderBy(r => r.Name).ToList()
+                Results = action.Results
             }
         };
     }

@@ -27,6 +27,7 @@ public interface IItem
     DateTimeOffset? UpdatedOn { get; }
     ItemId? PredecessorId { get; }
     DateTimeOffset CreatedAt { get; }
+    bool IsFavorite { get; }
 
     void Delete();
     void MarkAsMerged(ItemId newItemId, ItemTypeId newItemTypeId);
@@ -61,4 +62,6 @@ public interface IItem
     void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 
     void RemoveAvailabilitiesFor(StoreId storeId);
+    void MarkAsFavoriteAsync();
+    void UnmarkAsFavoriteAsync();
 }

@@ -516,4 +516,14 @@ public class ApiClient : IApiClient
             ? []
             : _converters.ToDomain<SearchItemsForMergeResultContract, MergeItemSearchResult>(contracts);
     }
+
+    public async Task MarkItemAsFavoriteAsync(Guid itemId)
+    {
+        await _client.MarkItemAsFavoriteAsync(itemId);
+    }
+    
+    public async Task UnmarkItemAsFavoriteAsync(Guid itemId)
+    {
+        await _client.UnmarkItemAsFavoriteAsync(itemId);
+    }
 }

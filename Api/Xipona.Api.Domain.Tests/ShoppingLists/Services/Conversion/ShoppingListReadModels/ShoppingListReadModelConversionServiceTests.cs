@@ -33,19 +33,23 @@ public class ShoppingListReadModelConversionServiceTests
             manufacturerRepositoryMock.Object,
             ConvertAsyncTestData.MemoryCacheMock.Object);
 
+        var itemsList = items.ToList();
+        var itemCategoriesList = itemCategories.ToList();
+        var manufacturersList = manufacturers.ToList();
+        
+        var itemIds = itemsList.Select(i => i.Id).ToList();
+        var itemCategoryIds = itemCategoriesList.Select(cat => cat.Id).ToList();
+        var manufacturerIds = manufacturersList.Select(m => m.Id).ToList();
+        
         storeRepositoryMock.SetupFindByAsync(store.Id, store);
-        itemRepositoryMock.SetupFindByAsync(items.Select(i => i.Id), items);
-        itemCategoryRepositoryMock.SetupFindByAsync(itemCategories.Select(cat => cat.Id), itemCategories);
-        manufacturerRepositoryMock.SetupFindByAsync(manufacturers.Select(m => m.Id), manufacturers);
-
+        itemRepositoryMock.SetupFindByAsync(itemIds, itemsList);
+        itemCategoryRepositoryMock.SetupFindByAsync(itemCategoryIds, itemCategoriesList);
+        manufacturerRepositoryMock.SetupFindByAsync(manufacturerIds, manufacturersList);
 
         // Act
         var result = await service.ConvertAsync(list);
 
         // Assert
-        using (new AssertionScope())
-        {
-            result.Should().BeEquivalentTo(expected);
-        }
+        result.Should().BeEquivalentTo(expected);
     }
 }

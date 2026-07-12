@@ -43,13 +43,15 @@ public class CreateItemWithTypesConverterTests
                     new ItemTypes(src.ItemTypes.Select(ctx.Mapper.Map<CreateItemTypeContract, IItemType>), new ItemTypeFactory(ItemTypeDateTimeServiceMock.Object)),
                     null,
                     null,
-                    CreatedAt))
+                    CreatedAt,
+                    false))
                 .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(_ => (DateTimeOffset?)null))
                 .ForMember(dest => dest.IsTemporary, opt => opt.MapFrom(_ => false))
                 .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(_ => false))
                 .ForMember(dest => dest.ItemQuantity, opt => opt.Ignore())
                 .ForMember(dest => dest.Availabilities, opt => opt.Ignore())
                 .ForMember(dest => dest.ItemTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.Ignore())
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
@@ -82,13 +84,15 @@ public class CreateItemWithTypesConverterTests
                     new ItemTypes(src.ItemTypes.Select(ctx.Mapper.Map<CreateItemTypeContract, IItemType>), new ItemTypeFactory(ItemTypeDateTimeServiceMock.Object)),
                     null,
                     null,
-                    CreatedAt))
+                    CreatedAt,
+                    false))
                 .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(_ => (DateTimeOffset?)null))
                 .ForMember(dest => dest.IsTemporary, opt => opt.MapFrom(_ => false))
                 .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(_ => false))
                 .ForMember(dest => dest.ItemQuantity, opt => opt.Ignore())
                 .ForMember(dest => dest.Availabilities, opt => opt.Ignore())
                 .ForMember(dest => dest.ItemTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.Ignore())
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
@@ -121,13 +125,15 @@ public class CreateItemWithTypesConverterTests
                     new ItemTypes(src.ItemTypes.Select(ctx.Mapper.Map<CreateItemTypeContract, IItemType>), new ItemTypeFactory(ItemTypeDateTimeServiceMock.Object)),
                     null,
                     null,
-                    CreatedAt))
+                    CreatedAt,
+                    false))
                 .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(_ => (DateTimeOffset?)null))
                 .ForMember(dest => dest.IsTemporary, opt => opt.MapFrom(_ => false))
                 .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(_ => false))
                 .ForMember(dest => dest.ItemQuantity, opt => opt.Ignore())
                 .ForMember(dest => dest.Availabilities, opt => opt.Ignore())
                 .ForMember(dest => dest.ItemTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsFavorite, opt => opt.Ignore())
                 .ForMember(dest => dest.RowVersion, opt => opt.Ignore())
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 

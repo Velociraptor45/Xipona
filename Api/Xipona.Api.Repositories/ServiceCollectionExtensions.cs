@@ -42,6 +42,8 @@ using Xipona.Api.Repositories.Users.Adapters;
 using Xipona.Api.Repositories.Users.Contexts;
 using Xipona.Api.Secrets.Configs;
 using System.Data.Common;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Repositories.Items.Entities;
 using GeneralSetting = Xipona.Api.Repositories.Users.Entities.GeneralSetting;
 using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 using RecipeTag = Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
@@ -134,11 +136,12 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ILogger<ItemRepository>>(),
                 ct);
         });
-        services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
+        services.AddTransient<Func<CancellationToken, IItemReadRepository>>(provider =>
         {
-            var dbContext = provider.GetRequiredService<ItemContext>();
-            var converter = provider.GetRequiredService<IToDomainConverter<Items.Entities.ItemType, IItemType>>();
-            return ct => new ItemTypeReadRepository(dbContext, converter, ct);
+            return ct => new ItemReadRepository(
+                provider.GetRequiredService<ItemContext>(),
+                provider.GetRequiredService<IToDomainConverter<ShoppingListItemViewModel, SearchItemForShoppingResultReadModel>>(),
+                ct);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryRepository>>(provider =>

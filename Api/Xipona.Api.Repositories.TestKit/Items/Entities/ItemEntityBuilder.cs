@@ -1,14 +1,15 @@
-﻿using Xipona.Api.Core.Extensions;
+using System;
+using System.Collections.Generic;
+using Xipona.Api.Core.Extensions;
 using Xipona.Api.Core.TestKit;
 using Xipona.Api.Domain.Items.Models;
 using Xipona.Api.Domain.TestKit.Common;
 using Xipona.Api.Repositories.Items.Entities;
 using Item = Xipona.Api.Repositories.Items.Entities.Item;
-using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
+using ItemType =Xipona.Api.Repositories.Items.Entities.ItemType;
 
 namespace Xipona.Api.Repositories.TestKit.Items.Entities;
-
-public class ItemEntityBuilder : TestBuilder<Item>
+public class ItemEntityBuilder : TestBuilderBase<Item>
 {
     public ItemEntityBuilder()
     {
@@ -17,6 +18,12 @@ public class ItemEntityBuilder : TestBuilder<Item>
         WithoutPredecessor();
         WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
         WithItemTypes(new ItemTypeEntityBuilder().CreateMany(3).ToList());
+    }
+
+    // TCG keep
+    public ItemEntityBuilder WithAvailableAt(AvailableAt availableAt)
+    {
+        return WithAvailableAt(new List<AvailableAt> { availableAt });
     }
 
     public ItemEntityBuilder WithId(Guid id)
@@ -110,6 +117,17 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithCreatedFrom(null);
     }
 
+    public ItemEntityBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
+    {
+        FillPropertyWith(p => p.UpdatedOn, updatedOn);
+        return this;
+    }
+
+    public ItemEntityBuilder WithoutUpdatedOn()
+    {
+        return WithUpdatedOn(null);
+    }
+
     public ItemEntityBuilder WithPredecessorId(Guid? predecessorId)
     {
         FillPropertyWith(p => p.PredecessorId, predecessorId);
@@ -119,6 +137,24 @@ public class ItemEntityBuilder : TestBuilder<Item>
     public ItemEntityBuilder WithoutPredecessorId()
     {
         return WithPredecessorId(null);
+    }
+
+    public ItemEntityBuilder WithCreatedAt(DateTimeOffset createdAt)
+    {
+        FillPropertyWith(p => p.CreatedAt, createdAt);
+        return this;
+    }
+
+    public ItemEntityBuilder WithIsFavorite(bool isFavorite)
+    {
+        FillPropertyWith(p => p.IsFavorite, isFavorite);
+        return this;
+    }
+
+    public ItemEntityBuilder WithRowVersion(uint rowVersion)
+    {
+        FillPropertyWith(p => p.RowVersion, rowVersion);
+        return this;
     }
 
     public ItemEntityBuilder WithPredecessor(Item? predecessor)
@@ -132,9 +168,10 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithPredecessor(null);
     }
 
-    public ItemEntityBuilder WithItemType(ItemType itemType)
+    // tcg keep
+    public ItemEntityBuilder WithItemType(ItemType itemTypes)
     {
-        return WithItemTypes([itemType]);
+        return WithItemTypes([itemTypes]);
     }
 
     public ItemEntityBuilder WithItemTypes(ICollection<ItemType> itemTypes)
@@ -148,12 +185,6 @@ public class ItemEntityBuilder : TestBuilder<Item>
         return WithItemTypes(new List<ItemType>());
     }
 
-    // TCG keep
-    public ItemEntityBuilder WithAvailableAt(AvailableAt availableAt)
-    {
-        return WithAvailableAt(new List<AvailableAt> { availableAt });
-    }
-
     public ItemEntityBuilder WithAvailableAt(ICollection<AvailableAt> availableAt)
     {
         FillPropertyWith(p => p.AvailableAt, availableAt);
@@ -163,22 +194,5 @@ public class ItemEntityBuilder : TestBuilder<Item>
     public ItemEntityBuilder WithEmptyAvailableAt()
     {
         return WithAvailableAt(new List<AvailableAt>());
-    }
-
-    public ItemEntityBuilder WithCreatedAt(DateTimeOffset createdAt)
-    {
-        FillPropertyWith(p => p.CreatedAt, createdAt);
-        return this;
-    }
-
-    public ItemEntityBuilder WithUpdatedOn(DateTimeOffset? updatedOn)
-    {
-        FillPropertyWith(p => p.UpdatedOn, updatedOn);
-        return this;
-    }
-
-    public ItemEntityBuilder WithoutUpdatedOn()
-    {
-        return WithUpdatedOn(null);
     }
 }

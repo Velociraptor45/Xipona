@@ -9,6 +9,7 @@ public record EditedItem(
     bool IsDeleted,
     string Comment,
     bool IsTemporary,
+    bool IsFavorite,
     QuantityType QuantityType,
     float? QuantityInPacket,
     QuantityTypeInPacket? QuantityInPacketType,

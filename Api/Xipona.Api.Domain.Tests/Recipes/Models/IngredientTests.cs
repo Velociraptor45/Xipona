@@ -376,7 +376,7 @@ public class IngredientTests
                 };
 
                 NewItem = ItemMother.InitialWithTypes()
-                    .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                    .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
                     .WithPredecessorId(DefaultItemId.Value)
                     .Create();
             }
@@ -393,7 +393,7 @@ public class IngredientTests
                 };
 
                 NewItem = ItemMother.InitialWithTypes()
-                    .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                    .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
                     .WithPredecessorId(DefaultItemId.Value)
                     .Create();
             }
@@ -552,7 +552,7 @@ public class IngredientTests
                 };
 
                 Item = ItemMother.InitialWithTypes()
-                    .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                    .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
                     .Create();
             }
 

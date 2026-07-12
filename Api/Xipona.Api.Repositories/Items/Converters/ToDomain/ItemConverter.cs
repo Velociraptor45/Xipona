@@ -74,7 +74,8 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                 predecessorId,
                 itemTypes,
                 source.UpdatedOn,
-                source.CreatedAt);
+                source.CreatedAt,
+                source.IsFavorite);
         }
         else
         {
@@ -99,7 +100,8 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                 availabilities,
                 temporaryId,
                 source.UpdatedOn,
-                source.CreatedAt);
+                source.CreatedAt,
+                source.IsFavorite);
         }
 
         item.EnrichWithRowVersion(source.RowVersion);

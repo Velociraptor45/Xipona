@@ -324,7 +324,8 @@ public class ShoppingListSearchBarEffectsTests
                         "",
                         "",
                         "",
-                        _expectedRequestWithoutType.SectionId!.Value));
+                        _expectedRequestWithoutType.SectionId!.Value,
+                        false));
             }
 
             public void SetupActionWithType()
@@ -341,7 +342,8 @@ public class ShoppingListSearchBarEffectsTests
                         "",
                         "",
                         "",
-                        _expectedRequestWithType.SectionId!.Value));
+                        _expectedRequestWithType.SectionId!.Value,
+                        false));
             }
 
             public void SetupAddingItemWithoutType(IQueueComponent component)

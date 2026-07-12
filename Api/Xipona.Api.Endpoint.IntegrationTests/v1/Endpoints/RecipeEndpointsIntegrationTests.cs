@@ -42,6 +42,8 @@ using Xipona.Api.TestTools.Exceptions;
 using Xipona.Api.TestTools.Extensions;
 using System;
 using System.Text.RegularExpressions;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
 using Xunit;
 using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
 using Item = Xipona.Api.Repositories.Items.Entities.Item;
@@ -1032,6 +1034,8 @@ public class RecipeEndpointsIntegrationTests
         {
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();

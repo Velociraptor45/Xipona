@@ -1,5 +1,4 @@
 ﻿using Xipona.Api.Core.TestKit;
-using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.Items.Models;
 using Xipona.Api.Domain.Items.Services.Queries;
@@ -7,18 +6,14 @@ using Xipona.Api.Domain.Items.Services.Searches;
 using Xipona.Api.Domain.Manufacturers.Models;
 using Xipona.Api.Domain.Stores.Models;
 using Xipona.Api.Domain.TestKit.Common;
-using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
 using Xipona.Api.Domain.TestKit.Items.Models;
 using Xipona.Api.Domain.TestKit.Items.Models.Factories;
 using Xipona.Api.Domain.TestKit.Items.Ports;
 using Xipona.Api.Domain.TestKit.Items.Services.Conversion;
-using Xipona.Api.Domain.TestKit.Items.Services.Conversion.ItemSearchReadModels;
 using Xipona.Api.Domain.TestKit.Items.Services.Validation;
 using Xipona.Api.Domain.TestKit.Manufacturers.Models;
 using Xipona.Api.Domain.TestKit.Manufacturers.Ports;
 using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using Xipona.Api.Domain.TestKit.Stores.Ports;
 using Xipona.Api.TestTools.Exceptions;
 
 namespace Xipona.Api.Domain.Tests.Items.Services.Search;
@@ -104,45 +99,13 @@ public class ItemSearchServiceTests
             result.Should().BeEmpty();
         }
 
-        [Fact]
-        public async Task SearchAsync_WithStoreNotFound_ShouldThrowDomainException()
-        {
-            // Arrange
-            _fixture.SetupParameters();
-            _fixture.SetupNotFindingStore();
-            var sut = _fixture.CreateSut();
-
-            // Act
-            Func<Task> func = async () => await sut.SearchForShoppingListAsync(_fixture.Name, _fixture.StoreId);
-
-            // Assert
-            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
-        }
-
         private sealed class SearchForShoppingListAsyncFixture : ItemSearchServiceFixture
         {
-            public string Name { get; private set; } = string.Empty;
             public StoreId StoreId { get; private set; }
-
-            public void SetupName()
-            {
-                Name = new TestBuilder<string>().Create();
-            }
 
             public void SetupStoreId()
             {
                 StoreId = StoreId.New;
-            }
-
-            public void SetupParameters()
-            {
-                SetupName();
-                SetupStoreId();
-            }
-
-            public void SetupNotFindingStore()
-            {
-                StoreRepositoryMock.SetupFindActiveByAsync(StoreId, null);
             }
         }
     }
@@ -372,7 +335,7 @@ public class ItemSearchServiceTests
             {
                 _foundItemWithTypes = ItemMother
                     .InitialWithTypes()
-                    .WithTypes(new ItemTypes(
+                    .WithItemTypes(new ItemTypes(
                         new ItemTypeBuilder().WithIsDeleted(true).CreateMany(2),
                         ItemTypeFactoryMock.Object))
                     .Create();
@@ -551,12 +514,8 @@ public class ItemSearchServiceTests
     private abstract class ItemSearchServiceFixture
     {
         protected readonly ItemRepositoryMock ItemRepositoryMock = new(MockBehavior.Strict);
+        protected readonly ItemReadRepositoryMock ItemReadRepositoryMock = new(MockBehavior.Strict);
         protected readonly ManufacturerRepositoryMock ManufacturerRepositoryMock = new(MockBehavior.Strict);
-        protected readonly ShoppingListRepositoryMock ShoppingListRepositoryMock = new(MockBehavior.Strict);
-        protected readonly StoreRepositoryMock StoreRepositoryMock = new(MockBehavior.Strict);
-        protected readonly ItemTypeReadRepositoryMock ItemTypeReadRepositoryMock = new(MockBehavior.Strict);
-        protected readonly ItemCategoryRepositoryMock ItemCategoryRepositoryMock = new(MockBehavior.Strict);
-        protected readonly ItemSearchReadModelConversionServiceMock ConversionServiceMock = new(MockBehavior.Strict);
         protected readonly ItemTypeFactoryMock ItemTypeFactoryMock = new(MockBehavior.Strict);
         protected readonly ItemAvailabilityReadModelConversionServiceMock AvailabilityConversionServiceMock = new(MockBehavior.Strict);
         protected readonly ValidatorMock ValidatorMock = new(MockBehavior.Strict);
@@ -565,12 +524,8 @@ public class ItemSearchServiceTests
         {
             return new ItemSearchService(
                 ItemRepositoryMock.Object,
+                ItemReadRepositoryMock.Object,
                 ManufacturerRepositoryMock.Object,
-                ShoppingListRepositoryMock.Object,
-                StoreRepositoryMock.Object,
-                ItemTypeReadRepositoryMock.Object,
-                ItemCategoryRepositoryMock.Object,
-                ConversionServiceMock.Object,
                 ValidatorMock.Object,
                 AvailabilityConversionServiceMock.Object);
         }

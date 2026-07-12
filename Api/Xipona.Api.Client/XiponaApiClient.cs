@@ -360,6 +360,18 @@ namespace Xipona.Api.Client
                 quantityTypeInPacket, excludedItemIds, cancellationToken);
         }
 
+        /// <inheritdoc/>
+        public async Task MarkItemAsFavoriteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.MarkItemAsFavoriteAsync(id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task UnmarkItemAsFavoriteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.UnmarkItemAsFavoriteAsync(id, cancellationToken);
+        }
+
         #endregion Item
 
         #region Store

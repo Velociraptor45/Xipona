@@ -45,7 +45,8 @@ public class ItemConverterTests
                         new ItemTypes(src.ItemTypes.Select(ctx.Mapper.Map<ItemType, IItemType>), new ItemTypeFactory(ItemTypeDateTimeServiceMock.Object)),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value),
-                        src.CreatedAt));
+                        src.CreatedAt,
+                        src.IsFavorite));
         }
 
         protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -92,7 +93,8 @@ public class ItemConverterTests
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value),
-                        src.CreatedAt));
+                        src.CreatedAt,
+                        src.IsFavorite));
         }
 
         protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -133,7 +135,8 @@ public class ItemConverterTests
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value),
-                        src.CreatedAt));
+                        src.CreatedAt,
+                        src.IsFavorite));
         }
 
         protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -174,7 +177,8 @@ public class ItemConverterTests
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value),
-                        src.CreatedAt));
+                        src.CreatedAt,
+                        src.IsFavorite));
         }
 
         protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -215,7 +219,8 @@ public class ItemConverterTests
                         null,
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value),
-                        src.CreatedAt));
+                        src.CreatedAt,
+                        src.IsFavorite));
         }
 
         protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)
@@ -258,7 +263,8 @@ public class ItemConverterTests
                         new TemporaryItemId(src.CreatedFrom!.Value),
                         src.UpdatedOn,
                         new ItemId(src.PredecessorId!.Value),
-                        src.CreatedAt));
+                        src.CreatedAt,
+                        src.IsFavorite));
         }
 
         protected override void AddAdditionalMapping(IMapperConfigurationExpression cfg)

@@ -7,7 +7,7 @@ namespace Xipona.Api.Domain.Items.Services.Queries;
 
 public class ItemReadModel
 {
-    public ItemReadModel(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
+    public ItemReadModel(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary, bool isFavorite,
         QuantityTypeReadModel quantityType, Quantity? quantityInPacket, QuantityTypeInPacketReadModel? quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         IEnumerable<ItemAvailabilityReadModel> availabilities, IEnumerable<ItemTypeReadModel> itemTypes)
@@ -17,6 +17,7 @@ public class ItemReadModel
         IsDeleted = isDeleted;
         Comment = comment;
         IsTemporary = isTemporary;
+        IsFavorite = isFavorite;
         QuantityType = quantityType;
         QuantityInPacket = quantityInPacket;
         QuantityTypeInPacket = quantityTypeInPacket;
@@ -31,6 +32,7 @@ public class ItemReadModel
     public bool IsDeleted { get; }
     public Comment Comment { get; }
     public bool IsTemporary { get; }
+    public bool IsFavorite { get; }
     public QuantityTypeReadModel QuantityType { get; }
     public Quantity? QuantityInPacket { get; }
     public QuantityTypeInPacketReadModel? QuantityTypeInPacket { get; }

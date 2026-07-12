@@ -1,8 +1,12 @@
 ﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Models;
 using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Stores.Models;
 using Xipona.Api.Repositories.Common.Transactions;
 
 namespace Xipona.Api.ApplicationServices.Items.Commands;
+
+public record UpdateItemPriceCommand(ItemId ItemId, ItemTypeId? ItemTypeId, StoreId StoreId, Price Price) : ICommand<bool>;
 
 public class UpdateItemPriceCommandHandler : ICommandHandler<UpdateItemPriceCommand, bool>
 {

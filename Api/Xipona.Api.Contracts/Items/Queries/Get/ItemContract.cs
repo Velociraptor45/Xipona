@@ -17,6 +17,7 @@ namespace Xipona.Api.Contracts.Items.Queries.Get
         /// <param name="isDeleted"></param>
         /// <param name="comment"></param>
         /// <param name="isTemporary"></param>
+        /// <param name="isFavorite"></param>
         /// <param name="quantityType"></param>
         /// <param name="quantityInPacket"></param>
         /// <param name="quantityTypeInPacket"></param>
@@ -25,7 +26,7 @@ namespace Xipona.Api.Contracts.Items.Queries.Get
         /// <param name="availabilities"></param>
         /// <param name="itemTypes"></param>
         public ItemContract(Guid id, string name, bool isDeleted, string comment, bool isTemporary,
-            QuantityTypeContract quantityType, float? quantityInPacket,
+            bool isFavorite, QuantityTypeContract quantityType, float? quantityInPacket,
             QuantityTypeInPacketContract quantityTypeInPacket, ItemCategoryContract itemCategory,
             ManufacturerContract manufacturer, IEnumerable<ItemAvailabilityContract> availabilities,
             IEnumerable<ItemTypeContract> itemTypes)
@@ -35,6 +36,7 @@ namespace Xipona.Api.Contracts.Items.Queries.Get
             IsDeleted = isDeleted;
             Comment = comment;
             IsTemporary = isTemporary;
+            IsFavorite = isFavorite;
             QuantityType = quantityType;
             QuantityInPacket = quantityInPacket;
             QuantityTypeInPacket = quantityTypeInPacket;
@@ -68,6 +70,11 @@ namespace Xipona.Api.Contracts.Items.Queries.Get
         /// Whether the item is temporary. True if the item is temporary, otherwise false.
         /// </summary>
         public bool IsTemporary { get; }
+
+        /// <summary>
+        /// Whether the item is favorite. True if the item is favorite, otherwise false.
+        /// </summary>
+        public bool IsFavorite { get; }
 
         /// <summary>
         /// The quantity type of the item.

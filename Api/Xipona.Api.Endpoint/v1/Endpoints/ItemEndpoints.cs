@@ -11,9 +11,11 @@ using Xipona.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.DeleteItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ItemUpdateWithTypes;
 using Xipona.Api.ApplicationServices.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.ApplicationServices.Items.Commands.MarkItemAsFavorite;
 using Xipona.Api.ApplicationServices.Items.Commands.MergeItems;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItem;
 using Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
+using Xipona.Api.ApplicationServices.Items.Commands.UnmarkItemAsFavorite;
 using Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 using Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
 using Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypesInPacket;
@@ -83,7 +85,9 @@ public static class ItemEndpoints
             .RegisterMakeTemporaryItemPermanent()
             .RegisterDeleteItem()
             .RegisterMergeItems()
-            .RegisterSearchItemsForMerge();
+            .RegisterSearchItemsForMerge()
+            .RegisterMarkItemAsFavorite()
+            .RegisterUnmarkItemAsFavorite();
     }
 
     private static IEndpointRouteBuilder RegisterGetItemById(this IEndpointRouteBuilder builder)
@@ -852,6 +856,74 @@ public static class ItemEndpoints
         catch (DomainException e)
         {
             var errorContract = errorContractConverter.ToContract(e.Reason);
+            return Results.UnprocessableEntity(errorContract);
+        }
+    }
+
+    private static IEndpointRouteBuilder RegisterMarkItemAsFavorite(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost($"/{_routeBase}/{{id:guid}}/favorite", MarkItemAsFavorite)
+            .WithName("MarkItemAsFavorite")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> MarkItemAsFavorite(
+        [FromRoute] Guid id,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = new MarkItemAsFavoriteCommand(new ItemId(id));
+            await commandDispatcher.DispatchAsync(command, cancellationToken);
+            return Results.NoContent();
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return Results.NotFound(errorContract);
+
+            return Results.UnprocessableEntity(errorContract);
+        }
+    }
+
+    private static IEndpointRouteBuilder RegisterUnmarkItemAsFavorite(this IEndpointRouteBuilder builder)
+    {
+        builder.MapPost($"/{_routeBase}/{{id:guid}}/un-favorite", UnmarkItemAsFavorite)
+            .WithName("UnmarkItemAsFavorite")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ErrorContract>(StatusCodes.Status404NotFound)
+            .Produces<ErrorContract>(StatusCodes.Status422UnprocessableEntity)
+            .RequireAuthorization("User");
+
+        return builder;
+    }
+
+    internal static async Task<IResult> UnmarkItemAsFavorite(
+        [FromRoute] Guid id,
+        [FromServices] ICommandDispatcher commandDispatcher,
+        [FromServices] IToContractConverter<IReason, ErrorContract> errorContractConverter,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = new UnmarkItemAsFavoriteCommand(new ItemId(id));
+            await commandDispatcher.DispatchAsync(command, cancellationToken);
+            return Results.NoContent();
+        }
+        catch (DomainException e)
+        {
+            var errorContract = errorContractConverter.ToContract(e.Reason);
+            if (e.Reason.ErrorCode == ErrorReasonCode.ItemNotFound)
+                return Results.NotFound(errorContract);
+
             return Results.UnprocessableEntity(errorContract);
         }
     }
