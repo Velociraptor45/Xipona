@@ -18,6 +18,7 @@ public class SearchItemForShoppingListResultConverter :
             contract.PriceLabel,
             contract.ItemCategoryName,
             contract.ManufacturerName,
-            contract.DefaultSection.Id);
+            contract.DefaultSection.Id,
+            contract.IsFavorite);
     }
 }

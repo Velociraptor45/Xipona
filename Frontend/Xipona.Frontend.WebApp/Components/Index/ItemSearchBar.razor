@@ -13,19 +13,27 @@
 
 <div class="d-flex">
     <Select Class="mr-1 cursor-text"
-        Placeholder="Search for item"
-        ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
-        LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
-        DataSource="State.Value.SearchBar.Results"
-        TItem="SearchItemForShoppingListResult"
-        TItemValue="string"
-        OnSelectedItemChanged="OnSearchItemSelectedAsync"
-        EnableSearch
-        Value="State.Value.SearchBar.Input"
-        Disabled="@(!SharedState.Value.IsOnline)"
-        OnSearch="OnSearchInputChanged">
+            Placeholder="Search for item"
+            ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
+            DataSource="State.Value.SearchBar.Results"
+            TItem="SearchItemForShoppingListResult"
+            TItemValue="string"
+            OnSelectedItemChanged="OnSearchItemSelectedAsync"
+            EnableSearch
+            Value="State.Value.SearchBar.Input"
+            Disabled="@(!SharedState.Value.IsOnline)"
+            OnSearch="OnSearchInputChanged">
+        <ItemTemplate>
+            <span>
+                @if(context.IsFavorite)
+                {
+                    <i class="bi bi-star-fill mr-1"></i>
+                }
+                @(context.DisplayValue)
+            </span>
+        </ItemTemplate>
     </Select>
-    <Dropdown Placement="Placement.BottomRight" Trigger="@(new[] { Trigger.Click })">
+    <Dropdown Placement="Placement.BottomRight" Trigger="@([Trigger.Click])">
         <Overlay>
             <Menu Selectable="false">
                 <MenuItem Class="d-flex" OnClick="OnOpenTempItemCreatorButtonClicked">

@@ -8,7 +8,7 @@ public class SearchItemForShoppingListResult
 
     public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, decimal price,
         int defaultQuantity, string priceLabel, string itemCategoryName, string manufacturerName,
-        Guid defaultSectionId)
+        Guid defaultSectionId, bool isFavorite)
     {
         ItemId = itemId;
         ItemTypeId = itemTypeId;
@@ -19,6 +19,7 @@ public class SearchItemForShoppingListResult
         ItemCategoryName = itemCategoryName;
         ManufacturerName = manufacturerName;
         DefaultSectionId = defaultSectionId;
+        IsFavorite = isFavorite;
     }
 
     public Guid ItemId { get; set; }
@@ -30,6 +31,7 @@ public class SearchItemForShoppingListResult
     public string ItemCategoryName { get; }
     public string ManufacturerName { get; }
     public Guid DefaultSectionId { get; }
+    public bool IsFavorite { get; }
 
     public string DisplayValue
     {
