@@ -4,9 +4,9 @@ namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class StoreEntityMother
 {
-    public static StoreEntityBuilder Active()
+    public static StoreEntityBuilder Active(StoreEntityGodmother? godmother = null)
     {
-        return new StoreEntityBuilder()
+        return (godmother ?? new StoreEntityGodmother()).GetFoundation()
             .WithDeleted(false);
     }
 
@@ -93,25 +93,5 @@ public static class StoreEntityMother
     {
         return Initial()
             .WithDeleted(true);
-    }
-}
-
-public class StoreEntityMother2
-{
-    private readonly StoreEntityGodmother _grandmother = new();
-
-    public StoreEntityMother2()
-    {
-    }
-    
-    public StoreEntityMother2(StoreEntityGodmother grandmother)
-    {
-        _grandmother = grandmother;
-    }
-    
-    public StoreEntityBuilder Active()
-    {
-        return _grandmother.GetFoundation()
-            .WithDeleted(false);
     }
 }

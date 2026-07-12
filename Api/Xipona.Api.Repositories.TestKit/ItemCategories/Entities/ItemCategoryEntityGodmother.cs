@@ -12,7 +12,7 @@ public class ItemCategoryEntityGodmother
         return this;
     }
 
-    public ItemCategoryEntityBuilder GetBasics()
+    public ItemCategoryEntityBuilder GetFoundation()
     {
         if (_item?.ItemCategoryId is null)
             return new ItemCategoryEntityBuilder();

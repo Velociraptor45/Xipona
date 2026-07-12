@@ -2,9 +2,9 @@
 
 public static class ManufacturerEntityMother
 {
-    public static ManufacturerEntityBuilder Active()
+    public static ManufacturerEntityBuilder Active(ManufacturerEntityGodmother? godmother = null)
     {
-        return new ManufacturerEntityBuilder()
+        return (godmother ?? new ManufacturerEntityGodmother()).GetFoundation()
             .WithDeleted(false);
     }
 }

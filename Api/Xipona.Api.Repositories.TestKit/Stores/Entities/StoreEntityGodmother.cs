@@ -1,13 +1,15 @@
 using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
 using Xipona.Api.Repositories.Stores.Entities;
 
 namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public class StoreEntityGodmother
 {
-    private static Random _rnd = new();
+    private static readonly Random _rnd = new();
     private AvailableAt[]? _availableAts;
     private ItemTypeAvailableAt[]? _itemTypeAvailableAts;
+    private ShoppingList? _shoppingList;
 
     public StoreEntityGodmother For(params AvailableAt[] availableAts)
     {
@@ -29,6 +31,12 @@ public class StoreEntityGodmother
         return this;
     }
 
+    public StoreEntityGodmother For(ShoppingList shoppingList)
+    {
+        _shoppingList = shoppingList;
+        return this;
+    }
+
     public StoreEntityBuilder GetFoundation()
     {
         if (_availableAts is not null)
@@ -42,6 +50,12 @@ public class StoreEntityGodmother
             return new StoreEntityBuilder()
                 .WithId(_itemTypeAvailableAts[0].StoreId)
                 .WithSections(CreateSections(_itemTypeAvailableAts.Select(ita => ita.DefaultSectionId)));
+        }
+        if (_shoppingList is not null)
+        {
+            return new StoreEntityBuilder()
+                .WithId(_shoppingList.Id)
+                .WithSections(CreateSections(_shoppingList.ItemsOnList.Select(i => i.SectionId)));
         }
 
         return new StoreEntityBuilder();

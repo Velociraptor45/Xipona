@@ -18,6 +18,11 @@ public static class ItemEntityMother
             .WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
     }
 
+    public static ItemEntityBuilder Deleted()
+    {
+        return Initial().WithDeleted(true);
+    }
+
     public static ItemEntityBuilder InitialForStore(Guid storeId)
     {
         return InitialForStore(storeId, Guid.NewGuid());

@@ -2,29 +2,9 @@
 
 public static class ItemCategoryEntityMother
 {
-    public static ItemCategoryEntityBuilder Active()
+    public static ItemCategoryEntityBuilder Active(ItemCategoryEntityGodmother? godmother = null)
     {
-        return new ItemCategoryEntityBuilder()
-            .WithDeleted(false);
-    }
-}
-
-public class ItemCategoryEntityMother2
-{
-    private readonly ItemCategoryEntityGodmother _grandmother = new();
-
-    public ItemCategoryEntityMother2()
-    {
-    }
-
-    public ItemCategoryEntityMother2(ItemCategoryEntityGodmother grandmother)
-    {
-        _grandmother = grandmother;
-    }
-    
-    public ItemCategoryEntityBuilder Active()
-    {
-        return _grandmother.GetBasics()
+        return (godmother ?? new ItemCategoryEntityGodmother()).GetFoundation()
             .WithDeleted(false);
     }
 }
