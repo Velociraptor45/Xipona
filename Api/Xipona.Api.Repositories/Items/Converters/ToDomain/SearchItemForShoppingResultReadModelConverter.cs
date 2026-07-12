@@ -34,7 +34,8 @@ public class SearchItemForShoppingResultReadModelConverter(IMemoryCache cache)
                 : new ManufacturerReadModel(new ManufacturerId(source.ManufacturerId.Value), new ManufacturerName(source.ManufacturerName), false),
             new ItemCategoryReadModel(new ItemCategoryId(source.ItemCategoryId), new ItemCategoryName(source.ItemCategoryName), false),
             new SectionReadModel(new SectionId(source.DefaultSectionId), new SectionName(source.SectionName), 
-                source.SectionSortingIndex, source.SectionIsDefaultSection)
+                source.SectionSortingIndex, source.SectionIsDefaultSection),
+            source.ItemIsFavorite
         );
     }
 }

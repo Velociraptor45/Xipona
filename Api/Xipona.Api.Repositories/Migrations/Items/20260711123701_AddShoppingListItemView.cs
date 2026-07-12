@@ -37,7 +37,8 @@ namespace Xipona.Api.Repositories.Migrations.Items
                 LEFT JOIN ""Sections"" s ON av.""DefaultSectionId"" = s.""Id"" OR itav.""DefaultSectionId"" = s.""Id""
                 LEFT JOIN ""ShoppingLists"" sl ON (av.""StoreId"" = sl.""StoreId"" OR itav.""StoreId"" = sl.""StoreId"") AND sl.""CompletionDate"" is null
                 LEFT JOIN ""ItemsOnLists"" iol ON sl.""Id"" = iol.""ShoppingListId"" AND i.""Id"" = iol.""ItemId"" AND (it.""Id"" = iol.""ItemTypeId"" OR COALESCE(it.""Id"", iol.""ItemTypeId"") is null)
-                Where i.""Deleted"" = false AND i.""IsTemporary"" = false AND iol.""Id"" IS NULL;");
+                Where i.""Deleted"" = false AND i.""IsTemporary"" = false AND iol.""Id"" IS NULL
+                ORDER BY ""ItemIsFavorite"" DESC, ""ItemName"" ASC;");
         }
 
         /// <inheritdoc />

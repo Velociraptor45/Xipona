@@ -19,9 +19,10 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists
         /// <param name="itemCategoryName"></param>
         /// <param name="manufacturerName"></param>
         /// <param name="defaultSection"></param>
+        /// <param name="isFavorite"></param>
         public SearchItemForShoppingListResultContract(Guid id, Guid? typeId, string name, int defaultQuantity,
             decimal price, string priceLabel, string itemCategoryName, string manufacturerName,
-            SectionContract defaultSection)
+            SectionContract defaultSection, bool isFavorite)
         {
             Id = id;
             TypeId = typeId;
@@ -32,6 +33,7 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists
             ItemCategoryName = itemCategoryName;
             ManufacturerName = manufacturerName;
             DefaultSection = defaultSection;
+            IsFavorite = isFavorite;
         }
 
         /// <summary>
@@ -78,5 +80,10 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists
         /// The store's section where the item or item type is normally located.
         /// </summary>
         public SectionContract DefaultSection { get; }
+
+        /// <summary>
+        /// Wheather the item is marked as a favorite or not.
+        /// </summary>
+        public bool IsFavorite { get; }
     }
 }

@@ -760,6 +760,31 @@ public class ItemEndpointsIntegrationTests
         }
 
         [Fact]
+        public async Task SearchItemsForShoppingListAsync_WithFavoriteItem_ShouldReturnFavoriteItemFirst()
+        {
+            // Arrange
+            _fixture.SetupStore();
+            _fixture.SetupFavoriteItem();
+            _fixture.SetupEmptyShoppingList();
+            _fixture.SetupExpectedResultForFavoriteItem();
+            await _fixture.SetupDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
+
+            var okResult = (Ok<List<SearchItemForShoppingListResultContract>>)result;
+            okResult.Value.Should().NotBeNull();
+            okResult.Value.Should().BeAssignableTo<IEnumerable<SearchItemForShoppingListResultContract>>();
+
+            var contract = okResult.Value!.ToList();
+            contract.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.WithStrictOrdering());
+        }
+
+        [Fact]
         public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_WithFindingViaCategoryName_ShouldReturnEmptyList()
         {
             // Arrange
@@ -962,6 +987,35 @@ public class ItemEndpointsIntegrationTests
                 _itemCategories.Add(category);
             }
 
+            public void SetupFavoriteItem()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                var category = new ItemCategoryEntityBuilder()
+                    .WithName(SearchInput)
+                    .WithDeleted(false)
+                    .Create();
+                var availability = new AvailableAtEntityBuilder()
+                    .WithStoreId(StoreId)
+                    .WithDefaultSectionId(_store.Sections.First().Id)
+                    .Create();
+                var item = ItemEntityMother.Initial()
+                    .WithName("Item" + SearchInput)
+                    .WithAvailableAt([availability])
+                    .WithIsFavorite(false)
+                    .WithItemCategoryId(category.Id)
+                    .Create();
+                var favoriteItem = ItemEntityMother.Initial()
+                    .WithName("Item favorite " + SearchInput)
+                    .WithAvailableAt([availability.DeepClone()])
+                    .WithIsFavorite(true)
+                    .WithItemCategoryId(category.Id)
+                    .Create();
+                _items.Add(item);
+                _items.Add(favoriteItem);
+                _itemCategories.Add(category);
+            }
+
             public void SetupItemAlreadyOnShoppingListWithFindingViaItemCategory()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
@@ -1038,7 +1092,43 @@ public class ItemEndpointsIntegrationTests
                         _itemCategories.First().Name,
                         "",
                         new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
-                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection))
+                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
+                        item.IsFavorite)
+                ];
+            }
+
+            public void SetupExpectedResultForFavoriteItem()
+            {
+                var favoriteItem = _items.Last();
+                var item = _items.First();
+                var quantityTypeFavorite = favoriteItem.QuantityType.ToEnum<QuantityType>();
+                var quantityType = item.QuantityType.ToEnum<QuantityType>();
+                ExpectedResult =
+                [
+                    new SearchItemForShoppingListResultContract(
+                        favoriteItem.Id,
+                        null,
+                        favoriteItem.Name,
+                        quantityTypeFavorite.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        favoriteItem.AvailableAt.First(av => av.StoreId == StoreId).Price,
+                        CachedCurrencySymbol + quantityTypeFavorite.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        _itemCategories.First().Name,
+                        "",
+                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
+                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
+                        favoriteItem.IsFavorite),
+                    new SearchItemForShoppingListResultContract(
+                        item.Id,
+                        null,
+                        item.Name,
+                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                        item.AvailableAt.First(av => av.StoreId == StoreId).Price,
+                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                        _itemCategories.First().Name,
+                        "",
+                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
+                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
+                        item.IsFavorite)
                 ];
             }
 
@@ -1060,7 +1150,8 @@ public class ItemEndpointsIntegrationTests
                         CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
                         _itemCategories.First().Name,
                         "",
-                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
+                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
+                        item.IsFavorite)
                     ];
             }
 
@@ -1082,7 +1173,8 @@ public class ItemEndpointsIntegrationTests
                         CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
                         _itemCategories.First().Name,
                         "",
-                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection))
+                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
+                        item.IsFavorite)
                     ];
             }
 
