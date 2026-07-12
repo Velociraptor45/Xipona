@@ -18,6 +18,7 @@ using Xipona.Api.Repositories.Manufacturers.Contexts;
 using Xipona.Api.TestTools.Exceptions;
 using System;
 using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
 using Xipona.Api.Repositories.Stores.Contexts;
 using Xunit;
 using Item = Xipona.Api.Repositories.Items.Entities.Item;
@@ -184,6 +185,7 @@ public class ManufacturerEndpointsIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 

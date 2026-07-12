@@ -15,6 +15,7 @@ using Xipona.Api.Repositories.Items.Contexts;
 using Xipona.Api.Repositories.Manufacturers.Contexts;
 using Xipona.Api.Repositories.Recipes.Contexts;
 using Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
 using Xipona.Api.Repositories.Stores.Contexts;
 using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
 using Xipona.Api.Repositories.TestKit.Recipes.Entities;
@@ -150,6 +151,7 @@ public class ItemCategoryEndpointsIntegrationTests
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
