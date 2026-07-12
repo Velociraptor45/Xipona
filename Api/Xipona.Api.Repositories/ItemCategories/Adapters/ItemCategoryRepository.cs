@@ -39,7 +39,7 @@ public class ItemCategoryRepository : IItemCategoryRepository
         int? limit)
     {
         var query = _dbContext.ItemCategories.AsNoTracking()
-            .Where(category => category.Name.Contains(searchInput));
+            .Where(category => EF.Functions.ILike(category.Name, $"%{searchInput}%"));
 
         if (!includeDeleted)
             query = query.Where(category => !category.Deleted);

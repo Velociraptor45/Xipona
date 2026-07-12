@@ -20,7 +20,7 @@ public class ItemReadRepository(
     {
         var query = dbContext.ShoppingListItems
             .Where(item =>
-                (item.ItemName.Contains(searchInput) || item.ItemCategoryName.Contains(searchInput))
+                (EF.Functions.ILike(item.ItemName, $"%{searchInput}%")|| EF.Functions.ILike(item.ItemCategoryName, $"%{searchInput}%"))
                 && item.StoreId == storeId.Value);
         
         if (limit.HasValue)

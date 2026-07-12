@@ -34,7 +34,7 @@ public class ManufacturerRepository : IManufacturerRepository
     public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, bool includeDeleted)
     {
         var query = _dbContext.Manufacturers.AsNoTracking()
-            .Where(manufacturer => manufacturer.Name.Contains(searchInput));
+            .Where(manufacturer => EF.Functions.ILike(manufacturer.Name, $"%{searchInput}%"));
 
         if (!includeDeleted)
             query = query.Where(manufacturer => !manufacturer.Deleted);
