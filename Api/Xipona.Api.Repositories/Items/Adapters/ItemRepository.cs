@@ -110,27 +110,6 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
-        IEnumerable<ItemId> excludedItemIds, int? limit)
-    {
-        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
-        var query = GetItemQuery()
-            .Where(item =>
-                !item.Deleted
-                && !item.IsTemporary
-                && !excludedRawItemIds.Contains(item.Id)
-                && item.Name.Contains(searchInput)
-                && (item.AvailableAt.Any(map => map.StoreId == storeId)
-                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))));
-
-        if (limit.HasValue)
-            query = query.Take(limit.Value);
-
-        var entities = await query.ToListAsync(_cancellationToken);
-
-        return _toModelConverter.ToDomain(entities);
-    }
-
     public async Task<IEnumerable<IItem>> FindActiveByAsync(StoreId storeId)
     {
         var entities = await GetItemQuery()
@@ -161,7 +140,7 @@ public class ItemRepository : IItemRepository
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
-                && item.Name.Contains(searchInput))
+                && EF.Functions.ILike(item.Name, $"%{searchInput}%"))
             .OrderBy(item => item.Name)
             .ThenBy(item => item.Id)
             .Skip((page - 1) * pageSize)
@@ -261,7 +240,7 @@ public class ItemRepository : IItemRepository
             .CountAsync(item =>
                     !item.Deleted
                     && !item.IsTemporary
-                    && item.Name.Contains(searchInput),
+                    && EF.Functions.ILike(item.Name, $"%{searchInput}%"),
                 _cancellationToken);
 
         return count;

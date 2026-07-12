@@ -45,7 +45,7 @@ public class RecipeRepository : IRecipeRepository
     public async Task<IEnumerable<RecipeSearchResult>> SearchByAsync(string searchInput)
     {
         var entities = await _dbContext.Recipes.AsNoTracking()
-            .Where(r => r.Name.Contains(searchInput))
+            .Where(r => EF.Functions.ILike(r.Name, $"%{searchInput}%"))
             .ToListAsync(_cancellationToken);
 
         return _searchToModelConverter.ToDomain(entities);
