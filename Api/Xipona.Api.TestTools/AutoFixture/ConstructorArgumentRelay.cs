@@ -20,7 +20,7 @@ public class ConstructorArgumentRelay<TTarget, TValueType> : ISpecimenBuilder
         ParameterInfo? parameter = request as ParameterInfo;
         if (parameter == null)
             return new NoSpecimen();
-        if (parameter.Member.DeclaringType != typeof(TTarget) ||
+        if (parameter.Member.ReflectedType != typeof(TTarget) ||
             parameter.Member.MemberType != MemberTypes.Constructor ||
             parameter.ParameterType != typeof(TValueType) ||
             parameter.Name != ParamName)

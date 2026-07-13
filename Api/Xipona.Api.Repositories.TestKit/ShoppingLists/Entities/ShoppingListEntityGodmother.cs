@@ -58,6 +58,7 @@ public class ShoppingListEntityGodmother
             .ToList();
         return new ShoppingListEntityBuilder()
             .WithItemsOnList(items.Union(itemTypes).ToArray())
-            .WithStoreId(storeId);
+            .WithStoreId(storeId)
+            .WithEmptyDiscounts();
     }
 }

@@ -1385,13 +1385,8 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupExpectedResult()
             {
-                var manufacturer = new ManufacturerContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
-
-                var itemCategory = new ItemCategoryContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
+                var manufacturer = new ManufacturerContractBuilder().WithIsDeleted(false).Create();
+                var itemCategory = new ItemCategoryContractBuilder().WithIsDeleted(false).Create();
 
                 Contracts.Items.Queries.Get.ItemAvailabilityContract[] availabilities =
                 [
@@ -1604,13 +1599,8 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupExpectedResult()
             {
-                var manufacturer = new ManufacturerContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
-
-                var itemCategory = new ItemCategoryContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
+                var manufacturer = new ManufacturerContractBuilder().WithIsDeleted(false).Create();
+                var itemCategory = new ItemCategoryContractBuilder().WithIsDeleted(false).Create();
 
                 ItemTypeContract[] itemTypes =
                 [
@@ -1838,10 +1828,7 @@ public class ItemEndpointsIntegrationTests
             public void SetupExistingItem()
             {
                 _existingAvailability = new AvailableAtEntityBuilder().Create();
-                ExistingItem = ItemEntityMother
-                    .Initial()
-                    .WithAvailableAt(_existingAvailability)
-                    .Create();
+                ExistingItem = ItemEntityMother.Initial().WithAvailableAt(_existingAvailability).Create();
             }
 
             public void SetupExpectedItem()
@@ -1898,12 +1885,14 @@ public class ItemEndpointsIntegrationTests
                     ExpectedItem.QuantityTypeInPacket,
                     ExpectedItem.ItemCategoryId!.Value,
                     ExpectedItem.ManufacturerId,
-                    [new ItemAvailabilityContract
-                    {
-                        StoreId = _expectedAvailability.StoreId,
-                        DefaultSectionId = _expectedAvailability.DefaultSectionId,
-                        Price = _expectedAvailability.Price
-                    }]);
+                    [
+                        new ItemAvailabilityContract
+                        {
+                            StoreId = _expectedAvailability.StoreId,
+                            DefaultSectionId = _expectedAvailability.DefaultSectionId,
+                            Price = _expectedAvailability.Price
+                        }
+                    ]);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -2475,7 +2464,7 @@ public class ItemEndpointsIntegrationTests
             newItem.Should().NotBeNull();
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "UpdatedOn").ExcludeRowVersion().WithCreatedAtPrecision());
-            oldItem!.UpdatedOn.Should().NotBeNull();
+            oldItem.UpdatedOn.Should().NotBeNull();
             oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeRowVersion().WithCreatedAtPrecision());
@@ -2807,19 +2796,11 @@ public class ItemEndpointsIntegrationTests
             public void SetupShoppingListWithDiscountedItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingItem);
-                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 var id = Guid.NewGuid();
-                _shoppingList = ShoppingListEntityMother.Empty()
+                _shoppingList = ShoppingListEntityMother
+                    .ActiveWithoutDiscounts(new ShoppingListEntityGodmother().For(_existingItem))
                     .WithId(id)
-                    .WithStoreId(Contract.StoreId)
-                    .WithItemsOnList([
-                        new ItemsOnListEntityBuilder()
-                            .WithShoppingListId(id)
-                            .WithItemId(_existingItem.Id)
-                            .WithItemTypeId(null)
-                            .WithSectionId(_existingItem.AvailableAt.First().DefaultSectionId)
-                            .Create()])
                     .WithDiscounts([
                         new DiscountEntityBuilder()
                             .WithItemId(_existingItem.Id)
@@ -2831,19 +2812,11 @@ public class ItemEndpointsIntegrationTests
             public void SetupShoppingListWithDiscountedItemType()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingItem);
-                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 var id = Guid.NewGuid();
-                _shoppingList = ShoppingListEntityMother.Empty()
+                _shoppingList = ShoppingListEntityMother
+                    .ActiveWithoutDiscounts(new ShoppingListEntityGodmother().For((_existingItem.Id, _existingItem.ItemTypes.First())))
                     .WithId(id)
-                    .WithStoreId(Contract.StoreId)
-                    .WithItemsOnList([
-                        new ItemsOnListEntityBuilder()
-                            .WithShoppingListId(id)
-                            .WithItemId(_existingItem.Id)
-                            .WithItemTypeId(_existingItem.ItemTypes.First().Id)
-                            .WithSectionId(_existingItem.ItemTypes.First().AvailableAt.First().DefaultSectionId)
-                            .Create()])
                     .WithDiscounts([
                         new DiscountEntityBuilder()
                             .WithItemId(_existingItem.Id)
@@ -2854,14 +2827,13 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupStore()
             {
-                TestPropertyNotSetException.ThrowIfNull(Contract);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
-
-                var sectionIds = ExpectedNewItem.ItemTypes
-                    .SelectMany(t => t.AvailableAt.Select(av => av.DefaultSectionId))
-                    .Union(ExpectedNewItem.AvailableAt.Select(av => av.DefaultSectionId));
-
-                _store = StoreEntityMother.ValidSections(sectionIds).WithId(Contract.StoreId).Create();
+                
+                _store = StoreEntityMother
+                    .Active(new StoreEntityGodmother()
+                        .For(ExpectedNewItem.ItemTypes.SelectMany(t => t.AvailableAt).ToArray())
+                        .For(ExpectedNewItem.AvailableAt.ToArray()))
+                    .Create();
             }
 
             public void SetupExpectedShoppingList()
@@ -3107,11 +3079,8 @@ public class ItemEndpointsIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_shoppingList);
 
-                var sectionIds = _shoppingList.ItemsOnList.Select(x => x.SectionId).ToArray();
-
                 _store = StoreEntityMother
-                    .ValidSections(sectionIds)
-                    .WithId(_shoppingList.StoreId)
+                    .Active(new StoreEntityGodmother().For(_shoppingList))
                     .Create();
             }
 

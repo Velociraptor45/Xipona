@@ -45,7 +45,7 @@ public static class ShoppingListEntityMother
 
     public static ShoppingListEntityBuilder Empty(ShoppingListEntityGodmother? godmother = null)
     {
-        return (godmother ?? new ShoppingListEntityGodmother()).GetFoundation()
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
             .WithoutCompletionDate()
             .WithEmptyDiscounts()
             .WithEmptyListDiscounts()
@@ -54,13 +54,21 @@ public static class ShoppingListEntityMother
 
     public static ShoppingListEntityBuilder Active(ShoppingListEntityGodmother? godmother = null)
     {
-        return (godmother ?? new ShoppingListEntityGodmother()).GetFoundation()
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
             .WithoutCompletionDate();
+    }
+
+    public static ShoppingListEntityBuilder ActiveWithoutDiscounts(ShoppingListEntityGodmother? godmother = null)
+    {
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
+            .WithoutCompletionDate()
+            .WithEmptyDiscounts()
+            .WithEmptyListDiscounts();
     }
 
     public static ShoppingListEntityBuilder Completed(ShoppingListEntityGodmother? godmother = null)
     {
-        return (godmother ?? new ShoppingListEntityGodmother()).GetFoundation();
+        return godmother?.GetFoundation() ?? new ShoppingListEntityBuilder();
     }
 
     public static ShoppingListEntityBuilder ActiveWithItemsWithoutType()

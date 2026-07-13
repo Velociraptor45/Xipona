@@ -20,7 +20,7 @@ public class PropertyRelay<TTarget, TValueType> : ISpecimenBuilder
         PropertyInfo? parameter = request as PropertyInfo;
         if (parameter == null)
             return new NoSpecimen();
-        if (parameter.DeclaringType != typeof(TTarget) ||
+        if (parameter.ReflectedType != typeof(TTarget) ||
             parameter.MemberType != MemberTypes.Property ||
             parameter.PropertyType != typeof(TValueType) ||
             parameter.Name != PropertyName)

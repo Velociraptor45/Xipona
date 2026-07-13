@@ -6,7 +6,7 @@ public static class StoreEntityMother
 {
     public static StoreEntityBuilder Active(StoreEntityGodmother? godmother = null)
     {
-        return (godmother ?? new StoreEntityGodmother()).GetFoundation()
+        return (godmother?.GetFoundation() ?? new StoreEntityBuilder())
             .WithDeleted(false);
     }
 

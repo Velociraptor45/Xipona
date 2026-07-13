@@ -4,7 +4,7 @@ public static class ManufacturerEntityMother
 {
     public static ManufacturerEntityBuilder Active(ManufacturerEntityGodmother? godmother = null)
     {
-        return (godmother ?? new ManufacturerEntityGodmother()).GetFoundation()
+        return (godmother?.GetFoundation() ?? new ManufacturerEntityBuilder())
             .WithDeleted(false);
     }
 }

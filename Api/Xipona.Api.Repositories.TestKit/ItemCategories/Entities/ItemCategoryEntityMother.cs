@@ -4,7 +4,7 @@ public static class ItemCategoryEntityMother
 {
     public static ItemCategoryEntityBuilder Active(ItemCategoryEntityGodmother? godmother = null)
     {
-        return (godmother ?? new ItemCategoryEntityGodmother()).GetFoundation()
+        return (godmother?.GetFoundation() ?? new ItemCategoryEntityBuilder())
             .WithDeleted(false);
     }
 }
