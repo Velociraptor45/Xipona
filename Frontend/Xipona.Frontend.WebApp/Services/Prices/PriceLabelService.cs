@@ -23,16 +23,16 @@ public class PriceLabelService(IState<SharedState> SharedState) : IPriceLabelSer
         if (SharedState.Value.Settings.GeneralSettings!.Currency.IsTrailing)
         {
             if (spaceBetweenCurrencyAndValue)
-                return $"{price:n2} {SharedState.Value.Settings.GeneralSettings.Currency.Symbol}{priceLabel}";
+                return $"{price:n2} {SharedState.Value.Settings.GeneralSettings.Currency.Symbol}{priceLabel}".TrimEnd();
 
-            return $"{price:n2}{SharedState.Value.Settings.GeneralSettings.Currency.Symbol}{priceLabel}";
+            return $"{price:n2}{SharedState.Value.Settings.GeneralSettings.Currency.Symbol}{priceLabel}".TrimEnd();
         }
 
         if (spaceBetweenCurrencyAndValue)
         {
-            return $"{SharedState.Value.Settings.GeneralSettings.Currency.Symbol} {price:n2}{priceLabel}";
+            return $"{SharedState.Value.Settings.GeneralSettings.Currency.Symbol} {price:n2} {priceLabel}".TrimEnd();
         }
-        return $"{SharedState.Value.Settings.GeneralSettings.Currency.Symbol}{price:n2}{priceLabel}";
+        return $"{SharedState.Value.Settings.GeneralSettings.Currency.Symbol}{price:n2}{priceLabel}".TrimEnd();
     }
     
     public string ParsePrice(string price)
