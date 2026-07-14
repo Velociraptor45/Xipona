@@ -43,34 +43,32 @@ public static class ShoppingListEntityMother
             .WithItemsOnList([item1, item2]);
     }
 
-    public static ShoppingListEntityBuilder Empty()
+    public static ShoppingListEntityBuilder Empty(ShoppingListEntityGodmother? godmother = null)
     {
-        return new ShoppingListEntityBuilder()
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
             .WithoutCompletionDate()
             .WithEmptyDiscounts()
             .WithEmptyListDiscounts()
             .WithEmptyItemsOnList();
     }
 
-    public static ShoppingListEntityBuilder Active()
+    public static ShoppingListEntityBuilder Active(ShoppingListEntityGodmother? godmother = null)
     {
-        var shoppingListId = Guid.NewGuid();
-        var items = ItemsOnListEntityMother.ItemType(shoppingListId).CreateMany(3).ToList();
-
-        return new ShoppingListEntityBuilder()
-            .WithId(shoppingListId)
-            .WithoutCompletionDate()
-            .WithItemsOnList(items);
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
+            .WithoutCompletionDate();
     }
 
-    public static ShoppingListEntityBuilder Completed()
+    public static ShoppingListEntityBuilder ActiveWithoutDiscounts(ShoppingListEntityGodmother? godmother = null)
     {
-        var shoppingListId = Guid.NewGuid();
-        var items = ItemsOnListEntityMother.ItemType(shoppingListId).CreateMany(3).ToList();
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
+            .WithoutCompletionDate()
+            .WithEmptyDiscounts()
+            .WithEmptyListDiscounts();
+    }
 
-        return new ShoppingListEntityBuilder()
-            .WithId(shoppingListId)
-            .WithItemsOnList(items);
+    public static ShoppingListEntityBuilder Completed(ShoppingListEntityGodmother? godmother = null)
+    {
+        return godmother?.GetFoundation() ?? new ShoppingListEntityBuilder();
     }
 
     public static ShoppingListEntityBuilder ActiveWithItemsWithoutType()

@@ -2,9 +2,9 @@
 
 public static class ItemCategoryEntityMother
 {
-    public static ItemCategoryEntityBuilder Active()
+    public static ItemCategoryEntityBuilder Active(ItemCategoryEntityGodmother? godmother = null)
     {
-        return new ItemCategoryEntityBuilder()
+        return (godmother?.GetFoundation() ?? new ItemCategoryEntityBuilder())
             .WithDeleted(false);
     }
 }

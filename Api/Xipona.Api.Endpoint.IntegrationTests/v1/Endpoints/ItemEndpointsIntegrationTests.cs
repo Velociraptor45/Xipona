@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Text.RegularExpressions;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
@@ -35,19 +34,19 @@ using Xipona.Api.Core.Converter;
 using Xipona.Api.Core.Extensions;
 using Xipona.Api.Core.TestKit;
 using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.Items.Models;
 using Xipona.Api.Domain.Items.Services.Creations;
 using Xipona.Api.Domain.Items.Services.Queries;
 using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Manufacturers.Models;
 using Xipona.Api.Domain.TestKit.Common;
-using Xipona.Api.Domain.TestKit.Shared;
 using Xipona.Api.Endpoint.IntegrationTests.Common;
 using Xipona.Api.Endpoint.v1.Endpoints;
 using Xipona.Api.Repositories.ItemCategories.Contexts;
 using Xipona.Api.Repositories.Items.Contexts;
 using Xipona.Api.Repositories.Items.Entities;
 using Xipona.Api.Repositories.Manufacturers.Contexts;
-using Xipona.Api.Repositories.Manufacturers.Entities;
 using Xipona.Api.Repositories.Recipes.Contexts;
 using Xipona.Api.Repositories.Recipes.Entities;
 using Xipona.Api.Repositories.ShoppingLists.Contexts;
@@ -68,6 +67,7 @@ using ItemAvailabilityContract = Xipona.Api.Contracts.Items.Commands.Shared.Item
 using ItemCategory = Xipona.Api.Repositories.ItemCategories.Entities.ItemCategory;
 using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
 using ItemTypeAvailableAt = Xipona.Api.Repositories.Items.Entities.ItemTypeAvailableAt;
+using Manufacturer = Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
 using Section = Xipona.Api.Repositories.Stores.Entities.Section;
 using Store = Xipona.Api.Repositories.Stores.Entities.Store;
 
@@ -577,7 +577,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithDeletedItemMatchingCategory_ShouldReturnEmptyList()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupDeletedItemForCategory();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
@@ -594,7 +593,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithItemMatchingCategory_ShouldReturnResults()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupItemForCategory();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
@@ -618,7 +616,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithItemWithTypesMatchingCategory_ShouldReturnResults()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupItemWithTypeForCategory();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
@@ -642,7 +639,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithItemWithTypesMatchingCategoryExceedingLimit_ShouldReturnLimitedResults()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupItemWithTypeForCategoryExceedingLimit();
             _fixture.SetupEmptyShoppingList();
             await _fixture.SetupDatabaseAsync();
@@ -667,9 +663,8 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithItemAndTypeNameMatchingInput_ShouldReturnTypeOnlyOnce()
         {
             // Arrange
-            _fixture.SetupStore();
-            _fixture.SetupEmptyShoppingList();
             _fixture.SetupItemWithTypesWhereItemAndTypeNameMatch();
+            _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForItemAndTypeNameMatch();
             await _fixture.SetupDatabaseAsync();
 
@@ -694,9 +689,8 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithOnlyTypeNameMatchingInput_ShouldReturnType()
         {
             // Arrange
-            _fixture.SetupStore();
-            _fixture.SetupEmptyShoppingList();
             _fixture.SetupItemWithTypesWhereOnlyTypeNameMatch();
+            _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForOnlyTypeNameMatch();
             await _fixture.SetupDatabaseAsync();
 
@@ -721,7 +715,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_ShouldReturnEmptyList()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupItemAlreadyOnShoppingList();
             _fixture.SetupShoppingListContainingItem();
             await _fixture.SetupDatabaseAsync();
@@ -738,7 +731,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithOneTypeOnShoppingListAndOneNot_ShouldReturnItemTypeNotOnShoppingList()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupItemTypeAlreadyOnShoppingList();
             _fixture.SetupShoppingListContainingItemType();
             _fixture.SetupExpectedResultForOneTypeOnShoppingListAndOneNot();
@@ -763,7 +755,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithFavoriteItem_ShouldReturnFavoriteItemFirst()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupFavoriteItem();
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForFavoriteItem();
@@ -788,7 +779,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithWrongCapitalization_ShouldReturnItemNonetheless()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupWrongCapitalizationItem();
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForWrongCapitalization();
@@ -813,7 +803,6 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsForShoppingListAsync_WithItemAlreadyOnShoppingList_WithFindingViaCategoryName_ShouldReturnEmptyList()
         {
             // Arrange
-            _fixture.SetupStore();
             _fixture.SetupItemAlreadyOnShoppingListWithFindingViaItemCategory();
             _fixture.SetupShoppingListContainingItem();
             await _fixture.SetupDatabaseAsync();
@@ -829,21 +818,22 @@ public class ItemEndpointsIntegrationTests
         private sealed class SearchItemsForShoppingListAsyncFixture(DockerFixture dockerFixture)
             : ItemEndpointFixture(dockerFixture)
         {
-            private readonly List<Item> _items = new();
-            private readonly List<ItemCategory> _itemCategories = new();
+            private readonly List<Item> _items = [];
+            private readonly List<ItemCategory> _itemCategories = [];
+            private readonly string _searchInput = new DomainTestBuilder<string>().Create().ToLower();
             private Store? _store;
             private ShoppingList? _shoppingList;
 
-            public string SearchInput { get; } = new DomainTestBuilder<string>().Create().ToLower();
-            public Guid StoreId { get; } = Guid.NewGuid();
             public IReadOnlyCollection<SearchItemForShoppingListResultContract>? ExpectedResult { get; private set; }
 
             public async Task<IResult> ActAsync()
             {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                
                 var scope = CreateServiceScope();
                 return await ItemEndpoints.SearchItemsForShoppingList(
-                    StoreId,
-                    SearchInput,
+                    _store.Id,
+                    _searchInput,
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemForShoppingResultReadModel,
@@ -852,29 +842,27 @@ public class ItemEndpointsIntegrationTests
                     TestContext.Current.CancellationToken);
             }
 
-            public void SetupStore()
+            private void SetupStore(params AvailableAt[] availableAts)
             {
-                _store = StoreEntityMother.Initial()
-                    .WithId(StoreId)
-                    .Create();
+                _store = StoreEntityMother.Active(new StoreEntityGodmother().For(availableAts)).Create();
+            }
+
+            private void SetupStore(params ItemTypeAvailableAt[] itemTypeAvailableAts)
+            {
+                _store = StoreEntityMother.Active(new StoreEntityGodmother().For(itemTypeAvailableAts)).Create();
             }
 
             public void SetupEmptyShoppingList()
             {
-                _shoppingList = ShoppingListEntityMother.Empty()
-                    .WithStoreId(StoreId)
-                    .Create();
+                TestPropertyNotSetException.ThrowIfNull(_store);
+
+                _shoppingList = ShoppingListEntityMother.Empty().WithStoreId(_store.Id).Create();
             }
 
             public void SetupShoppingListContainingItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
                 var item = _items.First();
-                _shoppingList = ShoppingListEntityMother
-                    .InitialWithOneItem(item.Id, null, _store.Sections.First().Id)
-                    .WithStoreId(StoreId)
-                    .Create();
+                _shoppingList = ShoppingListEntityMother.Active(new ShoppingListEntityGodmother().For(item)).Create();
             }
 
             public void SetupShoppingListContainingItemType()
@@ -883,8 +871,7 @@ public class ItemEndpointsIntegrationTests
 
                 var item = _items.First();
                 _shoppingList = ShoppingListEntityMother
-                    .InitialWithOneItem(item.Id, item.ItemTypes.First().Id, _store.Sections.First().Id)
-                    .WithStoreId(StoreId)
+                    .Active(new ShoppingListEntityGodmother().For((item.Id, item.ItemTypes.First())))
                     .Create();
             }
 
@@ -895,306 +882,208 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupItemForCategory(bool isDeleted = false)
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var category = new ItemCategoryEntityBuilder()
-                    .WithName(SearchInput)
-                    .WithDeleted(false)
-                    .Create();
-                var item = ItemEntityMother.InitialForStore(StoreId, _store.Sections.First().Id)
-                    .WithItemCategoryId(category.Id)
+                var availability = new AvailableAtEntityBuilder().Create();
+                var item = ItemEntityMother.Initial()
                     .WithoutManufacturerId()
                     .WithDeleted(isDeleted)
+                    .WithAvailableAt([availability])
                     .Create();
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item)).WithName(_searchInput).Create();
 
                 _items.Add(item);
                 _itemCategories.Add(category);
+                SetupStore(item.AvailableAt.First());
             }
 
             public void SetupItemWithTypesWhereItemAndTypeNameMatch()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var availability = new ItemTypeAvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
-                var itemTypes = ItemTypeEntityMother
-                    .Initial()
-                    .WithName("ABC" + SearchInput)
+                var availability = new ItemTypeAvailableAtEntityBuilder().Create();
+                var itemType = ItemTypeEntityMother.Initial()
+                    .WithName("ABC" + _searchInput)
                     .WithAvailableAt([availability])
-                    .CreateMany(1)
-                    .ToList();
-                var item = ItemEntityMother
-                    .InitialWithTypes()
+                    .Create();
+                var item = ItemEntityMother.InitialWithTypes()
                     .WithoutManufacturerId()
-                    .WithName(SearchInput + "12355")
-                    .WithItemTypes(itemTypes)
+                    .WithName(_searchInput + "12355")
+                    .WithItemTypes([itemType])
                     .Create();
                 _items.Add(item);
 
-                var itemCategory = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(item.ItemCategoryId!.Value)
-                    .Create();
-                _itemCategories.Add(itemCategory);
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item)).WithName(_searchInput).Create();
+                _itemCategories.Add(category);
+                SetupStore(availability);
             }
 
             public void SetupItemWithTypesWhereOnlyTypeNameMatch()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var availability = new ItemTypeAvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
-                var itemTypes = ItemTypeEntityMother
-                    .Initial()
-                    .WithName("ABC4732" + SearchInput)
+                var availability = new ItemTypeAvailableAtEntityBuilder().Create();
+                var itemType = ItemTypeEntityMother.Initial()
+                    .WithName("ABC4732" + _searchInput)
                     .WithAvailableAt([availability])
-                    .CreateMany(1)
-                    .ToList();
-                var item = ItemEntityMother
-                    .InitialWithTypes()
+                    .Create();
+                var item = ItemEntityMother.InitialWithTypes()
                     .WithoutManufacturerId()
-                    .WithItemTypes(itemTypes)
+                    .WithItemTypes([itemType])
                     .Create();
                 _items.Add(item);
 
-                var itemCategory = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(item.ItemCategoryId!.Value)
-                    .Create();
-                _itemCategories.Add(itemCategory);
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item)).WithName(_searchInput).Create();
+                _itemCategories.Add(category);
+                SetupStore(availability);
             }
 
             public void SetupItemAlreadyOnShoppingList()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var availability = new AvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
+                var availability = new AvailableAtEntityBuilder().Create();
                 var item = ItemEntityMother.Initial()
-                    .WithName("Item" + SearchInput)
+                    .WithName("Item " + _searchInput)
                     .WithAvailableAt([availability])
                     .Create();
                 _items.Add(item);
+                SetupStore(availability);
             }
             
             public void SetupItemTypeAlreadyOnShoppingList()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var category = new ItemCategoryEntityBuilder()
-                    .WithName(SearchInput)
-                    .WithDeleted(false)
-                    .Create();
-                var availability = new ItemTypeAvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
+                var availability = new ItemTypeAvailableAtEntityBuilder().Create();
                 List<ItemType> itemTypes =
                 [
                     ItemTypeEntityMother.Initial()
-                        .WithName("Item Type " + SearchInput)
+                        .WithName("Item Type " + _searchInput)
                         .WithAvailableAt([availability])
                         .Create(),
                     ItemTypeEntityMother.Initial()
-                        .WithName("Item Type " + SearchInput)
+                        .WithName("Item Type2 " + _searchInput)
                         .WithAvailableAt([availability.DeepClone()])
                         .Create()
                 ];
+                var item = ItemEntityMother.InitialWithTypes().WithItemTypes(itemTypes).Create();
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item)).WithName("Cat" + _searchInput).Create();
                 
-                var item = ItemEntityMother.InitialWithTypes().WithItemCategoryId(category.Id).WithItemTypes(itemTypes).Create();
                 _items.Add(item);
                 _itemCategories.Add(category);
+                SetupStore(availability);
             }
 
             public void SetupFavoriteItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var category = new ItemCategoryEntityBuilder()
-                    .WithName(SearchInput)
-                    .WithDeleted(false)
-                    .Create();
-                var availability = new AvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
+                var availability = new AvailableAtEntityBuilder().Create();
                 var item = ItemEntityMother.Initial()
-                    .WithName("Item" + SearchInput)
+                    .WithName("Item" + _searchInput)
                     .WithAvailableAt([availability])
                     .WithIsFavorite(false)
-                    .WithItemCategoryId(category.Id)
                     .Create();
                 var favoriteItem = ItemEntityMother.Initial()
-                    .WithName("Item favorite " + SearchInput)
+                    .WithName("Item favorite " + _searchInput)
                     .WithAvailableAt([availability.DeepClone()])
                     .WithIsFavorite(true)
-                    .WithItemCategoryId(category.Id)
                     .Create();
+                List<ItemCategory> categories =
+                [
+                    ItemCategoryEntityMother
+                        .Active(new ItemCategoryEntityGodmother().For(item))
+                        .Create(),
+                    ItemCategoryEntityMother
+                        .Active(new ItemCategoryEntityGodmother().For(favoriteItem))
+                        .Create()
+                ];
                 _items.Add(item);
                 _items.Add(favoriteItem);
-                _itemCategories.Add(category);
+                _itemCategories.AddRange(categories);
+                SetupStore(availability);
             }
 
             public void SetupWrongCapitalizationItem()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var category = new ItemCategoryEntityBuilder().WithDeleted(false).Create();
-                var availability = new AvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
+                var availability = new AvailableAtEntityBuilder().Create();
                 var item = ItemEntityMother.Initial()
-                    .WithName("Item" + SearchInput.ToUpper())
+                    .WithName("Item" + _searchInput.ToUpper())
                     .WithAvailableAt([availability])
                     .WithIsFavorite(false)
-                    .WithItemCategoryId(category.Id)
+                    .Create();
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item))
+                    .WithName("Cat" + _searchInput)
                     .Create();
                 _items.Add(item);
                 _itemCategories.Add(category);
+                SetupStore(availability);
             }
 
             public void SetupItemAlreadyOnShoppingListWithFindingViaItemCategory()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var availability = new AvailableAtEntityBuilder()
-                    .WithStoreId(StoreId)
-                    .WithDefaultSectionId(_store.Sections.First().Id)
-                    .Create();
+                var availability = new AvailableAtEntityBuilder().Create();
                 var item = ItemEntityMother.Initial()
                     .WithoutManufacturerId()
                     .WithAvailableAt([availability])
                     .Create();
                 _items.Add(item);
 
-                var category = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
-                    .WithId(item.ItemCategoryId!.Value)
-                    .WithName("Cat" + SearchInput)
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item))
+                    .WithName("Cat" + _searchInput)
                     .Create();
 
                 _itemCategories.Add(category);
+                SetupStore(availability);
             }
 
             public void SetupItemWithTypeForCategory()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var category = new ItemCategoryEntityBuilder()
-                    .WithName(SearchInput)
-                    .WithDeleted(false)
-                    .Create();
-                var item = ItemEntityMother.InitialWithTypesForStore(StoreId, _store.Sections.First().Id)
-                    .WithItemCategoryId(category.Id)
-                    .WithoutManufacturerId()
-                    .Create();
+                var item = ItemEntityMother.InitialWithTypesForSameStore().WithoutManufacturerId().Create();
+                var category = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(item)).WithName(_searchInput).Create();
 
                 _items.Add(item);
                 _itemCategories.Add(category);
+                SetupStore(item.ItemTypes.SelectMany(i => i.AvailableAt).ToArray());
             }
 
             public void SetupItemWithTypeForCategoryExceedingLimit()
             {
-                TestPropertyNotSetException.ThrowIfNull(_store);
-
-                var category = new ItemCategoryEntityBuilder()
-                    .WithName(SearchInput)
-                    .WithDeleted(false)
-                    .Create();
+                var storeId = Guid.NewGuid();
                 var items = Enumerable.Range(0, 7)
-                    .Select(_ => ItemEntityMother.InitialWithTypesForStore(StoreId, _store.Sections.First().Id)
-                        .WithItemCategoryId(category.Id)
-                        .WithoutManufacturerId()
-                        .Create())
+                    .Select(_ => ItemEntityMother.InitialWithTypesForSameStore(storeId).WithoutManufacturerId().Create())
+                    .ToList();
+                var categories = items
+                    .Select(i => ItemCategoryEntityMother
+                        .Active(new ItemCategoryEntityGodmother().For(i)).WithName(_searchInput).Create())
                     .ToList();
 
                 _items.AddRange(items);
-                _itemCategories.Add(category);
+                _itemCategories.AddRange(categories);
+                SetupStore(items.SelectMany(i => i.ItemTypes.SelectMany(t => t.AvailableAt)).ToArray());
             }
 
             public void SetupExpectedResultForOneTypeOnShoppingListAndOneNot()
             {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                
                 var item = _items.First();
-                var type = item.ItemTypes.Last();
-                var quantityType = item.QuantityType.ToEnum<QuantityType>();
-                ExpectedResult =
-                [
-                    new SearchItemForShoppingListResultContract(
-                        item.Id,
-                        type.Id,
-                        $"{item.Name} {type.Name}",
-                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        type.AvailableAt.First(av => av.StoreId == StoreId).Price,
-                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        _itemCategories.First().Name,
-                        "",
-                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
-                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
-                        item.IsFavorite)
-                ];
+                ExpectedResult = [CreateContract(item, item.ItemTypes.Last())];
             }
 
             public void SetupExpectedResultForFavoriteItem()
             {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                
                 var favoriteItem = _items.Last();
                 var item = _items.First();
-                var quantityTypeFavorite = favoriteItem.QuantityType.ToEnum<QuantityType>();
-                var quantityType = item.QuantityType.ToEnum<QuantityType>();
                 ExpectedResult =
                 [
-                    new SearchItemForShoppingListResultContract(
-                        favoriteItem.Id,
-                        null,
-                        favoriteItem.Name,
-                        quantityTypeFavorite.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        favoriteItem.AvailableAt.First(av => av.StoreId == StoreId).Price,
-                        CachedCurrencySymbol + quantityTypeFavorite.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        _itemCategories.First().Name,
-                        "",
-                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
-                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
-                        favoriteItem.IsFavorite),
-                    new SearchItemForShoppingListResultContract(
-                        item.Id,
-                        null,
-                        item.Name,
-                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        item.AvailableAt.First(av => av.StoreId == StoreId).Price,
-                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        _itemCategories.First().Name,
-                        "",
-                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
-                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
-                        item.IsFavorite)
+                    CreateContract(favoriteItem),
+                    CreateContract(item)
                 ];
             }
 
             public void SetupExpectedResultForWrongCapitalization()
             {
                 var item = _items.First();
-                var quantityType = item.QuantityType.ToEnum<QuantityType>();
-                ExpectedResult =
-                [
-                    new SearchItemForShoppingListResultContract(
-                        item.Id,
-                        null,
-                        item.Name,
-                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        item.AvailableAt.First(av => av.StoreId == StoreId).Price,
-                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        _itemCategories.First().Name,
-                        "",
-                        new SectionContract(_store!.Sections.First().Id, _store.Sections.First().Name,
-                            _store.Sections.First().SortIndex, _store.Sections.First().IsDefaultSection),
-                        item.IsFavorite)
-                ];
+                ExpectedResult = [CreateContract(item)];
             }
 
             public void SetupExpectedResultForItemAndTypeNameMatch()
@@ -1202,22 +1091,7 @@ public class ItemEndpointsIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_store);
 
                 var item = _items.First();
-                var quantityType = item.QuantityType.ToEnum<QuantityType>();
-                var availability = item.ItemTypes.First().AvailableAt.First(av => av.StoreId == StoreId);
-                var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
-
-                ExpectedResult = [new SearchItemForShoppingListResultContract(
-                        item.Id,
-                        item.ItemTypes.First().Id,
-                        $"{item.Name} {item.ItemTypes.First().Name}",
-                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        availability.Price,
-                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        _itemCategories.First().Name,
-                        "",
-                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
-                        item.IsFavorite)
-                    ];
+                ExpectedResult = [CreateContract(item, item.ItemTypes.First())];
             }
 
             public void SetupExpectedResultForOnlyTypeNameMatch()
@@ -1225,22 +1099,47 @@ public class ItemEndpointsIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_store);
 
                 var item = _items.First();
-                var quantityType = item.QuantityType.ToEnum<QuantityType>();
-                var availability = item.ItemTypes.First().AvailableAt.First(av => av.StoreId == StoreId);
-                var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
+                ExpectedResult = [CreateContract(item, item.ItemTypes.First())];
+            }
 
-                ExpectedResult = [new SearchItemForShoppingListResultContract(
-                        item.Id,
-                        item.ItemTypes.First().Id,
-                        $"{item.Name} {item.ItemTypes.First().Name}",
-                        quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-                        availability.Price,
-                        CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
-                        _itemCategories.First().Name,
-                        "",
-                        new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
-                        item.IsFavorite)
-                    ];
+            private SearchItemForShoppingListResultContract CreateContract(Item item, ItemType itemType)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                
+                var quantityType = item.QuantityType.ToEnum<QuantityType>();
+                var availability = item.ItemTypes.First().AvailableAt.First(av => av.StoreId == _store.Id);
+                var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
+                return new SearchItemForShoppingListResultContract(
+                    item.Id,
+                    itemType.Id,
+                    $"{item.Name} {itemType.Name}",
+                    quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    availability.Price,
+                    CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                    _itemCategories.First(i => i.Id == item.ItemCategoryId).Name,
+                    "",
+                    new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
+                    item.IsFavorite);
+            }
+
+            private SearchItemForShoppingListResultContract CreateContract(Item item)
+            {
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                
+                var quantityType = item.QuantityType.ToEnum<QuantityType>();
+                var availability = item.AvailableAt.First(av => av.StoreId == _store.Id);
+                var section = _store.Sections.First(s => s.Id == availability.DefaultSectionId);
+                return new SearchItemForShoppingListResultContract(
+                    item.Id,
+                    null,
+                    item.Name,
+                    quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
+                    availability.Price,
+                    CachedCurrencySymbol + quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
+                    _itemCategories.First(i => i.Id == item.ItemCategoryId).Name,
+                    "",
+                    new SectionContract(section.Id, section.Name, section.SortIndex, section.IsDefaultSection),
+                    item.IsFavorite);
             }
 
             public async Task SetupDatabaseAsync()
@@ -1276,9 +1175,9 @@ public class ItemEndpointsIntegrationTests
         public async Task SearchItemsByItemCategoryAsync_WithoutTypes_WithMatchingItemCategoryAndManufacturer_WithMatchingItemCategoryAndNoManufacturer_WithNotMatchingItemCategory_ShouldReturnExpectedResult()
         {
             // Arrange
+            _fixture.SetupItemsWithAndWithoutItemCategory();
             _fixture.SetupItemCategory();
             _fixture.SetupManufacturer();
-            _fixture.SetupItemsWithAndWithoutItemCategory();
             await _fixture.PrepareDatabaseAsync();
             _fixture.SetupExpectedResult();
 
@@ -1299,21 +1198,19 @@ public class ItemEndpointsIntegrationTests
         {
             private Item? _item;
             private Item? _itemWithoutManufacturer;
-            private Item? _itemWithoutItemCategory;
+            private Item? _itemDifferentItemCategory;
             private ItemCategory? _itemCategory;
             private Store? _store;
             private Manufacturer? _manufacturer;
 
-            public Guid? ItemCategoryId => _itemCategory?.Id;
+            private readonly Guid _itemCategoryId = Guid.NewGuid();
             public IReadOnlyCollection<SearchItemByItemCategoryResultContract>? ExpectedResult { get; private set; }
 
             public async Task<IResult> ActAsync()
             {
-                TestPropertyNotSetException.ThrowIfNull(ItemCategoryId);
-
                 var scope = CreateServiceScope();
                 return await ItemEndpoints.SearchItemsByItemCategory(
-                    ItemCategoryId.Value,
+                    _itemCategoryId,
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<SearchItemByItemCategoryResult, SearchItemByItemCategoryResultContract>>(),
@@ -1323,56 +1220,40 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupItemCategory()
             {
-                _itemCategory = new ItemCategoryEntityBuilder()
-                    .WithDeleted(false)
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _itemCategory = ItemCategoryEntityMother
+                    .Active(new ItemCategoryEntityGodmother().For(_item))
                     .Create();
             }
 
             public void SetupManufacturer()
             {
-                _manufacturer = new ManufacturerEntityBuilder()
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                _manufacturer = ManufacturerEntityMother
+                    .Active(new ManufacturerEntityGodmother().For(_item))
                     .Create();
             }
 
             public void SetupItemsWithAndWithoutItemCategory()
             {
-                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
-                TestPropertyNotSetException.ThrowIfNull(_manufacturer);
-
-                var sections = new List<Section>()
-                {
-                    new SectionEntityBuilder().WithIsDefaultSection(true).WithSortIndex(0).Create(),
-                    new SectionEntityBuilder().WithIsDefaultSection(false).WithSortIndex(1).Create()
-                };
-                _store = StoreEntityMother.Initial().WithSections(sections).Create();
-
-                var defaultSectionId = CommonFixture.ChooseRandom(_store.Sections).Id;
-
-                _item =
-                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
-                        .WithManufacturerId(_manufacturer.Id)
-                        .WithAvailableAt(AvailableAtEntityMother
-                            .InitialForStore(_store.Id)
-                            .WithDefaultSectionId(defaultSectionId)
-                            .CreateMany(1)
-                            .ToList())
-                        .Create();
-                _itemWithoutManufacturer =
-                    ItemEntityMother.Initial().WithItemCategoryId(_itemCategory.Id)
-                        .WithoutManufacturerId()
-                        .WithAvailableAt(AvailableAtEntityMother
-                            .InitialForStore(_store.Id)
-                            .WithDefaultSectionId(defaultSectionId)
-                            .CreateMany(1)
-                            .ToList())
-                        .Create();
-                _itemWithoutItemCategory = ItemEntityMother.Initial().Create();
+                var availability = new AvailableAtEntityBuilder().Create();
+                _item = ItemEntityMother.Initial()
+                    .WithItemCategoryId(_itemCategoryId)
+                    .WithAvailableAt([availability])
+                    .Create();
+                _itemWithoutManufacturer = ItemEntityMother.Initial()
+                    .WithItemCategoryId(_itemCategoryId)
+                    .WithoutManufacturerId()
+                    .WithAvailableAt([availability.DeepClone()])
+                    .Create();
+                _itemDifferentItemCategory = ItemEntityMother.Initial().Create();
+                _store = StoreEntityMother.Active(new StoreEntityGodmother().For(availability)).Create();
             }
 
             public async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
-                TestPropertyNotSetException.ThrowIfNull(_itemWithoutItemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_itemDifferentItemCategory);
                 TestPropertyNotSetException.ThrowIfNull(_itemWithoutManufacturer);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
                 TestPropertyNotSetException.ThrowIfNull(_store);
@@ -1389,7 +1270,7 @@ public class ItemEndpointsIntegrationTests
                 await storeContext.AddAsync(_store);
                 await itemContext.AddAsync(_item);
                 await itemContext.AddAsync(_itemWithoutManufacturer);
-                await itemContext.AddAsync(_itemWithoutItemCategory);
+                await itemContext.AddAsync(_itemDifferentItemCategory);
                 await manufacturerContext.AddAsync(_manufacturer);
 
                 await itemCategoryContext.SaveChangesAsync();
@@ -1501,13 +1382,8 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupExpectedResult()
             {
-                var manufacturer = new ManufacturerContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
-
-                var itemCategory = new ItemCategoryContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
+                var manufacturer = new ManufacturerContractBuilder().WithIsDeleted(false).Create();
+                var itemCategory = new ItemCategoryContractBuilder().WithIsDeleted(false).Create();
 
                 Contracts.Items.Queries.Get.ItemAvailabilityContract[] availabilities =
                 [
@@ -1622,7 +1498,8 @@ public class ItemEndpointsIntegrationTests
                                 .WithId(section.Id).Create();
                         }
 
-                        return StoreEntityMother.Active().WithId(av.Store.Id).WithName(av.Store.Name).WithSections(sections)
+                        return StoreEntityMother.Active()
+                            .WithId(av.Store.Id).WithName(av.Store.Name).WithSections(sections)
                             .Create();
                     })
                     .ToList();
@@ -1719,13 +1596,8 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupExpectedResult()
             {
-                var manufacturer = new ManufacturerContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
-
-                var itemCategory = new ItemCategoryContractBuilder()
-                    .WithIsDeleted(false)
-                    .Create();
+                var manufacturer = new ManufacturerContractBuilder().WithIsDeleted(false).Create();
+                var itemCategory = new ItemCategoryContractBuilder().WithIsDeleted(false).Create();
 
                 ItemTypeContract[] itemTypes =
                 [
@@ -1953,10 +1825,7 @@ public class ItemEndpointsIntegrationTests
             public void SetupExistingItem()
             {
                 _existingAvailability = new AvailableAtEntityBuilder().Create();
-                ExistingItem = ItemEntityMother
-                    .Initial()
-                    .WithAvailableAt(_existingAvailability)
-                    .Create();
+                ExistingItem = ItemEntityMother.Initial().WithAvailableAt(_existingAvailability).Create();
             }
 
             public void SetupExpectedItem()
@@ -2013,12 +1882,14 @@ public class ItemEndpointsIntegrationTests
                     ExpectedItem.QuantityTypeInPacket,
                     ExpectedItem.ItemCategoryId!.Value,
                     ExpectedItem.ManufacturerId,
-                    [new ItemAvailabilityContract
-                    {
-                        StoreId = _expectedAvailability.StoreId,
-                        DefaultSectionId = _expectedAvailability.DefaultSectionId,
-                        Price = _expectedAvailability.Price
-                    }]);
+                    [
+                        new ItemAvailabilityContract
+                        {
+                            StoreId = _expectedAvailability.StoreId,
+                            DefaultSectionId = _expectedAvailability.DefaultSectionId,
+                            Price = _expectedAvailability.Price
+                        }
+                    ]);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -2590,7 +2461,7 @@ public class ItemEndpointsIntegrationTests
             newItem.Should().NotBeNull();
             oldItem.Should().BeEquivalentTo(_fixture.ExpectedOldItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "UpdatedOn").ExcludeRowVersion().WithCreatedAtPrecision());
-            oldItem!.UpdatedOn.Should().NotBeNull();
+            oldItem.UpdatedOn.Should().NotBeNull();
             oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
             newItem.Should().BeEquivalentTo(_fixture.ExpectedNewItem,
                 opt => opt.ExcludeItemCycleRef().Excluding(info => info.Path == "Id").ExcludeRowVersion().WithCreatedAtPrecision());
@@ -2922,19 +2793,11 @@ public class ItemEndpointsIntegrationTests
             public void SetupShoppingListWithDiscountedItem()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingItem);
-                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 var id = Guid.NewGuid();
-                _shoppingList = ShoppingListEntityMother.Empty()
+                _shoppingList = ShoppingListEntityMother
+                    .ActiveWithoutDiscounts(new ShoppingListEntityGodmother().For(_existingItem))
                     .WithId(id)
-                    .WithStoreId(Contract.StoreId)
-                    .WithItemsOnList([
-                        new ItemsOnListEntityBuilder()
-                            .WithShoppingListId(id)
-                            .WithItemId(_existingItem.Id)
-                            .WithItemTypeId(null)
-                            .WithSectionId(_existingItem.AvailableAt.First().DefaultSectionId)
-                            .Create()])
                     .WithDiscounts([
                         new DiscountEntityBuilder()
                             .WithItemId(_existingItem.Id)
@@ -2946,19 +2809,11 @@ public class ItemEndpointsIntegrationTests
             public void SetupShoppingListWithDiscountedItemType()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingItem);
-                TestPropertyNotSetException.ThrowIfNull(Contract);
 
                 var id = Guid.NewGuid();
-                _shoppingList = ShoppingListEntityMother.Empty()
+                _shoppingList = ShoppingListEntityMother
+                    .ActiveWithoutDiscounts(new ShoppingListEntityGodmother().For((_existingItem.Id, _existingItem.ItemTypes.First())))
                     .WithId(id)
-                    .WithStoreId(Contract.StoreId)
-                    .WithItemsOnList([
-                        new ItemsOnListEntityBuilder()
-                            .WithShoppingListId(id)
-                            .WithItemId(_existingItem.Id)
-                            .WithItemTypeId(_existingItem.ItemTypes.First().Id)
-                            .WithSectionId(_existingItem.ItemTypes.First().AvailableAt.First().DefaultSectionId)
-                            .Create()])
                     .WithDiscounts([
                         new DiscountEntityBuilder()
                             .WithItemId(_existingItem.Id)
@@ -2969,14 +2824,13 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupStore()
             {
-                TestPropertyNotSetException.ThrowIfNull(Contract);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
-
-                var sectionIds = ExpectedNewItem.ItemTypes
-                    .SelectMany(t => t.AvailableAt.Select(av => av.DefaultSectionId))
-                    .Union(ExpectedNewItem.AvailableAt.Select(av => av.DefaultSectionId));
-
-                _store = StoreEntityMother.ValidSections(sectionIds).WithId(Contract.StoreId).Create();
+                
+                _store = StoreEntityMother
+                    .Active(new StoreEntityGodmother()
+                        .For(ExpectedNewItem.ItemTypes.SelectMany(t => t.AvailableAt).ToArray())
+                        .For(ExpectedNewItem.AvailableAt.ToArray()))
+                    .Create();
             }
 
             public void SetupExpectedShoppingList()
@@ -3222,11 +3076,8 @@ public class ItemEndpointsIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(_shoppingList);
 
-                var sectionIds = _shoppingList.ItemsOnList.Select(x => x.SectionId).ToArray();
-
                 _store = StoreEntityMother
-                    .ValidSections(sectionIds)
-                    .WithId(_shoppingList.StoreId)
+                    .Active(new StoreEntityGodmother().For(_shoppingList))
                     .Create();
             }
 
@@ -3411,16 +3262,15 @@ public class ItemEndpointsIntegrationTests
 
         private sealed class MergeItemsFixture : ItemEndpointFixture
         {
-            private readonly ItemEntityCreationContext _item1Context = new();
-            private readonly ItemEntityCreationContext _item2Context = new();
-            private readonly ShoppingListEntityCreationContext _sl1Context = new();
-            private readonly ShoppingListEntityCreationContext _sl2Context = new();
             private Item? _item1;
             private Item? _item2;
             private ShoppingList? _currentStore1ShoppingList;
             private readonly string _newItemName = new Fixture().Create<string>();
             private MergeItemsContract? _contract;
             private Recipe? _existingRecipe;
+            private readonly ItemCategoryId _categoryId = ItemCategoryId.New;
+            private readonly ManufacturerId _manufacturerId = ManufacturerId.New;
+            private readonly float _quantity = new DomainTestBuilder<float>().Create();
 
             public Item? Item1Predecessor { get; private set; }
             public Item? Item2Predecessor { get; private set; }
@@ -3434,24 +3284,6 @@ public class ItemEndpointsIntegrationTests
 
             public MergeItemsFixture(DockerFixture dockerFixture) : base(dockerFixture)
             {
-                var store1 = StoreEntityMother.Active().Create();
-                var store2 = StoreEntityMother.Active().Create();
-                var category = ItemCategoryEntityMother.Active().Create();
-                var manufacturer = ManufacturerEntityMother.Active().Create();
-                var quantityInPacket = new Fixture().Create<float>();
-
-                _item1Context.AddStores(store1);
-                _item1Context.AddItemCategory(category);
-                _item1Context.AddManufacturer(manufacturer);
-                _item1Context.AddQuantity(QuantityType.Unit, QuantityTypeInPacket.Weight, quantityInPacket);
-
-                _item2Context.AddStores(store2);
-                _item2Context.AddItemCategory(category);
-                _item2Context.AddManufacturer(manufacturer);
-                _item2Context.AddQuantity(QuantityType.Unit, QuantityTypeInPacket.Weight, quantityInPacket);
-
-                _sl1Context.AddStore(store1);
-                _sl2Context.AddStore(store2);
             }
 
             public async Task<IResult> ActAsync()
@@ -3494,21 +3326,33 @@ public class ItemEndpointsIntegrationTests
 
             public void SetupItem1()
             {
-                Item1Predecessor = ItemEntityMother.Initial().WithDeleted(true).Create();
-                _item1 = _item1Context.FillItem(
-                        ItemEntityMother.Initial()
-                            .WithPredecessor(Item1Predecessor)
-                            .WithPredecessorId(Item1Predecessor.Id))
+                Item1Predecessor = ItemEntityMother.Deleted().Create();
+                var availability = AvailableAtEntityMother.Initial().Create();
+                _item1 = ItemEntityMother.Initial()
+                    .WithQuantityType(QuantityType.Unit.ToInt())
+                    .WithQuantityTypeInPacket(QuantityTypeInPacket.Weight.ToInt())
+                    .WithQuantityInPacket(_quantity)
+                    .WithAvailableAt([availability])
+                    .WithItemCategoryId(_categoryId)
+                    .WithManufacturerId(_manufacturerId)
+                    .WithPredecessor(Item1Predecessor)
+                    .WithPredecessorId(Item1Predecessor.Id)
                     .Create();
             }
 
             public void SetupItem2()
             {
-                Item2Predecessor = ItemEntityMother.Initial().WithDeleted(true).Create();
-                _item2 = _item2Context.FillItem(
-                        ItemEntityMother.Initial()
-                            .WithPredecessor(Item2Predecessor)
-                            .WithPredecessorId(Item2Predecessor.Id))
+                Item2Predecessor = ItemEntityMother.Deleted().Create();
+                var availability = AvailableAtEntityMother.Initial().Create();
+                _item2 = ItemEntityMother.Initial()
+                    .WithQuantityType(QuantityType.Unit.ToInt())
+                    .WithQuantityTypeInPacket(QuantityTypeInPacket.Weight.ToInt())
+                    .WithQuantityInPacket(_quantity)
+                    .WithAvailableAt([availability])
+                    .WithItemCategoryId(_categoryId)
+                    .WithManufacturerId(_manufacturerId)
+                    .WithPredecessor(Item2Predecessor)
+                    .WithPredecessorId(Item2Predecessor.Id)
                     .Create();
             }
 
@@ -3564,27 +3408,25 @@ public class ItemEndpointsIntegrationTests
                 TestPropertyNotSetException.ThrowIfNull(_item1);
                 TestPropertyNotSetException.ThrowIfNull(_item2);
 
-                var shoppingListId = Guid.NewGuid();
-
                 // store 1
                 // current
-                var currentItemsOnList = ItemsOnListEntityMother.ItemInBasket(_item1.Id, shoppingListId).Create();
-                _currentStore1ShoppingList = _sl1Context.FillShoppingList(
-                        ShoppingListEntityMother.Active().WithItemsOnList([currentItemsOnList]))
+                _currentStore1ShoppingList = ShoppingListEntityMother
+                    .Active(new ShoppingListEntityGodmother().For(_item1))
+                    .WithEmptyDiscounts()
                     .Create();
 
                 // previous
-                ItemsOnList[] previousItemsOnList =
-                [
-                    ItemsOnListEntityMother.ItemInBasket(_item1.Id, shoppingListId).Create(),
-                    ItemsOnListEntityMother.ItemInBasket(_item2.Id, shoppingListId).Create()
-                ];
-                PreviousStore1ShoppingList = _sl1Context.FillShoppingList(
-                        ShoppingListEntityMother.Completed().WithEmptyDiscounts().WithItemsOnList(previousItemsOnList))
+                PreviousStore1ShoppingList = ShoppingListEntityMother
+                    .Completed(new ShoppingListEntityGodmother().For(_item1))
+                    .WithEmptyDiscounts()
                     .Create();
 
                 // store 2
-                CurrentStore2ShoppingList = _sl2Context.FillShoppingList(ShoppingListEntityMother.Active()).Create();
+                CurrentStore2ShoppingList = ShoppingListEntityMother
+                    .Active()
+                    .WithStoreId(_item2.AvailableAt.First().StoreId)
+                    .WithEmptyDiscounts()
+                    .Create();
             }
 
             public void SetupExpectedShoppingList(Guid itemId, Guid itemTypeId)

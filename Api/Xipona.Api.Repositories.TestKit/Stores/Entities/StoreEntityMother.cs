@@ -4,9 +4,9 @@ namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class StoreEntityMother
 {
-    public static StoreEntityBuilder Active()
+    public static StoreEntityBuilder Active(StoreEntityGodmother? godmother = null)
     {
-        return new StoreEntityBuilder()
+        return (godmother?.GetFoundation() ?? new StoreEntityBuilder())
             .WithDeleted(false);
     }
 

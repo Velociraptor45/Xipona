@@ -18,6 +18,11 @@ public static class ItemEntityMother
             .WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
     }
 
+    public static ItemEntityBuilder Deleted()
+    {
+        return Initial().WithDeleted(true);
+    }
+
     public static ItemEntityBuilder InitialForStore(Guid storeId)
     {
         return InitialForStore(storeId, Guid.NewGuid());
@@ -53,6 +58,22 @@ public static class ItemEntityMother
     public static ItemEntityBuilder InitialWithTypesForStore(Guid storeId)
     {
         return InitialWithTypesForStore(storeId, Guid.NewGuid());
+    }
+
+    public static ItemEntityBuilder InitialWithTypesForSameStore(Guid? storeId = null)
+    {
+        storeId ??= Guid.NewGuid();
+        var types = Enumerable.Range(0, 3)
+            .Select(_ => ItemTypeEntityMother.Initial().WithAvailableAt(CreateAvailabilities()).Create())
+            .ToList();
+
+        return InitialWithTypes()
+            .WithItemTypes(types);
+
+        IList<ItemTypeAvailableAt> CreateAvailabilities()
+        {
+            return ItemTypeAvailableAtEntityMother.InitialForStore(storeId.Value).CreateMany(1).ToList();
+        }
     }
 
     public static ItemEntityBuilder InitialWithTypesForStore(Guid storeId, Guid sectionId)
