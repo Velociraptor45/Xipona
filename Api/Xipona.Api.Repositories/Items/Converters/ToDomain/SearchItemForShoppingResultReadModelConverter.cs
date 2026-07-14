@@ -1,8 +1,6 @@
-using Microsoft.Extensions.Caching.Memory;
 using Xipona.Api.Core.Attributes;
 using Xipona.Api.Core.Converter;
 using Xipona.Api.Core.Extensions;
-using Xipona.Api.Domain.Common.Extensions;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.ItemCategories.Services.Shared;
 using Xipona.Api.Domain.Items.Models;
@@ -15,7 +13,7 @@ using Xipona.Api.Repositories.Items.Entities;
 
 namespace Xipona.Api.Repositories.Items.Converters.ToDomain;
 
-public class SearchItemForShoppingResultReadModelConverter(IMemoryCache cache)
+public class SearchItemForShoppingResultReadModelConverter()
     : IToDomainConverter<ShoppingListItemViewModel, SearchItemForShoppingResultReadModel>
 {
     public SearchItemForShoppingResultReadModel ToDomain(ShoppingListItemViewModel source)
@@ -28,7 +26,7 @@ public class SearchItemForShoppingResultReadModelConverter(IMemoryCache cache)
             source.ItemName,
             quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
             new Price(source.Price),
-            quantityType.GetAttribute<PriceLabelAttribute>().GetFullLabel(cache),
+            quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
             source.ManufacturerId is null || source.ManufacturerName is null
                 ? null
                 : new ManufacturerReadModel(new ManufacturerId(source.ManufacturerId.Value), new ManufacturerName(source.ManufacturerName), false),

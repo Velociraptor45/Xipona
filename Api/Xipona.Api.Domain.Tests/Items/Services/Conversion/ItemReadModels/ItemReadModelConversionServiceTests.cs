@@ -1,5 +1,4 @@
-﻿using Xipona.Api.Core.TestKit;
-using Xipona.Api.Domain.Common.Reasons;
+﻿using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.ItemCategories.Services.Shared;
 using Xipona.Api.Domain.Items.Models;
@@ -9,7 +8,6 @@ using Xipona.Api.Domain.Items.Services.Queries.Quantities;
 using Xipona.Api.Domain.Manufacturers.Models;
 using Xipona.Api.Domain.Manufacturers.Services.Shared;
 using Xipona.Api.Domain.Stores.Models;
-using Xipona.Api.Domain.TestKit.Common;
 using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
 using Xipona.Api.Domain.TestKit.ItemCategories.Models;
 using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
@@ -20,7 +18,6 @@ using Xipona.Api.Domain.TestKit.Manufacturers.Ports;
 using Xipona.Api.Domain.TestKit.Stores.Models;
 using Xipona.Api.Domain.TestKit.Stores.Models.Factories;
 using Xipona.Api.Domain.TestKit.Stores.Ports;
-using Xipona.Api.Domain.Users.Models;
 using Xipona.Api.TestTools.Exceptions;
 
 namespace Xipona.Api.Domain.Tests.Items.Services.Conversion.ItemReadModels;
@@ -40,7 +37,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupFindingNoItemCategory();
         local.SetupFindingManufacturer();
         local.SetupFindingStore();
-        local.SetupCachedSettings();
 
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
@@ -67,7 +63,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupFindingItemCategory();
         local.SetupFindingNoManufacturer();
         local.SetupFindingStore();
-        local.SetupCachedSettings();
 
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
@@ -93,7 +88,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupStore();
         local.SetupFindingManufacturer();
         local.SetupFindingStore();
-        local.SetupCachedSettings();
 
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
@@ -121,7 +115,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupStore();
         local.SetupFindingItemCategory();
         local.SetupFindingStore();
-        local.SetupCachedSettings();
 
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
@@ -147,7 +140,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupItemWithNeitherItemCategoryNorManufacturer();
         local.SetupStore();
         local.SetupFindingStore();
-        local.SetupCachedSettings();
 
         TestPropertyNotSetException.ThrowIfNull(local.Item);
 
@@ -174,7 +166,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupItemCategory();
         local.SetupManufacturer();
         local.SetupStore();
-        local.SetupCachedSettings();
 
         local.SetupFindingItemCategory();
         local.SetupFindingManufacturer();
@@ -205,7 +196,6 @@ public class ItemReadModelConversionServiceTests
         local.SetupItemCategory();
         local.SetupManufacturer();
         local.SetupStore();
-        local.SetupCachedSettings();
 
         local.SetupFindingItemCategory();
         local.SetupFindingManufacturer();
@@ -231,11 +221,9 @@ public class ItemReadModelConversionServiceTests
         private readonly ItemCategoryRepositoryMock _itemCategoryRepositoryMock = new(MockBehavior.Strict);
         private readonly ManufacturerRepositoryMock _manufacturerRepositoryMock = new(MockBehavior.Strict);
         private readonly StoreRepositoryMock _storeRepositoryMock = new(MockBehavior.Strict);
-        private readonly MemoryCacheMock _memoryCacheMock = new(MockBehavior.Strict);
         private IStore? _store;
         private IItemCategory? _itemCategory;
         private IManufacturer? _manufacturer;
-        private GeneralSetting? _settings;
         private ManufacturerId ManufacturerId => Item!.ManufacturerId!.Value;
         private ItemCategoryId ItemCategoryId => Item!.ItemCategoryId!.Value;
 
@@ -246,14 +234,7 @@ public class ItemReadModelConversionServiceTests
             return new ItemReadModelConversionService(
                 _itemCategoryRepositoryMock.Object,
                 _manufacturerRepositoryMock.Object,
-                _storeRepositoryMock.Object,
-                _memoryCacheMock.Object);
-        }
-
-        public void SetupCachedSettings()
-        {
-            _settings = new DomainTestBuilder<GeneralSetting>().Create();
-            _memoryCacheMock.SetupTryGetValue("GeneralSettings", _settings, true);
+                _storeRepositoryMock.Object);
         }
 
         public void SetupItem()
@@ -354,13 +335,13 @@ public class ItemReadModelConversionServiceTests
             var itemType = Item.ItemTypes.First();
             var itemTypeAvailability = itemType.Availabilities.First();
             var itemTypeAvailabilityReadModel = CreateAvailabilityReadModel(_store, itemTypeAvailability);
-            List<ItemTypeReadModel> itemTypeReadModels = new()
-            {
-                new ItemTypeReadModel(
+            List<ItemTypeReadModel> itemTypeReadModels =
+            [
+                new(
                     itemType.Id,
                     itemType.Name,
                     [itemTypeAvailabilityReadModel])
-            };
+            ];
 
             var itemQuantityInPacket = Item.ItemQuantity.InPacket;
             var quantityTypeInPacketReadModel = itemQuantityInPacket is null
@@ -374,7 +355,7 @@ public class ItemReadModelConversionServiceTests
                 Item.Comment,
                 Item.IsTemporary,
                 Item.IsFavorite,
-                new QuantityTypeReadModel(Item.ItemQuantity.Type, _memoryCacheMock.Object),
+                new QuantityTypeReadModel(Item.ItemQuantity.Type),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,
                 itemCategoryReadModel,
@@ -428,7 +409,7 @@ public class ItemReadModelConversionServiceTests
                 Item.Comment,
                 Item.IsTemporary,
                 Item.IsFavorite,
-                new QuantityTypeReadModel(Item.ItemQuantity.Type, _memoryCacheMock.Object),
+                new QuantityTypeReadModel(Item.ItemQuantity.Type),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,
                 itemCategoryReadModel,

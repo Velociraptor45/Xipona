@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
@@ -357,10 +356,10 @@ public class UserEndpointIntegrationTests
             {
                 ExpectedResult = new List<CurrencyContract>
                 {
-                    new(0, "€"),
-                    new(1, "$"),
-                    new(2, "£"),
-                    new(3, "¥")
+                    new(0, "€", true),
+                    new(1, "$", false),
+                    new(2, "£", false),
+                    new(3, "¥", false)
                 };
             }
 
@@ -397,10 +396,10 @@ public class UserEndpointIntegrationTests
             private Contracts.Users.Queries.GetGeneralSettings.CurrencyContract? _expectedCurrency;
             private List<Contracts.Users.Queries.GetGeneralSettings.CurrencyContract> _allCurrencies =
             [
-                new(0, "€"),
-                new(1, "$"),
-                new(2, "£"),
-                new(3, "¥")
+                new(0, "€", true),
+                new(1, "$", false),
+                new(2, "£", false),
+                new(3, "¥", false)
             ];
 
             public GetGeneralSettingsFixture(DockerFixture dockerFixture) : base(dockerFixture)

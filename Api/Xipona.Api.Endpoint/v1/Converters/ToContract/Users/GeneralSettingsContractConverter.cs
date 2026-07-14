@@ -10,9 +10,12 @@ public class GeneralSettingsContractConverter : IToContractConverter<IGeneralSet
 {
     public GeneralSettingsContract ToContract(IGeneralSetting source)
     {
+        var attr = source.Currency.GetAttribute<CurrencySymbolAttribute>();
+        
         return new GeneralSettingsContract(
             new CurrencyContract(
                 source.Currency.ToInt(),
-                source.Currency.GetAttribute<CurrencySymbolAttribute>().Symbol));
+                attr.Symbol,
+                attr.IsTrailing));
     }
 }

@@ -30,8 +30,7 @@ public class ShoppingListReadModelConversionServiceTests
             storeRepositoryMock.Object,
             itemRepositoryMock.Object,
             itemCategoryRepositoryMock.Object,
-            manufacturerRepositoryMock.Object,
-            ConvertAsyncTestData.MemoryCacheMock.Object);
+            manufacturerRepositoryMock.Object);
 
         var itemsList = items.ToList();
         var itemCategoriesList = itemCategories.ToList();

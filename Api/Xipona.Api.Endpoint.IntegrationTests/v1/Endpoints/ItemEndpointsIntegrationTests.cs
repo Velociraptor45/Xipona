@@ -334,7 +334,7 @@ public class ItemEndpointsIntegrationTests
                 await ApplyMigrationsAsync(ArrangeScope);
 
                 await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
-                itemContext.AddRange(_items);
+                itemContext.Items.AddRange(_items);
                 await itemContext.SaveChangesAsync();
             }
         }
@@ -2140,7 +2140,7 @@ public class ItemEndpointsIntegrationTests
                     .Excluding(info => info.Path == "UpdatedOn" || info.Path == "Deleted")
                     .ExcludeRowVersion()
                     .WithCreatedAtPrecision());
-            oldItem!.Deleted.Should().BeTrue();
+            oldItem.Deleted.Should().BeTrue();
             oldItem.UpdatedOn.Should().NotBeNull();
             oldItem.UpdatedOn.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30));
 
@@ -2159,7 +2159,7 @@ public class ItemEndpointsIntegrationTests
                     .WithCreatedAtPrecision()
                     .Excluding(info => info.Path == "Ingredients[0].DefaultItemId"
                                        || info.Path == "Ingredients[0].DefaultItemTypeId"));
-            recipes[0].Ingredients.First().DefaultItemId.Should().Be(newItem!.Id);
+            recipes[0].Ingredients.First().DefaultItemId.Should().Be(newItem.Id);
             recipes[0].Ingredients.First().DefaultItemTypeId.Should().Be(newItem.ItemTypes.First().Id);
         }
 

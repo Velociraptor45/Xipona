@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Xipona.Api.Core.Attributes;
+﻿using Xipona.Api.Core.Attributes;
 using Xipona.Api.Core.Extensions;
-using Xipona.Api.Domain.Common.Extensions;
 using Xipona.Api.Domain.Items.Models;
 
 namespace Xipona.Api.Domain.Items.Services.Queries.Quantities;
@@ -19,12 +17,12 @@ public class QuantityTypeReadModel
         QuantityNormalizer = quantityNormalizer;
     }
 
-    public QuantityTypeReadModel(QuantityType quantityType, IMemoryCache cache) :
+    public QuantityTypeReadModel(QuantityType quantityType) :
         this(
             (int)quantityType,
             quantityType.ToString(),
             quantityType.GetAttribute<DefaultQuantityAttribute>().DefaultQuantity,
-            quantityType.GetAttribute<PriceLabelAttribute>().GetFullLabel(cache),
+            quantityType.GetAttribute<PriceLabelAttribute>().PriceLabel,
             quantityType.GetAttribute<QuantityLabelAttribute>().QuantityLabel,
             quantityType.GetAttribute<QuantityNormalizerAttribute>().Value)
     {

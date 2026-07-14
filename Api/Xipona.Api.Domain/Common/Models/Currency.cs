@@ -4,12 +4,12 @@ namespace Xipona.Api.Domain.Common.Models;
 
 public enum Currency
 {
-    [CurrencySymbol("€")]
+    [CurrencySymbol("€", true)]
     Euro = 0,
-    [CurrencySymbol("$")]
+    [CurrencySymbol("$", false)]
     Dollar = 1,
-    [CurrencySymbol("£")]
+    [CurrencySymbol("£", false)]
     Pound = 2,
-    [CurrencySymbol("¥")]
+    [CurrencySymbol("¥", false)]
     Yen = 3,
 }
