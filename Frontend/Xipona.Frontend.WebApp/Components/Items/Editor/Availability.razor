@@ -3,7 +3,9 @@
 @using Fluxor
 @using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities
 @using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.WebApp.Services.Prices
 
+@inject IPriceLabelService PriceLabelService
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
@@ -71,11 +73,11 @@
 
     private string FormatPriceInput(decimal price)
     {
-        return $"{price:0.00} {State.Value.Editor.Item!.QuantityType.PriceLabel}";
+        return PriceLabelService.GetPriceLabel(price,State.Value.Editor.Item!.QuantityType.PriceLabel);
     }
 
     private string ParsePriceInput(string value)
     {
-        return value.Replace(State.Value.Editor.Item!.QuantityType.PriceLabel, string.Empty);
+        return PriceLabelService.ParsePrice(value);
     }
 }
