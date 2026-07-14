@@ -8,6 +8,7 @@ using Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 using Xipona.Frontend.TestTools.AutoFixture.Builder;
 using Xipona.Frontend.TestTools.Exceptions;
 using Xipona.Frontend.WebApp.Services;
+using Xipona.Frontend.WebApp.Services.Prices;
 
 namespace Xipona.Frontend.WebApp.Tests.Services;
 

@@ -7,9 +7,11 @@
 @using Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater
 @using Xipona.Frontend.Redux.ShoppingList.States
 @using Xipona.Frontend.WebApp.Services;
+@using Xipona.Frontend.WebApp.Services.Prices
 
 @inject IItemPriceCalculationService ItemPriceCalculationService;
 
+@inject IPriceLabelService PriceLabelService
 @inject IState<ShoppingListState> State
 @inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
@@ -23,7 +25,7 @@
                 <!-- upper row -->
                 <div class="d-flex">
                     <div class="h3 pl-1">@Model.Name</div>
-                    <div class="pb-2 pl-1 align-self-end">@($"{CalculatePrice():0.00}{SharedState.Value.GetCurrencySymbol()}")</div>
+                    <div class="pb-2 pl-1 align-self-end">@(PriceLabelService.GetPriceLabel(CalculatePrice(), Model.QuantityType))</div>
                 </div>
                 <Button Danger="true"
                         Class="mr-2 ml-auto px-2 remove-item"
@@ -98,7 +100,7 @@
                 {
                     <span class="pr-1"><i class="bi bi-percent discount-symbol"></i></span>
                 }
-                <span>@($"{CalculatePrice():0.00}")</span><span class="price-currency">@SharedState.Value.GetCurrencySymbol()</span>
+                <span>@(PriceLabelService.GetPriceLabel(CalculatePrice(), string.Empty))</span>
             </div>
         </div>
     }

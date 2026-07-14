@@ -29,10 +29,6 @@
     font-size: 0.5em;
 }
 
-.price-sum .currency {
-    padding-left: 2px;
-}
-
 .discounted {
     text-decoration: line-through;
 }

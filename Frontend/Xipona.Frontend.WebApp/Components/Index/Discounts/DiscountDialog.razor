@@ -3,8 +3,10 @@
 @using Fluxor
 @using Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts
 @using Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.WebApp.Services.Prices
 
 @inject IState<ShoppingListState> State
+@inject IPriceLabelService PriceLabelService
 @inject IDispatcher Dispatcher
 
 @if (State.Value.ItemDiscountDialog.Item is not null)
@@ -47,7 +49,7 @@
 
     private string FormatDiscount(decimal value)
     {
-        return $"{value:n2} {State.Value.ItemDiscountDialog.Item?.QuantityType.PriceLabel}";
+        return PriceLabelService.GetPriceLabel(value, State.Value.ItemDiscountDialog.Item!.QuantityType, true);
     }
 
     private string ParseDiscount(string value)
@@ -55,7 +57,7 @@
         if (State.Value.ItemDiscountDialog.Item is null)
             return value;
 
-        return value.Replace(State.Value.ItemDiscountDialog.Item.QuantityType.PriceLabel, string.Empty);
+        return PriceLabelService.ParsePrice(value);
     }
 
     private string GetTitle()
