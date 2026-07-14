@@ -13,6 +13,7 @@ using Xipona.Api.Contracts.Users.Commands.Login;
 using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
 using Xipona.Api.Core.Constants;
 using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
 using Xipona.Api.Domain.Common.Models;
 using Xipona.Api.Domain.Common.Reasons;
 using Xipona.Api.Domain.Items.Services.Searches;
@@ -163,34 +164,35 @@ public class UserEndpointIntegrationTests
         }
 
         [Fact]
-        public async Task UpdateGeneralSettings_WithValidData_ShouldChangeItemSearchCurrency()
+        public async Task UpdateGeneralSettings_WithValidData_ShouldChangeGeneralSettingsCurrency()
         {
             // Arrange
             _fixture.SetupItem();
             await _fixture.PrepareDatabaseWithItemAsync();
             _fixture.SetupContract();
-            _fixture.SetupExpectedResult();
             _fixture.SetupMemoryCache();
 
-            var searchResultBefore = await _fixture.GetSearchResultAsync();
+            var searchResultBefore = await _fixture.GetGeneralSettingsAsync();
             searchResultBefore.Should().NotBeNull();
-            searchResultBefore.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
-            var okResultBefore = (Ok<List<SearchItemForShoppingListResultContract>>)searchResultBefore;
-            var itemBefore = okResultBefore.Value![0];
-            itemBefore.PriceLabel.Should().Be("¥");
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+            searchResultBefore.Should().BeOfType<Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>();
+            var okResultBefore = (Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>)searchResultBefore;
+            var generalSettingsBefore = okResultBefore.Value!;
+            generalSettingsBefore.Currency.Id.Should().Be(Currency.Euro.ToInt());
+            generalSettingsBefore.Currency.Symbol.Should().Be("€");
+            generalSettingsBefore.Currency.IsTrailing.Should().BeTrue();
 
             // Act
             await _fixture.ActAsync();
 
             // Assert
-            var searchResultAfter = await _fixture.GetSearchResultAsync();
+            var searchResultAfter = await _fixture.GetGeneralSettingsAsync();
             searchResultAfter.Should().NotBeNull();
-            searchResultAfter.Should().BeOfType<Ok<List<SearchItemForShoppingListResultContract>>>();
-            var okResultAfter = (Ok<List<SearchItemForShoppingListResultContract>>)searchResultAfter;
-            var itemAfter = okResultAfter.Value![0];
-            itemAfter.PriceLabel.Should().Be("$");
+            searchResultAfter.Should().BeOfType<Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>();
+            var okResultAfter = (Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>)searchResultAfter;
+            var generalSettingsAfter = okResultAfter.Value!;
+            generalSettingsAfter.Currency.Id.Should().Be(Currency.Yen.ToInt());
+            generalSettingsAfter.Currency.Symbol.Should().Be("¥");
+            generalSettingsAfter.Currency.IsTrailing.Should().BeFalse();
         }
 
         private class UpdateGeneralSettingsFixture : UserEndpointFixture
@@ -238,12 +240,12 @@ public class UserEndpointIntegrationTests
                 var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
                 var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
                 var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
-
+                
                 await itemCategoryContext.ItemCategories.AddAsync(_itemCategory);
                 await storeContext.Stores.AddAsync(_store);
                 await itemContext.Items.AddAsync(_item);
                 await shoppingListContext.ShoppingLists.AddAsync(_shoppingList);
-
+                
                 await itemCategoryContext.SaveChangesAsync();
                 await storeContext.SaveChangesAsync();
                 await itemContext.SaveChangesAsync();
@@ -252,7 +254,7 @@ public class UserEndpointIntegrationTests
 
             public void SetupContract()
             {
-                _contract = new GeneralSettingsContract(1);
+                _contract = new GeneralSettingsContract(Currency.Yen.ToInt());
             }
 
             public void SetupExpectedResult()
@@ -260,7 +262,7 @@ public class UserEndpointIntegrationTests
                 ExpectedResult = new GeneralSetting
                 {
                     Id = 0,
-                    Currency = 1
+                    Currency = Currency.Yen.ToInt()
                 };
             }
 
@@ -288,18 +290,13 @@ public class UserEndpointIntegrationTests
                     new Domain.Users.Models.GeneralSetting(new GeneralSettingId(1), Currency.Yen));
             }
 
-            public async Task<IResult> GetSearchResultAsync()
+            public async Task<IResult> GetGeneralSettingsAsync()
             {
-                TestPropertyNotSetException.ThrowIfNull(_item);
-
                 var scope = CreateServiceScope();
 
-                return await ItemEndpoints.SearchItemsForShoppingList(
-                    _item.AvailableAt.First().StoreId,
-                    _item.Name,
+                return await UserEndpoints.GetGeneralSettings(
                     scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
-                    scope.ServiceProvider.GetRequiredService<IToContractConverter<SearchItemForShoppingResultReadModel, SearchItemForShoppingListResultContract>>(),
-                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>(),
                     TestContext.Current.CancellationToken);
             }
         }

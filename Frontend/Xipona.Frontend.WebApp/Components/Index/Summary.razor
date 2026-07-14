@@ -50,8 +50,6 @@
 }
 
 @code {
-    private string Title => $"Finish shopping at {State.Value.SelectedStore?.Name}";
-
     private void OnSummaryButtonClicked()
     {
         if (!State.Value.ShoppingList!.AnyItemInBasket)

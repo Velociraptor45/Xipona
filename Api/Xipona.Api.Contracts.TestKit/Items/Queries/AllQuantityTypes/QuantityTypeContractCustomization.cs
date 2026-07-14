@@ -17,8 +17,8 @@ public class QuantityTypeContractCustomization : ICustomization
 
         private readonly QuantityTypeContract[] _quantityTypes =
         [
-            new QuantityTypeContract(0, "Unit", 1, "€", "x", 1),
-            new QuantityTypeContract(1, "Weight", 100, "€/kg", "g", 1000),
+            new QuantityTypeContract(0, "Unit", 1, "", "x", 1),
+            new QuantityTypeContract(1, "Weight", 100, "/kg", "g", 1000),
         ];
 
         public object Create(object request, ISpecimenContext context)
