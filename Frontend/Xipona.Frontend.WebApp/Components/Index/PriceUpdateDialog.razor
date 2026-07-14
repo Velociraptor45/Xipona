@@ -70,7 +70,10 @@
 
     private string FormatUpdatePrice(decimal value)
     {
-        return PriceLabelService.GetPriceLabel(value, State.Value.PriceUpdate.Item!.QuantityType, true);
+        if (State.Value.PriceUpdate.Item is null)
+            return "0"; // the user should never see this as the Item is only when the PriceUpdate dialog is not initialized or in closing 
+        
+        return PriceLabelService.GetPriceLabel(value, State.Value.PriceUpdate.Item!.QuantityType);
     }
 
     private string ParseUpdatePrice(string value)
