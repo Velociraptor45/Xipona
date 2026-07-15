@@ -11,7 +11,7 @@ public readonly record struct ListDiscountId
         Value = value;
     }
 
-    public static ListDiscountId New => new(Guid.NewGuid());
+    public static ListDiscountId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

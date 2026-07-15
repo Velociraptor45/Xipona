@@ -12,7 +12,7 @@ public readonly record struct StoreId
         Value = value;
     }
 
-    public static StoreId New => new(Guid.NewGuid());
+    public static StoreId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 
