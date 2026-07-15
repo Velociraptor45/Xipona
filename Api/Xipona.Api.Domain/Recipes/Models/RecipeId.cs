@@ -11,7 +11,7 @@ public readonly record struct RecipeId
         Value = value;
     }
 
-    public static RecipeId New => new(Guid.NewGuid());
+    public static RecipeId New => new(Guid.CreateVersion7());
     public Guid Value { get; }
 
     public static implicit operator Guid(RecipeId recipeId)

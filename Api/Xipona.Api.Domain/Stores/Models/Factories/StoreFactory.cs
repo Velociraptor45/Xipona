@@ -24,6 +24,6 @@ public class StoreFactory : IStoreFactory
     {
         var sections = creationInfo.Sections.Select(s => _sectionFactory.CreateNew(s));
 
-        return Create(new StoreId(Guid.NewGuid()), creationInfo.Name, false, sections, _dateTimeService.UtcNow);
+        return Create(StoreId.New, creationInfo.Name, false, sections, _dateTimeService.UtcNow);
     }
 }

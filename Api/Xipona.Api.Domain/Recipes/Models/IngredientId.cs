@@ -11,7 +11,7 @@ public readonly record struct IngredientId
         Value = value;
     }
 
-    public static IngredientId New => new(Guid.NewGuid());
+    public static IngredientId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

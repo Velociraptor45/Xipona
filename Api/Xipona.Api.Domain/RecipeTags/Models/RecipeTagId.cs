@@ -12,7 +12,7 @@ public readonly record struct RecipeTagId
         Value = value;
     }
 
-    public static RecipeTagId New => new(Guid.NewGuid());
+    public static RecipeTagId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

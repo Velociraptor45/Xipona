@@ -11,7 +11,7 @@ public readonly record struct PreparationStepId
         Value = value;
     }
 
-    public static PreparationStepId New => new(Guid.NewGuid());
+    public static PreparationStepId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 
