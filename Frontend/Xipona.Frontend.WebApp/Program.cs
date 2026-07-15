@@ -3,13 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xipona.Api.Client;
 using Xipona.Frontend.Infrastructure;
 using Xipona.Frontend.Infrastructure.Connection;
@@ -19,8 +14,8 @@ using Xipona.Frontend.Redux.Shared.Ports;
 using Xipona.Frontend.WebApp.Auth;
 using Xipona.Frontend.WebApp.Configs;
 using Xipona.Frontend.WebApp.Services;
-using Xipona.Frontend.WebApp.Services.Discounts;
 using Xipona.Frontend.WebApp.Services.Notification;
+using Xipona.Frontend.WebApp.Services.Prices;
 
 namespace Xipona.Frontend.WebApp;
 
@@ -120,7 +115,7 @@ public static class Program
 
         builder.Services.AddTransient<IXiponaApiClient, XiponaApiClient>();
         builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
-        builder.Services.AddTransient<IDiscountLabelService, DiscountLabelService>();
+        builder.Services.AddTransient<IPriceLabelService, PriceLabelService>();
         builder.Services.AddTransient<IApiClient, ApiClient>();
         builder.Services.AddScoped<ICommandQueue, CommandQueue>();
 

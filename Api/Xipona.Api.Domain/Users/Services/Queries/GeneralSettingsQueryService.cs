@@ -19,7 +19,11 @@ public class GeneralSettingsQueryService : IGeneralSettingsQueryService
     {
         var values = Enum.GetValues<Currency>().ToList();
 
-        return values.Select(v => new CurrencyReadModel(v.ToInt(), v.GetAttribute<CurrencySymbolAttribute>().Symbol));
+        return values.Select(v =>
+        {
+            var attr = v.GetAttribute<CurrencySymbolAttribute>();
+            return new CurrencyReadModel(v.ToInt(), attr.Symbol, attr.IsTrailing);
+        });
     }
 
     public async Task<IGeneralSetting> GetGeneralSettingsAsync()

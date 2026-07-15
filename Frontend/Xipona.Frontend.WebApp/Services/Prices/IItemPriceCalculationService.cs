@@ -1,6 +1,6 @@
 ﻿using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace Xipona.Frontend.WebApp.Services;
+namespace Xipona.Frontend.WebApp.Services.Prices;
 
 public interface IItemPriceCalculationService
 {

@@ -1,9 +1,7 @@
 ﻿using AutoFixture.Kernel;
-using Xipona.Api.Core.TestKit;
 using Xipona.Api.Domain.Items.Models;
 using Xipona.Api.Domain.Items.Services.Queries.Quantities;
 using Xipona.Api.Domain.TestKit.Common;
-using Xipona.Api.Domain.Users.Models;
 
 namespace Xipona.Api.Domain.TestKit.Items.Models;
 
@@ -14,14 +12,14 @@ public class QuantityTypeReadModelCustomization : ICustomization
         fixture.Customizations.Add(new QuantityTypeReadModelBuilder());
     }
 
-    public class QuantityTypeReadModelBuilder : ISpecimenBuilder
+    private sealed class QuantityTypeReadModelBuilder : ISpecimenBuilder
     {
         public object Create(object request, ISpecimenContext context)
         {
             if (!MatchesType(request))
                 return new NoSpecimen();
 
-            return CreateInstance(context);
+            return CreateInstance();
         }
 
         private static bool MatchesType(object request)
@@ -30,15 +28,10 @@ public class QuantityTypeReadModelCustomization : ICustomization
             return typeof(QuantityTypeReadModel) == t;
         }
 
-        private static QuantityTypeReadModel CreateInstance(ISpecimenContext context)
+        private static QuantityTypeReadModel CreateInstance()
         {
-            var cacheMock = new MemoryCacheMock(MockBehavior.Strict);
-
-            var settings = new DomainTestBuilder<GeneralSetting>().Create();
-            cacheMock.SetupTryGetValue("GeneralSettings", settings, true);
-
             var quantityType = new DomainTestBuilder<QuantityType>().Create();
-            return new QuantityTypeReadModel(quantityType, cacheMock.Object);
+            return new QuantityTypeReadModel(quantityType);
         }
     }
 }

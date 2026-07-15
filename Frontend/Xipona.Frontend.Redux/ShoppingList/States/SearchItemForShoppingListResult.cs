@@ -1,11 +1,7 @@
-﻿using System.Globalization;
-
-namespace Xipona.Frontend.Redux.ShoppingList.States;
+﻿namespace Xipona.Frontend.Redux.ShoppingList.States;
 
 public class SearchItemForShoppingListResult
 {
-    private static readonly CultureInfo _culture = new("de-de");
-
     public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, decimal price,
         int defaultQuantity, string priceLabel, string itemCategoryName, string manufacturerName,
         Guid defaultSectionId, bool isFavorite)
@@ -32,14 +28,6 @@ public class SearchItemForShoppingListResult
     public string ManufacturerName { get; }
     public Guid DefaultSectionId { get; }
     public bool IsFavorite { get; }
-
-    public string DisplayValue
-    {
-        get => string.IsNullOrWhiteSpace(ManufacturerName)
-            ? $"{Name} | {Price.ToString("0.00", _culture)}{PriceLabel}"
-            : $"{Name} | {ManufacturerName} | {Price.ToString("0.00", _culture)}{PriceLabel}";
-        set { _ = value; }
-    }
 
     public string SelectIdentifier
     {

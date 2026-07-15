@@ -8,6 +8,6 @@ public class CurrencyConverter : IToDomainConverter<CurrencyContract, Currency>
 {
     public Currency ToDomain(CurrencyContract source)
     {
-        return new(source.Id, source.Symbol);
+        return new(source.Id, source.Symbol, source.IsTrailing);
     }
 }

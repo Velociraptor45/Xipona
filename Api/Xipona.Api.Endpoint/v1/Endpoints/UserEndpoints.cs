@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using System.IdentityModel.Tokens.Jwt;
-using System.Threading;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Users.Commands.Login;

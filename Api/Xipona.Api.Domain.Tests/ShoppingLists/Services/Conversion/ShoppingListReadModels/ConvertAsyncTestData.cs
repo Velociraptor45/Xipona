@@ -1,5 +1,4 @@
 ﻿using Xipona.Api.Core.Extensions;
-using Xipona.Api.Core.TestKit;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.ItemCategories.Services.Shared;
 using Xipona.Api.Domain.Items.Models;
@@ -9,29 +8,17 @@ using Xipona.Api.Domain.Manufacturers.Services.Shared;
 using Xipona.Api.Domain.ShoppingLists.Models;
 using Xipona.Api.Domain.ShoppingLists.Services.Queries;
 using Xipona.Api.Domain.Stores.Models;
-using Xipona.Api.Domain.TestKit.Common;
 using Xipona.Api.Domain.TestKit.ItemCategories.Models;
 using Xipona.Api.Domain.TestKit.Items.Models;
 using Xipona.Api.Domain.TestKit.Manufacturers.Models;
 using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
 using Xipona.Api.Domain.TestKit.Stores.Models;
-using Xipona.Api.Domain.Users.Models;
 
 namespace Xipona.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
 public class ConvertAsyncTestData : TheoryData<IShoppingList, IStore, IEnumerable<IItem>, IEnumerable<IItemCategory>,
     IEnumerable<IManufacturer>, ShoppingListReadModel>
 {
-    public static MemoryCacheMock MemoryCacheMock { get; }
-
-    static ConvertAsyncTestData()
-    {
-        MemoryCacheMock = new MemoryCacheMock(MockBehavior.Strict);
-
-        var settings = new DomainTestBuilder<GeneralSetting>().Create();
-        MemoryCacheMock.SetupTryGetValue("GeneralSettings", settings, true);
-    }
-    
     public ConvertAsyncTestData()
     {
         NoItemCategory();
@@ -207,7 +194,7 @@ public class ConvertAsyncTestData : TheoryData<IShoppingList, IStore, IEnumerabl
                 item.Comment,
                 item.IsTemporary,
                 item.Availabilities.First().Price,
-                new QuantityTypeReadModel(item.ItemQuantity.Type, MemoryCacheMock.Object),
+                new QuantityTypeReadModel(item.ItemQuantity.Type),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,
                 itemCategoryReadModel,

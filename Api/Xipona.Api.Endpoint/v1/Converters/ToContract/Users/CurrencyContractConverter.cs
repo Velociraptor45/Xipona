@@ -8,6 +8,6 @@ public class CurrencyContractConverter : IToContractConverter<CurrencyReadModel,
 {
     public CurrencyContract ToContract(CurrencyReadModel source)
     {
-        return new CurrencyContract(source.Id, source.Symbol);
+        return new CurrencyContract(source.Id, source.Symbol, source.IsTrailing);
     }
 }

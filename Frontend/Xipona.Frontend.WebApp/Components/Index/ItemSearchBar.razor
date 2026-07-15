@@ -6,7 +6,9 @@
 @using Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts
 @using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator
 @using Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.WebApp.Services.Prices
 
+@inject IPriceLabelService PriceLabelService
 @inject IState<ShoppingListState> State
 @inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
@@ -29,7 +31,7 @@
                 {
                     <i class="bi bi-star-fill mr-1"></i>
                 }
-                @(context.DisplayValue)
+                @(GetEntryValue(context))
             </span>
         </ItemTemplate>
     </Select>
@@ -78,5 +80,14 @@
     private void OnOpenTempItemCreatorButtonClicked()
     {
         Dispatcher.Dispatch(new OpenTemporaryItemCreatorAction());
+    }
+
+    private string GetEntryValue(SearchItemForShoppingListResult item)
+    {
+        var price = PriceLabelService.GetPriceLabel(item.Price, item.PriceLabel);
+
+        return string.IsNullOrWhiteSpace(item.ManufacturerName)
+            ? $"{item.Name} | {price}"
+            : $"{item.Name} | {item.ManufacturerName} | {price}";
     }
 }

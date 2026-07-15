@@ -45,8 +45,7 @@ public static class ServiceCollectionExtensions
             return ct => new ItemReadModelConversionService(
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
                 provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct),
-                provider.GetRequiredService<IMemoryCache>());
+                provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IItemAvailabilityReadModelConversionService>>(provider =>

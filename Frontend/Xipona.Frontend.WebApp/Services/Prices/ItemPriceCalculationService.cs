@@ -1,10 +1,7 @@
 ﻿using Fluxor;
 using Xipona.Frontend.Redux.ShoppingList.States;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Xipona.Frontend.WebApp.Services;
+namespace Xipona.Frontend.WebApp.Services.Prices;
 
 public class ItemPriceCalculationService : IItemPriceCalculationService
 {

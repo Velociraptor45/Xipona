@@ -8,6 +8,6 @@ public class GeneralSettingsConverter : IToDomainConverter<GeneralSettingsContra
 {
     public GeneralSettings ToDomain(GeneralSettingsContract source)
     {
-        return new GeneralSettings(new Currency(source.Currency.Id, source.Currency.Symbol));
+        return new GeneralSettings(new Currency(source.Currency.Id, source.Currency.Symbol, source.Currency.IsTrailing));
     }
 }

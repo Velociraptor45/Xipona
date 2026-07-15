@@ -1,7 +1,5 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemPriceCalculationService PriceCalculationService;
-
 @using Fluxor;
 @using System.Text
 @using System.Globalization;
@@ -9,7 +7,10 @@
 @using Xipona.Frontend.Redux.ShoppingList.Actions.Summary
 @using Xipona.Frontend.Redux.ShoppingList.States
 @using Xipona.Frontend.WebApp.Services;
+@using Xipona.Frontend.WebApp.Services.Prices
 
+@inject IPriceLabelService PriceLabelService
+@inject IItemPriceCalculationService PriceCalculationService;
 @inject IState<ShoppingListState> State
 @inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
@@ -19,15 +20,9 @@
     <div class="d-flex flex-column mt-2 summary @(SharedState.Value.IsOnline ? "" : "summary-retry")">
         <div class="pb-1 d-flex align-items-end flex-column">
             <div class="d-flex border-top pt-1 price-sum">
-                <div class="d-flex">
-                    <span>@GetInBasketPrice()</span>
-                    <span class="currency">@SharedState.Value.GetCurrencySymbol()</span>
-                </div>
+                <div>@GetInBasketPrice()</div>
                 <span class="px-1">/</span>
-                <div class="d-flex">
-                    <span>@GetTotalListPrice()</span>
-                    <span class="currency">@SharedState.Value.GetCurrencySymbol()</span>
-                </div>
+                <div>@GetTotalListPrice()</div>
             </div>
         </div>
         <Button Type="@ButtonType.Primary"
@@ -55,8 +50,6 @@
 }
 
 @code {
-    private string Title => $"Finish shopping at {State.Value.SelectedStore?.Name}";
-
     private void OnSummaryButtonClicked()
     {
         if (!State.Value.ShoppingList!.AnyItemInBasket)
@@ -93,19 +86,19 @@
     private string GetTotalListPrice()
     {
         var price = PriceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
-        return price.ToString("0.00");
+        return PriceLabelService.GetPriceLabel(price, string.Empty);
     }
 
     private string GetInBasketPrice()
     {
         var price = PriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
-        return price.ToString("0.00");
+        return PriceLabelService.GetPriceLabel(price, string.Empty);
     }
 
     private string GetInBasketPriceWithDiscounts()
     {
         var price = PriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!, includeDiscounts: true);
-        return price.ToString("0.00");
+        return PriceLabelService.GetPriceLabel(price, string.Empty);
     }
 
     private RenderFragment GetFooter()
@@ -115,12 +108,12 @@
                 <div class="d-flex">
                     <div class="final-price d-flex align-items-center">
                         <span class="font-weight-bold @(State.Value.ShoppingList!.Discounts.Any() ? "discounted" : "")">
-                            @GetInBasketPrice()@SharedState.Value.GetCurrencySymbol()
+                            @GetInBasketPrice()
                         </span>
                         @if (State.Value.ShoppingList!.Discounts.Count > 0)
                         {
                             <span class="px-1">=></span>
-                            <span class="font-weight-bold">@GetInBasketPriceWithDiscounts()@SharedState.Value.GetCurrencySymbol()</span>
+                            <span class="font-weight-bold">@GetInBasketPriceWithDiscounts()</span>
                         }
                     </div>
                     <Button Class="ml-auto"
@@ -139,7 +132,7 @@
     {
         return @<Template>
                    <div class ="summary-header">
-                       <div>@Title</div>
+                       <div>@($"Finish shopping at {State.Value.SelectedStore?.Name}")</div>
                        <div>
                            @if (State.Value.Summary.IsEditingFinishedAt)
                            {

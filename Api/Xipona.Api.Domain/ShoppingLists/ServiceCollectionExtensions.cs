@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xipona.Api.Core.Services;
 using Xipona.Api.Domain.ItemCategories.Ports;
@@ -50,8 +49,7 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>()(ct),
                 provider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(ct),
                 provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct),
-                provider.GetRequiredService<IMemoryCache>());
+                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct));
         });
 
         services.AddTransient<Func<CancellationToken, IShoppingListModificationService>>(provider =>

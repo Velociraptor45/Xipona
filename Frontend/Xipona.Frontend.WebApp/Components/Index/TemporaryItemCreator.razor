@@ -6,6 +6,7 @@
 @using Xipona.Frontend.Redux.ShoppingList.States
 
 @inject IState<ShoppingListState> State
+@inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
 
 <div>
@@ -33,16 +34,19 @@
                     </Select>
                     <div class="d-flex pl-4 align-items-center">
                         <div class="price-input mr-1">
-                            <Input TValue="decimal" Value="@State.Value.TemporaryItemCreator.Price"
-                                   ValueChanged="OnPriceChanged">
-                            </Input>
+                            <AntDesign.InputNumber TValue="decimal"
+                                                   Value="@State.Value.TemporaryItemCreator.Price"
+                                                   ValueChanged="OnPriceChanged"
+                                                   Min="0.01m"
+                                                   Formatter="FormatPrice">
+                            </AntDesign.InputNumber>
                         </div>
                         <div>
-                            <Select TItem="QuantityType"
+                            <Select TItem="TemporaryItemQuantityType"
                                     TItemValue="int"
-                                    ValueName="@nameof(QuantityType.Id)"
-                                    LabelName="@nameof(QuantityType.PriceLabel)"
-                                    DataSource="@State.Value.QuantityTypes"
+                                    ValueName="@nameof(TemporaryItemQuantityType.Id)"
+                                    LabelName="@nameof(TemporaryItemQuantityType.PriceLabel)"
+                                    DataSource="@GetTemporaryItemQuantityTypes()"
                                     OnSelectedItemChanged="OnSelectedQuantityTypeIdChanged"
                                     AllowClear="false"
                                     Value="@State.Value.TemporaryItemCreator.SelectedQuantityTypeId">
@@ -82,9 +86,14 @@
         Dispatcher.Dispatch(new SaveTemporaryItemAction());
     }
 
-    private void OnSelectedQuantityTypeIdChanged(QuantityType quantityType)
+    private void OnSelectedQuantityTypeIdChanged(TemporaryItemQuantityType quantityType)
     {
         Dispatcher.Dispatch(new TemporaryItemSelectedQuantityTypeChangedAction(quantityType.Id));
+    }
+
+    private string FormatPrice(decimal value)
+    {
+        return value.ToString("0.00");
     }
 
     private RenderFragment GetFooter()
@@ -100,4 +109,19 @@
                    </Button>
                </Template>;
     }
+
+    /// <summary>
+    /// I need to add the currency symbol to the PriceLabel in a custom structure because the currency is not
+    /// added by the server anymore as the currency symbol could be in front of the price value
+    /// </summary>
+    private List<TemporaryItemQuantityType> GetTemporaryItemQuantityTypes()
+    {
+        return State.Value.QuantityTypes
+            .Select(qt => new TemporaryItemQuantityType(
+                qt.Id,
+                $"{SharedState.Value.Settings.GeneralSettings?.Currency.Symbol}{qt.PriceLabel}"))
+            .ToList();
+    }
+
+    internal record TemporaryItemQuantityType(int Id, string PriceLabel);
 }

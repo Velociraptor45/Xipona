@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Xipona.Api.Domain.Common.Exceptions;
+﻿using Xipona.Api.Domain.Common.Exceptions;
 using Xipona.Api.Domain.ItemCategories.Models;
 using Xipona.Api.Domain.ItemCategories.Ports;
 using Xipona.Api.Domain.ItemCategories.Services.Shared;
@@ -25,17 +24,14 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
     private readonly IItemRepository _itemRepository;
     private readonly IItemCategoryRepository _itemCategoryRepository;
     private readonly IManufacturerRepository _manufacturerRepository;
-    private readonly IMemoryCache _cache;
 
     public ShoppingListReadModelConversionService(IStoreRepository storeRepository, IItemRepository itemRepository,
-        IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository,
-        IMemoryCache cache)
+        IItemCategoryRepository itemCategoryRepository, IManufacturerRepository manufacturerRepository)
     {
         _storeRepository = storeRepository;
         _itemRepository = itemRepository;
         _itemCategoryRepository = itemCategoryRepository;
         _manufacturerRepository = manufacturerRepository;
-        _cache = cache;
     }
 
     public async Task<ShoppingListReadModel> ConvertAsync(IShoppingList shoppingList)
@@ -108,7 +104,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
                     item.Comment,
                     item.IsTemporary,
                     price.Value,
-                    new QuantityTypeReadModel(item.ItemQuantity.Type, _cache),
+                    new QuantityTypeReadModel(item.ItemQuantity.Type),
                     itemQuantityInPacket?.Quantity,
                     quantityTypeInPacketReadModel,
                     item.ItemCategoryId == null ?

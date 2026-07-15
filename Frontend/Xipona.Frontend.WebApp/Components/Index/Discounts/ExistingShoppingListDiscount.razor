@@ -4,14 +4,14 @@
 @using Fluxor
 @using Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts
 @using Xipona.Frontend.Redux.ShoppingList.States
-@using Xipona.Frontend.WebApp.Services.Discounts
+@using Xipona.Frontend.WebApp.Services.Prices
 
+@inject IPriceLabelService PriceLabelService
 @inject IDispatcher Dispatcher
-@inject IDiscountLabelService LabelService
 
 <div class="d-flex mt-2">
     <div>
-        @Model.DiscountValue.ToString("0.00")@LabelService.GetLabel(Model.Type)
+        @FormatDiscount()
     </div>
     <div class="ml-2">
         <Button Size="ButtonSize.Small" Danger="true" Loading="Model.IsDeleting"
@@ -29,5 +29,13 @@
     private void RemoveDiscount()
     {
         Dispatcher.Dispatch(new RemoveDiscountAction(Model.Id));
+    }
+
+    private string FormatDiscount()
+    {
+        if (Model.Type == ShoppingListDiscountType.Percentage)
+            return $"{Model.DiscountValue:n2}%";
+
+        return PriceLabelService.GetPriceLabel(Model.DiscountValue, string.Empty);
     }
 }

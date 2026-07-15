@@ -7,9 +7,9 @@ using Xipona.Frontend.Redux.TestKit.Common;
 using Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 using Xipona.Frontend.TestTools.AutoFixture.Builder;
 using Xipona.Frontend.TestTools.Exceptions;
-using Xipona.Frontend.WebApp.Services;
+using Xipona.Frontend.WebApp.Services.Prices;
 
-namespace Xipona.Frontend.WebApp.Tests.Services;
+namespace Xipona.Frontend.WebApp.Tests.Services.Prices;
 
 public class ItemPriceCalculationServiceTests
 {
@@ -296,9 +296,7 @@ public class ItemPriceCalculationServiceTests
                     ExpectedResult = (5.98m + 69.97m - 1m) * 0.9m; // (item1 + item2 - discount1) * (1 - discount2)
                 else
                     ExpectedResult = 5.98m + 69.97m; // item1 + item2
-
             }
-
         }
     }
 
@@ -311,6 +309,5 @@ public class ItemPriceCalculationServiceTests
             var sut = new ItemPriceCalculationService(ShoppingListStateMock.Object);
             return sut;
         }
-
     }
 }
