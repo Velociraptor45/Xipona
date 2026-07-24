@@ -76,29 +76,28 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
-        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
+    public async Task<IEnumerable<IItem>> FindPermanentByAsync(StoreId? storeId, ItemCategoryId? itemCategoryId,
+        ManufacturerId? manufacturerId, int page, int pageSize)
     {
-        var storeIdLists = storeIds.Select(id => id.Value).ToList();
-        var itemCategoryIdLists = itemCategoriesIds.Select(id => id.Value).ToList();
-        var manufacturerIdLists = manufacturerIds.Select(id => id.Value).ToList();
-
-        var result = await GetItemQuery()
-            .Where(item =>
-                !item.IsTemporary
-                && !item.Deleted
-                && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
-                && ((!item.ManufacturerId.HasValue && manufacturerIdLists.Count == 0)
-                    || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
+        var query = GetItemQuery().Where(item => !item.IsTemporary && !item.Deleted);
+        
+        if(storeId is not null)
+            query = query.Where(
+                item => item.AvailableAt.Any(av => av.StoreId == storeId)
+                || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId)));
+        if(itemCategoryId is not null)
+            query = query.Where(item => item.ItemCategoryId == itemCategoryId);
+        if(manufacturerId is not null)
+            query = query.Where(item => item.ManufacturerId == manufacturerId);
+        
+        var result = await query
+            .OrderBy(item => item.Name)
+            .ThenBy(item => item.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(_cancellationToken);
 
-        // filtering by store
-        var filteredResultByStore = result
-            .Where(item => (item.AvailableAt.Count == 0 && storeIdLists.Count == 0)
-                           || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any())
-            .ToList();
-
-        return _toModelConverter.ToDomain(filteredResultByStore);
+        return _toModelConverter.ToDomain(result);
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId)

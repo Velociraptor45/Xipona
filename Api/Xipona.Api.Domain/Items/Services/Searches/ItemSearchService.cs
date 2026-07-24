@@ -8,6 +8,19 @@ using Xipona.Api.Domain.Stores.Models;
 
 namespace Xipona.Api.Domain.Items.Services.Searches;
 
+public interface IItemSearchService
+{
+    Task<IEnumerable<SearchItemForShoppingResultReadModel>> SearchForShoppingListAsync(string name, StoreId storeId);
+
+    Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput, int page, int pageSize);
+
+    Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(StoreId? storeId,
+        ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, int page, int pageSize);
+
+    Task<IEnumerable<SearchItemByItemCategoryResult>> SearchAsync(ItemCategoryId itemCategoryId);
+    Task<int> GetTotalSearchResultCountAsync(string searchInput);
+}
+
 public class ItemSearchService : IItemSearchService
 {
     private const int _maxSearchResults = 20;
@@ -32,15 +45,21 @@ public class ItemSearchService : IItemSearchService
         _availabilityConverter = availabilityConverter;
     }
 
-    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(IEnumerable<StoreId> storeIds,
-        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
+    public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(StoreId? storeId,
+        ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, int page, int pageSize)
     {
-        var items = await _itemRepository.FindPermanentByAsync(storeIds, itemCategoriesIds,
-            manufacturerIds);
+        var items = (await _itemRepository.FindPermanentByAsync(storeId, itemCategoryId,
+            manufacturerId, page, pageSize)).ToList();
+        
+        var manufacturerIds = items.Where(i => i.ManufacturerId is not null).Select(i => i.ManufacturerId!.Value);
+        var manufacturers = (await _manufacturerRepository.FindByAsync(manufacturerIds)).ToDictionary(m => m.Id);
 
         return items
-            .Where(model => !model.IsDeleted)
-            .Select(model => new SearchItemResultReadModel(model.Id, model.Name, null));
+            .Select(i =>
+            {
+                var manufacturerName = i.ManufacturerId is null ? null : manufacturers[i.ManufacturerId!.Value].Name;
+                return new SearchItemResultReadModel(i.Id, i.Name, manufacturerName);
+            });
     }
 
     public async Task<IEnumerable<SearchItemResultReadModel>> SearchAsync(string searchInput, int page, int pageSize)
