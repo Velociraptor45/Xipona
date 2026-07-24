@@ -139,4 +139,7 @@ public interface IApiClient
     Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems);
     Task MarkItemAsFavoriteAsync(Guid itemId);
     Task UnmarkItemAsFavoriteAsync(Guid itemId);
+
+    Task<List<ItemSearchResult>> FilterItemsAsync(Guid? storeId, Guid? itemCategoryId,
+        Guid? manufacturerId, int page, int pageSize);
 }

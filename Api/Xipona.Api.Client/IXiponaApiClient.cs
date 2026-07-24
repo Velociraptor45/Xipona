@@ -361,17 +361,19 @@ namespace Xipona.Api.Client
 
         /// <summary>
         /// Searches for items by filter.
-        /// Different filter criteria are connected via AND. Elements inside a filter criteria are connected via OR.
-        /// Does not include temporary items.
+        /// Different filter criteria are connected via AND.
+        /// Does not include temporary or deleted items.
         /// </summary>
-        /// <param name="storeIds"></param>
-        /// <param name="itemCategoryIds"></param>
-        /// <param name="manufacturerIds"></param>
+        /// <param name="storeId"></param>
+        /// <param name="itemCategoryId"></param>
+        /// <param name="manufacturerId"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="page"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Get("items/filter")]
-        Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync([Query] Guid[] storeIds,
-            [Query] Guid[] itemCategoryIds, [Query] Guid[] manufacturerIds,
+        Task<IEnumerable<SearchItemResultContract>> FilterItemsAsync([Query] Guid? storeId,
+            [Query] Guid? itemCategoryId, [Query] Guid? manufacturerId, int page = 1, int pageSize = 20,
             CancellationToken cancellationToken = default);
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.States.Filters;
 using Xipona.Frontend.Redux.Items.States.Merges;
 using Xipona.Frontend.Redux.Manufacturers.States;
 using Xipona.Frontend.Redux.Shared.States;
@@ -29,6 +30,10 @@ public class ItemFeatureState : Feature<ItemState>
             new List<QuantityTypeInPacket>(),
             new ActiveStores(new List<ItemStore>()),
             new ItemSearch(
+                new ItemFilter(
+                    null,
+                    new ItemCategoryFilter([], string.Empty, null),
+                    false),
                 string.Empty,
                 1,
                 25,

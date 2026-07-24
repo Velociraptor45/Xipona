@@ -1,0 +1,3 @@
+namespace Xipona.Frontend.Redux.Items.Actions.Filter;
+
+public record ItemCategoryInputChangedAction(string Input);
