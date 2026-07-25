@@ -44,7 +44,7 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge
         public Guid ItemCategoryId { get; set; }
 
         /// <summary>
-        /// The ID of the item's manufacturer. <code>null</code> if it has no manufacturer.
+        /// The ID of the item's manufacturer. <c>null</c> if it has no manufacturer.
         /// </summary>
         public Guid? ManufacturerId { get; set; }
 
@@ -54,12 +54,12 @@ namespace Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge
         public int QuantityType { get; set; }
 
         /// <summary>
-        /// The quantity of the item. <code>null</code> if it has no quantity.
+        /// The quantity of the item. <c>null</c> if it has no quantity.
         /// </summary>
         public float? Quantity { get; set; }
 
         /// <summary>
-        /// The quantity type in package of the item. <code>null</code> if it has no quantity in packet type.
+        /// The quantity type in package of the item. <c>null</c> if it has no quantity in packet type.
         /// </summary>
         public int? QuantityTypeInPacket { get; set; }
     }

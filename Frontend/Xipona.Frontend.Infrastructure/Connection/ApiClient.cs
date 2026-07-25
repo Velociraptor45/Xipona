@@ -526,4 +526,14 @@ public class ApiClient : IApiClient
     {
         await _client.UnmarkItemAsFavoriteAsync(itemId);
     }
+
+    public async Task<List<ItemSearchResult>> FilterItemsAsync(Guid? storeId, Guid? itemCategoryId,
+        Guid? manufacturerId, int page, int pageSize)
+    {
+        var contracts = await _client.FilterItemsAsync(storeId,  itemCategoryId, manufacturerId, page, pageSize);
+
+        return contracts is null
+            ? []
+            : [.. _converters.ToDomain<SearchItemResultContract, ItemSearchResult>(contracts)];
+    }
 }

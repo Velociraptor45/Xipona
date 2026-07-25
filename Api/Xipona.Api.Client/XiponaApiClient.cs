@@ -310,11 +310,12 @@ namespace Xipona.Api.Client
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(Guid[] storeIds,
-            Guid[] itemCategoryIds, Guid[] manufacturerIds,
+        public async Task<IEnumerable<SearchItemResultContract>> FilterItemsAsync(Guid? storeId,
+            Guid? itemCategoryId, Guid? manufacturerId, int page = 1, int pageSize = 20,
             CancellationToken cancellationToken = default)
         {
-            return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds, cancellationToken);
+            return await _apiClient.FilterItemsAsync(storeId, itemCategoryId, manufacturerId, page, pageSize,
+                cancellationToken);
         }
 
         /// <inheritdoc/>

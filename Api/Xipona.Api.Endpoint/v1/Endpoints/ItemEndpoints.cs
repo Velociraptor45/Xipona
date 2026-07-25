@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using System.Threading;
 using Xipona.Api.ApplicationServices.Common.Commands;
 using Xipona.Api.ApplicationServices.Common.Queries;
 using Xipona.Api.ApplicationServices.Items.Commands;
@@ -19,10 +18,10 @@ using Xipona.Api.ApplicationServices.Items.Commands.UnmarkItemAsFavorite;
 using Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 using Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
 using Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypesInPacket;
+using Xipona.Api.ApplicationServices.Items.Queries.FilterItems;
 using Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
 using Xipona.Api.ApplicationServices.Items.Queries.ItemById;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItems;
-using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByFilters;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsByItemCategory;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForMerge;
 using Xipona.Api.ApplicationServices.Items.Queries.SearchItemsForShoppingLists;
@@ -70,7 +69,7 @@ public static class ItemEndpoints
             .RegisterGetItemTypePrices()
             .RegisterGetTotalSearchResultCount()
             .RegisterSearchItems()
-            .RegisterSearchItemsByFilter()
+            .RegisterFilterItems()
             .RegisterSearchItemsForShoppingList()
             .RegisterSearchItemsByItemCategory()
             .RegisterGetAllQuantityTypes()
@@ -214,10 +213,10 @@ public static class ItemEndpoints
         return Results.Ok(contract);
     }
 
-    private static IEndpointRouteBuilder RegisterSearchItemsByFilter(this IEndpointRouteBuilder builder)
+    private static IEndpointRouteBuilder RegisterFilterItems(this IEndpointRouteBuilder builder)
     {
-        builder.MapGet($"/{_routeBase}/filter", SearchItemsByFilter)
-            .WithName("SearchItemsByFilter")
+        builder.MapGet($"/{_routeBase}/filter", FilterItems)
+            .WithName("FilterItems")
             .Produces<List<SearchItemResultContract>>()
             .Produces(StatusCodes.Status204NoContent)
             .RequireAuthorization("User");
@@ -225,18 +224,22 @@ public static class ItemEndpoints
         return builder;
     }
 
-    internal static async Task<IResult> SearchItemsByFilter(
-        [FromQuery] Guid[] storeIds,
-        [FromQuery] Guid[] itemCategoryIds,
-        [FromQuery] Guid[] manufacturerIds,
+    internal static async Task<IResult> FilterItems(
+        [FromQuery] Guid? storeId,
+        [FromQuery] Guid? itemCategoryId,
+        [FromQuery] Guid? manufacturerId,
         [FromServices] IQueryDispatcher queryDispatcher,
         [FromServices] IToContractConverter<SearchItemResultReadModel, SearchItemResultContract> contractConverter,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
     {
-        var query = new SearchItemsByFilterQuery(
-            storeIds.Select(id => new StoreId(id)),
-            itemCategoryIds.Select(id => new ItemCategoryId(id)),
-            manufacturerIds.Select(id => new ManufacturerId(id)));
+        var query = new FilterItemsQuery(
+            storeId is null ? null : new StoreId(storeId.Value),
+            itemCategoryId is null ? null : new ItemCategoryId(itemCategoryId.Value),
+            manufacturerId is null ? null : new ManufacturerId(manufacturerId.Value),
+            page,
+            pageSize);
 
         var result = (await queryDispatcher.DispatchAsync(query, cancellationToken)).ToList();
 

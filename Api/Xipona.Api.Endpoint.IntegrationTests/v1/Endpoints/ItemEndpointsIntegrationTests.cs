@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
@@ -40,6 +41,7 @@ using Xipona.Api.Domain.Items.Services.Creations;
 using Xipona.Api.Domain.Items.Services.Queries;
 using Xipona.Api.Domain.Items.Services.Searches;
 using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
 using Xipona.Api.Domain.TestKit.Common;
 using Xipona.Api.Endpoint.IntegrationTests.Common;
 using Xipona.Api.Endpoint.v1.Endpoints;
@@ -101,7 +103,7 @@ public class ItemEndpointsIntegrationTests
         {
             // Arrange
             _fixture.SetupItemNotAvailableAtStore();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -119,7 +121,7 @@ public class ItemEndpointsIntegrationTests
         {
             // Arrange
             _fixture.SetupItemWithoutTypes();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -138,7 +140,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupExpectedResult();
             _fixture.SetupItem();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -215,7 +217,7 @@ public class ItemEndpointsIntegrationTests
                 await ApplyMigrationsAsync(ArrangeScope);
             }
 
-            public async Task SetupDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
 
@@ -241,7 +243,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupSearchInput();
             _fixture.SetupNoSearchResults();
             _fixture.SetupExpectedResultZero();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -262,7 +264,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupSearchInput();
             _fixture.SetupSearchResults();
             _fixture.SetupExpectedResult();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -327,7 +329,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedResult = 0;
             }
 
-            public async Task SetupDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_items);
 
@@ -356,7 +358,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupItemWithNameMatchingButDeleted();
             _fixture.SetupItemWithNameMatchingButTemporary();
             _fixture.SetupManufacturerNameForItemWithNameMatching();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -379,7 +381,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupPageAndPageSize();
             _fixture.SetupTenMatchingItems();
             _fixture.SetupExpectedResultForTenMatchingItems();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -437,7 +439,7 @@ public class ItemEndpointsIntegrationTests
                     TestContext.Current.CancellationToken);
             }
 
-            public async Task SetupDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
 
@@ -579,7 +581,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupDeletedItemForCategory();
             _fixture.SetupEmptyShoppingList();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -595,7 +597,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupItemForCategory();
             _fixture.SetupEmptyShoppingList();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -618,7 +620,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupItemWithTypeForCategory();
             _fixture.SetupEmptyShoppingList();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -641,7 +643,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupItemWithTypeForCategoryExceedingLimit();
             _fixture.SetupEmptyShoppingList();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -666,7 +668,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupItemWithTypesWhereItemAndTypeNameMatch();
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForItemAndTypeNameMatch();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -692,7 +694,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupItemWithTypesWhereOnlyTypeNameMatch();
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForOnlyTypeNameMatch();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
@@ -717,7 +719,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupItemAlreadyOnShoppingList();
             _fixture.SetupShoppingListContainingItem();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -734,7 +736,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupItemTypeAlreadyOnShoppingList();
             _fixture.SetupShoppingListContainingItemType();
             _fixture.SetupExpectedResultForOneTypeOnShoppingListAndOneNot();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -758,7 +760,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupFavoriteItem();
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForFavoriteItem();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -782,7 +784,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupWrongCapitalizationItem();
             _fixture.SetupEmptyShoppingList();
             _fixture.SetupExpectedResultForWrongCapitalization();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -805,7 +807,7 @@ public class ItemEndpointsIntegrationTests
             // Arrange
             _fixture.SetupItemAlreadyOnShoppingListWithFindingViaItemCategory();
             _fixture.SetupShoppingListContainingItem();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             // Act
             var result = await _fixture.ActAsync();
@@ -1142,7 +1144,7 @@ public class ItemEndpointsIntegrationTests
                     item.IsFavorite);
             }
 
-            public async Task SetupDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_store);
                 TestPropertyNotSetException.ThrowIfNull(_shoppingList);
@@ -1250,7 +1252,7 @@ public class ItemEndpointsIntegrationTests
                 _store = StoreEntityMother.Active(new StoreEntityGodmother().For(availability)).Create();
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item);
                 TestPropertyNotSetException.ThrowIfNull(_itemDifferentItemCategory);
@@ -1461,7 +1463,7 @@ public class ItemEndpointsIntegrationTests
                 };
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_stores);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
@@ -1692,7 +1694,7 @@ public class ItemEndpointsIntegrationTests
                 };
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_stores);
                 TestPropertyNotSetException.ThrowIfNull(_itemCategory);
@@ -1892,7 +1894,7 @@ public class ItemEndpointsIntegrationTests
                     ]);
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
@@ -2082,7 +2084,7 @@ public class ItemEndpointsIntegrationTests
         });
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExistingItem);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedItem);
@@ -2114,7 +2116,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupExpectedRecipe();
             _fixture.SetupExistingRecipe();
             _fixture.SetupContract();
-            await _fixture.ApplyMigrationsAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.CurrentItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
@@ -2172,7 +2174,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupCurrentItem();
             _fixture.SetupExpectedNewItem();
             _fixture.SetupContract();
-            await _fixture.ApplyMigrationsAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.FirstLevelPredecessor);
             TestPropertyNotSetException.ThrowIfNull(_fixture.SecondLevelPredecessor);
@@ -2406,7 +2408,7 @@ public class ItemEndpointsIntegrationTests
                 _existingRecipe.Ingredients.First().DefaultStoreId = _existingAvailability.StoreId;
             }
 
-            public async Task ApplyMigrationsAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
 
@@ -2438,7 +2440,7 @@ public class ItemEndpointsIntegrationTests
             _fixture.SetupContract();
             _fixture.SetupExpectedRecipe();
             _fixture.SetupExistingRecipe();
-            await _fixture.SetupDatabaseAsync();
+            await _fixture.PrepareDatabaseAsync();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedOldItem);
             TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedNewItem);
@@ -2576,7 +2578,7 @@ public class ItemEndpointsIntegrationTests
                 _existingRecipe.Ingredients.First().DefaultStoreId = _existingAvailability.StoreId;
             }
 
-            public async Task SetupDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_existingItem);
                 TestPropertyNotSetException.ThrowIfNull(ExpectedNewItem);
@@ -2839,7 +2841,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedShoppingList.Discounts.Clear();
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 await ApplyMigrationsAsync(ArrangeScope);
 
@@ -3107,7 +3109,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedRecipe.Ingredients.First().AddToShoppingListByDefault = null;
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(Item);
                 TestPropertyNotSetException.ThrowIfNull(_store);
@@ -3462,7 +3464,7 @@ public class ItemEndpointsIntegrationTests
                 ExpectedRecipe.Ingredients.ElementAt(0).DefaultItemTypeId = newItemTypeId;
             }
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(_item1);
                 TestPropertyNotSetException.ThrowIfNull(Item1Predecessor);
@@ -3614,7 +3616,7 @@ public class ItemEndpointsIntegrationTests
             }
 
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(InitialItem);
 
@@ -3739,7 +3741,7 @@ public class ItemEndpointsIntegrationTests
             }
 
 
-            public async Task PrepareDatabaseAsync()
+            public override async Task PrepareDatabaseAsync()
             {
                 TestPropertyNotSetException.ThrowIfNull(InitialItem);
 
@@ -3754,7 +3756,378 @@ public class ItemEndpointsIntegrationTests
         }
     }
 
-    private class ItemEndpointFixture : DatabaseFixture
+    public sealed class FilterItems(DockerFixture dockerFixture)
+    {
+        private readonly FilterItemsFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerMatches_Items_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupManufacturer();
+            _fixture.SetupItems();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithItemCategoryMatches_Items_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupItems();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithStoreMatches_Items_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItems();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerAndItemCategoryMatch_Items_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupItems();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerAndItemCategoryAndStoreMatch_Items_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupStoreId();
+            _fixture.SetupItems();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerAndItemCategoryAndStoreMatch_Items_LimitResult_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupPageSizeOne();
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupStoreId();
+            _fixture.SetupItems();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerMatches_ItemsWithTypes_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemsWithTypes();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithItemCategoryMatches_ItemsWithTypes_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupItemsWithTypes();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithStoreMatches_ItemsWithTypes_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupStoreId();
+            _fixture.SetupItemsWithTypes();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerAndItemCategoryMatch_ItemsWithTypes_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupItemsWithTypes();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerAndItemCategoryAndStoreMatch_ItemsWithTypes_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupStoreId();
+            _fixture.SetupItemsWithTypes();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        [Fact]
+        public async Task FilterItemsAsync_WithManufacturerAndItemCategoryAndStoreMatch_ItemsWithTypes_LimitResult_ShouldReturnExpectedResult()
+        {
+            // Arrange
+            _fixture.SetupPageSizeOne();
+            _fixture.SetupManufacturer();
+            _fixture.SetupItemCategoryId();
+            _fixture.SetupStoreId();
+            _fixture.SetupItemsWithTypes();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<Ok<List<SearchItemResultContract>>>();
+            result.As<Ok<List<SearchItemResultContract>>>().Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private sealed class FilterItemsFixture(DockerFixture dockerFixture) : ItemEndpointFixture(dockerFixture)
+        {
+            private StoreId? _storeId;
+            private ItemCategoryId? _itemCategoryId;
+            private ManufacturerId? _manufacturerId;
+            private List<Item>? _items;
+            private string? _manufacturerName;
+            private Manufacturer? _manufacturer;
+            private int _pageSize = 2;
+            
+            public List<SearchItemResultContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await ItemEndpoints.FilterItems(_storeId, _itemCategoryId, _manufacturerId,
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<SearchItemResultReadModel, SearchItemResultContract>>(),
+                    TestContext.Current.CancellationToken,
+                    1,
+                    _pageSize);
+            }
+            
+            public void SetupStoreId()
+            {
+                _storeId = StoreId.New;
+            }
+            
+            public void SetupItemCategoryId()
+            {
+                _itemCategoryId = ItemCategoryId.New;
+            }
+
+            public void SetupPageSizeOne()
+            {
+                _pageSize = 1;
+            }
+
+            public void SetupManufacturer()
+            {
+                _manufacturerId = ManufacturerId.New;
+                _manufacturerName = new DomainTestBuilder<string>().Create();
+                _manufacturer = ManufacturerEntityMother.Active().WithName(_manufacturerName)
+                    .WithId(_manufacturerId!.Value)
+                    .Create();
+            }
+            
+            public void SetupItems()
+            {
+                var builder1 = ItemEntityMother.Initial().WithIsTemporary(false).WithDeleted(false).WithoutManufacturerId();
+                var builder2 = ItemEntityMother.Initial().WithIsTemporary(false).WithDeleted(false).WithoutManufacturerId();
+                var builderNoMatch = ItemEntityMother.Initial().WithIsTemporary(false).WithDeleted(false).WithoutManufacturerId();
+                if (_itemCategoryId is not null)
+                {
+                    builder1 = builder1.WithItemCategoryId(_itemCategoryId);
+                    builder2 = builder2.WithItemCategoryId(_itemCategoryId);
+                    builderNoMatch = builderNoMatch.WithItemCategoryId(_itemCategoryId);
+                }
+
+                if (_manufacturerId is not null)
+                {
+                    builder1 = builder1.WithManufacturerId(_manufacturerId);
+                    builder2 = builder2.WithManufacturerId(_manufacturerId);
+                    builderNoMatch = builderNoMatch.WithManufacturerId(_manufacturerId);
+                }
+
+                if (_storeId is not null)
+                {
+                    builder1 = builder1.WithAvailableAt(new AvailableAtEntityBuilder().WithStoreId(_storeId!.Value).Create());
+                    builder2 = builder2.WithAvailableAt(new AvailableAtEntityBuilder().WithStoreId(_storeId!.Value).Create());
+                    builderNoMatch = builderNoMatch.WithAvailableAt(new AvailableAtEntityBuilder().WithStoreId(_storeId!.Value).Create());
+                }
+                
+                _items =
+                [
+                    builder1.Create(),
+                    builder2.Create(),
+                    builderNoMatch.WithIsTemporary(true).Create(),
+                    builderNoMatch.WithDeleted(true).Create(),
+                    ItemEntityMother.Initial().Create() // add for noise
+                ];
+            }
+
+            public void SetupItemsWithTypes()
+            {
+                var builder1 = ItemEntityMother.InitialWithTypes().WithIsTemporary(false).WithDeleted(false).WithoutManufacturerId();
+                var builder2 = ItemEntityMother.InitialWithTypes().WithIsTemporary(false).WithDeleted(false).WithoutManufacturerId();
+                var builderNoMatch = ItemEntityMother.InitialWithTypes().WithIsTemporary(false).WithDeleted(false).WithoutManufacturerId();
+                if (_itemCategoryId is not null)
+                {
+                    builder1 = builder1.WithItemCategoryId(_itemCategoryId);
+                    builder2 = builder2.WithItemCategoryId(_itemCategoryId);
+                    builderNoMatch = builderNoMatch.WithItemCategoryId(_itemCategoryId);
+                }
+
+                if (_manufacturerId is not null)
+                {
+                    builder1 = builder1.WithManufacturerId(_manufacturerId);
+                    builder2 = builder2.WithManufacturerId(_manufacturerId);
+                    builderNoMatch = builderNoMatch.WithManufacturerId(_manufacturerId);
+                }
+                if (_storeId is not null)
+                {
+                    builder1 = builder1.WithItemType(ItemTypeEntityMother.InitialForStore(_storeId!.Value).Create());
+                    builder2 = builder2.WithItemType(ItemTypeEntityMother.InitialForStore(_storeId!.Value).Create());
+                    builderNoMatch = builderNoMatch.WithItemType(ItemTypeEntityMother.InitialForStore(_storeId!.Value).Create());
+                }
+                
+                _items =
+                [
+                    builder1.Create(),
+                    builder2.Create(),
+                    builderNoMatch.WithIsTemporary(true).Create(),
+                    builderNoMatch.WithDeleted(true).Create(),
+                    ItemEntityMother.InitialWithTypes().Create() // add for noise
+                ];
+            }
+
+            public void SetupExpectedResult()
+            {
+               TestPropertyNotSetException.ThrowIfNull(_items);
+                ExpectedResult = new List<SearchItemResultContract>
+                {
+                    new(_items[0].Id, _items[0].Name, _manufacturerName),
+                    new(_items[1].Id, _items[1].Name, _manufacturerName)
+                }.OrderBy(item => item.ItemName).ToList();
+                
+                if(_pageSize == 1)
+                    ExpectedResult.RemoveAt(1);
+            }
+
+            public override async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_items);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                await using var manufacturerContext = GetContextInstance<ManufacturerContext>(ArrangeScope);
+
+                itemContext.Items.AddRange(_items);
+                
+                if(_manufacturer is not null)
+                    manufacturerContext.Manufacturers.Add(_manufacturer);
+
+                await itemContext.SaveChangesAsync();
+                await manufacturerContext.SaveChangesAsync();
+            }
+        }
+    }
+
+    private abstract class ItemEndpointFixture : DatabaseFixture
     {
         protected ItemEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
         {
@@ -3781,5 +4154,7 @@ public class ItemEndpointsIntegrationTests
             }
             base.Dispose(disposing);
         }
+
+        public abstract Task PrepareDatabaseAsync();
     }
 }

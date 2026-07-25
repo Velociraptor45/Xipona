@@ -9,6 +9,7 @@ using Xipona.Frontend.Redux.Shared.Constants;
 using Xipona.Frontend.Redux.Shared.Ports;
 using Xipona.Frontend.Redux.Shared.States;
 using RestEase;
+using Xipona.Frontend.Redux.Shared.Actions.Settings;
 
 namespace Xipona.Frontend.Redux.Items.Effects;
 
@@ -38,6 +39,7 @@ public class ItemEffects
         dispatcher.Dispatch(new LoadQuantityTypesAction());
         dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         dispatcher.Dispatch(new LoadActiveStoresAction());
+        dispatcher.Dispatch(new LoadGeneralSettingsAction());
 
         return Task.CompletedTask;
     }
