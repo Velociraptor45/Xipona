@@ -7,6 +7,7 @@ using Xipona.Frontend.Redux.Shared.States;
 using Xipona.Frontend.Redux.TestKit.Common;
 using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
+using Xipona.Frontend.Redux.Shared.Actions.Settings;
 
 namespace Xipona.Frontend.Redux.Tests.Items.Effects;
 
@@ -25,6 +26,7 @@ public class ItemEffectsTests
                 _fixture.SetupDispatchingLoadingQuantityTypes(x0);
                 _fixture.SetupDispatchingLoadingQuantityTypesInPacket(x0);
                 _fixture.SetupDispatchingLoadingActiveStores(x0);
+                _fixture.SetupDispatchingLoadingGeneralSettings(x0);
             });
 
             // Act
@@ -49,6 +51,11 @@ public class ItemEffectsTests
             public void SetupDispatchingLoadingActiveStores(IQueueComponent component)
             {
                 SetupDispatchingAction<LoadActiveStoresAction>(component);
+            }
+
+            public void SetupDispatchingLoadingGeneralSettings(IQueueComponent component)
+            {
+                SetupDispatchingAction<LoadGeneralSettingsAction>(component);
             }
         }
     }
