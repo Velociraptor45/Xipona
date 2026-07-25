@@ -1,2 +1,4 @@
 ﻿namespace Xipona.Frontend.Redux.ItemCategories.Actions;
 public record SaveItemCategoryAction;
+public record SaveItemCategoryStartedAction;
+public record SaveItemCategoryFinishedAction;

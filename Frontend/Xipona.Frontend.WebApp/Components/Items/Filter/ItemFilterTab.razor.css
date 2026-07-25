@@ -12,15 +12,12 @@
 
 @media (max-width: 768px) {
     .store {
-        /*display: flex;*/
         margin-top: 8px;
     }
     .item-category {
-        /*display: flex;*/
         margin-top: 8px;
     }
     .manufacturer {
-        /*display: flex;*/
         margin-top: 8px;
     }
 }

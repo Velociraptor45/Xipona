@@ -1,2 +1,6 @@
-﻿namespace Xipona.Frontend.Redux.ItemCategories.Actions;
+﻿using Xipona.Frontend.Redux.ItemCategories.States;
+
+namespace Xipona.Frontend.Redux.ItemCategories.Actions;
 public record LoadItemCategoryForEditingAction(Guid ItemCategoryId);
+public record LoadItemCategoryForEditingStartedAction;
+public record LoadItemCategoryForEditingFinishedAction(EditedItemCategory ItemCategory);

@@ -1,2 +1,4 @@
 ﻿namespace Xipona.Frontend.Redux.Recipes.Actions.Editor.AddToShoppingListModal;
 public record AddItemsToShoppingListAction;
+public record AddItemsToShoppingListStartedAction;
+public record AddItemsToShoppingListFinishedAction;

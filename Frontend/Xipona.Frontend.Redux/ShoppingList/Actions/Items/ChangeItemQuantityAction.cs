@@ -11,3 +11,5 @@ public record ChangeItemQuantityAction(ShoppingListItemId ItemId, Guid? ItemType
         Diff
     }
 }
+
+public record ChangeItemQuantityFinishedAction(ShoppingListItemId ItemId, Guid? ItemTypeId, float NewQuantity);

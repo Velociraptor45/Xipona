@@ -1,2 +1,4 @@
 ﻿namespace Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts;
 public record SaveDiscountAction;
+public record SaveDiscountStartedAction;
+public record SaveDiscountFinishedAction;

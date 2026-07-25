@@ -1,2 +1,0 @@
-﻿namespace Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
-public record SavePriceUpdateStartedAction;
