@@ -6,6 +6,7 @@
 @using Xipona.Frontend.Redux.Items.Actions
 @using Xipona.Frontend.Redux.Items.Actions.Editor
 @using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.Redux.Shared.Actions.Settings
 @using Xipona.Frontend.WebApp.Components.Items.Editor;
 
 @inject IState<ItemState> State
@@ -96,6 +97,7 @@
     {
         base.OnInitialized();
 
+        Dispatcher.Dispatch(new LoadGeneralSettingsAction());
         Dispatcher.Dispatch(new SetEditorItemIdAction(ItemId));
         Dispatcher.Dispatch(new LoadQuantityTypesAction());
         Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());

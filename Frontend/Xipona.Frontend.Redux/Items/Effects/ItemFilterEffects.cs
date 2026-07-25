@@ -3,6 +3,7 @@ using RestEase;
 using Xipona.Frontend.Redux.ItemCategories.States;
 using Xipona.Frontend.Redux.Items.Actions.Filter;
 using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Manufacturers.States;
 using Xipona.Frontend.Redux.Shared.Actions;
 using Xipona.Frontend.Redux.Shared.Ports;
 using Timer = System.Timers.Timer;
@@ -11,7 +12,8 @@ namespace Xipona.Frontend.Redux.Items.Effects;
 
 public sealed class ItemFilterEffects(IApiClient client, IState<ItemState> state) : IAsyncDisposable
 {
-    private Timer? _startSearchTimer;
+    private Timer? _itemCategoryStartSearchTimer;
+    private Timer? _manufacturerStartSearchTimer;
     
     [EffectMethod(typeof(LoadFilteredItemsAction))]
     public async Task HandleLoadFilteredItemsAction(IDispatcher dispatcher)
@@ -21,7 +23,9 @@ public sealed class ItemFilterEffects(IApiClient client, IState<ItemState> state
         dispatcher.Dispatch(new LoadFilteredItemsStartedAction());
         
         var result = await client.FilterItemsAsync(filter.SelectedStore?.Id,
-            filter.ItemCategoryFilter.SelectedItemCategory?.Id, null, 1, 20);
+            filter.ItemCategoryFilter.SelectedItemCategory?.Id, 
+            filter.ManufacturerFilter.SelectedManufacturer?.Id,
+            1, 20);
         
         dispatcher.Dispatch(new LoadFilteredItemsFinishedAction(result));
     }
@@ -29,10 +33,10 @@ public sealed class ItemFilterEffects(IApiClient client, IState<ItemState> state
     [EffectMethod]
     public Task HandleItemCategoryInputChangedAction(ItemCategoryInputChangedAction action, IDispatcher dispatcher)
     {
-        if (_startSearchTimer is not null)
+        if (_itemCategoryStartSearchTimer is not null)
         {
-            _startSearchTimer.Stop();
-            _startSearchTimer.Dispose();
+            _itemCategoryStartSearchTimer.Stop();
+            _itemCategoryStartSearchTimer.Dispose();
         }
 
         if (string.IsNullOrWhiteSpace(action.Input))
@@ -41,10 +45,10 @@ public sealed class ItemFilterEffects(IApiClient client, IState<ItemState> state
             return Task.CompletedTask;
         }
 
-        _startSearchTimer = new(300d);
-        _startSearchTimer.AutoReset = false;
-        _startSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchItemCategoriesAction());
-        _startSearchTimer.Start();
+        _itemCategoryStartSearchTimer = new(300d);
+        _itemCategoryStartSearchTimer.AutoReset = false;
+        _itemCategoryStartSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchItemCategoriesAction());
+        _itemCategoryStartSearchTimer.Start();
 
         return Task.CompletedTask;
     }
@@ -75,9 +79,59 @@ public sealed class ItemFilterEffects(IApiClient client, IState<ItemState> state
         dispatcher.Dispatch(new SearchItemCategoriesFinishedAction([.. results]));
     }
 
+    [EffectMethod]
+    public Task HandleManufacturerInputChangedAction(ManufacturerInputChangedAction action, IDispatcher dispatcher)
+    {
+        if (_manufacturerStartSearchTimer is not null)
+        {
+            _manufacturerStartSearchTimer.Stop();
+            _manufacturerStartSearchTimer.Dispose();
+        }
+
+        if (string.IsNullOrWhiteSpace(action.Input))
+        {
+            dispatcher.Dispatch(new SearchManufacturersFinishedAction([]));
+            return Task.CompletedTask;
+        }
+
+        _manufacturerStartSearchTimer = new(300d);
+        _manufacturerStartSearchTimer.AutoReset = false;
+        _manufacturerStartSearchTimer.Elapsed += (_, _) => dispatcher.Dispatch(new SearchManufacturersAction());
+        _manufacturerStartSearchTimer.Start();
+
+        return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(SearchManufacturersAction))]
+    public async Task HandleSearchManufacturersAction(IDispatcher dispatcher)
+    {
+        var input = state.Value.Search.Filter.ManufacturerFilter.Input;
+        if (string.IsNullOrWhiteSpace(input))
+            return;
+
+        IEnumerable<ManufacturerSearchResult> results;
+        try
+        {
+            results = await client.GetManufacturerSearchResultsAsync(input);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Searching for item categories failed", e));
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Searching for item categories failed", e.Message));
+            return;
+        }
+
+        dispatcher.Dispatch(new SearchManufacturersFinishedAction([.. results]));
+    }
+
     public ValueTask DisposeAsync()
     {
-        _startSearchTimer?.Dispose();
+        _itemCategoryStartSearchTimer?.Dispose();
+        _manufacturerStartSearchTimer?.Dispose();
         return ValueTask.CompletedTask;
     }
 }

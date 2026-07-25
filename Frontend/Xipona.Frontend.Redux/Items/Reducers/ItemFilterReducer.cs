@@ -29,7 +29,8 @@ public static class ItemFilterReducer
         {
             Search = state.Search with
             {
-                SearchResults = action.Items
+                SearchResults = action.Items,
+                TriggeredAtLeastOnce = true
             }
         };
     }
@@ -92,6 +93,7 @@ public static class ItemFilterReducer
     [ReducerMethod(typeof(ItemCategoryDropdownClosedAction))]
     public static ItemState OnItemCategoryDropdownClosed(ItemState state)
     {
+        var selectedItemCategory = state.Search.Filter.ItemCategoryFilter.SelectedItemCategory;
         return state with
         {
             Search = state.Search with
@@ -100,7 +102,83 @@ public static class ItemFilterReducer
                 {
                     ItemCategoryFilter = state.Search.Filter.ItemCategoryFilter with
                     {
-                        Input = string.Empty
+                        Input = string.Empty,
+                        ItemCategories = selectedItemCategory is null ? [] : [selectedItemCategory]
+                    }
+                }
+            }
+        };
+    }
+
+    [ReducerMethod]
+    public static ItemState OnSearchManufacturersFinishedAction(ItemState state, SearchManufacturersFinishedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Filter = state.Search.Filter with
+                {
+                    ManufacturerFilter = state.Search.Filter.ManufacturerFilter with
+                    {
+                        Manufacturers = action.Manufacturers
+                    }
+                }
+            }
+        };
+    }
+    
+    [ReducerMethod]
+    public static ItemState OnSelectedManufacturersChangedAction(ItemState state,
+        SelectedManufacturerChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Filter = state.Search.Filter with
+                {
+                    ManufacturerFilter = state.Search.Filter.ManufacturerFilter with
+                    {
+                        SelectedManufacturer = action.Manufacturer
+                    }
+                }
+            }
+        };
+    }
+    
+    [ReducerMethod]
+    public static ItemState OnManufacturerInputChanged(ItemState state, ManufacturerInputChangedAction action)
+    {
+        return state with
+        {
+            Search = state.Search with
+            {
+                Filter = state.Search.Filter with
+                {
+                    ManufacturerFilter = state.Search.Filter.ManufacturerFilter with
+                    {
+                        Input = action.Input
+                    }
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(ManufacturerDropdownClosedAction))]
+    public static ItemState OnManufacturerDropdownClosed(ItemState state)
+    {
+        var selectedManufacturer = state.Search.Filter.ManufacturerFilter.SelectedManufacturer;
+        return state with
+        {
+            Search = state.Search with
+            {
+                Filter = state.Search.Filter with
+                {
+                    ManufacturerFilter = state.Search.Filter.ManufacturerFilter with
+                    {
+                        Input = string.Empty,
+                        Manufacturers = selectedManufacturer is null ? [] : [selectedManufacturer]
                     }
                 }
             }

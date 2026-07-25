@@ -1,0 +1,26 @@
+@media (min-width: 769px) {
+    .item-category {
+        margin-left: 8px;
+    }
+    .manufacturer {
+        margin-left: 8px;
+    }
+    .selection-row {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .store {
+        /*display: flex;*/
+        margin-top: 8px;
+    }
+    .item-category {
+        /*display: flex;*/
+        margin-top: 8px;
+    }
+    .manufacturer {
+        /*display: flex;*/
+        margin-top: 8px;
+    }
+}

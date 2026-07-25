@@ -33,6 +33,7 @@ public class ItemFeatureState : Feature<ItemState>
                 new ItemFilter(
                     null,
                     new ItemCategoryFilter([], string.Empty, null),
+                    new ManufacturerFilter([], string.Empty, null),
                     false),
                 string.Empty,
                 1,
