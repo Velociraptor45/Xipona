@@ -1,2 +1,4 @@
 ﻿namespace Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
 public record CreateInitialStoreAction;
+public record CreateInitialStoreStartedAction;
+public record CreateInitialStoreFinishedAction;

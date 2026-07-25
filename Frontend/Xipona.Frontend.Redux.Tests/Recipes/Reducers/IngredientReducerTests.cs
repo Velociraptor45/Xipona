@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor;
 using Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients;
 using Xipona.Frontend.Redux.Recipes.Reducers;
 using Xipona.Frontend.Redux.Recipes.States;
@@ -12,12 +13,7 @@ public class IngredientReducerTests
 {
     public class OnLoadIngredientQuantityTypesFinished
     {
-        private readonly OnLoadIngredientQuantityTypesFinishedFixture _fixture;
-
-        public OnLoadIngredientQuantityTypesFinished()
-        {
-            _fixture = new OnLoadIngredientQuantityTypesFinishedFixture();
-        }
+        private readonly OnLoadIngredientQuantityTypesFinishedFixture _fixture = new();
 
         [Fact]
         public void ShouldSetIngredientQuantityTypes()
@@ -56,12 +52,7 @@ public class IngredientReducerTests
 
     public class OnIngredientAdded
     {
-        private readonly OnIngredientAddedFixture _fixture;
-
-        public OnIngredientAdded()
-        {
-            _fixture = new OnIngredientAddedFixture();
-        }
+        private readonly OnIngredientAddedFixture _fixture = new();
 
         [Fact]
         public void OnIngredientAdded_WithValidData_ShouldAddIngredient()
@@ -148,12 +139,7 @@ public class IngredientReducerTests
 
     public class OnIngredientRemoved
     {
-        private readonly OnIngredientRemovedFixture _fixture;
-
-        public OnIngredientRemoved()
-        {
-            _fixture = new OnIngredientRemovedFixture();
-        }
+        private readonly OnIngredientRemovedFixture _fixture = new();
 
         [Fact]
         public void OnIngredientRemoved_WithValidData_ShouldRemoveIngredient()
@@ -238,12 +224,7 @@ public class IngredientReducerTests
 
     public class OnIngredientQuantityChanged
     {
-        private readonly OnIngredientQuantityChangedFixture _fixture;
-
-        public OnIngredientQuantityChanged()
-        {
-            _fixture = new OnIngredientQuantityChangedFixture();
-        }
+        private readonly OnIngredientQuantityChangedFixture _fixture = new();
 
         [Fact]
         public void OnIngredientQuantityChanged_WithValidData_ShouldChangeQuantity()
@@ -359,12 +340,7 @@ public class IngredientReducerTests
 
     public class OnIngredientQuantityTypeChanged
     {
-        private readonly OnIngredientQuantityTypeChangedFixture _fixture;
-
-        public OnIngredientQuantityTypeChanged()
-        {
-            _fixture = new OnIngredientQuantityTypeChangedFixture();
-        }
+        private readonly OnIngredientQuantityTypeChangedFixture _fixture = new();
 
         [Fact]
         public void OnIngredientQuantityTypeChanged_WithValidData_ShouldChangeQuantityTypeId()
@@ -480,12 +456,7 @@ public class IngredientReducerTests
 
     public class OnSelectedItemChanged
     {
-        private readonly OnSelectedItemChangedFixture _fixture;
-
-        public OnSelectedItemChanged()
-        {
-            _fixture = new OnSelectedItemChangedFixture();
-        }
+        private readonly OnSelectedItemChangedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedItemChanged_WithValidData_ShouldChangeSelectedItem()
@@ -646,12 +617,7 @@ public class IngredientReducerTests
 
     public class OnSelectedItemCleared
     {
-        private readonly OnSelectedItemClearedFixture _fixture;
-
-        public OnSelectedItemCleared()
-        {
-            _fixture = new OnSelectedItemClearedFixture();
-        }
+        private readonly OnSelectedItemClearedFixture _fixture = new();
 
         [Fact]
         public void OnSelectedItemCleared_WithValidData_ShouldChangeSelectedItem()
@@ -794,12 +760,7 @@ public class IngredientReducerTests
 
     public class OnLoadItemsForItemCategoryFinished
     {
-        private readonly OnLoadItemsForItemCategoryFinishedFixture _fixture;
-
-        public OnLoadItemsForItemCategoryFinished()
-        {
-            _fixture = new OnLoadItemsForItemCategoryFinishedFixture();
-        }
+        private readonly OnLoadItemsForItemCategoryFinishedFixture _fixture = new();
 
         [Fact]
         public void OnLoadItemsForItemCategoryFinished_WithValidData_ShouldChangeSelectedItem()
@@ -957,12 +918,7 @@ public class IngredientReducerTests
 
     public class OnIngredientDefaultStoreChanged
     {
-        private readonly OnIngredientDefaultStoreChangedFixture _fixture;
-
-        public OnIngredientDefaultStoreChanged()
-        {
-            _fixture = new OnIngredientDefaultStoreChangedFixture();
-        }
+        private readonly OnIngredientDefaultStoreChangedFixture _fixture = new();
 
         [Fact]
         public void OnIngredientDefaultStoreChanged_WithValidData_ShouldChangeDefaultStoreId()
@@ -1078,12 +1034,7 @@ public class IngredientReducerTests
 
     public class OnIngredientAddToShoppingListByDefaultChanged
     {
-        private readonly OnIngredientAddToShoppingListByDefaultChangedFixture _fixture;
-
-        public OnIngredientAddToShoppingListByDefaultChanged()
-        {
-            _fixture = new OnIngredientAddToShoppingListByDefaultChangedFixture();
-        }
+        private readonly OnIngredientAddToShoppingListByDefaultChangedFixture _fixture = new();
 
         [Fact]
         public void OnIngredientAddToShoppingListByDefaultChanged_WithValidData_ShouldChangeAddToShoppingListByDefault()

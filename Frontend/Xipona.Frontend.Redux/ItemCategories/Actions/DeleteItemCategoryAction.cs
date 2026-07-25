@@ -1,2 +1,4 @@
 ﻿namespace Xipona.Frontend.Redux.ItemCategories.Actions;
 public record DeleteItemCategoryAction;
+public record DeleteItemCategoryStartedAction;
+public record DeleteItemCategoryFinishedAction;

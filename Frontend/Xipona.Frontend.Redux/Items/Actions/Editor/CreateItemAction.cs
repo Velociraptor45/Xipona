@@ -1,2 +1,4 @@
 ﻿namespace Xipona.Frontend.Redux.Items.Actions.Editor;
 public record CreateItemAction;
+public record CreateItemStartedAction;
+public record CreateItemFinishedAction;

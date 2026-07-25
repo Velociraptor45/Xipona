@@ -1,3 +1,7 @@
-﻿namespace Xipona.Frontend.Redux.Manufacturers.Actions;
+﻿using Xipona.Frontend.Redux.Manufacturers.States;
 
-public record SearchManufacturersAction();
+namespace Xipona.Frontend.Redux.Manufacturers.Actions;
+
+public record SearchManufacturersAction;
+public record SearchManufacturersStartedAction;
+public record SearchManufacturersFinishedAction(IReadOnlyCollection<ManufacturerSearchResult> SearchResults);

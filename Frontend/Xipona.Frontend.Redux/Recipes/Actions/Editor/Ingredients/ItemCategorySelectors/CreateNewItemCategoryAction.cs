@@ -1,2 +1,5 @@
-﻿namespace Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors;
+﻿using Xipona.Frontend.Redux.ItemCategories.States;
+
+namespace Xipona.Frontend.Redux.Recipes.Actions.Editor.Ingredients.ItemCategorySelectors;
 public record CreateNewItemCategoryAction(Guid IngredientKey);
+public record CreateNewItemCategoryFinishedAction(Guid IngredientKey, ItemCategorySearchResult SearchResult);
