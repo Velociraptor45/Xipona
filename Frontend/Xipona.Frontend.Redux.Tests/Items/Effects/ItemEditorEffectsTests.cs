@@ -9,6 +9,8 @@ using Xipona.Frontend.Redux.TestKit.Common;
 using Xipona.Frontend.Redux.TestKit.Shared.Ports;
 using Xipona.Frontend.TestTools.Exceptions;
 using RestEase;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Saving;
 
 namespace Xipona.Frontend.Redux.Tests.Items.Effects;
 
@@ -1516,7 +1518,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
+                SetupDispatchingAction(new LeaveItemViewAction(true), component);
             }
 
             public void SetupSuccessNotification(IQueueComponent component)
@@ -1728,7 +1730,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
+                SetupDispatchingAction(new LeaveItemViewAction(true), component);
             }
 
             public void SetupSuccessNotification(IQueueComponent component)
@@ -1940,7 +1942,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
+                SetupDispatchingAction(new LeaveItemViewAction(true), component);
             }
 
             public void SetupSuccessNotification(IQueueComponent component)
@@ -2118,7 +2120,7 @@ public class ItemEditorEffectsTests
 
             public void SetupDispatchingLeaveAction(IQueueComponent component)
             {
-                SetupDispatchingAction(new LeaveItemEditorAction(true), component);
+                SetupDispatchingAction(new LeaveItemViewAction(true), component);
             }
 
             public void SetupSuccessNotification(IQueueComponent component)

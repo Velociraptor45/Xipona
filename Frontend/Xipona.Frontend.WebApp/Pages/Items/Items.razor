@@ -4,11 +4,10 @@
 
 @using Fluxor
 @using Xipona.Frontend.Redux.Items.Actions
-@using Xipona.Frontend.Redux.Items.Actions.Editor
 @using Xipona.Frontend.Redux.Items.Actions.Search
 @using Xipona.Frontend.Redux.Items.States
 @using Xipona.Frontend.Redux.Shared.States
-@using Xipona.Frontend.WebApp.Components.Items.Filter;
+@using Xipona.Frontend.WebApp.Components.Items.Searches;
 
 @inject IState<SharedState> SharedState
 @inject IState<ItemState> State
@@ -47,7 +46,7 @@
         <!-- result item list -->
         @foreach (var item in State.Value.Search.SearchResults)
         {
-            <SearchResult Model="item" TAction="EditItemAction" IsLastItem="State.Value.Search.SearchResults.Last() == item">
+            <SearchResult Model="item" TAction="OpenItemAction" IsLastItem="State.Value.Search.SearchResults.Last() == item">
                 <div class="d-flex row">
                     <div class="col-5">@item.Name</div>
                     <div class="col-7">@item.ManufacturerName</div>
@@ -80,7 +79,7 @@
 
     private void OnCreateItemButtonClicked()
     {
-        Dispatcher.Dispatch(new EditItemAction
+        Dispatcher.Dispatch(new OpenItemAction
         {
             Id = Guid.Empty
         });

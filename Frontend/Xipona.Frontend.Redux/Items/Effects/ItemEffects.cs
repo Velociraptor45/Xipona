@@ -27,7 +27,7 @@ public class ItemEffects
     }
 
     [EffectMethod]
-    public Task HandleEditItemAction(EditItemAction action, IDispatcher dispatcher)
+    public Task HandleOpenItemAction(OpenItemAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo($"{PageRoutes.Items}/{action.Id}");
         return Task.CompletedTask;

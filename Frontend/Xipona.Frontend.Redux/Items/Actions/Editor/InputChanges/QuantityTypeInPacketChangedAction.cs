@@ -1,4 +1,4 @@
 ﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace Xipona.Frontend.Redux.Items.Actions.Editor;
+namespace Xipona.Frontend.Redux.Items.Actions.Editor.InputChanges;
 public record QuantityTypeInPacketChangedAction(QuantityTypeInPacket QuantityTypeInPacket);

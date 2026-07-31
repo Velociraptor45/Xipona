@@ -5,6 +5,7 @@ public record ItemEditor(
     EditedItem? Item,
     ItemCategorySelector ItemCategorySelector,
     ManufacturerSelector ManufacturerSelector,
+    bool IsInEditMode,
     bool IsLoadingEditedItem,
     bool IsUpdating,
     bool IsModifying,

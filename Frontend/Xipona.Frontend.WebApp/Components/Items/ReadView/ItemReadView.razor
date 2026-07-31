@@ -1,0 +1,42 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions
+@using Xipona.Frontend.Redux.Items.Actions.ReadView
+@using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.WebApp.Components.Items.EditView
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+@if (State.Value.Editor.Item != null)
+{
+    <div class="pt-2 item-read-view">
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <i class="bi bi-arrow-left"></i>
+            </Button>
+            <div class="mx-3 item-name">@State.Value.Editor.Item.Name</div>
+            <div class="ml-auto d-flex">
+                <Button Class="d-flex align-items-center mr-2" OnClick="@OnEditModeButtonClicked">
+                    <i class="bi bi-pencil"></i>
+                </Button>
+                <ItemOptions></ItemOptions>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    private void OnBackButtonClicked()
+    {
+        Dispatcher.Dispatch(new LeaveItemViewAction(false));
+    }
+
+    public void OnEditModeButtonClicked()
+    {
+        Dispatcher.Dispatch(new EnterEditModeAction());
+    }
+
+}
