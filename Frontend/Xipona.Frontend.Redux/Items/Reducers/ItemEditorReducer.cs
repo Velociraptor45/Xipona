@@ -283,7 +283,8 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 IsLoadingEditedItem = false,
-                Item = action.Item
+                Item = action.Item,
+                ReadOnlyItem = action.Item
             }
         };
     }
@@ -706,7 +707,8 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 ItemId = null,
-                Item = null
+                Item = null,
+                ReadOnlyItem = null
             }
         };
     }

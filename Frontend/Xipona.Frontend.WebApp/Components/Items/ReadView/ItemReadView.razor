@@ -9,14 +9,14 @@
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
-@if (State.Value.Editor.Item != null)
+@if (State.Value.Editor.ReadOnlyItem != null)
 {
     <div class="pt-2 item-read-view">
         <div class="d-flex">
             <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
                 <i class="bi bi-arrow-left"></i>
             </Button>
-            <div class="mx-3 item-name">@State.Value.Editor.Item.Name</div>
+            <div class="mx-3 item-name">@State.Value.Editor.ReadOnlyItem.Name</div>
             <div class="ml-auto d-flex">
                 <Button Class="d-flex align-items-center mr-2" OnClick="@OnEditModeButtonClicked">
                     <i class="bi bi-pencil"></i>

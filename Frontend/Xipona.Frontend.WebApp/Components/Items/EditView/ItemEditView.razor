@@ -2,6 +2,7 @@
 
 @using Fluxor
 @using Xipona.Frontend.Redux.Items.Actions
+@using Xipona.Frontend.Redux.Items.Actions.Editor
 @using Xipona.Frontend.Redux.Items.Actions.Editor.InputChanges
 @using Xipona.Frontend.Redux.Items.Actions.Editor.Saving
 @using Xipona.Frontend.Redux.Items.States
@@ -26,7 +27,10 @@
             </div>
             @if (State.Value.Editor.Item.Id != Guid.Empty)
             {
-                <div class="ml-auto">
+                <div class="ml-auto d-flex">
+                    <Button Class="d-flex align-items-center mr-2" OnClick="@OnEditModeButtonClicked">
+                        <i class="bi bi-pencil"></i>
+                    </Button>
                     <ItemOptions></ItemOptions>
                 </div>
             }
@@ -123,5 +127,10 @@
     private void OnCommentChanged(string comment)
     {
         Dispatcher.Dispatch(new ItemCommentChangedAction(comment));
+    }
+
+    private void OnEditModeButtonClicked()
+    {
+        Dispatcher.Dispatch(new CancelItemEditingAction());
     }
 }

@@ -2,6 +2,7 @@
 
 public record ItemEditor(
     Guid? ItemId,
+    EditedItem? ReadOnlyItem,
     EditedItem? Item,
     ItemCategorySelector ItemCategorySelector,
     ManufacturerSelector ManufacturerSelector,

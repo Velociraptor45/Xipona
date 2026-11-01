@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
 using Xipona.Frontend.Redux.Items.Actions.ReadView;
 using Xipona.Frontend.Redux.Items.Actions.Search;
 using Xipona.Frontend.Redux.Items.States;
@@ -156,6 +157,7 @@ public static class ItemReducer
         {
             Editor = state.Editor with
             {
+                Item = state.Editor.ReadOnlyItem,
                 IsInEditMode = true,
                 ValidationResult = new(),
                 ItemCategorySelector = state.Editor.ItemCategorySelector with
@@ -166,6 +168,18 @@ public static class ItemReducer
                 {
                     Input = string.Empty
                 }
+            } 
+        };
+    }
+
+    [ReducerMethod(typeof(CancelItemEditingAction))]
+    public static ItemState OnCancelItemEditingAction(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsInEditMode = false
             } 
         };
     }
