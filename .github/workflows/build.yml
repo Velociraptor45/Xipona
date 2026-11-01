@@ -76,8 +76,8 @@ jobs:
           dotnet build Frontend/Xipona.Frontend.sln --configuration Release
       - name: Test
         run: |
-          dotnet test ./Api/Xipona.Api.sln --configuration Release --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
-          dotnet test ./Frontend/Xipona.Frontend.sln --configuration Release --logger:trx --results-directory TestResults "/p:CollectCoverage=true" "/p:CoverletOutput=../TestResults/" "/p:MergeWith=../TestResults/coverage.json" "/p:CoverletOutputFormat=\"json,opencover\""
+          dotnet test ./Api/Xipona.Api.sln --configuration Release --report-trx --results-directory TestResults --coverlet --coverlet-output-format opencover
+          dotnet test ./Frontend/Xipona.Frontend.sln --configuration Release --report-trx --results-directory TestResults --coverlet --coverlet-output-format opencover
       - name: End Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
