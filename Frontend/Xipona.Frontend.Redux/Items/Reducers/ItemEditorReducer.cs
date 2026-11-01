@@ -3,6 +3,8 @@ using Xipona.Frontend.Redux.ItemCategories.States;
 using Xipona.Frontend.Redux.Items.Actions;
 using Xipona.Frontend.Redux.Items.Actions.Editor;
 using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using Xipona.Frontend.Redux.Items.Actions.Editor.InputChanges;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Saving;
 using Xipona.Frontend.Redux.Items.States;
 using Xipona.Frontend.Redux.Items.States.Validators;
 using Xipona.Frontend.Redux.Manufacturers.States;
@@ -29,7 +31,8 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                ItemId = action.ItemId
+                ItemId = action.ItemId,
+                IsInEditMode = false
             }
         };
     }
@@ -244,6 +247,7 @@ public static class ItemEditorReducer
                     new List<EditedItemAvailability>(),
                     new List<EditedItemType>(),
                     ItemMode.NotDefined),
+                IsInEditMode = true,
                 ItemCategorySelector = state.Editor.ItemCategorySelector with
                 {
                     ItemCategories = new List<ItemCategorySearchResult>(0),
@@ -280,15 +284,7 @@ public static class ItemEditorReducer
             {
                 IsLoadingEditedItem = false,
                 Item = action.Item,
-                ValidationResult = new(),
-                ItemCategorySelector = state.Editor.ItemCategorySelector with
-                {
-                    Input = string.Empty
-                },
-                ManufacturerSelector = state.Editor.ManufacturerSelector with
-                {
-                    Input = string.Empty
-                }
+                ReadOnlyItem = action.Item
             }
         };
     }
@@ -644,7 +640,7 @@ public static class ItemEditorReducer
         if (_nameValidator.Validate(modifiedType.Name, out var nameErrorMessage))
             typeNameResults.Remove(modifiedType.Key);
         else
-            typeNameResults[modifiedType.Key] = nameErrorMessage!;
+            typeNameResults[modifiedType.Key] = nameErrorMessage;
 
         return state with
         {
@@ -711,7 +707,8 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 ItemId = null,
-                Item = null
+                Item = null,
+                ReadOnlyItem = null
             }
         };
     }

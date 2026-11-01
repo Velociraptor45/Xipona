@@ -2,9 +2,11 @@
 
 public record ItemEditor(
     Guid? ItemId,
+    EditedItem? ReadOnlyItem,
     EditedItem? Item,
     ItemCategorySelector ItemCategorySelector,
     ManufacturerSelector ManufacturerSelector,
+    bool IsInEditMode,
     bool IsLoadingEditedItem,
     bool IsUpdating,
     bool IsModifying,

@@ -1,5 +1,7 @@
 ﻿using Fluxor;
 using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.ReadView;
 using Xipona.Frontend.Redux.Items.Actions.Search;
 using Xipona.Frontend.Redux.Items.States;
 using Xipona.Frontend.Redux.Stores.Actions.Editor;
@@ -146,6 +148,40 @@ public static class ItemReducer
     public static ItemState OnDeleteStoreFinished(ItemState state)
     {
         return ClearStores(state);
+    }
+
+    [ReducerMethod(typeof(EnterEditModeAction))]
+    public static ItemState OnEnterEditModeAction(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = state.Editor.ReadOnlyItem,
+                IsInEditMode = true,
+                ValidationResult = new(),
+                ItemCategorySelector = state.Editor.ItemCategorySelector with
+                {
+                    Input = string.Empty
+                },
+                ManufacturerSelector = state.Editor.ManufacturerSelector with
+                {
+                    Input = string.Empty
+                }
+            } 
+        };
+    }
+
+    [ReducerMethod(typeof(CancelItemEditingAction))]
+    public static ItemState OnCancelItemEditingAction(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                IsInEditMode = false
+            } 
+        };
     }
 
     private static ItemState ClearStores(ItemState state)

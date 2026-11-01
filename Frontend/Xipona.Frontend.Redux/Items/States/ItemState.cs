@@ -45,8 +45,10 @@ public class ItemFeatureState : Feature<ItemState>
             new ItemEditor(
                 null,
                 null,
+                null,
                 new ItemCategorySelector(new List<ItemCategorySearchResult>(), string.Empty),
                 new ManufacturerSelector(new List<ManufacturerSearchResult>(), string.Empty),
+                false,
                 false,
                 false,
                 false,

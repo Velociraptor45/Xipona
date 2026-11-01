@@ -10,6 +10,7 @@ using Xipona.Frontend.Redux.Shared.Constants;
 using Xipona.Frontend.Redux.Shared.Ports;
 using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
 using RestEase;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Saving;
 using Timer = System.Timers.Timer;
 
 namespace Xipona.Frontend.Redux.Items.Effects;
@@ -21,7 +22,7 @@ public sealed class ItemEditorEffects
     private readonly NavigationManager _navigationManager;
     private readonly IShoppingListNotificationService _notificationService;
 
-    private Timer? _leaveEditorTimer;
+    private Timer? _leaveViewTimer;
 
     public ItemEditorEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager,
         IShoppingListNotificationService notificationService)
@@ -163,12 +164,12 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleLeaveItemEditorAction(LeaveItemEditorAction action, IDispatcher dispatcher)
+    public Task HandleLeaveItemViewAction(LeaveItemViewAction action, IDispatcher dispatcher)
     {
-        if (_leaveEditorTimer is not null)
+        if (_leaveViewTimer is not null)
         {
-            _leaveEditorTimer.Stop();
-            _leaveEditorTimer.Dispose();
+            _leaveViewTimer.Stop();
+            _leaveViewTimer.Dispose();
         }
 
         _navigationManager.NavigateTo(PageRoutes.Items);
@@ -213,7 +214,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully created item {item.Name}");
     }
 
@@ -251,7 +252,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully updated item {item.Name}");
     }
 
@@ -289,7 +290,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new ModifyItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully modified item {item.Name}");
     }
 
@@ -331,7 +332,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully made item {item.Name} permanent");
     }
 
@@ -370,16 +371,16 @@ public sealed class ItemEditorEffects
         if (!action.LeaveEditor)
             return Task.CompletedTask;
 
-        if (_leaveEditorTimer is not null)
+        if (_leaveViewTimer is not null)
         {
-            _leaveEditorTimer.Stop();
-            _leaveEditorTimer.Dispose();
+            _leaveViewTimer.Stop();
+            _leaveViewTimer.Dispose();
         }
 
-        _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
-        _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction(true));
-        _leaveEditorTimer.Start();
+        _leaveViewTimer = new Timer(Delays.LeaveEditorAfterDelete);
+        _leaveViewTimer.AutoReset = false;
+        _leaveViewTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemViewAction(true));
+        _leaveViewTimer.Start();
 
         return Task.CompletedTask;
     }

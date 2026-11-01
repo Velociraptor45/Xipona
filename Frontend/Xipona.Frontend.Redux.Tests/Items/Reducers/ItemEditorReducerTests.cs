@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Xipona.Frontend.Redux.ItemCategories.States;
 using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Editor.InputChanges;
 using Xipona.Frontend.Redux.Items.Reducers;
 using Xipona.Frontend.Redux.Items.States;
 using Xipona.Frontend.Redux.Manufacturers.States;
@@ -578,15 +579,7 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsLoadingEditedItem = false,
-                        ValidationResult = new(),
-                        ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
-                        {
-                            Input = string.Empty
-                        },
-                        ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
-                        {
-                            Input = string.Empty
-                        }
+                        ReadOnlyItem = ExpectedState.Editor.Item
                     }
                 };
             }
@@ -598,8 +591,8 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Item = new DomainTestBuilder<EditedItem>().Create(),
-                        IsLoadingEditedItem = true,
-                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
+                        ReadOnlyItem = new DomainTestBuilder<EditedItem>().Create(),
+                        IsLoadingEditedItem = true
                     }
                 };
             }
@@ -664,7 +657,8 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         ItemId = null,
-                        Item = null
+                        Item = null,
+                        ReadOnlyItem = null
                     }
                 };
             }
