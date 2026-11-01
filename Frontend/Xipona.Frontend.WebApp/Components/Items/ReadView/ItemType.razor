@@ -1,0 +1,16 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Xipona.Frontend.Redux.Items.States
+
+<div class="item-type-card mb-3">
+    <div class="item-type-header">
+        <span class="item-type-name">@Model.Name</span>
+    </div>
+    <Availabilities Item="Item" Models="Model.Availabilities" Stores="@Stores"></Availabilities>
+</div>
+
+@code {
+    [Parameter] public ActiveStores Stores { get; set; }
+    [Parameter] public EditedItem Item { get; set; }
+    [Parameter] public EditedItemType Model { get; set; }
+}

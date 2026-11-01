@@ -4,39 +4,73 @@
 @using Xipona.Frontend.Redux.Items.Actions
 @using Xipona.Frontend.Redux.Items.Actions.ReadView
 @using Xipona.Frontend.Redux.Items.States
-@using Xipona.Frontend.WebApp.Components.Items.EditView
 
 @inject IState<ItemState> State
 @inject IDispatcher Dispatcher
 
 @if (State.Value.Editor.ReadOnlyItem != null)
 {
+    var item = State.Value.Editor.ReadOnlyItem;
+
     <div class="pt-2 item-read-view">
-        <div class="d-flex">
+        <div class="d-flex align-items-center mb-3">
             <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
                 <i class="bi bi-arrow-left"></i>
             </Button>
-            <div class="mx-3 item-name">@State.Value.Editor.ReadOnlyItem.Name</div>
-            <div class="ml-auto d-flex">
+            <div class="mx-3 item-name text-truncate" title="@item.Name">@item.Name</div>
+            <div class="ml-auto d-flex align-items-center">
                 <Button Class="d-flex align-items-center mr-2" OnClick="@OnEditModeButtonClicked">
                     <i class="bi bi-pencil"></i>
                 </Button>
                 <ItemOptions></ItemOptions>
             </div>
         </div>
+        
+        <ItemProperties Item="item"></ItemProperties>
+        
+        @if (!string.IsNullOrWhiteSpace(item.Comment))
+        {
+            <div class="item-comment-card mb-3">
+                <i class="bi bi-chat-left-text comment-icon mr-2"></i>
+                <div class="item-comment-text">@item.Comment</div>
+            </div>
+        }
+
+        @if (item.ItemMode == ItemMode.WithoutTypes)
+        {
+            <div class="item-section mt-2">
+                <div class="section-title mb-2">
+                    <i class="bi bi-shop mr-1"></i> Stores
+                </div>
+                <Availabilities Item="item" Models="item.Availabilities" Stores="@State.Value.Stores"></Availabilities>
+            </div>
+        }
+
+        @if (item.ItemMode == ItemMode.WithTypes)
+        {
+            <div class="item-section mt-2">
+                <div class="section-title mb-2">
+                    <i class="bi bi-grid mr-1"></i> Types
+                </div>
+                <div class="item-types-list">
+                    @foreach (var itemType in item.ItemTypes)
+                    {
+                        <ItemType Item="item" Model="itemType" Stores="@State.Value.Stores"></ItemType>
+                    }
+                </div>
+            </div>
+        }
     </div>
 }
 
 @code {
-
     private void OnBackButtonClicked()
     {
         Dispatcher.Dispatch(new LeaveItemViewAction(false));
     }
 
-    public void OnEditModeButtonClicked()
+    private void OnEditModeButtonClicked()
     {
         Dispatcher.Dispatch(new EnterEditModeAction());
     }
-
 }

@@ -15,6 +15,40 @@
 }
 
 .item-name {
-    font-size: 21px;
-    font-weight: bold;
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.item-comment-card {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.65rem 0.85rem;
+    background-color: var(--secondary-color-shade-1);
+    border-left: 3px solid var(--primary-color, #17a2b8);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.comment-icon {
+    font-size: 1rem;
+    opacity: 0.75;
+    margin-top: 1px;
+}
+
+.item-comment-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.item-section {
+    margin-top: 0.75rem;
+}
+
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
 }
