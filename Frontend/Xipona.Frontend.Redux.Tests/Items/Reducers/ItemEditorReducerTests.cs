@@ -579,7 +579,7 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsLoadingEditedItem = false,
-                        IsInEditMode = false
+                        ReadOnlyItem = ExpectedState.Editor.Item
                     }
                 };
             }
@@ -591,8 +591,8 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Item = new DomainTestBuilder<EditedItem>().Create(),
-                        IsLoadingEditedItem = true,
-                        IsInEditMode = true
+                        ReadOnlyItem = new DomainTestBuilder<EditedItem>().Create(),
+                        IsLoadingEditedItem = true
                     }
                 };
             }
@@ -657,7 +657,8 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         ItemId = null,
-                        Item = null
+                        Item = null,
+                        ReadOnlyItem = null
                     }
                 };
             }

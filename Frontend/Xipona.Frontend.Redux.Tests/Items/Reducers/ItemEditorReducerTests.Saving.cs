@@ -18,6 +18,7 @@ public partial class ItemEditorReducerTests
         {
             // Arrange
             _fixture.SetupInitialState();
+            _fixture.SetupExpectedState();
             _fixture.SetupAction();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
@@ -39,7 +40,19 @@ public partial class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        ItemId = null
+                        ItemId = null,
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedState()
+            {
+                ExpectedState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        IsInEditMode = false
                     }
                 };
             }
