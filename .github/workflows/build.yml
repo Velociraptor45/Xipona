@@ -73,7 +73,7 @@ jobs:
           /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/**
           /d:sonar.coverage.exclusions=**/*.Generators*/**,**/*.razor
           /d:sonar.cpd.exclusions=**/*.Generators*/**
-          /d:sonar.cs.cobertura.reportsPaths=Api/TestResults/coverage.cobertura.*.xml,Frontend/TestResults/coverage.cobertura.*.xml
+          /d:sonar.cs.cobertura.reportsPaths=TestResults/coverage.cobertura.*.xml
       - name: Build Backend
         run: |
           dotnet build Api/Xipona.Api.sln --configuration Release
