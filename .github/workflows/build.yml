@@ -67,7 +67,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet-sonarscanner begin /k:"Velociraptor45_Xipona" /o:"velociraptor45" /d:sonar.verbose=true /d:sonar.token="$SONAR_TOKEN" /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/** /d:sonar.coverage.exclusions=**/*.Generators*/**,**/*.razor /d:sonar.cpd.exclusions=**/*.Generators*/** /d:sonar.cs.opencover.reportsPaths=Api/TestResults/coverage.opencover.xml,Frontend/TestResults/coverage.opencover.xml
+          dotnet-sonarscanner begin /k:"Velociraptor45_Xipona" /o:"velociraptor45"
+          /v:"${{ steps.gitversion.outputs.GitVersion_SemVer }}"
+          /d:sonar.verbose=true
+          /d:sonar.token="$SONAR_TOKEN"
+          /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/**
+          /d:sonar.coverage.exclusions=**/*.Generators*/**,**/*.razor
+          /d:sonar.cpd.exclusions=**/*.Generators*/**
+          /d:sonar.cs.cobertura.reportsPaths=Api/TestResults/coverage.cobertura.*.xml,Frontend/TestResults/coverage.cobertura.*.xml
       - name: Build Backend
         run: |
           dotnet build Api/Xipona.Api.sln --configuration Release
@@ -76,8 +83,8 @@ jobs:
           dotnet build Frontend/Xipona.Frontend.sln --configuration Release
       - name: Test
         run: |
-          dotnet test ./Api/Xipona.Api.sln --configuration Release --report-trx --results-directory TestResults --coverlet --coverlet-output-format opencover
-          dotnet test ./Frontend/Xipona.Frontend.sln --configuration Release --report-trx --results-directory TestResults --coverlet --coverlet-output-format opencover
+          dotnet test ./Api/Xipona.Api.sln --no-build --configuration Release --results-directory TestResults --coverlet --coverlet-output-format cobertura --coverlet-include "[Xipona.*]*"
+          dotnet test ./Frontend/Xipona.Frontend.sln --no-build --configuration Release --results-directory TestResults --coverlet --coverlet-output-format cobertura --coverlet-include "[Xipona.*]*"
       - name: End Sonar scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
