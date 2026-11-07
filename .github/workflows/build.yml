@@ -69,7 +69,6 @@ jobs:
         run: >
           dotnet-sonarscanner begin /k:"Velociraptor45_Xipona" /o:"velociraptor45"
           /v:"${{ steps.gitversion.outputs.GitVersion_SemVer }}"
-          /d:sonar.verbose=true
           /d:sonar.token="$SONAR_TOKEN"
           /d:sonar.exclusions=**/*TestTools*/**,**/Migrations/**
           /d:sonar.coverage.exclusions=**/*.Generators*/**,**/*.razor
