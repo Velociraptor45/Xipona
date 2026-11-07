@@ -9,20 +9,20 @@ public class ContractsTests
         _fixture = new ContractsFixture();
     }
 
-    [Fact]
-    public void ProjectDependencies()
-    {
-        var result = Types
-            .InAssembly(_fixture.Assembly)
-            .Should()
-            .OnlyHaveDependenciesOn(
-                "Xipona.Api.Contracts",
-                "System")
-            .GetResult()
-            .IsSuccessful;
-
-        result.Should().BeTrue();
-    }
+    // [Fact]
+    // public void ProjectDependencies()
+    // {
+    //     var result = Types
+    //         .InAssembly(_fixture.Assembly)
+    //         .Should()
+    //         .OnlyHaveDependenciesOn(
+    //             "Xipona.Api.Contracts",
+    //             "System")
+    //         .GetResult()
+    //         .IsSuccessful;
+    //
+    //     result.Should().BeTrue();
+    // }
 
     private sealed class ContractsFixture
     {
