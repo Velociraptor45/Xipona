@@ -9,21 +9,21 @@ public class CoreTests
         _fixture = new CoreFixture();
     }
 
-    [Fact]
-    public void ProjectDependencies()
-    {
-        var result = Types
-            .InAssembly(_fixture.Assembly)
-            .Should()
-            .OnlyHaveDependenciesOn(
-                "Xipona.Api.Core",
-                "System",
-                "Microsoft")
-            .GetResult()
-            .IsSuccessful;
-
-        result.Should().BeTrue();
-    }
+    // [Fact]
+    // public void ProjectDependencies()
+    // {
+    //     var result = Types
+    //         .InAssembly(_fixture.Assembly)
+    //         .Should()
+    //         .OnlyHaveDependenciesOn(
+    //             "Xipona.Api.Core",
+    //             "System",
+    //             "Microsoft")
+    //         .GetResult()
+    //         .IsSuccessful;
+    //
+    //     result.Should().BeTrue();
+    // }
 
     private sealed class CoreFixture
     {

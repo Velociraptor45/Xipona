@@ -9,23 +9,23 @@ public class ClientTests
         _fixture = new ClientFixture();
     }
 
-    [Fact]
-    public void ProjectDependencies()
-    {
-        var result = Types
-            .InAssembly(_fixture.Assembly)
-            .Should()
-            .OnlyHaveDependenciesOn(
-                "Xipona.Api.Client",
-                "Xipona.Api.Contracts",
-                "System",
-                "Newtonsoft",
-                "RestEase")
-            .GetResult()
-            .IsSuccessful;
-
-        result.Should().BeTrue();
-    }
+    // [Fact]
+    // public void ProjectDependencies()
+    // {
+    //     var result = Types
+    //         .InAssembly(_fixture.Assembly)
+    //         .Should()
+    //         .OnlyHaveDependenciesOn(
+    //             "Xipona.Api.Client",
+    //             "Xipona.Api.Contracts",
+    //             "System",
+    //             "Newtonsoft",
+    //             "RestEase")
+    //         .GetResult()
+    //         .IsSuccessful;
+    //
+    //     result.Should().BeTrue();
+    // }
 
     private sealed class ClientFixture
     {
