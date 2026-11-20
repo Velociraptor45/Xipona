@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>Xipona.Api.WebApp</RootNamespace>
-    <Version>0.13.1</Version>
+    <Version>0.14.0</Version>
     <UserSecretsId>fa7d8437-775b-44ff-a217-06a4efe92f94</UserSecretsId>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>

@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
         <RootNamespace>Xipona.Frontend.WebApp</RootNamespace>
-        <Version>0.13.1</Version>
+        <Version>0.14.0</Version>
         <PublishTrimmed>false</PublishTrimmed>
         <Nullable>disable</Nullable>
         <UserSecretsId>3fec0ee5-b1d4-47f3-9180-b2d87730c4ec</UserSecretsId>
