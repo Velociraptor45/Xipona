@@ -13,7 +13,6 @@ using Xipona.Frontend.Redux.Shared.Configurations;
 using Xipona.Frontend.Redux.Shared.Ports;
 using Xipona.Frontend.WebApp.Auth;
 using Xipona.Frontend.WebApp.Configs;
-using Xipona.Frontend.WebApp.Services;
 using Xipona.Frontend.WebApp.Services.Notification;
 using Xipona.Frontend.WebApp.Services.Prices;
 
