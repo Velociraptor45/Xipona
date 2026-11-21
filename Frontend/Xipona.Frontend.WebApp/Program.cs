@@ -29,7 +29,7 @@ public static class Program
         await LoadVariables(builder);
         
         var authConfig = new AuthConfig();
-        builder.Configuration.Bind(authConfig);
+        builder.Configuration.GetSection("authConfig").Bind(authConfig);
         builder.Services.AddSingleton(authConfig);
         AddSecurity(builder, authConfig);
 
@@ -46,16 +46,13 @@ public static class Program
     {
         using var client = new HttpClient();
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-        var responseMessage = await client.GetAsync("variables.json").ConfigureAwait(false);
-        var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
-        builder.Configuration.AddJsonStream(stream);
+        builder.Configuration.AddJsonStream(await client.GetStreamAsync("runtime-config.json").ConfigureAwait(false));
     }
 
     private static void ConfigureHttpClient(WebAssemblyHostBuilder builder, AuthConfig authConfig)
     {
         var connectionConfig = new ConnectionConfig();
-        builder.Configuration.Bind(connectionConfig);
+        builder.Configuration.GetSection("connectionConfig").Bind(connectionConfig);
 
         builder.Services.AddSingleton(connectionConfig);
 
@@ -77,7 +74,7 @@ public static class Program
     private static void ConfigureLogging(WebAssemblyHostBuilder builder)
     {
         var config = new CollectRemoteLogsConfig();
-        builder.Configuration.Bind(config);
+        builder.Configuration.GetSection("logConfig").Bind(config);
 
         if (!config.Enabled)
             return;

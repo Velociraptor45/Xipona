@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Xipona.Frontend.WebApp.Configs;
+﻿namespace Xipona.Frontend.WebApp.Configs;
 
 public sealed class ConnectionConfig
 {
