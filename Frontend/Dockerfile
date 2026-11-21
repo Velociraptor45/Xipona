@@ -1,5 +1,5 @@
 ################## BUILD ##################
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
 ARG TARGETARCH
 WORKDIR /src
 COPY . .
@@ -19,7 +19,7 @@ COPY Docker/start-engine.sh ./start-engine.sh
 RUN chmod +x start-engine.sh create-variables.sh
 
 ################## FINAL ##################
-FROM nginxinc/nginx-unprivileged:1.25 AS final
+FROM nginxinc/nginx-unprivileged:1.31-alpine AS final
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish .
 COPY Docker/nginx.conf /etc/nginx/nginx.conf
