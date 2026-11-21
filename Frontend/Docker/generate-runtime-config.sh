@@ -33,4 +33,4 @@ jq -n \
     connectionConfig: {
       XIPONA_API_URL: $apiUrl
     }
-  }' > /usr/share/nginx/html/runtime-config.json
+  }' > /usr/share/nginx/html/wwwroot/runtime-config.json

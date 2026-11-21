@@ -46,7 +46,10 @@ public static class Program
     {
         using var client = new HttpClient();
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-        builder.Configuration.AddJsonStream(await client.GetStreamAsync("runtime-config.json").ConfigureAwait(false));
+        var responseMessage = await client.GetAsync("runtime-config.json").ConfigureAwait(false);
+        var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+        builder.Configuration.AddJsonStream(stream);
     }
 
     private static void ConfigureHttpClient(WebAssemblyHostBuilder builder, AuthConfig authConfig)
