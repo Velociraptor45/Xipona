@@ -116,8 +116,8 @@ public class RoleClaimsTransformationTests
         claims.Should().HaveCount(2);
         claims.Should().BeEquivalentTo(expectedResult, opt => opt.Using(new ClaimComparer()));
     }
-    
-    public class ClaimComparer : IEquivalencyStep
+
+    private class ClaimComparer : IEquivalencyStep
     {
         public EquivalencyResult Handle(Comparands comparands, IEquivalencyValidationContext context,
             IValidateChildNodeEquivalency valueChildNodes)
