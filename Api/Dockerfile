@@ -3,7 +3,7 @@ FROM golang:latest AS chisel
 RUN mkdir /extract
 RUN mkdir /extract/tmp
 RUN go install github.com/canonical/chisel/cmd/chisel@latest
-RUN chisel cut --release ubuntu-22.04 --root /extract/ ca-certificates_data libstdc++6_libs libssl3_libs
+RUN chisel cut --release ubuntu-26.04 --root /extract/ ca-certificates_data libstdc++6_libs libssl3t64_libs
 
 ################## BASE ###################
 FROM scratch AS base
