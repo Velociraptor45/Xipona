@@ -53,7 +53,11 @@ public static class ManufacturerReducer
         {
             Editor = state.Editor with
             {
-                IsLoadingEditedManufacturer = true
+                ReadOnlyManufacturer = null,
+                Manufacturer = null,
+                IsInEditMode = false,
+                IsLoadingEditedManufacturer = true,
+                IsDeleteDialogOpen = false
             }
         };
     }
@@ -67,7 +71,41 @@ public static class ManufacturerReducer
             Editor = state.Editor with
             {
                 IsLoadingEditedManufacturer = false,
-                Manufacturer = action.Manufacturer
+                ReadOnlyManufacturer = action.Manufacturer,
+                Manufacturer = action.Manufacturer,
+                IsInEditMode = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(EnterManufacturerEditModeAction))]
+    public static ManufacturerState OnEnterManufacturerEditMode(ManufacturerState state)
+    {
+        if (state.Editor.ReadOnlyManufacturer is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Manufacturer = state.Editor.ReadOnlyManufacturer,
+                IsInEditMode = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CancelManufacturerEditingAction))]
+    public static ManufacturerState OnCancelManufacturerEditing(ManufacturerState state)
+    {
+        if (state.Editor.ReadOnlyManufacturer is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Manufacturer = state.Editor.ReadOnlyManufacturer,
+                IsInEditMode = false
             }
         };
     }
@@ -95,7 +133,11 @@ public static class ManufacturerReducer
         {
             Editor = state.Editor with
             {
-                Manufacturer = null
+                ReadOnlyManufacturer = null,
+                Manufacturer = null,
+                IsInEditMode = false,
+                IsLoadingEditedManufacturer = false,
+                IsDeleteDialogOpen = false
             }
         };
     }
@@ -155,7 +197,11 @@ public static class ManufacturerReducer
         {
             Editor = state.Editor with
             {
-                Manufacturer = new EditedManufacturer(Guid.Empty, string.Empty)
+                ReadOnlyManufacturer = null,
+                Manufacturer = new EditedManufacturer(Guid.Empty, string.Empty),
+                IsInEditMode = true,
+                IsLoadingEditedManufacturer = false,
+                IsDeleteDialogOpen = false
             }
         };
     }
