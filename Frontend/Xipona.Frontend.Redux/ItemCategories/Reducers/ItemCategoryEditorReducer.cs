@@ -13,7 +13,11 @@ public static class ItemCategoryEditorReducer
         {
             Editor = state.Editor with
             {
-                IsLoadingEditedItemCategory = true
+                ReadOnlyItemCategory = null,
+                ItemCategory = null,
+                IsInEditMode = false,
+                IsLoadingEditedItemCategory = true,
+                IsDeleteDialogOpen = false
             }
         };
     }
@@ -27,7 +31,41 @@ public static class ItemCategoryEditorReducer
             Editor = state.Editor with
             {
                 IsLoadingEditedItemCategory = false,
-                ItemCategory = action.ItemCategory
+                ReadOnlyItemCategory = action.ItemCategory,
+                ItemCategory = action.ItemCategory,
+                IsInEditMode = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(EnterItemCategoryEditModeAction))]
+    public static ItemCategoryState OnEnterItemCategoryEditMode(ItemCategoryState state)
+    {
+        if (state.Editor.ReadOnlyItemCategory is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ItemCategory = state.Editor.ReadOnlyItemCategory,
+                IsInEditMode = true
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(CancelItemCategoryEditingAction))]
+    public static ItemCategoryState OnCancelItemCategoryEditing(ItemCategoryState state)
+    {
+        if (state.Editor.ReadOnlyItemCategory is null)
+            return state;
+
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                ItemCategory = state.Editor.ReadOnlyItemCategory,
+                IsInEditMode = false
             }
         };
     }
@@ -55,7 +93,11 @@ public static class ItemCategoryEditorReducer
         {
             Editor = state.Editor with
             {
-                ItemCategory = null
+                ReadOnlyItemCategory = null,
+                ItemCategory = null,
+                IsInEditMode = false,
+                IsLoadingEditedItemCategory = false,
+                IsDeleteDialogOpen = false
             }
         };
     }
@@ -115,7 +157,11 @@ public static class ItemCategoryEditorReducer
         {
             Editor = state.Editor with
             {
-                ItemCategory = new EditedItemCategory(Guid.Empty, "")
+                ReadOnlyItemCategory = null,
+                ItemCategory = new EditedItemCategory(Guid.Empty, ""),
+                IsInEditMode = true,
+                IsLoadingEditedItemCategory = false,
+                IsDeleteDialogOpen = false
             }
         };
     }

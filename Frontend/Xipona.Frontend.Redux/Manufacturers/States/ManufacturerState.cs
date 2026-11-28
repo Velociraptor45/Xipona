@@ -23,6 +23,8 @@ public class ManufacturerFeatureState : Feature<ManufacturerState>
                 new List<ManufacturerSearchResult>()),
             new ManufacturerEditor(
                 null,
+                null,
+                false,
                 false,
                 false,
                 false,

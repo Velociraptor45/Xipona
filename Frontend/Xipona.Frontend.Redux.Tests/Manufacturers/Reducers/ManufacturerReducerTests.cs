@@ -261,11 +261,16 @@ public class ManufacturerReducerTests
 
             private void SetupInitialState(bool isLoading)
             {
+                var staleManufacturer = new DomainTestBuilder<EditedManufacturer>().Create();
                 InitialState = ExpectedState with
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsLoadingEditedManufacturer = isLoading
+                        ReadOnlyManufacturer = staleManufacturer,
+                        Manufacturer = staleManufacturer,
+                        IsInEditMode = true,
+                        IsLoadingEditedManufacturer = isLoading,
+                        IsDeleteDialogOpen = true
                     }
                 };
             }
@@ -276,7 +281,11 @@ public class ManufacturerReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsLoadingEditedManufacturer = true
+                        ReadOnlyManufacturer = null,
+                        Manufacturer = null,
+                        IsInEditMode = false,
+                        IsLoadingEditedManufacturer = true,
+                        IsDeleteDialogOpen = false
                     }
                 };
             }
@@ -354,6 +363,8 @@ public class ManufacturerReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsLoadingEditedManufacturer = false,
+                        ReadOnlyManufacturer = ExpectedState.Editor.Manufacturer,
+                        IsInEditMode = false
                     }
                 };
             }
@@ -361,6 +372,159 @@ public class ManufacturerReducerTests
             public void SetupAction()
             {
                 Action = new LoadManufacturerForEditingFinishedAction(ExpectedState.Editor.Manufacturer!);
+            }
+        }
+    }
+
+    public class OnEnterManufacturerEditMode
+    {
+        private readonly OnEnterManufacturerEditModeFixture _fixture = new();
+
+        [Fact]
+        public void OnEnterManufacturerEditMode_WithReadOnlyManufacturer_ShouldCopyItToEditableManufacturer()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithReadOnlyManufacturer();
+            _fixture.SetupExpectedStateEnteringEditMode();
+
+            // Act
+            var result = ManufacturerReducer.OnEnterManufacturerEditMode(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnEnterManufacturerEditMode_WithoutReadOnlyManufacturer_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithoutReadOnlyManufacturer();
+            _fixture.SetupExpectedStateUnchanged();
+
+            // Act
+            var result = ManufacturerReducer.OnEnterManufacturerEditMode(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnEnterManufacturerEditModeFixture : ManufacturerReducerFixture
+        {
+            public void SetupInitialStateWithReadOnlyManufacturer()
+            {
+                var readOnlyManufacturer = new EditedManufacturer(Guid.NewGuid(), "Saved manufacturer");
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyManufacturer = readOnlyManufacturer,
+                        Manufacturer = readOnlyManufacturer with { Name = "Unsaved manufacturer" },
+                        IsInEditMode = false
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithoutReadOnlyManufacturer()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyManufacturer = null
+                    }
+                };
+            }
+
+            public void SetupExpectedStateEnteringEditMode()
+            {
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Manufacturer = InitialState.Editor.ReadOnlyManufacturer,
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedStateUnchanged()
+            {
+                ExpectedState = InitialState;
+            }
+        }
+    }
+
+    public class OnCancelManufacturerEditing
+    {
+        private readonly OnCancelManufacturerEditingFixture _fixture = new();
+
+        [Fact]
+        public void OnCancelManufacturerEditing_WithUnsavedChanges_ShouldRestoreReadOnlyManufacturer()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithUnsavedChanges();
+            _fixture.SetupExpectedStateAfterCanceling();
+
+            // Act
+            var result = ManufacturerReducer.OnCancelManufacturerEditing(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCancelManufacturerEditing_AfterCanceling_ShouldAllowReenteringEditModeFromSavedVersion()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithUnsavedChanges();
+            _fixture.SetupExpectedStateAfterReenteringEditMode();
+
+            // Act
+            var canceled = ManufacturerReducer.OnCancelManufacturerEditing(_fixture.InitialState);
+            var result = ManufacturerReducer.OnEnterManufacturerEditMode(canceled);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCancelManufacturerEditingFixture : ManufacturerReducerFixture
+        {
+            public void SetupInitialStateWithUnsavedChanges()
+            {
+                var readOnlyManufacturer = new EditedManufacturer(Guid.NewGuid(), "Saved manufacturer");
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyManufacturer = readOnlyManufacturer,
+                        Manufacturer = readOnlyManufacturer with { Name = "Unsaved manufacturer" },
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedStateAfterCanceling()
+            {
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Manufacturer = InitialState.Editor.ReadOnlyManufacturer,
+                        IsInEditMode = false
+                    }
+                };
+            }
+
+            public void SetupExpectedStateAfterReenteringEditMode()
+            {
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        Manufacturer = InitialState.Editor.ReadOnlyManufacturer,
+                        IsInEditMode = true
+                    }
+                };
             }
         }
     }
@@ -436,7 +600,11 @@ public class ManufacturerReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Manufacturer = new DomainTestBuilder<EditedManufacturer>().Create()
+                        ReadOnlyManufacturer = new DomainTestBuilder<EditedManufacturer>().Create(),
+                        Manufacturer = new DomainTestBuilder<EditedManufacturer>().Create(),
+                        IsInEditMode = true,
+                        IsLoadingEditedManufacturer = true,
+                        IsDeleteDialogOpen = true
                     }
                 };
             }
@@ -447,7 +615,11 @@ public class ManufacturerReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Manufacturer = null
+                        ReadOnlyManufacturer = null,
+                        Manufacturer = null,
+                        IsInEditMode = false,
+                        IsLoadingEditedManufacturer = false,
+                        IsDeleteDialogOpen = false
                     }
                 };
             }
@@ -763,7 +935,11 @@ public class ManufacturerReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Manufacturer = new EditedManufacturer(Guid.Empty, string.Empty)
+                        ReadOnlyManufacturer = null,
+                        Manufacturer = new EditedManufacturer(Guid.Empty, string.Empty),
+                        IsInEditMode = true,
+                        IsLoadingEditedManufacturer = false,
+                        IsDeleteDialogOpen = false
                     }
                 };
             }

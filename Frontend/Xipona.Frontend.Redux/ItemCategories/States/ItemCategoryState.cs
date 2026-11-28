@@ -22,6 +22,8 @@ public class ItemCategoryFeatureState : Feature<ItemCategoryState>
                 new List<ItemCategorySearchResult>()),
             new ItemCategoryEditor(
                 null,
+                null,
+                false,
                 false,
                 false,
                 false,

@@ -1,0 +1,33 @@
+@using Fluxor
+@using Xipona.Frontend.Redux.Manufacturers.Actions
+@using Xipona.Frontend.Redux.Manufacturers.States
+@using Xipona.Frontend.WebApp.Components.Manufacturers
+
+@inject IDispatcher Dispatcher
+
+<div class="d-flex align-items-center mb-3">
+    <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+        <i class="bi bi-arrow-left"></i>
+    </Button>
+    <div class="mx-3 manufacturer-name text-truncate" title="@Manufacturer.Name">@Manufacturer.Name</div>
+    <div class="ml-auto d-flex align-items-center">
+        <Button Class="d-flex align-items-center mr-2" OnClick="@OnEditModeButtonClicked">
+            <i class="bi bi-pencil"></i>
+        </Button>
+        <DeleteManufacturer></DeleteManufacturer>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EditedManufacturer Manufacturer { get; set; }
+    
+    private void OnBackButtonClicked()
+    {
+        Dispatcher.Dispatch(new LeaveManufacturerEditorAction(false));
+    }
+
+    private void OnEditModeButtonClicked()
+    {
+        Dispatcher.Dispatch(new EnterManufacturerEditModeAction());
+    }
+}
