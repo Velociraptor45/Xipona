@@ -1,0 +1,69 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.ItemCategories.Actions
+@using Xipona.Frontend.Redux.ItemCategories.States
+@using Xipona.Frontend.WebApp.Components.ItemCategories
+
+@inject IState<ItemCategoryState> State
+@inject IDispatcher Dispatcher
+
+@if (State.Value.Editor.ItemCategory is not null)
+{
+    <div class="item-category-edit-view">
+        <div class="d-flex">
+            <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+                <i class="bi bi-arrow-left"></i>
+            </Button>
+            <div class="mx-3 flex-grow-1">
+                <Input Placeholder="Item category name"
+                       TValue="string"
+                       Value="@State.Value.Editor.ItemCategory.Name"
+                       OnChange="OnNameChanged" />
+            </div>
+            @if (State.Value.Editor.ItemCategory.Id != Guid.Empty)
+            {
+                <Button Class="d-flex align-items-center mr-2" OnClick="@OnReadModeButtonClicked">
+                    <i class="bi bi-pencil-fill"></i>
+                </Button>
+                <DeleteItemCategory></DeleteItemCategory>
+            }
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+            <Button Type="@ButtonType.Primary" @onclick="@OnSaveButtonClicked"
+                    Disabled="@(State.Value.Editor.ItemCategory.Name.Length == 0)"
+                    Loading="@State.Value.Editor.IsSaving">
+                @if (State.Value.Editor.ItemCategory.Id == Guid.Empty)
+                {
+                    @("Create")
+                }
+                else
+                {
+                    @("Save")
+                }
+            </Button>
+        </div>
+    </div>
+}
+
+@code {
+    private void OnNameChanged(string name)
+    {
+        Dispatcher.Dispatch(new EditedItemCategoryNameChangedAction(name));
+    }
+
+    private void OnBackButtonClicked()
+    {
+        Dispatcher.Dispatch(new LeaveItemCategoryEditorAction(false));
+    }
+
+    private void OnReadModeButtonClicked()
+    {
+        Dispatcher.Dispatch(new CancelItemCategoryEditingAction());
+    }
+
+    private void OnSaveButtonClicked()
+    {
+        Dispatcher.Dispatch(new SaveItemCategoryAction());
+    }
+}

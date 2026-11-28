@@ -1,0 +1,32 @@
+@using Fluxor
+@using Xipona.Frontend.Redux.ItemCategories.Actions
+@using Xipona.Frontend.Redux.ItemCategories.States
+
+@inject IDispatcher Dispatcher
+
+<div class="d-flex align-items-center mb-3">
+    <Button Class="d-flex align-items-center" OnClick="@OnBackButtonClicked">
+        <i class="bi bi-arrow-left"></i>
+    </Button>
+    <div class="mx-3 item-category-name text-truncate" title="@ItemCategory.Name">@ItemCategory.Name</div>
+    <div class="ml-auto d-flex align-items-center">
+        <Button Class="d-flex align-items-center mr-2" OnClick="@OnEditModeButtonClicked">
+            <i class="bi bi-pencil"></i>
+        </Button>
+        <DeleteItemCategory></DeleteItemCategory>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EditedItemCategory ItemCategory { get; set; }
+    
+    private void OnBackButtonClicked()
+    {
+        Dispatcher.Dispatch(new LeaveItemCategoryEditorAction(false));
+    }
+
+    private void OnEditModeButtonClicked()
+    {
+        Dispatcher.Dispatch(new EnterItemCategoryEditModeAction());
+    }
+}

@@ -13,14 +13,16 @@
 
 @namespace Xipona.Frontend.WebApp.Pages.Manufacturers
 
-@if (State.Value.Editor.IsInEditMode)
-{
-    <ManufacturerEditView></ManufacturerEditView>
-}
-else
-{
-    <ManufacturerReadView></ManufacturerReadView>
-}
+<div class="manufacturer">
+    @if (State.Value.Editor.IsInEditMode)
+    {
+        <ManufacturerEditView></ManufacturerEditView>
+    }
+    else
+    {
+        <ManufacturerReadView></ManufacturerReadView>
+    }
+</div>
 
 @code {
     [Parameter] public Guid ManufacturerId { get; set; }

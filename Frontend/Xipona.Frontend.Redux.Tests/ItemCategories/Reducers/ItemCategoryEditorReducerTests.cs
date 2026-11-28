@@ -64,18 +64,26 @@ public class ItemCategoryEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        IsLoadingEditedItemCategory = isLoading
+                        ReadOnlyItemCategory = new EditedItemCategory(Guid.NewGuid(), "Saved item category"),
+                        ItemCategory = new EditedItemCategory(Guid.NewGuid(), "Unsaved item category"),
+                        IsInEditMode = true,
+                        IsLoadingEditedItemCategory = isLoading,
+                        IsDeleteDialogOpen = true
                     }
                 };
             }
 
             public void SetupExpectedState()
             {
-                ExpectedState = ExpectedState with
+                ExpectedState = InitialState with
                 {
-                    Editor = ExpectedState.Editor with
+                    Editor = InitialState.Editor with
                     {
-                        IsLoadingEditedItemCategory = true
+                        ReadOnlyItemCategory = null,
+                        ItemCategory = null,
+                        IsInEditMode = false,
+                        IsLoadingEditedItemCategory = true,
+                        IsDeleteDialogOpen = false
                     }
                 };
             }
@@ -146,6 +154,7 @@ public class ItemCategoryEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsLoadingEditedItemCategory = isLoading,
+                        ReadOnlyItemCategory = new EditedItemCategory(Guid.NewGuid(), "Stale category"),
                         ItemCategory = new DomainTestBuilder<EditedItemCategory>().Create()
                     }
                 };
@@ -153,18 +162,22 @@ public class ItemCategoryEditorReducerTests
 
             public void SetupExpectedState()
             {
-                ExpectedState = ExpectedState with
+                var itemCategory = new EditedItemCategory(Guid.NewGuid(), "Loaded category");
+                ExpectedState = InitialState with
                 {
-                    Editor = ExpectedState.Editor with
+                    Editor = InitialState.Editor with
                     {
                         IsLoadingEditedItemCategory = false,
+                        ReadOnlyItemCategory = itemCategory,
+                        ItemCategory = itemCategory,
+                        IsInEditMode = false
                     }
                 };
             }
 
             public void SetupAction()
             {
-                Action = new LoadItemCategoryForEditingFinishedAction(ExpectedState.Editor.ItemCategory!);
+                Action = new LoadItemCategoryForEditingFinishedAction(ExpectedState.Editor.ReadOnlyItemCategory!);
             }
         }
     }
@@ -219,6 +232,192 @@ public class ItemCategoryEditorReducerTests
         }
     }
 
+    public class OnEnterItemCategoryEditMode
+    {
+        private readonly OnEnterItemCategoryEditModeFixture _fixture = new();
+
+        [Fact]
+        public void OnEnterItemCategoryEditMode_WithReadOnlyItemCategory_ShouldCopyItToEditableItemCategory()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithReadOnlyItemCategory();
+            _fixture.SetupExpectedStateEnteringEditMode();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnEnterItemCategoryEditMode(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnEnterItemCategoryEditMode_WithoutReadOnlyItemCategory_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithoutReadOnlyItemCategory();
+            _fixture.SetupExpectedStateUnchanged();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnEnterItemCategoryEditMode(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnEnterItemCategoryEditModeFixture : ItemCategoryEditorReducerFixture
+        {
+            public void SetupInitialStateWithReadOnlyItemCategory()
+            {
+                var readOnlyItemCategory = new EditedItemCategory(Guid.NewGuid(), "Saved item category");
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyItemCategory = readOnlyItemCategory,
+                        ItemCategory = readOnlyItemCategory with { Name = "Unsaved item category" },
+                        IsInEditMode = false
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithoutReadOnlyItemCategory()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyItemCategory = null,
+                        ItemCategory = new EditedItemCategory(Guid.NewGuid(), "New item category")
+                    }
+                };
+            }
+
+            public void SetupExpectedStateEnteringEditMode()
+            {
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        ItemCategory = InitialState.Editor.ReadOnlyItemCategory,
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedStateUnchanged()
+            {
+                ExpectedState = InitialState;
+            }
+        }
+    }
+
+    public class OnCancelItemCategoryEditing
+    {
+        private readonly OnCancelItemCategoryEditingFixture _fixture = new();
+
+        [Fact]
+        public void OnCancelItemCategoryEditing_WithUnsavedChanges_ShouldRestoreReadOnlyItemCategory()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithUnsavedChanges();
+            _fixture.SetupExpectedStateAfterCanceling();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnCancelItemCategoryEditing(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCancelItemCategoryEditing_AfterCanceling_ShouldAllowReenteringEditModeFromSavedVersion()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithUnsavedChanges();
+            _fixture.SetupExpectedStateAfterReenteringEditMode();
+
+            // Act
+            var canceled = ItemCategoryEditorReducer.OnCancelItemCategoryEditing(_fixture.InitialState);
+            var result = ItemCategoryEditorReducer.OnEnterItemCategoryEditMode(canceled);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        [Fact]
+        public void OnCancelItemCategoryEditing_WithoutReadOnlyItemCategory_ShouldNotChangeState()
+        {
+            // Arrange
+            _fixture.SetupInitialStateWithoutReadOnlyItemCategory();
+            _fixture.SetupExpectedStateUnchanged();
+
+            // Act
+            var result = ItemCategoryEditorReducer.OnCancelItemCategoryEditing(_fixture.InitialState);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnCancelItemCategoryEditingFixture : ItemCategoryEditorReducerFixture
+        {
+            public void SetupInitialStateWithUnsavedChanges()
+            {
+                var readOnlyItemCategory = new EditedItemCategory(Guid.NewGuid(), "Saved item category");
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyItemCategory = readOnlyItemCategory,
+                        ItemCategory = readOnlyItemCategory with { Name = "Unsaved item category" },
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupInitialStateWithoutReadOnlyItemCategory()
+            {
+                InitialState = ExpectedState with
+                {
+                    Editor = ExpectedState.Editor with
+                    {
+                        ReadOnlyItemCategory = null,
+                        ItemCategory = new EditedItemCategory(Guid.NewGuid(), "Unsaved item category"),
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedStateAfterCanceling()
+            {
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        ItemCategory = InitialState.Editor.ReadOnlyItemCategory,
+                        IsInEditMode = false
+                    }
+                };
+            }
+
+            public void SetupExpectedStateAfterReenteringEditMode()
+            {
+                ExpectedState = InitialState with
+                {
+                    Editor = InitialState.Editor with
+                    {
+                        ItemCategory = InitialState.Editor.ReadOnlyItemCategory,
+                        IsInEditMode = true
+                    }
+                };
+            }
+
+            public void SetupExpectedStateUnchanged()
+            {
+                ExpectedState = InitialState;
+            }
+        }
+    }
+
     public class OnLeaveItemCategoryEditor
     {
         private readonly OnLeaveItemCategoryEditorFixture _fixture;
@@ -250,18 +449,26 @@ public class ItemCategoryEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        ItemCategory = new DomainTestBuilder<EditedItemCategory>().Create()
+                        ReadOnlyItemCategory = new DomainTestBuilder<EditedItemCategory>().Create(),
+                        ItemCategory = new DomainTestBuilder<EditedItemCategory>().Create(),
+                        IsInEditMode = true,
+                        IsLoadingEditedItemCategory = true,
+                        IsDeleteDialogOpen = true
                     }
                 };
             }
 
             public void SetupExpectedState()
             {
-                ExpectedState = ExpectedState with
+                ExpectedState = InitialState with
                 {
-                    Editor = ExpectedState.Editor with
+                    Editor = InitialState.Editor with
                     {
-                        ItemCategory = null
+                        ReadOnlyItemCategory = null,
+                        ItemCategory = null,
+                        IsInEditMode = false,
+                        IsLoadingEditedItemCategory = false,
+                        IsDeleteDialogOpen = false
                     }
                 };
             }
@@ -591,7 +798,11 @@ public class ItemCategoryEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        ItemCategory = new DomainTestBuilder<EditedItemCategory>().Create()
+                        ReadOnlyItemCategory = new DomainTestBuilder<EditedItemCategory>().Create(),
+                        ItemCategory = new DomainTestBuilder<EditedItemCategory>().Create(),
+                        IsInEditMode = false,
+                        IsLoadingEditedItemCategory = true,
+                        IsDeleteDialogOpen = true
                     }
                 };
             }
@@ -602,7 +813,11 @@ public class ItemCategoryEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        ItemCategory = new EditedItemCategory(Guid.Empty, string.Empty)
+                        ReadOnlyItemCategory = null,
+                        ItemCategory = new EditedItemCategory(Guid.Empty, string.Empty),
+                        IsInEditMode = true,
+                        IsLoadingEditedItemCategory = false,
+                        IsDeleteDialogOpen = false
                     }
                 };
             }
