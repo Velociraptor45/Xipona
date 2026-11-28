@@ -39,11 +39,6 @@ jobs:
       - name: Output Git Version      
         id: gitversionoutput
         run: echo "semver=${{ steps.gitversion.outputs.GitVersion_SemVer }}" >> "$GITHUB_OUTPUT"
-      - name: Add Git Tag
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git tag v${{ steps.gitversion.outputs.GitVersion_SemVer }}
-          git push --tags
 
       - name: Setup Docker Compose (temp)
         run: |
