@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Recipes.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
 
 public class AddToShoppingListAvailabilityConverter
     : IToDomainConverter<ItemAmountForOneServingAvailabilityContract, AddToShoppingListAvailability>

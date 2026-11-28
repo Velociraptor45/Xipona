@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Query;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Services.Query;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.RecipeTags.Queries.GetAll;
+namespace Xipona.Api.ApplicationServices.RecipeTags.Queries.GetAll;
 
 public class GetAllQueryHandler : IQueryHandler<GetAllQuery, IEnumerable<IRecipeTag>>
 {

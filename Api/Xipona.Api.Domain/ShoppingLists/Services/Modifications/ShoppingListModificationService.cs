@@ -1,20 +1,20 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Models.Factories;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 
 public class ShoppingListModificationService : IShoppingListModificationService
 {
@@ -228,23 +228,16 @@ public class ShoppingListModificationService : IShoppingListModificationService
         if (section is null)
             return;
 
-        var itemIds = section.Items.Select(i => i.Id);
-        var items = (await _itemRepository.FindActiveByAsync(itemIds)).ToDictionary(i => i.Id);
+        SectionId defaultSectionId = store.GetDefaultSection().Id;
+
+        if (shoppingList.Sections.All(s => s.Id != defaultSectionId))
+        {
+            var newSection = _shoppingListSectionFactory.CreateEmpty(defaultSectionId);
+            shoppingList.AddSection(newSection);
+        }
 
         foreach (var listItem in section.Items)
         {
-            if (!items.TryGetValue(listItem.Id, out var item))
-                throw new DomainException(new ItemNotFoundReason(listItem.Id));
-
-            SectionId defaultSectionId = listItem.TypeId.HasValue
-                ? item.GetDefaultSectionIdForStore(shoppingList.StoreId, listItem.TypeId.Value)
-                : item.GetDefaultSectionIdForStore(shoppingList.StoreId);
-
-            if (shoppingList.Sections.All(s => s.Id != defaultSectionId))
-            {
-                var newSection = _shoppingListSectionFactory.CreateEmpty(defaultSectionId);
-                shoppingList.AddSection(newSection);
-            }
 
             shoppingList.TransferItem(defaultSectionId, listItem.Id, listItem.TypeId);
         }
@@ -252,7 +245,18 @@ public class ShoppingListModificationService : IShoppingListModificationService
         await _shoppingListRepository.StoreAsync(shoppingList);
     }
 
-    public async Task AddDiscountAsync(ShoppingListId id, Discount discount)
+    public async Task AddDiscountAsync(ShoppingListId id, ItemDiscount discount)
+    {
+        var shoppingList = await _shoppingListRepository.FindByAsync(id);
+        if (shoppingList == null)
+            throw new DomainException(new ShoppingListNotFoundReason(id));
+
+        shoppingList.AddDiscount(discount);
+
+        await _shoppingListRepository.StoreAsync(shoppingList);
+    }
+
+    public async Task AddDiscountAsync(ShoppingListId id, ListDiscount discount)
     {
         var shoppingList = await _shoppingListRepository.FindByAsync(id);
         if (shoppingList == null)
@@ -272,5 +276,36 @@ public class ShoppingListModificationService : IShoppingListModificationService
         shoppingList.RemoveDiscount(itemId, itemTypeId);
 
         await _shoppingListRepository.StoreAsync(shoppingList);
+    }
+
+    public async Task RemoveDiscountAsync(ShoppingListId shoppingListId, ListDiscountId listDiscountId)
+    {
+        var shoppingList = await _shoppingListRepository.FindByAsync(shoppingListId);
+        if (shoppingList == null)
+            throw new DomainException(new ShoppingListNotFoundReason(shoppingListId));
+
+        shoppingList.RemoveDiscount(listDiscountId);
+
+        await _shoppingListRepository.StoreAsync(shoppingList);
+    }
+
+    public async Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        var newItem = await _itemRepository.FindActiveByAsync(newItemId);
+        if (newItem is null)
+            throw new DomainException(new ItemNotFoundReason(newItemId));
+        if (!newItem.TryGetType(newItemTypeId, out var newItemType))
+            throw new DomainException(new ItemTypeNotFoundReason(newItemTypeId));
+
+        foreach (var availability in newItemType.Availabilities)
+        {
+            var shoppingList = await _shoppingListRepository.FindActiveByAsync(availability.StoreId);
+            if (shoppingList is null)
+                throw new DomainException(new ShoppingListNotFoundReason(availability.StoreId));
+
+            var replaced = shoppingList.ReplaceMergedItem(originalItemId, newItemId, newItemTypeId);
+            if (replaced)
+                await _shoppingListRepository.StoreAsync(shoppingList);
+        }
     }
 }

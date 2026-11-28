@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Recipes.States;
+namespace Xipona.Frontend.Redux.Tests.Recipes.States;
 
 public class EditedIngredientTests
 {

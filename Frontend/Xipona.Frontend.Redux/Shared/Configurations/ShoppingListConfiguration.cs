@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Configurations;
+﻿namespace Xipona.Frontend.Redux.Shared.Configurations;
 
 public class ShoppingListConfiguration
 {

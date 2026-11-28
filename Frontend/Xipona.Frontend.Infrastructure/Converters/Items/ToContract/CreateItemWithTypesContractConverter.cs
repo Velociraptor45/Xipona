@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
+﻿using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.Shared;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Items.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
 
 public class CreateItemWithTypesContractConverter :
     IToContractConverter<EditedItem, CreateItemWithTypesContract>
@@ -26,7 +26,7 @@ public class CreateItemWithTypesContractConverter :
             QuantityType = source.QuantityType.Id,
             QuantityInPacket = source.QuantityInPacket,
             QuantityTypeInPacket = source.QuantityInPacketType?.Id,
-            ItemCategoryId = source.ItemCategoryId.Value,
+            ItemCategoryId = source.ItemCategoryId!.Value,
             ManufacturerId = source.ManufacturerId,
             ItemTypes = source.ItemTypes.Select(ToCreateItemTypeContract)
         };

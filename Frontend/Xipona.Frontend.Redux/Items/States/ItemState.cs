@@ -1,16 +1,19 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.States.Filters;
+using Xipona.Frontend.Redux.Items.States.Merges;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.States;
+namespace Xipona.Frontend.Redux.Items.States;
 public record ItemState(
     ItemStateInitialization Initialization,
     IReadOnlyCollection<QuantityType> QuantityTypes,
     IReadOnlyCollection<QuantityTypeInPacket> QuantityTypesInPacket,
     ActiveStores Stores,
     ItemSearch Search,
-    ItemEditor Editor);
+    ItemEditor Editor,
+    ItemMerge Merge);
 
 public class ItemFeatureState : Feature<ItemState>
 {
@@ -27,6 +30,11 @@ public class ItemFeatureState : Feature<ItemState>
             new List<QuantityTypeInPacket>(),
             new ActiveStores(new List<ItemStore>()),
             new ItemSearch(
+                new ItemFilter(
+                    null,
+                    new ItemCategoryFilter([], string.Empty, null),
+                    new ManufacturerFilter([], string.Empty, null),
+                    false),
                 string.Empty,
                 1,
                 25,
@@ -37,6 +45,7 @@ public class ItemFeatureState : Feature<ItemState>
             new ItemEditor(
                 null,
                 null,
+                null,
                 new ItemCategorySelector(new List<ItemCategorySearchResult>(), string.Empty),
                 new ManufacturerSelector(new List<ManufacturerSearchResult>(), string.Empty),
                 false,
@@ -44,6 +53,12 @@ public class ItemFeatureState : Feature<ItemState>
                 false,
                 false,
                 false,
-                new()));
+                false,
+                new()),
+            new ItemMerge(
+                new MergeItemSelector(false, false, [], []),
+                null,
+                false,
+                new ItemMergeValidationResult()));
     }
 }

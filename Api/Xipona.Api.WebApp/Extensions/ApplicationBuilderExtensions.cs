@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace ProjectHermes.Xipona.Api.WebApp.Extensions;
+namespace Xipona.Api.WebApp.Extensions;
 
 public static class ApplicationBuilderExtensions
 {

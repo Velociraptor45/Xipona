@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers
+﻿namespace Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers
 {
     public class ModifyManufacturerRequest
     {

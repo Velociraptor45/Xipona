@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
+﻿using Xipona.Api.Repositories.Stores.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
+namespace Xipona.Api.Repositories.TestKit.Stores.Entities;
 
 public static class StoreEntityMother
 {
-    public static StoreEntityBuilder Active()
+    public static StoreEntityBuilder Active(StoreEntityGodmother? godmother = null)
     {
-        return new StoreEntityBuilder()
+        return (godmother?.GetFoundation() ?? new StoreEntityBuilder())
             .WithDeleted(false);
     }
 
@@ -69,12 +69,12 @@ public static class StoreEntityMother
         var sections = new List<Section>()
         {
             new SectionEntityBuilder()
-                .WithIsDefaultSection(false)
+                .WithIsDefaultSection(true)
                 .WithSortIndex(0)
                 .WithIsDeleted(false)
                 .Create(),
             new SectionEntityBuilder()
-                .WithIsDefaultSection(true)
+                .WithIsDefaultSection(false)
                 .WithSortIndex(1)
                 .WithIsDeleted(true)
                 .Create(),

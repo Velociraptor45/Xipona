@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+﻿using Xipona.Api.Domain.Stores.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
+namespace Xipona.Api.Domain.Stores.Models.Factories;
 
 public class SectionFactory : ISectionFactory
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Models.ShoppingLists;
 
 public class DiscountTests
 {
@@ -14,7 +14,7 @@ public class DiscountTests
         public void Ctor_WithNoArguments_ShouldThrowNotSupportedException()
         {
             // Act
-            var act = () => new Discount();
+            var act = () => new ItemDiscount();
 
             // Assert
             act.Should().Throw<NotSupportedException>();
@@ -28,7 +28,7 @@ public class DiscountTests
             var price = _fixture.Price;
 
             // Act
-            var discount = new Discount(itemId, price);
+            var discount = new ItemDiscount(itemId, price);
 
             // Assert
             discount.ItemId.Should().Be(itemId);
@@ -45,7 +45,7 @@ public class DiscountTests
             var price = _fixture.Price;
 
             // Act
-            var discount = new Discount(itemId, itemTypeId, price);
+            var discount = new ItemDiscount(itemId, itemTypeId, price);
 
             // Assert
             discount.ItemId.Should().Be(itemId);

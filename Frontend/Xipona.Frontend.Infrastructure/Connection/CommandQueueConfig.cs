@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
+namespace Xipona.Frontend.Infrastructure.Connection;
 
 public class CommandQueueConfig
 {

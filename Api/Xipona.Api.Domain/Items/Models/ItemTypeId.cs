@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿namespace Xipona.Api.Domain.Items.Models;
 
 public readonly record struct ItemTypeId
 {
@@ -12,7 +12,7 @@ public readonly record struct ItemTypeId
         Value = value;
     }
 
-    public static ItemTypeId New => new(Guid.NewGuid());
+    public static ItemTypeId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

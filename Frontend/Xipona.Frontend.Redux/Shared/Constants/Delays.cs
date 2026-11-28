@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
+﻿namespace Xipona.Frontend.Redux.Shared.Constants;
 
 public static class Delays
 {

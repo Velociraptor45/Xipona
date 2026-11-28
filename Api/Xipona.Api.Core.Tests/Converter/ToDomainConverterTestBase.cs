@@ -1,10 +1,11 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using FluentAssertions.Equivalency;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Microsoft.Extensions.Logging;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Core.Tests.Converter;
+namespace Xipona.Api.Core.Tests.Converter;
 
 public abstract class ToDomainConverterTestBase<TSource, TDest, TConverter> where TConverter : IToDomainConverter<TSource, TDest>
 {
@@ -15,7 +16,7 @@ public abstract class ToDomainConverterTestBase<TSource, TDest, TConverter> wher
         var contract = CreateSource();
         Setup(contract);
 
-        var mapper = new MapperConfiguration(AddMapping).CreateMapper();
+        var mapper = new MapperConfiguration(AddMapping, new LoggerFactory()).CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 

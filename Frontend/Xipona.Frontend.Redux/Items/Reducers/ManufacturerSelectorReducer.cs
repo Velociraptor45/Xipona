@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Manufacturers.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
+namespace Xipona.Frontend.Redux.Items.Reducers;
 
 public static class ManufacturerSelectorReducer
 {

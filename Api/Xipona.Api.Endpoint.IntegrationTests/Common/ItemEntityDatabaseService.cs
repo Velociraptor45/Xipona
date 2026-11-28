@@ -1,17 +1,17 @@
-﻿using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
+﻿using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Entities;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Stores.Entities;
+using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+using Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
+using Xipona.Api.Repositories.TestKit.Stores.Entities;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.Common;
+namespace Xipona.Api.Endpoint.IntegrationTests.Common;
 
 internal class ItemEntityDatabaseService
 {

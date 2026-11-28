@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Manufacturers.Actions;
+using Xipona.Frontend.Redux.Manufacturers.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Reducers;
+namespace Xipona.Frontend.Redux.Manufacturers.Reducers;
 
 public static class ManufacturerReducer
 {

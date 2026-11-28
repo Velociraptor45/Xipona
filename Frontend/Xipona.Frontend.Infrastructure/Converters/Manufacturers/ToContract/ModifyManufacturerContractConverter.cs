@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+﻿using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Manufacturers.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Manufacturers.ToContract;
 
 public class ModifyManufacturerContractConverter :
     IToContractConverter<ModifyManufacturerRequest, ModifyManufacturerContract>

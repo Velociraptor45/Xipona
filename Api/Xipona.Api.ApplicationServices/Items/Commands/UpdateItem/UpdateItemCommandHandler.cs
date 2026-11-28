@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
+namespace Xipona.Api.ApplicationServices.Items.Commands.UpdateItem;
 
 public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, bool>
 {

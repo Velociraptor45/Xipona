@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.Middleware;
+namespace Xipona.Api.Endpoint.Middleware;
 
 public static class DiagnosticsMiddleware
 {

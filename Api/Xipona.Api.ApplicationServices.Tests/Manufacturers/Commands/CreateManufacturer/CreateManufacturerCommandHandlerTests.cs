@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Services.Creations;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Services.Creations;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Manufacturers.Commands.CreateManufacturer;
+namespace Xipona.Api.ApplicationServices.Tests.Manufacturers.Commands.CreateManufacturer;
 
 public class CreateManufacturerCommandHandlerTests()
     : CommandHandlerTestsBase<CreateManufacturerCommandHandler, CreateManufacturerCommand, IManufacturer>

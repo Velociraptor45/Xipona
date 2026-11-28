@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.ItemCategories.Actions;
+using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ItemCategories.Reducers;
+namespace Xipona.Frontend.Redux.ItemCategories.Reducers;
 
 public static class ItemCategoryEditorReducer
 {

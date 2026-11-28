@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
+﻿using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.ItemCategories.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+namespace Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
 
 public class ItemCategoryEntityBuilder : TestBuilderBase<ItemCategory>
 {

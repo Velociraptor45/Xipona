@@ -1,10 +1,10 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
 
 public static class ManufacturerEntityMother
 {
-    public static ManufacturerEntityBuilder Active()
+    public static ManufacturerEntityBuilder Active(ManufacturerEntityGodmother? godmother = null)
     {
-        return new ManufacturerEntityBuilder()
+        return (godmother?.GetFoundation() ?? new ManufacturerEntityBuilder())
             .WithDeleted(false);
     }
 }

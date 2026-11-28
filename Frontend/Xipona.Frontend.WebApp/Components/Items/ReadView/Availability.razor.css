@@ -1,0 +1,38 @@
+.store-availability-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 0.85rem;
+    background-color: var(--secondary-color-shade-1);
+    border: 1px solid var(--button-border-color);
+    border-radius: 6px;
+}
+
+.store-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.store-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.store-section {
+    font-size: 0.8rem;
+    opacity: 0.75;
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.store-price {
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.2rem 0.55rem;
+    background-color: var(--secondary-color-shade-2);
+    border-radius: 4px;
+    border: 1px solid var(--button-border-color);
+    white-space: nowrap;
+    margin-left: 0.5rem;
+}

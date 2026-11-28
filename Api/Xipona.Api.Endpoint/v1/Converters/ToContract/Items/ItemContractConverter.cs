@@ -1,13 +1,13 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+﻿using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Items;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Items;
 
 public class ItemContractConverter :
     IToContractConverter<ItemReadModel, ItemContract>
@@ -51,6 +51,7 @@ public class ItemContractConverter :
             source.IsDeleted,
             source.Comment.Value,
             source.IsTemporary,
+            source.IsFavorite,
             _quantityTypeContractConverter.ToContract(source.QuantityType),
             source.QuantityInPacket,
             source.QuantityTypeInPacket is null

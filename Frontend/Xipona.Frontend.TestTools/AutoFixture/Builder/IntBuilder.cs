@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.TestTools.AutoFixture.Customizations;
+﻿using Xipona.Frontend.TestTools.AutoFixture.Customizations;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools.AutoFixture.Builder;
+namespace Xipona.Frontend.TestTools.AutoFixture.Builder;
 
 public class IntBuilder : TestBuilderBase<int>
 {

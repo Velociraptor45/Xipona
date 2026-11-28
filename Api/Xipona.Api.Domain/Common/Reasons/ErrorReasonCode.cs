@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Common.Reasons;
+﻿namespace Xipona.Api.Domain.Common.Reasons;
 
 public enum ErrorReasonCode
 {
@@ -72,5 +72,13 @@ public enum ErrorReasonCode
     CannotModifyDeletedStore = 69,
     CannotModifyDeletedSection = 70,
     CannotChangeStoreOfIngredientWithoutShoppingListProperties = 71,
-    CannotModifyItemWithTypesAsItem = 72
+    CannotModifyItemWithTypesAsItem = 72,
+    GeneralSettingsNotLoaded = 73,
+    CannotMergeItemWithTypes = 74,
+    CannotMergeDeletedItem = 75,
+    CannotMergeItemsWithDifferentQuantities = 76,
+    CannotMergeItemsWithDifferentItemCategories = 77,
+    CannotMergeItemsWithDifferentManufacturers = 78,
+    CannotMergeTemporaryItem = 79,
+    CannotMergeItemWithItself = 80,
 }

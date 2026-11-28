@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Modifications;
+using Xipona.Api.Domain.TestKit.Recipes.Models;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Recipes.Models;
+namespace Xipona.Api.Domain.Tests.Recipes.Models;
 
 public class PreparationStepTests
 {

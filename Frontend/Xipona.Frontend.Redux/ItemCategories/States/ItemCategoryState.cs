@@ -1,6 +1,6 @@
 ﻿using Fluxor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+namespace Xipona.Frontend.Redux.ItemCategories.States;
 public record ItemCategoryState(
     ItemCategorySearch Search,
     ItemCategoryEditor Editor);

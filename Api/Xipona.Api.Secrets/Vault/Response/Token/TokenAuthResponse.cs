@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ProjectHermes.Xipona.Api.Secrets.Vault.Response.Token;
+namespace Xipona.Api.Secrets.Vault.Response.Token;
 
 internal sealed class TokenAuthResponse
 {

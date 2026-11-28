@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
+﻿using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
 public interface IShoppingListReadModelConversionService
 {

@@ -1,22 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories;
-using ProjectHermes.Xipona.Api.Domain.Items;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers;
-using ProjectHermes.Xipona.Api.Domain.Recipes;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags;
-using ProjectHermes.Xipona.Api.Domain.Shared;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists;
-using ProjectHermes.Xipona.Api.Domain.Stores;
-using System.Reflection;
+using Xipona.Api.Domain.ItemCategories;
+using Xipona.Api.Domain.Items;
+using Xipona.Api.Domain.Manufacturers;
+using Xipona.Api.Domain.Recipes;
+using Xipona.Api.Domain.RecipeTags;
+using Xipona.Api.Domain.Shared;
+using Xipona.Api.Domain.ShoppingLists;
+using Xipona.Api.Domain.Stores;
+using Xipona.Api.Domain.Users;
 
-namespace ProjectHermes.Xipona.Api.Domain;
+namespace Xipona.Api.Domain;
 
 public static class ServiceCollectionExtensions
 {
     public static void AddDomain(this IServiceCollection services)
     {
+        services.AddUsers();
         services.AddItemCategories();
         services.AddManufacturers();
         services.AddShared();
@@ -26,7 +25,8 @@ public static class ServiceCollectionExtensions
         services.AddRecipeTags();
         services.AddStores();
 
-        var assembly = Assembly.GetExecutingAssembly();
-        services.AddImplementationOfGenericType(assembly, typeof(IDomainEventHandler<>));
+        services.AddDomainEventHandlers();
+
+        services.AddSingleton(TimeProvider.System);
     }
 }

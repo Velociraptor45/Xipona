@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Recipes.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Recipes.States;
+namespace Xipona.Frontend.Redux.TestKit.Recipes.States;
 
 public class RecipeStateMock : Mock<IState<RecipeState>>
 {

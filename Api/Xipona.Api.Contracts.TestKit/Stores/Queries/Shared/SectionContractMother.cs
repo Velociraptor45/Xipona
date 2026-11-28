@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Stores.Queries.Shared;
+﻿namespace Xipona.Api.Contracts.TestKit.Stores.Queries.Shared;
 
 public static class SectionContractMother
 {

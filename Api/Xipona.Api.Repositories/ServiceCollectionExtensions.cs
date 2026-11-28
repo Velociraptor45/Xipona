@@ -1,60 +1,72 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MySqlConnector;
+using Npgsql;
 using Polly;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Adapters;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using ProjectHermes.Xipona.Api.Secrets.Configs;
+using Polly.Retry;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Ports;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Domain.Users.Ports;
+using Xipona.Api.Repositories.Common.Transactions;
+using Xipona.Api.Repositories.ItemCategories.Adapters;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.Items.Adapters;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Adapters;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Repositories.Recipes.Adapters;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.RecipeTags.Adapters;
+using Xipona.Api.Repositories.RecipeTags.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Adapters;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.Stores.Adapters;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Users.Adapters;
+using Xipona.Api.Repositories.Users.Contexts;
+using Xipona.Api.Secrets.Configs;
 using System.Data.Common;
-using System.Reflection;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
-using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Repositories.Items.Entities;
+using GeneralSetting = Xipona.Api.Repositories.Users.Entities.GeneralSetting;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
+using RecipeTag = Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+using User = Xipona.Api.Repositories.Users.Entities.User;
 
-namespace ProjectHermes.Xipona.Api.Repositories;
+namespace Xipona.Api.Repositories;
 
 public static class ServiceCollectionExtensions
 {
-    private static readonly MySqlServerVersion _sqlServerVersion = new(new Version(10, 3, 27));
-
     public static void AddRepositories(this IServiceCollection services, string? connectionString = null)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var connectionRetryPolicy = Policy.Handle<Exception>().WaitAndRetry(
-                5,
-                _ => TimeSpan.FromSeconds(5),
-                (e, _, tryNo, _) => Console.WriteLine($"Failed to open DB connection (Try no. {tryNo}): {e}"));
+        var retryOpt = new RetryStrategyOptions()
+        {
+            MaxRetryAttempts = 5,
+            Delay = TimeSpan.FromSeconds(5),
+            OnRetry = static args =>
+            {
+                Console.WriteLine($"Failed to open DB connection (Try no. {args.AttemptNumber}): {args.Outcome.Exception}");
+
+                return default;
+            }
+        };
+        var pipeline = new ResiliencePipelineBuilder().AddRetry(retryOpt).Build();
 
         services.AddScoped<DbConnection>(provider =>
         {
@@ -64,9 +76,9 @@ public static class ServiceCollectionExtensions
                 connectionString = cs.ShoppingDatabase;
             }
 
-            return connectionRetryPolicy.Execute(() =>
+            return pipeline.Execute(() =>
             {
-                var connection = new MySqlConnection(connectionString);
+                var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 return connection;
             });
@@ -74,6 +86,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IList<DbContext>>(serviceProvider => GetAllDbContextInstances(serviceProvider).ToList());
 
+        services.AddDbContext<GeneralSettingContext>(SetDbConnection);
+        services.AddDbContext<UserContext>(SetDbConnection);
         services.AddDbContext<ShoppingListContext>(SetDbConnection);
         services.AddDbContext<ItemCategoryContext>(SetDbConnection);
         services.AddDbContext<ManufacturerContext>(SetDbConnection);
@@ -81,6 +95,27 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<StoreContext>(SetDbConnection);
         services.AddDbContext<RecipeContext>(SetDbConnection);
         services.AddDbContext<RecipeTagContext>(SetDbConnection);
+
+        services.AddTransient<Func<CancellationToken, IUserRepository>>(provider =>
+        {
+            return ct => new UserRepository(
+                provider.GetRequiredService<UserContext>(),
+                provider.GetRequiredService<IToDomainConverter<User, IUser>>(),
+                provider.GetRequiredService<IToContractConverter<IUser, User>>(),
+                provider.GetRequiredService<Func<CancellationToken, IDomainEventDispatcher>>()(ct),
+                provider.GetRequiredService<ILogger<UserRepository>>(),
+                ct);
+        });
+
+        services.AddTransient<Func<CancellationToken, IGeneralSettingRepository>>(provider =>
+        {
+            return ct => new GeneralSettingRepository(
+                provider.GetRequiredService<GeneralSettingContext>(),
+                provider.GetRequiredService<IToDomainConverter<GeneralSetting, IGeneralSetting>>(),
+                provider.GetRequiredService<IToContractConverter<IGeneralSetting, GeneralSetting>>(),
+                provider.GetRequiredService<ILogger<GeneralSettingRepository>>(),
+                ct);
+        });
 
         services.AddTransient<Func<CancellationToken, IShoppingListRepository>>(provider =>
         {
@@ -101,11 +136,12 @@ public static class ServiceCollectionExtensions
                 provider.GetRequiredService<ILogger<ItemRepository>>(),
                 ct);
         });
-        services.AddTransient<Func<CancellationToken, IItemTypeReadRepository>>(provider =>
+        services.AddTransient<Func<CancellationToken, IItemReadRepository>>(provider =>
         {
-            var dbContext = provider.GetRequiredService<ItemContext>();
-            var converter = provider.GetRequiredService<IToDomainConverter<Items.Entities.ItemType, IItemType>>();
-            return ct => new ItemTypeReadRepository(dbContext, converter, ct);
+            return ct => new ItemReadRepository(
+                provider.GetRequiredService<ItemContext>(),
+                provider.GetRequiredService<IToDomainConverter<ShoppingListItemViewModel, SearchItemForShoppingResultReadModel>>(),
+                ct);
         });
 
         services.AddTransient<Func<CancellationToken, IItemCategoryRepository>>(provider =>
@@ -171,14 +207,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped(_ => new SemaphoreSlim(1, 1));
         services.AddScoped<ITransactionGenerator, TransactionGenerator>();
 
-        services.AddImplementationOfGenericType(assembly, typeof(IToContractConverter<,>));
-        services.AddImplementationOfGenericType(assembly, typeof(IToDomainConverter<,>));
+        services.AddToDomainConverter();
+        services.AddToContractConverter();
     }
 
     private static void SetDbConnection(IServiceProvider serviceProvider, DbContextOptionsBuilder options)
     {
         var connection = serviceProvider.GetService<DbConnection>()!;
-        options.UseMySql(connection, _sqlServerVersion);
+        options.UseNpgsql(connection);
     }
 
     private static IEnumerable<DbContext> GetAllDbContextInstances(IServiceProvider serviceProvider)
@@ -195,12 +231,14 @@ public static class ServiceCollectionExtensions
     {
         // The order of the types is important, because the migrations are applied in the same order
         // and some of them depend on others
+        yield return typeof(GeneralSettingContext);
+        yield return typeof(UserContext);
         yield return typeof(ManufacturerContext);
         yield return typeof(ItemCategoryContext);
         yield return typeof(StoreContext);
-        yield return typeof(ItemContext);
         yield return typeof(ShoppingListContext);
         yield return typeof(RecipeTagContext);
         yield return typeof(RecipeContext);
+        yield return typeof(ItemContext);
     }
 }

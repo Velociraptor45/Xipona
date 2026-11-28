@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Services.Modifications;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Modifications;
+namespace Xipona.Api.Domain.TestKit.Recipes.Services.Modifications;
 
 public class RecipeModificationServiceMock : Mock<IRecipeModificationService>
 {

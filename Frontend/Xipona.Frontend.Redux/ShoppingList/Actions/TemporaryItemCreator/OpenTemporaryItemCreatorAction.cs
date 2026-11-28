@@ -1,2 +1,2 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+﻿namespace Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 public record OpenTemporaryItemCreatorAction;

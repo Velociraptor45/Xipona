@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared
+namespace Xipona.Api.Contracts.Items.Queries.Shared
 {
     /// <summary>
     /// Represents the search result for an item.
@@ -30,7 +30,7 @@ namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared
         public string ItemName { get; }
 
         /// <summary>
-        /// The name of the item's manufacturer.
+        /// The name of the item's manufacturer. <c>null</c> if item has no manufacturer.  
         /// </summary>
         public string ManufacturerName { get; }
     }

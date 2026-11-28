@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Core.Services;
+﻿namespace Xipona.Api.Core.Services;
 
 public class DateTimeService : IDateTimeService
 {

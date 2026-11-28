@@ -1,13 +1,13 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 
 public class ItemTypes : IEnumerable<IItemType>
 {

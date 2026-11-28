@@ -1,23 +1,23 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Ports;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models.Factories;
+using Xipona.Api.Domain.TestKit.Stores.Ports;
+using Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Services;
 
 public class AddItemToShoppingListServiceTests
 {

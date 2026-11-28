@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
+﻿using Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Queries.Quantities;
+namespace Xipona.Api.Domain.TestKit.Recipes.Services.Queries.Quantities;
 
 public class QuantitiesQueryServiceMock : Mock<IQuantitiesQueryService>
 {

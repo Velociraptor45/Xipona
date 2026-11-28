@@ -1,0 +1,90 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.ShoppingList.Actions.ItemDiscounts
+@using Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.WebApp.Services.Prices
+
+@inject IState<ShoppingListState> State
+@inject IPriceLabelService PriceLabelService
+@inject IDispatcher Dispatcher
+
+@if (State.Value.ItemDiscountDialog.Item is not null)
+{
+    <Modal Title="@GetTitle()"
+           Visible="State.Value.ItemDiscountDialog.IsOpen"
+           OnCancel="@OnCloseDialogButtonClicked"
+           ConfirmLoading="State.Value.ItemDiscountDialog.IsSaving"
+           Footer="@GetFooter()">
+        <AntDesign.InputNumber Formatter="FormatDiscount"
+                               Parser="ParseDiscount"
+                               Class="price-update-input"
+                               TValue="decimal"
+                               Value="State.Value.ItemDiscountDialog.Discount"
+                               ValueChanged="OnDiscountChanged"
+                               Min="0.01m"></AntDesign.InputNumber>
+    </Modal>
+}
+
+@code {
+    private void OnCloseDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new CloseDiscountDialogAction());
+    }
+
+    private void OnDiscountChanged(decimal price)
+    {
+        Dispatcher.Dispatch(new DiscountChangedAction(price));
+    }
+
+    private void OnSaveDiscountButtonClicked()
+    {
+        Dispatcher.Dispatch(new SaveDiscountAction());
+    }
+
+    private void OnRemoveDiscountButtonClicked()
+    {
+        Dispatcher.Dispatch(new RemoveDiscountAction());
+    }
+
+    private string FormatDiscount(decimal value)
+    {
+        return PriceLabelService.GetPriceLabel(value, State.Value.ItemDiscountDialog.Item!.QuantityType, true);
+    }
+
+    private string ParseDiscount(string value)
+    {
+        if (State.Value.ItemDiscountDialog.Item is null)
+            return value;
+
+        return PriceLabelService.ParsePrice(value);
+    }
+
+    private string GetTitle()
+    {
+        return $"Discount {State.Value.ItemDiscountDialog.Item?.Name ?? string.Empty}";
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return
+            @<Template>
+                <div class="d-flex">
+                    @if (State.Value.ItemDiscountDialog.Item!.IsDiscounted)
+                    {
+                        <Button OnClick="OnRemoveDiscountButtonClicked"
+                                Type="@ButtonType.Default"
+                                Loading="State.Value.ItemDiscountDialog.IsRemoving">
+                            Remove Discount
+                        </Button>
+                    }
+                    <Button Class="ml-auto"
+                            OnClick="OnSaveDiscountButtonClicked"
+                            Type="@ButtonType.Primary"
+                            Loading="State.Value.ItemDiscountDialog.IsSaving">
+                        Save
+                    </Button>
+                </div>
+            </Template>;
+    }
+}

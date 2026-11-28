@@ -1,0 +1,99 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.Shared.States
+@using Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts
+@using Xipona.Frontend.Redux.ShoppingList.States
+
+@inject IState<ShoppingListState> State
+@inject IState<SharedState> SharedState
+@inject IDispatcher Dispatcher
+
+
+@* this if is ia workaround to fix #561 - otherwise the EnumSelect would cache the currency Symbol *@
+@if (State.Value.ShoppingListDiscountDialog.IsOpen)
+{
+    <Modal Title="Manage Shopping List Discounts"
+           Visible="@State.Value.ShoppingListDiscountDialog.IsOpen"
+           OnCancel="@CloseModal"
+           ConfirmLoading="@State.Value.ShoppingListDiscountDialog.IsSaving"
+           Footer="GetFooter()">
+
+        <div class="d-flex">
+            <AntDesign.InputNumber TValue="decimal"
+                                   Value="@State.Value.ShoppingListDiscountDialog.DiscountValue"
+                                   Min="0.01m"
+                                   Formatter="FormatDiscountValue"
+                                   Placeholder="Discount"
+                                   ValueChanged="OnDiscountChanged"
+                                   Class="discount-input"></AntDesign.InputNumber>
+            <EnumSelect TEnum="ShoppingListDiscountType" ValueChanged="OnDiscountTypeChanged"
+                        ItemLabel="GetLabel" Value="@State.Value.ShoppingListDiscountDialog.Type"
+                        Class="discount-type-select" Style=""> <!-- Do NOT remove this empty style here - this eliminates the default 'width: 100%' -->
+            </EnumSelect>
+            <Button Class="ml-auto"
+                    OnClick="OnAddButtonClicked"
+                    @key="@("submit")"
+                    Type="@ButtonType.Primary"
+                    Loading="@State.Value.ShoppingListDiscountDialog.IsSaving"
+                    Disabled="@(State.Value.ShoppingListDiscountDialog.DiscountValue <= 0)">
+                Add
+            </Button>
+        </div>
+
+        @if (State.Value.ShoppingList!.Discounts.Count > 0)
+        {
+            <hr class="my-3"/>
+            <h3 class="existing-discounts-headline mb-3">Existing Shopping List Discounts</h3>
+            <div>
+                @foreach (var discount in State.Value.ShoppingList.Discounts)
+                {
+                    <ExistingShoppingListDiscount Model="discount"></ExistingShoppingListDiscount>
+                }
+            </div>
+        }
+    </Modal>
+}
+
+@code {
+
+    private void OnDiscountChanged(decimal discount)
+    {
+        Dispatcher.Dispatch(new DiscountValueChangedAction(discount));
+    }
+
+    private void OnDiscountTypeChanged(ShoppingListDiscountType type)
+    {
+        Dispatcher.Dispatch(new DiscountTypeChangedAction(type));
+    }
+
+    private void OnAddButtonClicked()
+    {
+        Dispatcher.Dispatch(new SaveDiscountAction());
+    }
+
+    private void CloseModal()
+    {
+        Dispatcher.Dispatch(new CloseDiscountDialogAction());
+    }
+
+    private string FormatDiscountValue(decimal value)
+    {
+        return value.ToString("0.00");
+    }
+    
+    public string GetLabel(ShoppingListDiscountType type)
+    {
+        return type switch
+        {
+            ShoppingListDiscountType.Price => SharedState.Value.Settings.GeneralSettings!.Currency.Symbol,
+            ShoppingListDiscountType.Percentage => "%",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+    }
+
+    private RenderFragment GetFooter()
+    {
+        return @<Template></Template>;
+    }
+}

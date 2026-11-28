@@ -1,0 +1,12 @@
+﻿::deep .discount-input {
+    width: 90px;
+    margin-right: 10px;
+}
+
+::deep .discount-type-select {
+    width: auto;
+}
+
+.existing-discounts-headline {
+    font-size: 16px;
+}

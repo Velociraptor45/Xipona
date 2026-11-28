@@ -1,19 +1,21 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Recipes.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.SpecimenBuilders;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.Users.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+namespace Xipona.Api.Domain.TestKit.Common;
 
 public class DomainCustomization : ICustomization
 {
@@ -44,8 +46,12 @@ public class DomainCustomization : ICustomization
         fixture.Customize<IngredientId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<PreparationStepId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
         fixture.Customize<RecipeTagId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<UserId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<ListDiscountId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
+        fixture.Customize<GeneralSettingId>(c => c.FromFactory(new MethodInvoker(new IdConstructorQuery())));
 
-        fixture.Customize<Discount>(c => c.FromFactory(new MethodInvoker(new DiscountConstructorQuery())));
+        fixture.Customize<ItemDiscount>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
+        fixture.Customize<Percentage>(c => c.FromFactory(new MethodInvoker(new BiggestConstructorQuery())));
 
         fixture.Customize(new PriceCustomization());
         fixture.Customize(new QuantityCustomization());
@@ -53,6 +59,7 @@ public class DomainCustomization : ICustomization
         fixture.Customize(new ItemQuantityCustomization());
         fixture.Customize(new NumberOfServingsCustomization());
         fixture.Customize(new QuantityInBasketCustomization());
+        fixture.Customize(new QuantityTypeReadModelCustomization());
 
         fixture.Customize(new SectionsCustomization());
 

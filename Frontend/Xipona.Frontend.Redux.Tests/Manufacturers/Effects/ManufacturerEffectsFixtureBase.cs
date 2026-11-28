@@ -1,10 +1,10 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Services;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Manufacturers.States;
+using Xipona.Frontend.Redux.TestKit.Shared.Services;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Manufacturers.Effects;
+namespace Xipona.Frontend.Redux.Tests.Manufacturers.Effects;
 
 public class ManufacturerEffectsFixtureBase : EffectsFixtureBase
 {

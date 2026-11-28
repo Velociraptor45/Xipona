@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+﻿namespace Xipona.Api.Domain.Recipes.Models;
 public readonly record struct PreparationStepId
 {
     public PreparationStepId()
@@ -11,7 +11,7 @@ public readonly record struct PreparationStepId
         Value = value;
     }
 
-    public static PreparationStepId New => new(Guid.NewGuid());
+    public static PreparationStepId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

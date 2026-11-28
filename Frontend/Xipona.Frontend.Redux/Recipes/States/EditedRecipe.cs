@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+namespace Xipona.Frontend.Redux.Recipes.States;
 public record EditedRecipe(Guid Id, string Name, int NumberOfServings, IReadOnlyCollection<EditedIngredient> Ingredients,
     SortedSet<EditedPreparationStep> PreparationSteps, IReadOnlyCollection<Guid> RecipeTagIds, SideDish? SideDish)
         : ISortable<EditedPreparationStep>

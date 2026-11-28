@@ -1,33 +1,35 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.TestTools.Exceptions;
 using System;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.Stores.Contexts;
 using Xunit;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
-using Manufacturer = ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
-using Models = ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
+using Manufacturer = Xipona.Api.Repositories.Manufacturers.Entities.Manufacturer;
+using Models = Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
+namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ManufacturerEndpointsIntegrationTests
 {
-    public class DeleteManufacturerAsync : IAssemblyFixture<DockerFixture>
+    public class DeleteManufacturerAsync
     {
         private readonly DeleteManufacturerAsyncFixture _fixture;
 
@@ -120,7 +122,7 @@ public class ManufacturerEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<Guid, DeleteManufacturerCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupManufacturerId()
@@ -137,7 +139,6 @@ public class ManufacturerEndpointsIntegrationTests
             {
                 TestPropertyNotSetException.ThrowIfNull(ManufacturerId);
 
-                using var transaction = await CreateTransactionAsync(SetupScope);
                 await ApplyMigrationsAsync(SetupScope);
 
                 // manufacturer
@@ -166,8 +167,6 @@ public class ManufacturerEndpointsIntegrationTests
                 {
                     await itemRepository.StoreAsync(item);
                 }
-
-                await transaction.CommitAsync(default);
             }
         }
     }
@@ -183,8 +182,11 @@ public class ManufacturerEndpointsIntegrationTests
 
         public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
         {
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
         }
 
         protected ManufacturerContext CreateManufacturerContext(IServiceScope scope)
@@ -199,12 +201,12 @@ public class ManufacturerEndpointsIntegrationTests
 
         protected IManufacturerRepository CreateManufacturerRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(default);
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(TestContext.Current.CancellationToken);
         }
 
         protected IItemRepository CreateItemRepository(IServiceScope scope)
         {
-            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(default);
+            return scope.ServiceProvider.GetRequiredService<Func<CancellationToken, IItemRepository>>()(TestContext.Current.CancellationToken);
         }
 
         public async Task<IList<Manufacturer>> LoadPersistedManufacturersAsync()

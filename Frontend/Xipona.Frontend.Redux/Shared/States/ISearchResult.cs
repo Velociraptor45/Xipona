@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿namespace Xipona.Frontend.Redux.Shared.States;
 
 public interface ISearchResult
 {

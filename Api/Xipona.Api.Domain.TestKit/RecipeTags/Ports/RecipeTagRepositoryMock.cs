@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Ports;
+namespace Xipona.Api.Domain.TestKit.RecipeTags.Ports;
 
 public class RecipeTagRepositoryMock : Mock<IRecipeTagRepository>
 {

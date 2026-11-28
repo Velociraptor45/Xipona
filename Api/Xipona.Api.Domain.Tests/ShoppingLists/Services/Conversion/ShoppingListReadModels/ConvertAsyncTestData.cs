@@ -1,38 +1,34 @@
-﻿using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+﻿using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
-public class ConvertAsyncTestData : IEnumerable<object[]>
+public class ConvertAsyncTestData : TheoryData<IShoppingList, IStore, IEnumerable<IItem>, IEnumerable<IItemCategory>,
+    IEnumerable<IManufacturer>, ShoppingListReadModel>
 {
-    public IEnumerator<object[]> GetEnumerator()
+    public ConvertAsyncTestData()
     {
-        yield return NoItemCategory();
-        yield return NoManufacturer();
-        yield return NeitherItemCategoryNorManufacturer();
-        yield return WithItemCategoryAndManufacturer();
-        yield return EmptyList();
+        NoItemCategory();
+        NoManufacturer();
+        NeitherItemCategoryNorManufacturer();
+        WithItemCategoryAndManufacturer();
+        EmptyList();
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-
-    private object[] NoItemCategory()
+    private void NoItemCategory()
     {
         IStore store = StoreMother.Initial().Create();
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
@@ -49,18 +45,16 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, null, manufacturer);
 
-        return new object[]
-        {
+        Add(
             list,
             store,
-            item.ToMonoList(),
-            Enumerable.Empty<IItemCategory>(),
+            [item],
+            [],
             manufacturer.ToMonoList(),
-            listReadModel
-        };
+            listReadModel);
     }
 
-    private object[] NoManufacturer()
+    private void NoManufacturer()
     {
         IStore store = StoreMother.Initial().Create();
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
@@ -77,18 +71,16 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
 
         var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, null);
 
-        return new object[]
-        {
+        Add(
             list,
             store,
-            item.ToMonoList(),
-            itemCategory.ToMonoList(),
-            Enumerable.Empty<IManufacturer>(),
-            listReadModel
-        };
+            [item],
+            [itemCategory],
+            [],
+            listReadModel);
     }
 
-    private object[] NeitherItemCategoryNorManufacturer()
+    private void NeitherItemCategoryNorManufacturer()
     {
         IStore store = StoreMother.Initial().Create();
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
@@ -100,18 +92,16 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, null, null);
 
-        return new object[]
-        {
+        Add(
             list,
             store,
-            item.ToMonoList(),
-            Enumerable.Empty<IItemCategory>(),
-            Enumerable.Empty<IManufacturer>(),
-            listReadModel
-        };
+            [item],
+            [],
+            [],
+            listReadModel);
     }
 
-    private object[] WithItemCategoryAndManufacturer()
+    private void WithItemCategoryAndManufacturer()
     {
         IStore store = StoreMother.Initial().Create();
         var list = GetShoppingListContainingOneItem(store.Id, store.Sections.First().Id);
@@ -128,32 +118,28 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             .Create();
         var listReadModel = ToSimpleReadModel(list, store, item, itemCategory, manufacturer);
 
-        return new object[]
-        {
+        Add(
             list,
             store,
-            item.ToMonoList(),
-            itemCategory.ToMonoList(),
-            manufacturer.ToMonoList(),
-            listReadModel
-        };
+            [item],
+            [itemCategory],
+            [manufacturer],
+            listReadModel);
     }
 
-    private object[] EmptyList()
+    private void EmptyList()
     {
         IStore store = StoreMother.Initial().Create();
         var list = ShoppingListMother.NoSections().WithStoreId(store.Id).Create();
         var listReadModel = ToSimpleReadModel(list, store, null, null, null);
 
-        return new object[]
-        {
+        Add(
             list,
             store,
-            Enumerable.Empty<IItem>(),
-            Enumerable.Empty<IItemCategory>(),
-            Enumerable.Empty<IManufacturer>(),
-            listReadModel
-        };
+            [],
+            [],
+            [],
+            listReadModel);
     }
 
     private IShoppingList GetShoppingListContainingOneItem(StoreId storeId, SectionId sectionId)
@@ -234,6 +220,7 @@ public class ConvertAsyncTestData : IEnumerable<object[]>
             new ShoppingListStoreReadModel(
                 store.Id,
                 store.Name),
-            sectionReadModels is null ? Enumerable.Empty<ShoppingListSectionReadModel>() : [sectionReadModels]);
+            sectionReadModels is null ? [] : [sectionReadModels],
+            list.ListDiscounts);
     }
 }

@@ -1,71 +1,78 @@
-﻿using ProjectHermes.Xipona.Api.Client;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AddItemToShoppingListContract = ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
-using IngredientQuantityType = ProjectHermes.Xipona.Frontend.Redux.Recipes.States.IngredientQuantityType;
-using ItemStore = ProjectHermes.Xipona.Frontend.Redux.Items.States.ItemStore;
-using ShoppingListStore = ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.ShoppingListStore;
+using Xipona.Api.Client;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.ItemCategories.Commands;
+using Xipona.Api.Contracts.ItemCategories.Queries;
+using Xipona.Api.Contracts.Items.Commands.CreateItem;
+using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
+using Xipona.Api.Contracts.Items.Commands.ModifyItem;
+using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.UpdateItem;
+using Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
+using Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using Xipona.Api.Contracts.Items.Queries.Shared;
+using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Api.Contracts.Manufacturers.Queries;
+using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using Xipona.Api.Contracts.RecipeTags.Commands;
+using Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Contracts.Stores.Commands.CreateStore;
+using Xipona.Api.Contracts.Stores.Commands.ModifyStore;
+using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
+using Xipona.Api.Contracts.Users.Commands.Login;
+using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Merges;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Stores.States;
+using AddItemToShoppingListContract = Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
+using IngredientQuantityType = Xipona.Frontend.Redux.Recipes.States.IngredientQuantityType;
+using ItemStore = Xipona.Frontend.Redux.Items.States.ItemStore;
+using ShoppingListStore = Xipona.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
+namespace Xipona.Frontend.Infrastructure.Connection;
 
 public class ApiClient : IApiClient
 {
@@ -81,6 +88,12 @@ public class ApiClient : IApiClient
     public async Task IsAliveAsync()
     {
         _ = await _client.IsAlive();
+    }
+
+    public async Task<UserInfo> LoginAsync()
+    {
+        var result = await _client.LoginAsync();
+        return _converters.ToDomain<UserInfoContract, UserInfo>(result);
     }
 
     public async Task PutItemInBasketAsync(PutItemInBasketRequest request)
@@ -209,7 +222,7 @@ public class ApiClient : IApiClient
         var contracts = await _client.GetActiveStoresForShoppingAsync();
 
         return contracts is null ?
-            Enumerable.Empty<ShoppingListStore>() :
+            [] :
             contracts.Select(_converters.ToDomain<StoreForShoppingContract, ShoppingListStore>);
     }
 
@@ -218,7 +231,7 @@ public class ApiClient : IApiClient
         var contracts = await _client.GetActiveStoresForItemAsync();
 
         return contracts is null ?
-            Enumerable.Empty<ItemStore>() :
+            [] :
             contracts.Select(_converters.ToDomain<StoreForItemContract, ItemStore>);
     }
 
@@ -227,7 +240,7 @@ public class ApiClient : IApiClient
         var contracts = await _client.GetActiveStoresOverviewAsync();
 
         return contracts is null
-            ? Enumerable.Empty<StoreSearchResult>()
+            ? []
             : contracts.Select(_converters.ToDomain<StoreSearchResultContract, StoreSearchResult>);
     }
 
@@ -243,7 +256,7 @@ public class ApiClient : IApiClient
     {
         var result = await _client.SearchItemsForShoppingListAsync(storeId, searchInput, cancellationToken);
         if (result is null)
-            return Enumerable.Empty<SearchItemForShoppingListResult>();
+            return [];
 
         return result
             .Select(_converters.ToDomain<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>);
@@ -259,7 +272,7 @@ public class ApiClient : IApiClient
         var result = await _client.SearchItemsAsync(searchInput, page, pageSize);
 
         return result is null
-            ? Enumerable.Empty<ItemSearchResult>()
+            ? []
             : result.Select(_converters.ToDomain<SearchItemResultContract, ItemSearchResult>);
     }
 
@@ -273,7 +286,7 @@ public class ApiClient : IApiClient
     {
         var result = await _client.GetAllQuantityTypesAsync();
         return result is null ?
-            Enumerable.Empty<QuantityType>() :
+            [] :
             result.Select(_converters.ToDomain<QuantityTypeContract, QuantityType>);
     }
 
@@ -281,7 +294,7 @@ public class ApiClient : IApiClient
     {
         var result = await _client.GetAllQuantityTypesInPacketAsync();
         return result is null ?
-            Enumerable.Empty<QuantityTypeInPacket>() :
+            [] :
             result.Select(_converters.ToDomain<QuantityTypeInPacketContract, QuantityTypeInPacket>);
     }
 
@@ -308,7 +321,7 @@ public class ApiClient : IApiClient
         var result = await _client.GetManufacturerSearchResultsAsync(searchInput, false);
 
         return result is null
-            ? Enumerable.Empty<ManufacturerSearchResult>()
+            ? []
             : result.Select(_converters.ToDomain<ManufacturerSearchResultContract, ManufacturerSearchResult>);
     }
 
@@ -341,7 +354,7 @@ public class ApiClient : IApiClient
         var results = await _client.SearchItemCategoriesByNameAsync(searchInput, false);
 
         return results is null
-            ? Enumerable.Empty<ItemCategorySearchResult>()
+            ? []
             : results.Select(_converters.ToDomain<ItemCategorySearchResultContract, ItemCategorySearchResult>);
     }
 
@@ -360,7 +373,7 @@ public class ApiClient : IApiClient
     {
         var results = await _client.SearchItemsByItemCategoryAsync(itemCategoryId);
         return results is null
-            ? Enumerable.Empty<SearchItemByItemCategoryResult>()
+            ? []
             : _converters.ToDomain<SearchItemByItemCategoryResultContract, SearchItemByItemCategoryResult>(results);
     }
 
@@ -374,7 +387,7 @@ public class ApiClient : IApiClient
     {
         var results = await _client.SearchRecipesByNameAsync(searchInput);
         return results is null
-            ? Enumerable.Empty<RecipeSearchResult>()
+            ? []
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
     }
 
@@ -395,7 +408,7 @@ public class ApiClient : IApiClient
     {
         var types = await _client.GetAllIngredientQuantityTypes();
         return types is null
-            ? Enumerable.Empty<IngredientQuantityType>()
+            ? []
             : _converters.ToDomain<IngredientQuantityTypeContract, IngredientQuantityType>(types);
     }
 
@@ -403,7 +416,7 @@ public class ApiClient : IApiClient
     {
         var tags = await _client.GetAllRecipeTagsAsync();
         return tags is null
-            ? Enumerable.Empty<RecipeTag>()
+            ? []
             : _converters.ToDomain<RecipeTagContract, RecipeTag>(tags);
     }
 
@@ -418,7 +431,7 @@ public class ApiClient : IApiClient
     {
         var results = await _client.SearchRecipesByTagsAsync(tagIds.ToArray());
         return results is null
-            ? Enumerable.Empty<RecipeSearchResult>()
+            ? []
             : _converters.ToDomain<RecipeSearchResultContract, RecipeSearchResult>(results);
     }
 
@@ -455,5 +468,72 @@ public class ApiClient : IApiClient
     {
         var contract = new RemoveItemDiscountContract(itemId, itemTypeId);
         await _client.RemoveItemDiscountAsync(shoppingListId, contract);
+    }
+
+    public async Task AddShoppingListDiscountAsync(Guid shoppingListId, decimal discount, ShoppingListDiscountType type)
+    {
+        var contract = _converters
+            .ToContract<(decimal, ShoppingListDiscountType), AddShoppingListDiscountContract>((discount, type));
+        await _client.AddShoppingListDiscountAsync(shoppingListId, contract);
+    }
+
+    public async Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId)
+    {
+        await _client.RemoveShoppingListDiscountAsync(shoppingListId, discountId);
+    }
+
+    public async Task<IEnumerable<Currency>> GetAllCurrenciesAsync()
+    {
+        var result = await _client.GetAllCurrenciesAsync();
+        return _converters.ToDomain<CurrencyContract, Currency>(result);
+    }
+
+    public async Task UpdateGeneralSettingsAsync(Currency currency)
+    {
+        var contract = new GeneralSettingsContract(currency.Id);
+        await _client.UpdateGeneralSettingsAsync(contract);
+    }
+
+    public async Task<GeneralSettings> GetGeneralSettingsAsync()
+    {
+        var settings = await _client.GetGeneralSettingsAsync();
+        return _converters
+            .ToDomain<Api.Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract, GeneralSettings>(settings);
+    }
+
+    public async Task<Guid> MergeItemsAsync(MergedItem mergedItem)
+    {
+        var contract = _converters.ToContract<MergedItem, MergeItemsContract>(mergedItem);
+        var result = await _client.MergeItemsAsync(contract);
+        return result;
+    }
+
+    public async Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems)
+    {
+        var contracts = await _client.SearchItemsForMergeAsync(item.ItemCategoryId!.Value, item.ManufacturerId,
+            item.QuantityType.Id, item.QuantityInPacket, item.QuantityInPacketType?.Id, alreadySelectedItems);
+        return contracts is null
+            ? []
+            : _converters.ToDomain<SearchItemsForMergeResultContract, MergeItemSearchResult>(contracts);
+    }
+
+    public async Task MarkItemAsFavoriteAsync(Guid itemId)
+    {
+        await _client.MarkItemAsFavoriteAsync(itemId);
+    }
+    
+    public async Task UnmarkItemAsFavoriteAsync(Guid itemId)
+    {
+        await _client.UnmarkItemAsFavoriteAsync(itemId);
+    }
+
+    public async Task<List<ItemSearchResult>> FilterItemsAsync(Guid? storeId, Guid? itemCategoryId,
+        Guid? manufacturerId, int page, int pageSize)
+    {
+        var contracts = await _client.FilterItemsAsync(storeId,  itemCategoryId, manufacturerId, page, pageSize);
+
+        return contracts is null
+            ? []
+            : [.. _converters.ToDomain<SearchItemResultContract, ItemSearchResult>(contracts)];
     }
 }

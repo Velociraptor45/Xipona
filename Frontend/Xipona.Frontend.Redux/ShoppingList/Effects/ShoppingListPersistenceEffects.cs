@@ -1,15 +1,15 @@
 ﻿using Blazored.LocalStorage;
 using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Items;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
+using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+using Xipona.Frontend.Redux.ShoppingList.States;
 using System.Text;
 using System.Text.Json;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
+namespace Xipona.Frontend.Redux.ShoppingList.Effects;
 
 public class ShoppingListPersistenceEffects
 {

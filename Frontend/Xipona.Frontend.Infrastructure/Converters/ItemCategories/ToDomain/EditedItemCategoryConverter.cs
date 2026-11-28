@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
+﻿using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ItemCategories.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.ItemCategories.ToDomain;
 
 public class EditedItemCategoryConverter : IToDomainConverter<ItemCategoryContract, EditedItemCategory>
 {

@@ -1,14 +1,14 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
-
+namespace Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
 public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
 {
     public ShoppingListEntityBuilder()
     {
         WithItemsOnList(new ItemsOnListEntityBuilder().CreateMany(3).ToList());
         WithDiscounts(new DiscountEntityBuilder().CreateMany(3).ToList());
+        WithListDiscounts(ShoppingListDiscountEntityMother.Price().CreateMany(3).ToList());
     }
 
     public ShoppingListEntityBuilder WithId(Guid id)
@@ -62,14 +62,20 @@ public class ShoppingListEntityBuilder : TestBuilderBase<ShoppingList>
         return WithDiscounts(new List<Discount>());
     }
 
-    public ShoppingListEntityBuilder WithRowVersion(byte[] rowVersion)
+    public ShoppingListEntityBuilder WithListDiscounts(ICollection<ShoppingListDiscount> listDiscounts)
     {
-        FillPropertyWith(p => p.RowVersion, rowVersion);
+        FillPropertyWith(p => p.ListDiscounts, listDiscounts);
         return this;
     }
 
-    public ShoppingListEntityBuilder WithEmptyRowVersion()
+    public ShoppingListEntityBuilder WithEmptyListDiscounts()
     {
-        return WithRowVersion(Array.Empty<byte>());
+        return WithListDiscounts(new List<ShoppingListDiscount>());
+    }
+
+    public ShoppingListEntityBuilder WithRowVersion(uint rowVersion)
+    {
+        FillPropertyWith(p => p.RowVersion, rowVersion);
+        return this;
     }
 }

@@ -1,14 +1,14 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Repositories.Items.Entities;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Items.Converters.ToDomain;
 
 public class ItemConverter : IToDomainConverter<Item, IItem>
 {
@@ -74,7 +74,8 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                 predecessorId,
                 itemTypes,
                 source.UpdatedOn,
-                source.CreatedAt);
+                source.CreatedAt,
+                source.IsFavorite);
         }
         else
         {
@@ -99,7 +100,8 @@ public class ItemConverter : IToDomainConverter<Item, IItem>
                 availabilities,
                 temporaryId,
                 source.UpdatedOn,
-                source.CreatedAt);
+                source.CreatedAt,
+                source.IsFavorite);
         }
 
         item.EnrichWithRowVersion(source.RowVersion);

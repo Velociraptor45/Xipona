@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Api.Contracts.Common;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Ports;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Effects;
+namespace Xipona.Frontend.Redux.Shared.Effects;
 
 public class NotificationEffects
 {

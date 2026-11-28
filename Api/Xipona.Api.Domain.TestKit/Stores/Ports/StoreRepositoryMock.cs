@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+﻿using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
+namespace Xipona.Api.Domain.TestKit.Stores.Ports;
 
 public class StoreRepositoryMock : Mock<IStoreRepository>
 {

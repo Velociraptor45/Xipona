@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping
+namespace Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping
 {
     /// <summary>
     /// Represents a store's section.

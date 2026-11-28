@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Deletions;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Services.Deletions;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.DeleteItem;
+namespace Xipona.Api.ApplicationServices.Items.Commands.DeleteItem;
 
 public class DeleteItemCommandHandler : ICommandHandler<DeleteItemCommand, bool>
 {

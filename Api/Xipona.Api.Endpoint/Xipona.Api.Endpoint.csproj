@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>ProjectHermes.Xipona.Api.Endpoint</RootNamespace>
-    <Nullable>enable</Nullable>
+    <RootNamespace>Xipona.Api.Endpoint</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Xipona.Api.ApplicationServices\Xipona.Api.ApplicationServices.csproj" />
     <ProjectReference Include="..\Xipona.Api.Contracts\Xipona.Api.Contracts.csproj" />
     <ProjectReference Include="..\Xipona.Api.Domain\Xipona.Api.Domain.csproj" />
+    <ProjectReference Include="..\Xipona.Api.Endpoint.Generators\Xipona.Api.Endpoint.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,9 +16,16 @@
     <InternalsVisibleTo Include="$(AssemblyName)s.Tests" />
     <InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands
+namespace Xipona.Api.Contracts.Manufacturers.Commands
 {
     /// <summary>
     /// Represents the contract for modifying a manufacturer.

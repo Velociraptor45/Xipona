@@ -1,19 +1,20 @@
-﻿using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.DomainEvents;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.DomainEvents;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 
 public class Item : AggregateRoot, IItem
 {
@@ -23,7 +24,7 @@ public class Item : AggregateRoot, IItem
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
         ItemQuantity itemQuantity, ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId,
         IEnumerable<ItemAvailability> availabilities, TemporaryItemId? temporaryId, DateTimeOffset? updatedOn,
-        ItemId? predecessorId, DateTimeOffset createdAt)
+        ItemId? predecessorId, DateTimeOffset createdAt, bool isFavorite)
     {
         Id = id;
         Name = name;
@@ -37,6 +38,7 @@ public class Item : AggregateRoot, IItem
         UpdatedOn = updatedOn;
         PredecessorId = predecessorId;
         CreatedAt = createdAt;
+        IsFavorite = isFavorite;
         _itemTypes = null;
         _availabilities = availabilities.ToList();
 
@@ -46,7 +48,7 @@ public class Item : AggregateRoot, IItem
 
     public Item(ItemId id, ItemName name, bool isDeleted, Comment comment,
         ItemQuantity itemQuantity, ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
-        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId, DateTimeOffset createdAt)
+        ItemTypes itemTypes, DateTimeOffset? updatedOn, ItemId? predecessorId, DateTimeOffset createdAt, bool isFavorite)
     {
         Id = id;
         Name = name;
@@ -59,6 +61,7 @@ public class Item : AggregateRoot, IItem
         UpdatedOn = updatedOn;
         PredecessorId = predecessorId;
         CreatedAt = createdAt;
+        IsFavorite = isFavorite;
         TemporaryId = null;
         _itemTypes = itemTypes;
         _availabilities = new List<ItemAvailability>();
@@ -79,6 +82,7 @@ public class Item : AggregateRoot, IItem
     public DateTimeOffset? UpdatedOn { get; private set; }
     public ItemId? PredecessorId { get; }
     public DateTimeOffset CreatedAt { get; }
+    public bool IsFavorite { get; private set; }
 
     public IReadOnlyCollection<IItemType> ItemTypes =>
         _itemTypes?.ToList().AsReadOnly() ?? new List<IItemType>().AsReadOnly();
@@ -103,6 +107,15 @@ public class Item : AggregateRoot, IItem
 
         IsDeleted = true;
         PublishDomainEvent(new ItemDeletedDomainEvent());
+    }
+
+    public void MarkAsMerged(ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        if (IsDeleted)
+            return;
+
+        IsDeleted = true;
+        PublishDomainEvent(new ItemMergedDomainEvent(Id, newItemId, newItemTypeId));
     }
 
     public bool IsAvailableInStore(StoreId storeId)
@@ -200,7 +213,7 @@ public class Item : AggregateRoot, IItem
         return availability.DefaultSectionId;
     }
 
-    public bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType)
+    public bool TryGetType(ItemTypeId itemTypeId, [NotNullWhen(true)] out IItemType? itemType)
     {
         if (_itemTypes is not null)
             return _itemTypes.TryGetValue(itemTypeId, out itemType);
@@ -261,7 +274,8 @@ public class Item : AggregateRoot, IItem
             types,
             null,
             Id,
-            CreatedAt);
+            CreatedAt,
+            IsFavorite);
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(updatedItem));
         Delete();
@@ -308,7 +322,8 @@ public class Item : AggregateRoot, IItem
             null,
             null,
             Id,
-            CreatedAt);
+            CreatedAt,
+            IsFavorite);
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
         Delete();
@@ -327,7 +342,7 @@ public class Item : AggregateRoot, IItem
         {
             var itemTypes = _itemTypes!.Update(storeId, itemTypeId, price);
             newItem = new Item(ItemId.New, Name, false, Comment, ItemQuantity, ItemCategoryId!.Value, ManufacturerId,
-                itemTypes, null, Id, CreatedAt);
+                itemTypes, null, Id, CreatedAt, IsFavorite);
         }
         else
         {
@@ -340,7 +355,7 @@ public class Item : AggregateRoot, IItem
                     : av);
 
             newItem = new Item(ItemId.New, Name, false, Comment, IsTemporary, ItemQuantity, ItemCategoryId,
-                ManufacturerId, availabilities, TemporaryId, null, Id, CreatedAt);
+                ManufacturerId, availabilities, TemporaryId, null, Id, CreatedAt, IsFavorite);
         }
 
         PublishDomainEvent(new ItemUpdatedDomainEvent(newItem));
@@ -401,5 +416,21 @@ public class Item : AggregateRoot, IItem
         {
             Delete();
         }
+    }
+
+    public void MarkAsFavoriteAsync()
+    {
+        if(IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+        
+        IsFavorite = true;
+    }
+
+    public void UnmarkAsFavoriteAsync()
+    {
+        if(IsDeleted)
+            throw new DomainException(new CannotModifyDeletedItemReason(Id));
+        
+        IsFavorite = false;
     }
 }

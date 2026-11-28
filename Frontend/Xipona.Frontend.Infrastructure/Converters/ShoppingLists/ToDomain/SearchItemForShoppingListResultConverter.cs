@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToDomain;
 
 public class SearchItemForShoppingListResultConverter :
     IToDomainConverter<SearchItemForShoppingListResultContract, SearchItemForShoppingListResult>
@@ -18,6 +18,7 @@ public class SearchItemForShoppingListResultConverter :
             contract.PriceLabel,
             contract.ItemCategoryName,
             contract.ManufacturerName,
-            contract.DefaultSection.Id);
+            contract.DefaultSection.Id,
+            contract.IsFavorite);
     }
 }

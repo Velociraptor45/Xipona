@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+﻿namespace Xipona.Api.Domain.Recipes.Models;
 public readonly record struct IngredientId
 {
     public IngredientId()
@@ -11,7 +11,7 @@ public readonly record struct IngredientId
         Value = value;
     }
 
-    public static IngredientId New => new(Guid.NewGuid());
+    public static IngredientId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

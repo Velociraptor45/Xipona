@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.Recipes.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Recipes.Entities;
+namespace Xipona.Api.Repositories.TestKit.Recipes.Entities;
 public class RecipeEntityBuilder : TestBuilderBase<Recipe>
 {
     public RecipeEntityBuilder()
@@ -53,15 +53,10 @@ public class RecipeEntityBuilder : TestBuilderBase<Recipe>
         return this;
     }
 
-    public RecipeEntityBuilder WithRowVersion(byte[] rowVersion)
+    public RecipeEntityBuilder WithRowVersion(uint rowVersion)
     {
         FillPropertyWith(p => p.RowVersion, rowVersion);
         return this;
-    }
-
-    public RecipeEntityBuilder WithEmptyRowVersion()
-    {
-        return WithRowVersion(Array.Empty<byte>());
     }
 
     public RecipeEntityBuilder WithIngredients(ICollection<Ingredient> ingredients)

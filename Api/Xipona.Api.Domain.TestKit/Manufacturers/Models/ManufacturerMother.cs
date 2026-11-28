@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
+﻿namespace Xipona.Api.Domain.TestKit.Manufacturers.Models;
 
 public static class ManufacturerMother
 {

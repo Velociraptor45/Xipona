@@ -1,8 +1,7 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
-using System;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.RecipeTags.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.RecipeTags.Entities;
+namespace Xipona.Api.Repositories.TestKit.RecipeTags.Entities;
 public class RecipeTagEntityBuilder : TestBuilderBase<RecipeTag>
 {
     public RecipeTagEntityBuilder WithId(Guid id)
@@ -17,7 +16,7 @@ public class RecipeTagEntityBuilder : TestBuilderBase<RecipeTag>
         return this;
     }
 
-    public RecipeTagEntityBuilder WithRowVersion(Byte[] rowVersion)
+    public RecipeTagEntityBuilder WithRowVersion(uint rowVersion)
     {
         FillPropertyWith(p => p.RowVersion, rowVersion);
         return this;

@@ -1,22 +1,22 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Ports;
+using Xipona.Api.Domain.Stores.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
 public class ShoppingListReadModelConversionService : IShoppingListReadModelConversionService
 {
@@ -57,7 +57,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
         return ToReadModel(shoppingList, store, itemsDict, itemCategoriesDict, manufacturersDict);
     }
 
-    private static ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
+    private ShoppingListReadModel ToReadModel(IShoppingList shoppingList, IStore store,
         IReadOnlyDictionary<ItemId, IItem> items, IReadOnlyDictionary<ItemCategoryId,
             IItemCategory> itemCategories, IReadOnlyDictionary<ManufacturerId, IManufacturer> manufacturers)
     {
@@ -134,6 +134,7 @@ public class ShoppingListReadModelConversionService : IShoppingListReadModelConv
             shoppingList.Id,
             shoppingList.CompletionDate,
             new ShoppingListStoreReadModel(store.Id, store.Name),
-            sectionReadModels);
+            sectionReadModels,
+            shoppingList.ListDiscounts);
     }
 }

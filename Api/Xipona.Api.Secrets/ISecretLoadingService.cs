@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Secrets.Configs;
+﻿using Xipona.Api.Secrets.Configs;
 
-namespace ProjectHermes.Xipona.Api.Secrets;
+namespace Xipona.Api.Secrets;
 
 public interface ISecretLoadingService
 {

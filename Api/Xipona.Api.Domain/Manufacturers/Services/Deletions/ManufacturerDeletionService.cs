@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
+﻿using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Deletions;
+namespace Xipona.Api.Domain.Manufacturers.Services.Deletions;
 
 public class ManufacturerDeletionService : IManufacturerDeletionService
 {

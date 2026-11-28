@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 
-namespace ProjectHermes.Xipona.Api.TestTools.AutoFixture;
+namespace Xipona.Api.TestTools.AutoFixture;
 
 public static class AutoFixtureExtensions
 {

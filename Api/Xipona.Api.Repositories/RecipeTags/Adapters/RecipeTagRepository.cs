@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
-using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Ports;
+using Xipona.Api.Repositories.RecipeTags.Contexts;
+using RecipeTag = Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Adapters;
+namespace Xipona.Api.Repositories.RecipeTags.Adapters;
 
 public class RecipeTagRepository : IRecipeTagRepository
 {

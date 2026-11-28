@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Adapters;
+namespace Xipona.Api.Repositories.Manufacturers.Adapters;
 
 public class ManufacturerRepository : IManufacturerRepository
 {
@@ -34,7 +34,7 @@ public class ManufacturerRepository : IManufacturerRepository
     public async Task<IEnumerable<IManufacturer>> FindByAsync(string searchInput, bool includeDeleted)
     {
         var query = _dbContext.Manufacturers.AsNoTracking()
-            .Where(manufacturer => manufacturer.Name.Contains(searchInput));
+            .Where(manufacturer => EF.Functions.ILike(manufacturer.Name, $"%{searchInput}%"));
 
         if (!includeDeleted)
             query = query.Where(manufacturer => !manufacturer.Deleted);

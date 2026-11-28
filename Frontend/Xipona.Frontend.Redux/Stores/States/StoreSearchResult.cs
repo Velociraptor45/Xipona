@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Frontend.Redux.Shared.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+namespace Xipona.Frontend.Redux.Stores.States;
 public record StoreSearchResult : ISearchResult
 {
     public StoreSearchResult(Guid id, string name)

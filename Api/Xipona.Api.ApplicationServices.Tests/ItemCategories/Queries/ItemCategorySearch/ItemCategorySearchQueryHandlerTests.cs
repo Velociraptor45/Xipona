@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ItemCategories.Services.Queries;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategorySearch;
+namespace Xipona.Api.ApplicationServices.Tests.ItemCategories.Queries.ItemCategorySearch;
 
 public class ItemCategorySearchQueryHandlerTests : QueryHandlerTestsBase<ItemCategorySearchQueryHandler, ItemCategorySearchQuery,
     IEnumerable<ItemCategorySearchResultReadModel>>

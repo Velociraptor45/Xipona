@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
+namespace Xipona.Api.ApplicationServices.Items.Commands.CreateItemWithTypes;
 
 public class CreateItemWithTypesCommand : ICommand<ItemReadModel>
 {

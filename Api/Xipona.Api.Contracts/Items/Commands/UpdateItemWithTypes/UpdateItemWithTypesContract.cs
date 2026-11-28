@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes
+namespace Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes
 {
     /// <summary>
     /// Represents a command to update an item with types.

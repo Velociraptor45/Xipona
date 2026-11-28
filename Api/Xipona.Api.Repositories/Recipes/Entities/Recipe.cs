@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
+namespace Xipona.Api.Repositories.Recipes.Entities;
 
 public class Recipe
 {
@@ -18,7 +18,7 @@ public class Recipe
     public string Name { get; set; } = string.Empty;
 
     [Timestamp]
-    public byte[] RowVersion { get; set; } = [];
+    public uint RowVersion { get; set; }
 
     [InverseProperty("Recipe")]
     public ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();

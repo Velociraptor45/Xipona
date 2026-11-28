@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.ErrorReasons;
+namespace Xipona.Api.Domain.ShoppingLists.ErrorReasons;
 
 public class SectionNotPartOfStoreReason : IReason
 {

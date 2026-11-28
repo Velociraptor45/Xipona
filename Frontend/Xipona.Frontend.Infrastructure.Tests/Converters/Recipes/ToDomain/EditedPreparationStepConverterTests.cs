@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Recipes.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.Recipes.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.Recipes.ToDomain;
 
 public class EditedPreparationStepConverterTests
     : ToDomainConverterBase<PreparationStepContract, EditedPreparationStep, EditedPreparationStepConverter>

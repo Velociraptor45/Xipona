@@ -1,4 +1,3 @@
-next-version: 0.12.0
 assembly-versioning-scheme: MajorMinorPatch
 assembly-file-versioning-scheme: MajorMinorPatch
 major-version-bump-message: '\+semver:\s?major'

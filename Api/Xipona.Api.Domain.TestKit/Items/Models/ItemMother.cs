@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Models.Factories;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public static class ItemMother
 {
@@ -20,7 +20,7 @@ public static class ItemMother
         var types = ItemTypeMother.Initial().CreateMany(3);
 
         return EnrichAsActiveWithoutPredecessor(builder)
-            .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
+            .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
     }
 
     public static ItemBuilder InitialWithType(IItemType itemType)
@@ -30,7 +30,7 @@ public static class ItemMother
             new ItemTypeFactoryMock(MockBehavior.Strict).Object);
 
         return EnrichAsActiveWithoutPredecessor(new ItemBuilder())
-            .WithTypes(types);
+            .WithItemTypes(types);
     }
 
     public static ItemBuilder InitialTemporary(ItemBuilder? builder = null)
@@ -63,7 +63,7 @@ public static class ItemMother
         var types = ItemTypeMother.WithPredecessor().CreateMany(3);
 
         return EnrichAsActiveWithoutPredecessor(builder)
-            .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
+            .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object));
     }
 
     public static ItemBuilder Deleted(ItemBuilder? builder = null)

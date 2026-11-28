@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Recipes.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
+namespace Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
 
 public class ModifyRecipeCommand : ICommand<bool>
 {

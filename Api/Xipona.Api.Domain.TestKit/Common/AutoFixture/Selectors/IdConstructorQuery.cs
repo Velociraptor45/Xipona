@@ -1,6 +1,6 @@
 ﻿using AutoFixture.Kernel;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+namespace Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
 public class IdConstructorQuery : IMethodQuery
 {

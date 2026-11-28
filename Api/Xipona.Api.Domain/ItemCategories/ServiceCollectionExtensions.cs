@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.ItemCategories.Models.Factories;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.ItemCategories.Services.Creations;
+using Xipona.Api.Domain.ItemCategories.Services.Deletions;
+using Xipona.Api.Domain.ItemCategories.Services.Modifications;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
+using Xipona.Api.Domain.ItemCategories.Services.Validations;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.ShoppingLists.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories;
+namespace Xipona.Api.Domain.ItemCategories;
 
 public static class ServiceCollectionExtensions
 {

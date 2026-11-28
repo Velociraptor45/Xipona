@@ -1,26 +1,32 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using MySqlConnector;
-using ProjectHermes.Xipona.Api.ApplicationServices;
-using ProjectHermes.Xipona.Api.Core;
-using ProjectHermes.Xipona.Api.Domain;
-using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
+using Npgsql;
 using System;
+using Xipona.Api.ApplicationServices;
+using Xipona.Api.Core;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Domain;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Repositories;
+using Xipona.Api.Repositories.Common.Transactions;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.Recipes.Entities;
+using Xipona.Api.Repositories.RecipeTags.Contexts;
+using Xipona.Api.Repositories.RecipeTags.Entities;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Users.Contexts;
+using Xipona.Api.Repositories.Users.Entities;
+using Xunit;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests;
+namespace Xipona.Api.Endpoint.IntegrationTests;
 
 public abstract class DatabaseFixture : IDisposable
 {
@@ -42,17 +48,26 @@ public abstract class DatabaseFixture : IDisposable
             _connectionString = DockerFixture.ConnectionString.Replace("{DatabaseName}", databaseName);
         }
 
-        using var connection = new MySqlConnection(DockerFixture.ConnectionStringWithoutDb);
+        using var connection = new NpgsqlConnection(DockerFixture.ConnectionStringWithoutDb);
         connection.Open();
 
         var cmd = connection.CreateCommand();
-        cmd.CommandText = $"CREATE DATABASE IF NOT EXISTS `{databaseName}`;";
+        cmd.CommandText = $"CREATE DATABASE \"{databaseName}\";";
         cmd.ExecuteNonQuery();
 
         connection.Close();
 
         _provider = CreateServiceProvider();
+
+        var memoryCache = _provider.GetRequiredService<IMemoryCache>();
+        var settings = new DomainTestBuilder<Domain.Users.Models.GeneralSetting>().Create();
+        memoryCache.Set(
+            CacheKeys.GeneralSettings,
+            settings);
+        CachedCurrencySymbol = settings.CurrencySymbol;
     }
+
+    public string CachedCurrencySymbol { get; }
 
     protected IServiceProvider CreateServiceProvider()
     {
@@ -64,6 +79,8 @@ public abstract class DatabaseFixture : IDisposable
         services.AddApplicationServices();
 
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+
+        services.AddMemoryCache();
 
         return services.BuildServiceProvider();
     }
@@ -93,7 +110,7 @@ public abstract class DatabaseFixture : IDisposable
     public static async Task<ITransaction> CreateTransactionAsync(IServiceScope scope)
     {
         var generator = scope.ServiceProvider.GetRequiredService<ITransactionGenerator>();
-        return await generator.GenerateAsync(default);
+        return await generator.GenerateAsync(TestContext.Current.CancellationToken);
     }
 
     public async Task<IEnumerable<Recipe>> LoadAllRecipesAsync(IServiceScope assertionScope)
@@ -144,6 +161,23 @@ public abstract class DatabaseFixture : IDisposable
         return await shoppingListContext.ShoppingLists.AsNoTracking()
             .Include(l => l.ItemsOnList)
             .Include(l => l.Discounts)
+            .Include(l => l.ListDiscounts)
+            .ToListAsync();
+    }
+
+    public async Task<List<User>> LoadAllUsersAsync(IServiceScope assertionScope)
+    {
+        await using var userContext = GetContextInstance<UserContext>(assertionScope);
+
+        return await userContext.Users.AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<List<GeneralSetting>> LoadAllGeneralSettingsAsync(IServiceScope assertionScope)
+    {
+        await using var generalSettingContext = GetContextInstance<GeneralSettingContext>(assertionScope);
+
+        return await generalSettingContext.GeneralSettings.AsNoTracking()
             .ToListAsync();
     }
 

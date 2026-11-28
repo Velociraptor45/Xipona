@@ -2,32 +2,32 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.AllIngredientQuantityTypes;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.ItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.RecipeById;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
+using Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.ApplicationServices.Recipes.Queries.AllIngredientQuantityTypes;
+using Xipona.Api.ApplicationServices.Recipes.Queries.ItemAmountsForOneServing;
+using Xipona.Api.ApplicationServices.Recipes.Queries.RecipeById;
+using Xipona.Api.ApplicationServices.Recipes.Queries.SearchByTagIds;
+using Xipona.Api.ApplicationServices.Recipes.Queries.SearchRecipesByName;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
+using Xipona.Api.Domain.RecipeTags.Models;
 using System.Threading;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
+namespace Xipona.Api.Endpoint.v1.Endpoints;
 
 public static class RecipeEndpoints
 {

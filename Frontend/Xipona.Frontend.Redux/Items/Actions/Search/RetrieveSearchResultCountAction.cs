@@ -1,2 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
+﻿namespace Xipona.Frontend.Redux.Items.Actions.Search;
 public record RetrieveSearchResultCountAction;
+public record RetrieveSearchResultCountStartedAction;
+public record RetrieveSearchResultCountFinishedAction(int Count);

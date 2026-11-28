@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
+﻿using Xipona.Frontend.Redux.Shared.Ports.Requests;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports
+namespace Xipona.Frontend.Redux.Shared.Ports
 {
     public interface ICommandQueue
     {

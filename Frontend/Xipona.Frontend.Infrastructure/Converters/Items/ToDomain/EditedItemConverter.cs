@@ -1,12 +1,12 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+﻿using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.States;
 using System;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToDomain;
 
 public class EditedItemConverter : IToDomainConverter<ItemContract, EditedItem>
 {
@@ -34,6 +34,7 @@ public class EditedItemConverter : IToDomainConverter<ItemContract, EditedItem>
             source.IsDeleted,
             source.Comment,
             source.IsTemporary,
+            source.IsFavorite,
             _quantityTypeConverter.ToDomain(source.QuantityType),
             source.QuantityInPacket,
             source.QuantityTypeInPacket is null ?

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+﻿using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Stores.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Stores.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Stores.ToDomain;
 
 public class StoreSearchResultConverter : IToDomainConverter<StoreSearchResultContract, StoreSearchResult>
 {

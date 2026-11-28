@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
+namespace Xipona.Api.Domain.Stores.Services.Queries;
 
 public interface IStoreQueryService
 {

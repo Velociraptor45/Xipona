@@ -1,16 +1,16 @@
 ﻿using Moq.Language.Flow;
-using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+namespace Xipona.Api.Domain.TestKit.Items.Models;
 
 public class ItemMock : Mock<IItem>
 {

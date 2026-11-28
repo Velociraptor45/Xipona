@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+﻿using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
+namespace Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId
 {
     /// <summary>
     /// Represents a shopping list item.

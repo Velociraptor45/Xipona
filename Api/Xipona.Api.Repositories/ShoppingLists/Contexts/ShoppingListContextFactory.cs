@@ -1,15 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using ProjectHermes.Xipona.Api.Repositories.Common.Contexts;
+﻿using Microsoft.EntityFrameworkCore.Design;
+using Xipona.Api.Repositories.Common.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+namespace Xipona.Api.Repositories.ShoppingLists.Contexts;
 
 public class ShoppingListContextFactory : ContextFactoryBase, IDesignTimeDbContextFactory<ShoppingListContext>
 {
     public ShoppingListContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ShoppingListContext>();
-        optionsBuilder.UseMySql(GetDbConnectionString(), GetVersion());
+        var optionsBuilder = GetOptionBuilder<ShoppingListContext>();
 
         return new ShoppingListContext(optionsBuilder.Options);
     }

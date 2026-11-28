@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Deletions;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Manufacturers.Services.Deletions;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
+namespace Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
 
 public class DeleteManufacturerCommandHandler : ICommandHandler<DeleteManufacturerCommand, bool>
 {

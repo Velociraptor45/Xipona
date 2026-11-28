@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Repositories.Manufacturers.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
+namespace Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
 
 public class ManufacturerEntityBuilder : TestBuilderBase<Manufacturer>
 {

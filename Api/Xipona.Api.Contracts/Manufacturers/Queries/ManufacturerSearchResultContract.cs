@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries
+namespace Xipona.Api.Contracts.Manufacturers.Queries
 {
     /// <summary>
     /// The search result for a manufacturer.

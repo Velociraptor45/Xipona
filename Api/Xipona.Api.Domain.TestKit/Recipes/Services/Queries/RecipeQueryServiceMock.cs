@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+﻿using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.RecipeTags.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Services.Queries;
+namespace Xipona.Api.Domain.TestKit.Recipes.Services.Queries;
 
 public class RecipeQueryServiceMock : Mock<IRecipeQueryService>
 {

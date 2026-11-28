@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
+namespace Xipona.Api.Domain.Manufacturers.Ports;
 
 public interface IManufacturerRepository
 {

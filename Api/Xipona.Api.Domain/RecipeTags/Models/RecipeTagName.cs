@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Shared.Models;
+﻿using Xipona.Api.Domain.Shared.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+namespace Xipona.Api.Domain.RecipeTags.Models;
 
 public record RecipeTagName : Name
 {

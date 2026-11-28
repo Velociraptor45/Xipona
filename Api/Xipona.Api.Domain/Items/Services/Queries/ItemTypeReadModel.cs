@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+namespace Xipona.Api.Domain.Items.Services.Queries;
 
 public class ItemTypeReadModel
 {

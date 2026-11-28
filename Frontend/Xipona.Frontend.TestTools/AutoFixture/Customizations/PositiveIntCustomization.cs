@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools.AutoFixture.Customizations;
+namespace Xipona.Frontend.TestTools.AutoFixture.Customizations;
 
 public class PositiveIntCustomization : ICustomization
 {

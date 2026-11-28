@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
+namespace Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
 
 public class ItemCategorySearchQuery : IQuery<IEnumerable<ItemCategorySearchResultReadModel>>
 {

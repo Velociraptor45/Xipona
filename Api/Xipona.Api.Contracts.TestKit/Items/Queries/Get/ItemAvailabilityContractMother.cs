@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
+﻿using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.TestKit.Shared;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 
 public static class ItemAvailabilityContractMother
 {

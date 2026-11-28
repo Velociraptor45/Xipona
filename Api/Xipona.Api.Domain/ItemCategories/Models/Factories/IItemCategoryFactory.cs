@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Models.Factories;
+﻿namespace Xipona.Api.Domain.ItemCategories.Models.Factories;
 
 public interface IItemCategoryFactory
 {

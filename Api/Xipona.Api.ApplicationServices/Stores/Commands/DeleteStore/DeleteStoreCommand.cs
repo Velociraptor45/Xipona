@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
+namespace Xipona.Api.ApplicationServices.Stores.Commands.DeleteStore;
 
 public class DeleteStoreCommand : ICommand<bool>
 {

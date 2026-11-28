@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
+﻿namespace Xipona.Api.Core.DomainEventHandlers;
 
 public interface IDomainEvent
 {

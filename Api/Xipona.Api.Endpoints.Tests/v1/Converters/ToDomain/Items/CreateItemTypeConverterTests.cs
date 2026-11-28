@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using FluentAssertions.Equivalency;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
-using ProjectHermes.Xipona.Api.Core.TestKit.Services;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.Shared;
+using Xipona.Api.Core.TestKit.Services;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Endpoint.v1.Converters.ToDomain.Items;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Converters.ToDomain.Items;
+namespace Xipona.Api.Endpoints.Tests.v1.Converters.ToDomain.Items;
 
 public class CreateItemTypeConverterTests
     : ToDomainConverterTestBase<CreateItemTypeContract, IItemType, CreateItemTypeConverter>

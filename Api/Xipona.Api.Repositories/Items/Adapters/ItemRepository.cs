@@ -1,21 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Items.Adapters;
+namespace Xipona.Api.Repositories.Items.Adapters;
 
 public class ItemRepository : IItemRepository
 {
@@ -43,6 +43,28 @@ public class ItemRepository : IItemRepository
 
     #region public methods
 
+    public async Task<IEnumerable<IItem>> FindForMergeByAsync(ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
+        ItemQuantity itemQuantity, IEnumerable<ItemId> excludedItemIds)
+    {
+        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
+        var quantity = itemQuantity.InPacket?.Quantity.Value;
+        var quantityTypeInPacket = itemQuantity.InPacket?.Type.ToInt();
+
+        var entities = await GetItemQuery()
+            .Where(item => item.ItemCategoryId == itemCategoryId
+                && item.ManufacturerId == manufacturerId
+                && item.QuantityType == itemQuantity.Type.ToInt()
+                && item.QuantityInPacket == quantity
+                && item.QuantityTypeInPacket == quantityTypeInPacket
+                && !excludedRawItemIds.Contains(item.Id)
+                && !item.ItemTypes.Any()
+                && !item.IsTemporary
+                && !item.Deleted)
+            .ToListAsync(_cancellationToken);
+
+        return _toModelConverter.ToDomain(entities);
+    }
+
     public async Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds)
     {
         var idList = itemIds.Select(id => id.Value).ToList();
@@ -54,29 +76,28 @@ public class ItemRepository : IItemRepository
         return _toModelConverter.ToDomain(entities);
     }
 
-    public async Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
-        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds)
+    public async Task<IEnumerable<IItem>> FindPermanentByAsync(StoreId? storeId, ItemCategoryId? itemCategoryId,
+        ManufacturerId? manufacturerId, int page, int pageSize)
     {
-        var storeIdLists = storeIds.Select(id => id.Value).ToList();
-        var itemCategoryIdLists = itemCategoriesIds.Select(id => id.Value).ToList();
-        var manufacturerIdLists = manufacturerIds.Select(id => id.Value).ToList();
-
-        var result = await GetItemQuery()
-            .Where(item =>
-                !item.IsTemporary
-                && !item.Deleted
-                && itemCategoryIdLists.Contains(item.ItemCategoryId!.Value)
-                && ((!item.ManufacturerId.HasValue && manufacturerIdLists.Count == 0)
-                    || manufacturerIdLists.Contains(item.ManufacturerId!.Value)))
+        var query = GetItemQuery().Where(item => !item.IsTemporary && !item.Deleted);
+        
+        if(storeId is not null)
+            query = query.Where(
+                item => item.AvailableAt.Any(av => av.StoreId == storeId)
+                || item.ItemTypes.Any(t => t.AvailableAt.Any(av => av.StoreId == storeId)));
+        if(itemCategoryId is not null)
+            query = query.Where(item => item.ItemCategoryId == itemCategoryId);
+        if(manufacturerId is not null)
+            query = query.Where(item => item.ManufacturerId == manufacturerId);
+        
+        var result = await query
+            .OrderBy(item => item.Name)
+            .ThenBy(item => item.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(_cancellationToken);
 
-        // filtering by store
-        var filteredResultByStore = result
-            .Where(item => (item.AvailableAt.Count == 0 && storeIdLists.Count == 0)
-                           || storeIdLists.Intersect(item.AvailableAt.Select(av => av.StoreId)).Any())
-            .ToList();
-
-        return _toModelConverter.ToDomain(filteredResultByStore);
+        return _toModelConverter.ToDomain(result);
     }
 
     public async Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId)
@@ -84,27 +105,6 @@ public class ItemRepository : IItemRepository
         var entities = await GetItemQuery()
             .Where(i => i.ManufacturerId == manufacturerId.Value && !i.Deleted)
             .ToListAsync(_cancellationToken);
-
-        return _toModelConverter.ToDomain(entities);
-    }
-
-    public async Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
-        IEnumerable<ItemId> excludedItemIds, int? limit)
-    {
-        var excludedRawItemIds = excludedItemIds.Select(id => id.Value).ToList();
-        var query = GetItemQuery()
-            .Where(item =>
-                !item.Deleted
-                && !item.IsTemporary
-                && !excludedRawItemIds.Contains(item.Id)
-                && item.Name.Contains(searchInput)
-                && (item.AvailableAt.Any(map => map.StoreId == storeId)
-                    || item.ItemTypes.Any(t => !t.IsDeleted && t.AvailableAt.Any(av => av.StoreId == storeId))));
-
-        if (limit.HasValue)
-            query = query.Take(limit.Value);
-
-        var entities = await query.ToListAsync(_cancellationToken);
 
         return _toModelConverter.ToDomain(entities);
     }
@@ -139,7 +139,7 @@ public class ItemRepository : IItemRepository
             .Where(item =>
                 !item.Deleted
                 && !item.IsTemporary
-                && item.Name.Contains(searchInput))
+                && EF.Functions.ILike(item.Name, $"%{searchInput}%"))
             .OrderBy(item => item.Name)
             .ThenBy(item => item.Id)
             .Skip((page - 1) * pageSize)
@@ -239,7 +239,7 @@ public class ItemRepository : IItemRepository
             .CountAsync(item =>
                     !item.Deleted
                     && !item.IsTemporary
-                    && item.Name.Contains(searchInput),
+                    && EF.Functions.ILike(item.Name, $"%{searchInput}%"),
                 _cancellationToken);
 
         return count;

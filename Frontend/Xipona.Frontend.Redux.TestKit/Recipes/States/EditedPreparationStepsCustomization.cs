@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Recipes.States;
+namespace Xipona.Frontend.Redux.TestKit.Recipes.States;
 
 public class EditedPreparationStepsCustomization : ICustomization
 {

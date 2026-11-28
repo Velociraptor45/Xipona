@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+﻿namespace Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
 
 public class UpdateItemPriceRequest
 {

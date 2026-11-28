@@ -1,7 +1,7 @@
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Models;
+namespace Xipona.Api.Domain.TestKit.RecipeTags.Models;
 
 public class RecipeTagBuilder : DomainTestBuilderBase<RecipeTag>
 {

@@ -1,10 +1,10 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Services;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.TestKit;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Shared.Services;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ItemCategories.Effects;
+namespace Xipona.Frontend.Redux.Tests.ItemCategories.Effects;
 
 public class ItemCategoryEffectsFixtureBase : EffectsFixtureBase
 {
@@ -12,7 +12,7 @@ public class ItemCategoryEffectsFixtureBase : EffectsFixtureBase
     protected readonly NavigationManagerMock NavigationManagerMock = new(MockBehavior.Strict);
     protected ItemCategoryState State = new DomainTestBuilder<ItemCategoryState>().Create();
 
-    public void SetupStateReturningState()
+    protected void SetupStateReturningState()
     {
         ItemCategoryStateMock.SetupValue(State);
     }

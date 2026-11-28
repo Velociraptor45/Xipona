@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.TestTools.Exceptions;
 using System.Net;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
+namespace Xipona.Api.Endpoints.Tests.Common;
 
 public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterInputType, TCommand, TCommandReturnType, TReturnType, TFixture>
     : EndpointCommandTestsBase<TCommandConverterInputType, TCommand, TCommandReturnType, TFixture>
@@ -18,13 +18,13 @@ public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterIn
     {
     }
 
-    [SkippableFact]
+    [Fact]
     public override async Task EndpointCall_WithValidData_ShouldReturnOk()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.OK);
 
-        Skip.If(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 200 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParameters();
@@ -43,13 +43,13 @@ public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterIn
         okResult!.Value.Should().BeEquivalentTo(Fixture.ExpectedResult);
     }
 
-    [SkippableFact]
+    [Fact]
     public async Task EndpointCall_WithValidData_ShouldReturnCreated()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.Created);
 
-        Skip.If(statusResult is null, $"Status code 201 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 201 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Arrange
         Fixture.SetupParameters();
@@ -69,13 +69,13 @@ public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterIn
         createdResult.RouteName.Should().StartWith("Get");
     }
 
-    [SkippableFact]
+    [Fact]
     public void EndpointCall_ShouldHaveCreatedResponseTypeAttribute()
     {
         var statusResult =
             Fixture.PossibleResults.SingleOrDefault(r => r.StatusCode == HttpStatusCode.Created);
 
-        Skip.If(statusResult is null, $"Status code 201 not relevant for endpoint {Fixture.RoutePattern}");
+        Assert.SkipWhen(statusResult is null, $"Status code 201 not relevant for endpoint {Fixture.RoutePattern}");
 
         // Act
         var result = Fixture.GetAllResponseTypeMetadata().ToList();
@@ -95,7 +95,7 @@ public abstract class EndpointCommandWithReturnTypeTestsBase<TCommandConverterIn
         public TReturnType? ExpectedResult { get; protected set; }
         public override Type OkResultReturnType => typeof(TReturnType);
 
-        public void SetupExpectedResult()
+        public virtual void SetupExpectedResult()
         {
             ExpectedResult = new DomainTestBuilder<TReturnType>().Create();
         }

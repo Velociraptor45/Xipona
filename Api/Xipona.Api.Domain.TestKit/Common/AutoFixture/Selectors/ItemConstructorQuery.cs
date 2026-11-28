@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
+namespace Xipona.Api.Domain.TestKit.Common.AutoFixture.Selectors;
 
 public class ItemConstructorQuery : IMethodQuery
 {

@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.States;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.States;
 
 public class ShoppingListStateTests
 {

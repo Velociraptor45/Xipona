@@ -2,13 +2,13 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
+namespace Xipona.Api.Repositories.Migrations.ShoppingLists
 {
     [DbContext(typeof(ShoppingListContext))]
     partial class ShoppingListContextModelSnapshot : ModelSnapshot
@@ -17,30 +17,30 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("DiscountPrice")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ItemTypeId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ShoppingListId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -53,31 +53,31 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("Discount");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("InBasket")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ItemTypeId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<float>("Quantity")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<Guid>("SectionId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ShoppingListId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -86,33 +86,55 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.ToTable("ItemsOnLists");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CompletionDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("RowVersion")
+                    b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp(6)");
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.Property<Guid>("StoreId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.ToTable("ShoppingLists");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("DiscountPercentage")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("DiscountPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("ShoppingListId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShoppingListId");
+
+                    b.ToTable("ShoppingListDiscount");
+                });
+
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.Discount", b =>
+                {
+                    b.HasOne("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
                         .WithMany("Discounts")
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -121,9 +143,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.Navigation("ShoppingList");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ItemsOnList", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
+                    b.HasOne("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
                         .WithMany("ItemsOnList")
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -132,11 +154,24 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.ShoppingLists
                     b.Navigation("ShoppingList");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingListDiscount", b =>
+                {
+                    b.HasOne("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", "ShoppingList")
+                        .WithMany("ListDiscounts")
+                        .HasForeignKey("ShoppingListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShoppingList");
+                });
+
+            modelBuilder.Entity("Xipona.Api.Repositories.ShoppingLists.Entities.ShoppingList", b =>
                 {
                     b.Navigation("Discounts");
 
                     b.Navigation("ItemsOnList");
+
+                    b.Navigation("ListDiscounts");
                 });
 #pragma warning restore 612, 618
         }

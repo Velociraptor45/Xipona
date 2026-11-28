@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Shared.Models;
+﻿using Xipona.Api.Domain.Recipes.Services.Modifications;
+using Xipona.Api.Domain.Shared.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+namespace Xipona.Api.Domain.Recipes.Models;
 
 public interface IPreparationStep : ISortable
 {

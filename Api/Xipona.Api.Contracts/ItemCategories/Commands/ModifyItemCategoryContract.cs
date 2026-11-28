@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands
+namespace Xipona.Api.Contracts.ItemCategories.Commands
 {
     /// <summary>
     /// Represents a command to modify an item category.

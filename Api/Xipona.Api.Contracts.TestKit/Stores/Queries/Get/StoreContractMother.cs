@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.Stores.Queries.Shared;
+﻿using Xipona.Api.Contracts.Stores.Queries.Shared;
+using Xipona.Api.Contracts.TestKit.Stores.Queries.Shared;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Stores.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Stores.Queries.Get;
 
 public static class StoreContractMother
 {

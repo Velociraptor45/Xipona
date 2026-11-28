@@ -1,43 +1,43 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using ProjectHermes.Xipona.Api.ApplicationServices;
-using ProjectHermes.Xipona.Api.Core;
-using ProjectHermes.Xipona.Api.Core.Files;
-using ProjectHermes.Xipona.Api.Domain;
-using ProjectHermes.Xipona.Api.Endpoint;
-using ProjectHermes.Xipona.Api.Endpoint.Middleware;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories;
-using ProjectHermes.Xipona.Api.Secrets;
-using ProjectHermes.Xipona.Api.WebApp.Auth;
-using ProjectHermes.Xipona.Api.WebApp.BackgroundServices;
-using ProjectHermes.Xipona.Api.WebApp.Configs;
-using ProjectHermes.Xipona.Api.WebApp.Extensions;
-using ProjectHermes.Xipona.Api.WebApp.Serialization;
 using Scalar.AspNetCore;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
+using Xipona.Api.ApplicationServices;
+using Xipona.Api.Core;
+using Xipona.Api.Core.Files;
+using Xipona.Api.Domain;
+using Xipona.Api.Endpoint;
+using Xipona.Api.Endpoint.Middleware;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories;
+using Xipona.Api.Secrets;
+using Xipona.Api.WebApp.Auth;
+using Xipona.Api.WebApp.BackgroundServices;
+using Xipona.Api.WebApp.Configs;
+using Xipona.Api.WebApp.Extensions;
+using Xipona.Api.WebApp.Serialization;
+using AuthenticationOptions = Xipona.Api.Endpoint.Middleware.AuthenticationOptions;
 
 var builder = WebApplication.CreateBuilder();
-
+builder.Host.UseDefaultServiceProvider((_, opt) =>
+{
+    opt.ValidateOnBuild = true;
+});
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 
 if (builder.Environment.IsEnvironment("Local"))
 {
     builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
 }
-
-AddAppsettingsSourceTo(builder.Configuration.Sources);
 
 var configuration = builder.Configuration;
 
@@ -60,6 +60,7 @@ await builder.Services.AddOtelAsync(configuration, builder.Environment, secretLo
 builder.Services.Configure<JsonOptions>(opt =>
     opt.SerializerOptions.TypeInfoResolverChain.Add(XiponaJsonSerializationContext.Default));
 
+builder.Services.AddMemoryCache();
 builder.Services.AddCore();
 builder.Services.AddDomain();
 builder.Services.AddEndpointConverters();
@@ -69,7 +70,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors();
 
 var authOptions = new AuthenticationOptions();
-configuration.GetSection("Auth").Bind(authOptions);
+configuration.Bind(authOptions);
 
 builder.Services.AddSingleton(authOptions);
 
@@ -103,8 +104,7 @@ app.MapScalarApiReference(opt => opt.Title = "Xipona API");
 app.UseCors(policyBuilder =>
 {
     var corsConfig = new CorsConfig();
-    // throwing does atm not work https://github.com/dotnet/runtime/issues/98231
-    app.Configuration.GetSection("Cors").Bind(corsConfig, opt => opt.ErrorOnUnknownConfiguration = true);
+    app.Configuration.Bind(corsConfig);
 
     policyBuilder
         .WithOrigins(corsConfig.AllowedOrigins)
@@ -120,6 +120,7 @@ app.UseAuthorization();
 
 app.UseDiagnosticsMiddleware();
 
+app.RegisterUserEndpoints();
 app.RegisterItemCategoryEndpoints();
 app.RegisterItemEndpoints();
 app.RegisterManufacturerEndpoints();
@@ -130,22 +131,6 @@ app.RegisterRecipeTagEndpoints();
 app.RegisterStoreEndpoints();
 
 await app.RunAsync();
-
-static void AddAppsettingsSourceTo(IList<IConfigurationSource> sources)
-{
-    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-    var basePath = env == "Local"
-        ? Directory.GetCurrentDirectory()
-        : Path.Combine(Directory.GetCurrentDirectory(), "config");
-    var jsonSource = new JsonConfigurationSource
-    {
-        FileProvider = new PhysicalFileProvider(basePath),
-        Path = $"appsettings.{env}.json",
-        Optional = false,
-        ReloadOnChange = true
-    };
-    sources.Add(jsonSource);
-}
 
 void SetupSecurity()
 {
@@ -159,7 +144,10 @@ void SetupSecurity()
 
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
     JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
+    
+    // flatten nested claims
+    builder.Services.AddTransient<IClaimsTransformation, RoleClaimsTransformation>();
+    
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(opt =>

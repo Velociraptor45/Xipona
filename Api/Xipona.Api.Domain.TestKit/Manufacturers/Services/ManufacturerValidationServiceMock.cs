@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Validations;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Services;
+namespace Xipona.Api.Domain.TestKit.Manufacturers.Services;
 
 public class ManufacturerValidationServiceMock : Mock<IManufacturerValidationService>
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
+﻿using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Models.Factories;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+namespace Xipona.Api.Domain.TestKit.Stores.Models;
 
 public static class SectionsMother
 {

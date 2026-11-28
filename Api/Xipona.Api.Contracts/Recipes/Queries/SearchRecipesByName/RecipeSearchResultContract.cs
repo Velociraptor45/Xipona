@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName
+namespace Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName
 {
     /// <summary>
     /// Represents a recipe search result.

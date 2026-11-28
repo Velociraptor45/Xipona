@@ -1,0 +1,468 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using System.IdentityModel.Tokens.Jwt;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
+using Xipona.Api.Contracts.Users.Commands.Login;
+using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
+using Xipona.Api.Core.Constants;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.Users.Models;
+using Xipona.Api.Domain.Users.Services.Queries;
+using Xipona.Api.Endpoint.Middleware;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Stores.Entities;
+using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+using Xipona.Api.Repositories.TestKit.Items.Entities;
+using Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+using Xipona.Api.Repositories.TestKit.Stores.Entities;
+using Xipona.Api.Repositories.Users.Contexts;
+using Xipona.Api.TestTools.AutoFixture;
+using Xipona.Api.TestTools.Exceptions;
+using Xunit;
+using GeneralSetting = Xipona.Api.Repositories.Users.Entities.GeneralSetting;
+using User = Xipona.Api.Repositories.Users.Entities.User;
+
+namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
+
+public class UserEndpointIntegrationTests
+{
+    public sealed class Login
+    {
+        private readonly LoginFixture _fixture;
+        public Login(DockerFixture dockerFixture)
+        {
+            _fixture = new LoginFixture(dockerFixture);
+        }
+
+        [Fact]
+        public async Task Login_WithValidAccessToken_ShouldCreateUser()
+        {
+            // Arrange
+            _fixture.SetupExpectedUser();
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedUser);
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<Ok<UserInfoContract>>();
+
+            var okResult = (Ok<UserInfoContract>)result;
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+
+            using var assertionServiceScope = _fixture.CreateServiceScope();
+
+            var users = await _fixture.LoadAllUsersAsync(assertionServiceScope);
+            users.Should().HaveCount(1);
+            var user = users[0];
+            user.Should().BeEquivalentTo(_fixture.ExpectedUser,
+                opt => opt.ExcludeRowVersion().WithCreatedAtPrecision(TimeSpan.FromSeconds(30)));
+        }
+
+        private sealed class LoginFixture : UserEndpointFixture
+        {
+            public LoginFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public User? ExpectedUser { get; private set; }
+            public UserInfoContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                var ctx = new DefaultHttpContext();
+                ctx.Request.Headers.Authorization = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMDVjNDJkYy0zNTI5LTQwODYtOTY4OS1kMjNiNjNkYTYzY2EiLCJnaXZlbl9uYW1lIjoiSm9obi1vaCBEZWVyIn0.CEBWi9GOoMZKC0Lu_qSXbCGbbv7UlCSeR_ttPAC1N-YVd2RXnHVAKe0BLhvgRdB8jMY0LXse2LrODcKtC0eLvFjMCg6TWGSuS1cM-QP-yrHRPpzvNNRZojkSSfeTQcmo475dSCcNpqMtJhvYj0d6bAuunFv0vm5yL3tWRNgtDKPUvsx8DkbTcq1-r6F8K7LCxUWjWO6mj-Vva0AbkJQIgO32e3j7Ny2ArykTpvFG00-5uVxc9po7OMIEw7ld23PFwqkrAD9Z9plxXK9GTTNHj-4sh0P-MqrONrXOlER5Bqx6lzis0freHPV_NspXXoMGK599S9eFG2CPsU7pR-SXjg";
+
+                return await UserEndpoints.Login(
+                    ctx,
+                    new JwtSecurityTokenHandler(),
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    new AuthenticationOptions
+                    {
+                        NameClaimType = "given_name"
+                    },
+                    TestContext.Current.CancellationToken);
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                await ApplyMigrationsAsync(ArrangeScope);
+            }
+
+            public void SetupExpectedUser()
+            {
+                ExpectedUser = new User
+                {
+                    Id = Guid.Parse("005c42dc-3529-4086-9689-d23b63da63ca"),
+                    CreatedAt = DateTimeOffset.UtcNow,
+                };
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new UserInfoContract
+                {
+                    DisplayName = "John-oh Deer"
+                };
+            }
+
+        }
+    }
+
+    public sealed class UpdateGeneralSettings(DockerFixture dockerFixture)
+    {
+        private readonly UpdateGeneralSettingsFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task UpdateGeneralSettings_WithValidData_ShouldUpdateSettings()
+        {
+            // Arrange
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupContract();
+            _fixture.SetupExpectedResult();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+
+            var assertionScope = _fixture.CreateServiceScope();
+            var generalSettings = await _fixture.LoadAllGeneralSettingsAsync(assertionScope);
+            generalSettings.Should().HaveCount(1);
+            var generalSetting = generalSettings[0];
+            generalSetting.Should().BeEquivalentTo(_fixture.ExpectedResult, opt => opt.ExcludeRowVersion());
+        }
+
+        [Fact]
+        public async Task UpdateGeneralSettings_WithValidData_ShouldChangeGeneralSettingsCurrency()
+        {
+            // Arrange
+            _fixture.SetupItem();
+            await _fixture.PrepareDatabaseWithItemAsync();
+            _fixture.SetupContract();
+            _fixture.SetupMemoryCache();
+
+            var searchResultBefore = await _fixture.GetGeneralSettingsAsync();
+            searchResultBefore.Should().NotBeNull();
+            searchResultBefore.Should().BeOfType<Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>();
+            var okResultBefore = (Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>)searchResultBefore;
+            var generalSettingsBefore = okResultBefore.Value!;
+            generalSettingsBefore.Currency.Id.Should().Be(Currency.Euro.ToInt());
+            generalSettingsBefore.Currency.Symbol.Should().Be("€");
+            generalSettingsBefore.Currency.IsTrailing.Should().BeTrue();
+
+            // Act
+            await _fixture.ActAsync();
+
+            // Assert
+            var searchResultAfter = await _fixture.GetGeneralSettingsAsync();
+            searchResultAfter.Should().NotBeNull();
+            searchResultAfter.Should().BeOfType<Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>();
+            var okResultAfter = (Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>)searchResultAfter;
+            var generalSettingsAfter = okResultAfter.Value!;
+            generalSettingsAfter.Currency.Id.Should().Be(Currency.Yen.ToInt());
+            generalSettingsAfter.Currency.Symbol.Should().Be("¥");
+            generalSettingsAfter.Currency.IsTrailing.Should().BeFalse();
+        }
+
+        private class UpdateGeneralSettingsFixture : UserEndpointFixture
+        {
+            private GeneralSettingsContract? _contract;
+            private Item? _item;
+            private ItemCategory? _itemCategory;
+            private Store? _store;
+            private ShoppingList? _shoppingList;
+
+            public UpdateGeneralSettingsFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public GeneralSetting? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_contract);
+
+                var scope = CreateServiceScope();
+
+                return await UserEndpoints.UpdateGeneralSettings(
+                    _contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                await ApplyMigrationsAsync(ArrangeScope);
+            }
+
+            public async Task PrepareDatabaseWithItemAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_item);
+                TestPropertyNotSetException.ThrowIfNull(_itemCategory);
+                TestPropertyNotSetException.ThrowIfNull(_store);
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var itemCategoryContext = GetContextInstance<ItemCategoryContext>(ArrangeScope);
+                var storeContext = GetContextInstance<StoreContext>(ArrangeScope);
+                var itemContext = GetContextInstance<ItemContext>(ArrangeScope);
+                var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+                
+                await itemCategoryContext.ItemCategories.AddAsync(_itemCategory);
+                await storeContext.Stores.AddAsync(_store);
+                await itemContext.Items.AddAsync(_item);
+                await shoppingListContext.ShoppingLists.AddAsync(_shoppingList);
+                
+                await itemCategoryContext.SaveChangesAsync();
+                await storeContext.SaveChangesAsync();
+                await itemContext.SaveChangesAsync();
+                await shoppingListContext.SaveChangesAsync();
+            }
+
+            public void SetupContract()
+            {
+                _contract = new GeneralSettingsContract(Currency.Yen.ToInt());
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new GeneralSetting
+                {
+                    Id = 0,
+                    Currency = Currency.Yen.ToInt()
+                };
+            }
+
+            public void SetupItem()
+            {
+                _item = ItemEntityMother.Initial().WithoutManufacturerId().Create();
+                _itemCategory = ItemCategoryEntityMother.Active().WithId(_item.ItemCategoryId!.Value).Create();
+
+                var availability = _item.AvailableAt.First();
+                _store = StoreEntityMother.Active().WithId(availability.StoreId)
+                    .WithSection(SectionEntityMother.Default().WithId(availability.DefaultSectionId).Create())
+                    .Create();
+                _shoppingList = ShoppingListEntityMother.Empty()
+                    .WithStoreId(availability.StoreId)
+                    .Create();
+            }
+
+            public void SetupMemoryCache()
+            {
+                var scope = CreateServiceScope();
+
+                var cache = scope.ServiceProvider.GetRequiredService<IMemoryCache>();
+                cache.Set(
+                    CacheKeys.GeneralSettings,
+                    new Domain.Users.Models.GeneralSetting(new GeneralSettingId(1), Currency.Yen));
+            }
+
+            public async Task<IResult> GetGeneralSettingsAsync()
+            {
+                var scope = CreateServiceScope();
+
+                return await UserEndpoints.GetGeneralSettings(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+        }
+    }
+
+    public sealed class GetAllCurrencies(DockerFixture dockerFixture)
+    {
+        private readonly GetAllCurrenciesFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task GetAllCurrencies_WithValidData_ShouldReturnAllCurrencies()
+        {
+            // Arrange
+            await _fixture.PrepareDatabaseAsync();
+            _fixture.SetupExpectedResult();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+
+            result.Should().BeOfType<Ok<List<CurrencyContract>>>();
+            var okResult = (Ok<List<CurrencyContract>>)result;
+
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private class GetAllCurrenciesFixture : UserEndpointFixture
+        {
+            public GetAllCurrenciesFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public IReadOnlyCollection<CurrencyContract>? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await UserEndpoints.GetAllCurrencies(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<CurrencyReadModel, CurrencyContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                await ApplyMigrationsAsync(ArrangeScope);
+            }
+
+            public void SetupExpectedResult()
+            {
+                ExpectedResult = new List<CurrencyContract>
+                {
+                    new(0, "€", true),
+                    new(1, "$", false),
+                    new(2, "£", false),
+                    new(3, "¥", false)
+                };
+            }
+
+        }
+    }
+
+    public sealed class GetGeneralSettings(DockerFixture dockerFixture)
+    {
+        private readonly GetGeneralSettingsFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task GetGeneralSettings_WithValidData_ShouldReturnGeneralSettings()
+        {
+            // Arrange
+            _fixture.SetupExpectedResult();
+            await _fixture.PrepareDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().NotBeNull();
+
+            result.Should().BeOfType<Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>();
+            var okResult = (Ok<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>)result;
+
+            okResult.Value.Should().BeEquivalentTo(_fixture.ExpectedResult);
+        }
+
+        private class GetGeneralSettingsFixture : UserEndpointFixture
+        {
+            private Contracts.Users.Queries.GetGeneralSettings.CurrencyContract? _expectedCurrency;
+            private List<Contracts.Users.Queries.GetGeneralSettings.CurrencyContract> _allCurrencies =
+            [
+                new(0, "€", true),
+                new(1, "$", false),
+                new(2, "£", false),
+                new(3, "¥", false)
+            ];
+
+            public GetGeneralSettingsFixture(DockerFixture dockerFixture) : base(dockerFixture)
+            {
+            }
+
+            public Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                var scope = CreateServiceScope();
+                return await UserEndpoints.GetGeneralSettings(
+                    scope.ServiceProvider.GetRequiredService<IQueryDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IGeneralSetting, Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+
+            public async Task PrepareDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_expectedCurrency);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var context = GetContextInstance<GeneralSettingContext>(ArrangeScope);
+
+                var settings = await context.GeneralSettings.SingleAsync();
+                settings.Currency = _expectedCurrency.Id;
+
+                await context.SaveChangesAsync();
+            }
+
+            public void SetupExpectedResult()
+            {
+                _expectedCurrency = CommonFixture.ChooseRandom(_allCurrencies);
+                ExpectedResult = new Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract(_expectedCurrency);
+            }
+        }
+    }
+
+    private abstract class UserEndpointFixture : DatabaseFixture
+    {
+        protected UserEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
+        {
+            ArrangeScope = CreateServiceScope();
+        }
+
+        protected readonly IServiceScope ArrangeScope;
+
+        public override IEnumerable<DbContext> GetDbContexts(IServiceScope scope)
+        {
+            yield return scope.ServiceProvider.GetRequiredService<UserContext>();
+            yield return scope.ServiceProvider.GetRequiredService<GeneralSettingContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ArrangeScope.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Common
+﻿namespace Xipona.Api.Contracts.Common
 {
     /// <summary>
     /// Represents an error containing a message and an error code.

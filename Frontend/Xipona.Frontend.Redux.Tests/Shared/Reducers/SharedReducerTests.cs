@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Reducers;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Shared.Reducers;
+namespace Xipona.Frontend.Redux.Tests.Shared.Reducers;
 
 public class SharedReducerTests
 {
@@ -260,6 +260,45 @@ public class SharedReducerTests
             {
                 ExpectedState = ExpectedState with { IsRetryOngoing = false };
             }
+        }
+    }
+
+    public class OnUserLoggedIn
+    {
+        private readonly OnUserLoggedInFixture _fixture = new();
+
+        [Fact]
+        public void OnUserLoggedIn_WithValidAction_ShouldSetUser()
+        {
+            // Arrange
+            _fixture.SetupInitialState();
+            _fixture.SetupAction();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.Action);
+
+            // Act
+            var result = SharedReducer.OnUserLoggedIn(_fixture.InitialState, _fixture.Action);
+
+            // Assert
+            result.Should().BeEquivalentTo(_fixture.ExpectedState);
+        }
+
+        private sealed class OnUserLoggedInFixture : SharedReducerFixture
+        {
+            public UserLoggedInAction? Action { get; private set; }
+            public void SetupInitialState()
+            {
+                InitialState = ExpectedState with
+                {
+                    User = new DomainTestBuilder<UserInfo>().Create()
+                };
+            }
+
+            public void SetupAction()
+            {
+                Action = new UserLoggedInAction(ExpectedState.User!);
+            }
+
         }
     }
 

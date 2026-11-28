@@ -1,14 +1,14 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
 using RestEase;
 using Timer = System.Timers.Timer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Effects;
+namespace Xipona.Frontend.Redux.Recipes.Effects;
 public sealed class SideDishSelectorEffects : IAsyncDisposable
 {
     private readonly IApiClient _client;

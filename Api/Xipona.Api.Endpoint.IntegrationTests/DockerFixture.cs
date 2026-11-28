@@ -2,8 +2,11 @@
 using Ductus.FluentDocker.Services;
 using System;
 using System.IO;
+using Xipona.Api.Endpoint.IntegrationTests;
+using Xunit;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests;
+[assembly: AssemblyFixture(typeof(DockerFixture))]
+namespace Xipona.Api.Endpoint.IntegrationTests;
 
 public sealed class DockerFixture : IDisposable
 {
@@ -17,20 +20,18 @@ public sealed class DockerFixture : IDisposable
             .UseCompose()
             .FromFile(fileDir)
             .RemoveOrphans()
-            //.WaitForProcess("Database", "mariadb", millisTimeout: 30000)
-            //.WaitForPort("Database", "15906/tcp", 30000)
             .Build()
             .Start();
 
         // wait for DB to initialize
-        Task.Delay(10000).GetAwaiter().GetResult();
+        Task.Delay(3000).GetAwaiter().GetResult();
     }
 
     public const string ConnectionStringWithoutDb =
-        "server=127.0.0.1;port=15906;user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
+        "server=127.0.0.1;port=15906;userid=postgres;password=123root";
 
     public const string ConnectionString =
-        "server=127.0.0.1;port=15906;database={DatabaseName};user id=root;pwd=123root;AllowUserVariables=true;UseAffectedRows=false";
+        "server=127.0.0.1;port=15906;database={DatabaseName};userid=postgres;password=123root";
 
     public const string DatabaseName = "test-shoppinglist";
 

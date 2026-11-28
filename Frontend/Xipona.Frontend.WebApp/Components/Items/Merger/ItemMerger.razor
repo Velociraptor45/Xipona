@@ -1,0 +1,61 @@
+﻿@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions.Merges
+@using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.Redux.Items.States.Merges
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+<div>
+    <div class="mb-4">
+        <div class="d-flex">
+            <Button OnClick="OnLeaveMergerButtonClicked" Class="mr-3 d-flex align-items-center">
+                <i class="bi bi-arrow-left"></i>
+            </Button>
+            <h1>Merge Items</h1>
+        </div>
+        <hr/>
+    </div>
+
+    <Input TValue="string" Value="MergedItem.Name" OnInput="OnItemNameChanged" Placeholder="New item name ..."
+           Class="mb-2 name-input">
+    </Input>
+    @if (State.Value.Merge.ValidationResult.Name is not null)
+    {
+        <div class="validation-error-message">@State.Value.Merge.ValidationResult.Name</div>
+    }
+
+    <h2 class="font-weight-bold mt-2">Types</h2>
+
+    @foreach (var type in MergedItem.Types)
+    {
+        <div class="mb-3">
+            <ItemTypeMerger MergedItemType="type"></ItemTypeMerger>
+        </div>
+    }
+    <Button Class="mt-2 d-flex ml-auto" OnClick="OnSaveButtonClicked" Type="@ButtonType.Primary"
+            Loading="@State.Value.Merge.IsSaving">Merge</Button>
+</div>
+
+@code
+{
+    [Parameter]
+    public required MergedItem MergedItem { get; set; }
+
+    private void OnItemNameChanged(ChangeEventArgs args)
+    {
+        Dispatcher.Dispatch(new ItemNameChangedAction(args.Value?.ToString() ?? string.Empty));
+    }
+
+    private void OnSaveButtonClicked()
+    {
+        Dispatcher.Dispatch(new MergeItemsAction());
+    }
+
+    private void OnLeaveMergerButtonClicked()
+    {
+        Dispatcher.Dispatch(new LeaveItemMergerAction(null));
+    }
+}

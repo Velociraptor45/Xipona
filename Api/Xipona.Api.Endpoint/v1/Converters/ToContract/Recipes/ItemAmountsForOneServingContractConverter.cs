@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
+﻿using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Recipes.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Recipes;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Recipes;
 
 public class ItemAmountsForOneServingContractConverter
     : IToContractConverter<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>

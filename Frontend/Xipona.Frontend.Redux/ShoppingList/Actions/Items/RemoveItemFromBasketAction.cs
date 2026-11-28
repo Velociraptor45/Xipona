@@ -1,4 +1,4 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Items;
+namespace Xipona.Frontend.Redux.ShoppingList.Actions.Items;
 public record RemoveItemFromBasketAction(ShoppingListItemId ItemId, Guid? ItemTypeId, string ItemName);

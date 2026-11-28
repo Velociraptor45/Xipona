@@ -1,4 +1,4 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+﻿using Xipona.Frontend.Redux.Stores.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Stores.Actions.Editor.Sections;
+namespace Xipona.Frontend.Redux.Stores.Actions.Editor.Sections;
 public record SectionRemovedAction(EditedSection Section);

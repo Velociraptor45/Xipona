@@ -1,9 +1,9 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
+namespace Xipona.Frontend.Redux.ShoppingList.Reducers;
 
 public static class TemporaryItemCreatorReducer
 {

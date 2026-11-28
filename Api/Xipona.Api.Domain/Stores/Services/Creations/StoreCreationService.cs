@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+﻿using Xipona.Api.Domain.ShoppingLists.Models.Factories;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Models.Factories;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+namespace Xipona.Api.Domain.Stores.Services.Creations;
 
 public class StoreCreationService : IStoreCreationService
 {

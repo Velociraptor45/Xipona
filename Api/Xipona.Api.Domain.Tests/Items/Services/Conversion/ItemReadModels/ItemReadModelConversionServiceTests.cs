@@ -1,26 +1,26 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Models.Factories;
+using Xipona.Api.Domain.TestKit.Manufacturers.Models;
+using Xipona.Api.Domain.TestKit.Manufacturers.Ports;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models.Factories;
+using Xipona.Api.Domain.TestKit.Stores.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.Conversion.ItemReadModels;
+namespace Xipona.Api.Domain.Tests.Items.Services.Conversion.ItemReadModels;
 
 public class ItemReadModelConversionServiceTests
 {
@@ -259,7 +259,7 @@ public class ItemReadModelConversionServiceTests
                     .Create()
             };
             Item = ItemMother.InitialWithTypes()
-                .WithTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
+                .WithItemTypes(new ItemTypes(types, new ItemTypeFactoryMock(MockBehavior.Strict).Object))
                 .Create();
         }
 
@@ -335,13 +335,13 @@ public class ItemReadModelConversionServiceTests
             var itemType = Item.ItemTypes.First();
             var itemTypeAvailability = itemType.Availabilities.First();
             var itemTypeAvailabilityReadModel = CreateAvailabilityReadModel(_store, itemTypeAvailability);
-            List<ItemTypeReadModel> itemTypeReadModels = new()
-            {
-                new ItemTypeReadModel(
+            List<ItemTypeReadModel> itemTypeReadModels =
+            [
+                new(
                     itemType.Id,
                     itemType.Name,
                     [itemTypeAvailabilityReadModel])
-            };
+            ];
 
             var itemQuantityInPacket = Item.ItemQuantity.InPacket;
             var quantityTypeInPacketReadModel = itemQuantityInPacket is null
@@ -354,6 +354,7 @@ public class ItemReadModelConversionServiceTests
                 Item.IsDeleted,
                 Item.Comment,
                 Item.IsTemporary,
+                Item.IsFavorite,
                 new QuantityTypeReadModel(Item.ItemQuantity.Type),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,
@@ -407,6 +408,7 @@ public class ItemReadModelConversionServiceTests
                 Item.IsDeleted,
                 Item.Comment,
                 Item.IsTemporary,
+                Item.IsFavorite,
                 new QuantityTypeReadModel(Item.ItemQuantity.Type),
                 itemQuantityInPacket?.Quantity,
                 quantityTypeInPacketReadModel,

@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Items.States;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using Xipona.Frontend.Redux.Items.Reducers;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.TestKit.Items.States;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Reducers;
+namespace Xipona.Frontend.Redux.Tests.Items.Reducers;
 
 public partial class ItemEditorReducerTests
 {

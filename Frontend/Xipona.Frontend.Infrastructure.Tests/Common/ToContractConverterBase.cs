@@ -1,7 +1,8 @@
-﻿using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.TestTools;
+﻿using Microsoft.Extensions.Logging;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.TestTools;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
+namespace Xipona.Frontend.Infrastructure.Tests.Common;
 
 public abstract class ToContractConverterBase<TSource, TDest, TConverter> where TConverter : IToContractConverter<TSource, TDest>
 {
@@ -11,7 +12,7 @@ public abstract class ToContractConverterBase<TSource, TDest, TConverter> where 
         // Arrange
         var contract = CreateSource();
 
-        var mapper = new MapperConfiguration(AddMapping).CreateMapper();
+        var mapper = new MapperConfiguration(AddMapping, new LoggerFactory()).CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 

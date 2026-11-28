@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Services.Modifications;
 
 public class ShoppingListModificationServiceMock : Mock<IShoppingListModificationService>
 {
@@ -84,12 +84,12 @@ public class ShoppingListModificationServiceMock : Mock<IShoppingListModificatio
         Verify(m => m.PutItemInBasketAsync(shoppingListId, offlineTolerantItemId, itemTypeId), times);
     }
 
-    public void SetupAddDiscountAsync(ShoppingListId id, Discount discount)
+    public void SetupAddDiscountAsync(ShoppingListId id, ItemDiscount discount)
     {
         Setup(m => m.AddDiscountAsync(id, discount)).Returns(Task.CompletedTask);
     }
 
-    public void VerifyAddDiscountAsync(ShoppingListId id, Discount discount, Func<Times> times)
+    public void VerifyAddDiscountAsync(ShoppingListId id, ItemDiscount discount, Func<Times> times)
     {
         Verify(m => m.AddDiscountAsync(id, discount), times);
     }

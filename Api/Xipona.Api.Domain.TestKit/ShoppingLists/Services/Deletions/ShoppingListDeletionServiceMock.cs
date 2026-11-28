@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.ShoppingLists.Services.Deletions;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.Deletions;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Services.Deletions;
 
 public class ShoppingListDeletionServiceMock : Mock<IShoppingListDeletionService>
 {

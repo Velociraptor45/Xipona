@@ -1,11 +1,11 @@
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using Ingredient = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Recipes.Entities;
+namespace Xipona.Api.Repositories.TestKit.Recipes.Entities;
 
 public class IngredientEntityBuilder : TestBuilderBase<Ingredient>
 {

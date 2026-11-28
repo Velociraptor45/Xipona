@@ -2,64 +2,66 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemDiscount;
-using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Manufacturers.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
-using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
 using System;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemDiscount;
+using Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Api.ApplicationServices.ShoppingLists.Commands.RemoveItemDiscount;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Contracts.TestKit.Common;
+using Xipona.Api.Contracts.TestKit.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Repositories.Manufacturers.Entities;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Stores.Entities;
+using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+using Xipona.Api.Repositories.TestKit.Items.Entities;
+using Xipona.Api.Repositories.TestKit.Manufacturers.Entities;
+using Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+using Xipona.Api.Repositories.TestKit.Stores.Entities;
+using Xipona.Api.TestTools.AutoFixture;
+using Xipona.Api.TestTools.Exceptions;
 using Xunit;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
-using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
+using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
+namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class ShoppingListEndpointsIntegrationTests
 {
-    public sealed class GetActiveShoppingListByStoreId(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class GetActiveShoppingListByStoreId(DockerFixture dockerFixture)
     {
         private readonly GetActiveShoppingListByStoreIdFixture _fixture = new(dockerFixture);
 
@@ -112,7 +114,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<ShoppingListReadModel, ShoppingListContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -153,9 +155,9 @@ public class ShoppingListEndpointsIntegrationTests
                         .Create()
                 ];
 
-                ExpectedResult = new ContractTestBuilder<ShoppingListContract>()
-                    .FillConstructorWith("sections", sections)
-                    .FillConstructorWith("completionDate", (DateTimeOffset?)null)
+                ExpectedResult = new ShoppingListContractBuilder()
+                    .WithSections(sections)
+                    .WithoutCompletionDate()
                     .Create();
             }
 
@@ -183,7 +185,16 @@ public class ShoppingListEndpointsIntegrationTests
                     CompletionDate = ExpectedResult.CompletionDate,
                     StoreId = ExpectedResult.Store.Id,
                     ItemsOnList = [item1, item2],
-                    Discounts = [firstItemDiscount]
+                    Discounts = [firstItemDiscount],
+                    ListDiscounts = ExpectedResult.ShoppingListDiscounts
+                        .Select(d => new ShoppingListDiscount
+                        {
+                            Id = d.Id,
+                            DiscountPercentage = d.DiscountPercentage,
+                            DiscountPrice = d.DiscountPrice,
+                            ShoppingListId = ExpectedResult.Id
+                        })
+                        .ToList()
                 };
 
                 ItemsOnList ConvertItem(Guid sectionId, ShoppingListItemContract item)
@@ -331,7 +342,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveItemFromShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemFromShoppingList(DockerFixture dockerFixture)
     {
         private readonly RemoveItemFromShoppingListFixture _fixture = new(dockerFixture);
 
@@ -472,7 +483,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -562,7 +573,7 @@ public class ShoppingListEndpointsIntegrationTests
     }
 
     public sealed class AddTemporaryItemToShoppingList(DockerFixture dockerFixture)
-        : IAssemblyFixture<DockerFixture>
+
     {
         private readonly AddTemporaryItemToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -643,7 +654,7 @@ public class ShoppingListEndpointsIntegrationTests
                         IToDomainConverter<(Guid, AddTemporaryItemToShoppingListContract), AddTemporaryItemToShoppingListCommand>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<TemporaryShoppingListItemReadModel, TemporaryShoppingListItemContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupContract()
@@ -746,7 +757,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddItemToShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemToShoppingList(DockerFixture dockerFixture)
     {
         private readonly AddItemToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -831,7 +842,7 @@ public class ShoppingListEndpointsIntegrationTests
                     Contract,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -915,7 +926,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddItemWithTypeToShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemWithTypeToShoppingList(DockerFixture dockerFixture)
     {
         private readonly AddItemWithTypeToShoppingListFixture _fixture = new(dockerFixture);
 
@@ -1032,7 +1043,7 @@ public class ShoppingListEndpointsIntegrationTests
                     Contract,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1149,7 +1160,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class PutItemInBasket(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class PutItemInBasket(DockerFixture dockerFixture)
     {
         private readonly PutItemInBasketFixture _fixture = new(dockerFixture);
 
@@ -1268,7 +1279,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1370,7 +1381,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveItemFromBasket(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveItemFromBasket(DockerFixture dockerFixture)
     {
         private readonly RemoveItemFromBasketFixture _fixture = new(dockerFixture);
 
@@ -1485,7 +1496,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1587,7 +1598,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class ChangeItemQuantityOnShoppingList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class ChangeItemQuantityOnShoppingList(DockerFixture dockerFixture)
     {
         private readonly ChangeItemQuantityOnShoppingListFixture _fixture = new(dockerFixture);
 
@@ -1702,7 +1713,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider
                         .GetRequiredService<IToDomainConverter<ItemIdContract, OfflineTolerantItemId>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -1803,7 +1814,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class FinishList(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class FinishList(DockerFixture dockerFixture)
     {
         private readonly FinishListFixture _fixture = new(dockerFixture);
 
@@ -1902,7 +1913,7 @@ public class ShoppingListEndpointsIntegrationTests
                     FinishedAt,
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupShoppingListId()
@@ -1957,7 +1968,7 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class AddItemDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class AddItemDiscount(DockerFixture dockerFixture)
     {
         private readonly AddItemDiscountFixture _fixture = new(dockerFixture);
 
@@ -1984,7 +1995,7 @@ public class ShoppingListEndpointsIntegrationTests
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
                 opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
-                    .WithCreatedAtPrecision());
+                    .ExcludeListDiscountId().WithCreatedAtPrecision());
         }
 
         private sealed class AddItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListEndpointFixture(dockerFixture)
@@ -2005,7 +2016,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, AddItemDiscountContract), AddItemDiscountCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupExpectedResult()
@@ -2046,7 +2057,81 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
-    public sealed class RemoveItemDiscount(DockerFixture dockerFixture) : IAssemblyFixture<DockerFixture>
+    public sealed class RemoveShoppingListDiscount(DockerFixture dockerFixture)
+    {
+        private readonly RemoveShoppingListDiscountFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task RemoveShoppingListDiscountAsync_WithValidData_ShouldRemoveShoppingListDiscount()
+        {
+            // Arrange
+            _fixture.SetupShoppingListWithDiscount();
+            await _fixture.SetupDatabaseAsync();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
+                    .WithCreatedAtPrecision());
+        }
+
+        private sealed class RemoveShoppingListDiscountFixture(DockerFixture dockerFixture) : ShoppingListEndpointFixture(dockerFixture)
+        {
+            private ShoppingList? _shoppingList;
+            private readonly Domain.ShoppingLists.Models.ListDiscountId _listDiscountId =
+                Domain.ShoppingLists.Models.ListDiscountId.New;
+            private Guid? _shoppingListId;
+            public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingListId);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.RemoveShoppingListDiscount(
+                    _shoppingListId.Value,
+                    _listDiscountId,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    TestContext.Current.CancellationToken);
+            }
+
+            public void SetupShoppingListWithDiscount()
+            {
+                ExpectedResult = ShoppingListEntityMother.Active().Create();
+
+                var discount = new ShoppingListDiscountEntityBuilder().WithId(_listDiscountId).Create();
+                _shoppingList = ExpectedResult.DeepClone();
+                _shoppingList.ListDiscounts.Add(discount);
+                _shoppingListId = _shoppingList.Id;
+            }
+
+            public async Task SetupDatabaseAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                await using var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+
+                await shoppingListContext.AddAsync(_shoppingList);
+
+                await shoppingListContext.SaveChangesAsync();
+            }
+        }
+    }
+
+    public sealed class RemoveItemDiscount(DockerFixture dockerFixture)
     {
         private readonly RemoveItemDiscountFixture _fixture = new(dockerFixture);
 
@@ -2072,7 +2157,7 @@ public class ShoppingListEndpointsIntegrationTests
             shoppingLists.Should().HaveCount(1);
             shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
                 opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
-                    .WithCreatedAtPrecision());
+                    .ExcludeListDiscountId().WithCreatedAtPrecision());
         }
 
         private sealed class RemoveItemDiscountFixture(DockerFixture dockerFixture) : ShoppingListEndpointFixture(dockerFixture)
@@ -2097,7 +2182,7 @@ public class ShoppingListEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, RemoveItemDiscountContract), RemoveItemDiscountCommand>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupShoppingListWithDiscount()
@@ -2105,6 +2190,7 @@ public class ShoppingListEndpointsIntegrationTests
                 ExpectedResult = ShoppingListEntityMother.Active().Create();
 
                 var discount = new DiscountEntityBuilder()
+                    .WithId(ExpectedResult.Discounts.Max(d => d.Id) + 1)
                     .WithItemId(ItemId)
                     .WithItemTypeId(ItemTypeId)
                     .Create();
@@ -2134,6 +2220,132 @@ public class ShoppingListEndpointsIntegrationTests
         }
     }
 
+    public sealed class AddShoppingListDiscount(DockerFixture dockerFixture)
+    {
+        private readonly AddShoppingListDiscountFixture _fixture = new(dockerFixture);
+
+        [Fact]
+        public async Task AddShoppingListDiscountAsync_WithPriceDiscount_ShouldAddShoppingListDiscount()
+        {
+            // Arrange
+            _fixture.SetupShoppingList();
+            _fixture.SetupPriceDiscount();
+            _fixture.SetupExpectedResult();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabase();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
+                    .ExcludeListDiscountId().WithCreatedAtPrecision());
+        }
+
+        [Fact]
+        public async Task AddShoppingListDiscountAsync_WithPercentageDiscount_ShouldAddShoppingListDiscount()
+        {
+            // Arrange
+            _fixture.SetupShoppingList();
+            _fixture.SetupPercentageDiscount();
+            _fixture.SetupExpectedResult();
+            _fixture.SetupContract();
+            await _fixture.SetupDatabase();
+
+            TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
+
+            // Act
+            var result = await _fixture.ActAsync();
+
+            // Assert
+            result.Should().BeOfType<NoContent>();
+
+            using var assertScope = _fixture.CreateServiceScope();
+
+            var shoppingLists = (await _fixture.LoadAllShoppingListsAsync(assertScope)).ToList();
+            shoppingLists.Should().HaveCount(1);
+            shoppingLists.Single().Should().BeEquivalentTo(_fixture.ExpectedResult,
+                opt => opt.ExcludeShoppingListCycleRef().ExcludeRowVersion().ExcludeItemsOnListId().ExcludeDiscountId()
+                    .ExcludeListDiscountId().WithCreatedAtPrecision());
+        }
+
+        private class AddShoppingListDiscountFixture(DockerFixture dockerFixture) : ShoppingListEndpointFixture(dockerFixture)
+        {
+            private ShoppingList? _shoppingList;
+            private ShoppingListDiscount? _discount;
+            private AddShoppingListDiscountContract? _contract;
+            public ShoppingList? ExpectedResult { get; private set; }
+
+            public async Task<IResult> ActAsync()
+            {
+                TestPropertyNotSetException.ThrowIfNull(ExpectedResult);
+                TestPropertyNotSetException.ThrowIfNull(_contract);
+
+                var scope = CreateServiceScope();
+                return await ShoppingListEndpoints.AddShoppingListDiscount(
+                    ExpectedResult.Id,
+                    _contract,
+                    scope.ServiceProvider.GetRequiredService<ICommandDispatcher>(),
+                    scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
+                    scope.ServiceProvider.GetRequiredService<IToDomainConverter<(Guid, AddShoppingListDiscountContract), AddShoppingListDiscountCommand>>(),
+                    TestContext.Current.CancellationToken);
+            }
+
+            public async Task SetupDatabase()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+
+                await ApplyMigrationsAsync(ArrangeScope);
+
+                var shoppingListContext = GetContextInstance<ShoppingListContext>(ArrangeScope);
+
+                await shoppingListContext.AddAsync(_shoppingList);
+
+                await shoppingListContext.SaveChangesAsync();
+            }
+
+            public void SetupShoppingList()
+            {
+                _shoppingList = ShoppingListEntityMother.ListDiscount().Create();
+            }
+
+            public void SetupPercentageDiscount()
+            {
+                _discount = ShoppingListDiscountEntityMother.Percentage().Create();
+            }
+
+            public void SetupPriceDiscount()
+            {
+                _discount = ShoppingListDiscountEntityMother.Price().Create();
+            }
+
+            public void SetupExpectedResult()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_shoppingList);
+                TestPropertyNotSetException.ThrowIfNull(_discount);
+
+                ExpectedResult = _shoppingList.DeepClone();
+                ExpectedResult.ListDiscounts.Add(_discount);
+            }
+
+            public void SetupContract()
+            {
+                TestPropertyNotSetException.ThrowIfNull(_discount);
+                _contract = new AddShoppingListDiscountContract(_discount.DiscountPrice, _discount.DiscountPercentage);
+            }
+
+        }
+    }
+
     private abstract class ShoppingListEndpointFixture : DatabaseFixture
     {
         protected ShoppingListEndpointFixture(DockerFixture dockerFixture) : base(dockerFixture)
@@ -2147,9 +2359,9 @@ public class ShoppingListEndpointsIntegrationTests
         {
             yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
-            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
             yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
         }
     }

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Recipes.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.Shared.Models;
+namespace Xipona.Api.Domain.Shared.Models;
 
 public interface ISortableCollection<in T> where T : ISortable
 {

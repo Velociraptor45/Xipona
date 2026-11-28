@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Manufacturers;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Endpoint.v1.Converters.ToDomain.Manufacturers;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Converters.ToDomain.Manufacturers;
+namespace Xipona.Api.Endpoints.Tests.v1.Converters.ToDomain.Manufacturers;
 
 public class CreateManufacturerCommandConverterTests
     : ToDomainConverterTestBase<string, CreateManufacturerCommand, CreateManufacturerCommandConverter>

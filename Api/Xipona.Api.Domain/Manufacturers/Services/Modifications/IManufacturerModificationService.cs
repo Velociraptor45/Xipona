@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
+﻿namespace Xipona.Api.Domain.Manufacturers.Services.Modifications;
 
 public interface IManufacturerModificationService
 {

@@ -21,7 +21,7 @@
     margin-top: -5px;
 }
 
-.summary-price {
+.final-price {
     font-size: 16px;
 }
 
@@ -29,8 +29,8 @@
     font-size: 0.5em;
 }
 
-.price-sum .currency {
-    padding-left: 2px;
+.discounted {
+    text-decoration: line-through;
 }
 
 @media (min-width: 769px) {

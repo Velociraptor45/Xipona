@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Recipes.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
+namespace Xipona.Api.Domain.Recipes.Reasons;
 
 public class CannotChangeStoreOfIngredientWithoutShoppingListPropertiesReason : IReason
 {

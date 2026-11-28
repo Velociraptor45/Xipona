@@ -1,22 +1,22 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Summary;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.InitialStoreCreator;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Persistence;
+using Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Summary;
+using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Stores.States;
 using RestEase;
-using ShoppingListItem = ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.ShoppingListItem;
+using ShoppingListItem = Xipona.Frontend.Redux.ShoppingList.States.ShoppingListItem;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Effects;
+namespace Xipona.Frontend.Redux.ShoppingList.Effects;
 
 public class ShoppingListEffects
 {

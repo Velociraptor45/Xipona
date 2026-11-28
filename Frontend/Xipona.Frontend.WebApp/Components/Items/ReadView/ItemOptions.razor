@@ -1,0 +1,71 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions.Editor
+@using Xipona.Frontend.Redux.Items.Actions.Merges
+@using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.WebApp.Components.Items.Merger
+
+@inject IDispatcher Dispatcher
+@inject IState<ItemState> State
+
+<Dropdown Placement="Placement.BottomRight" Trigger="@([Trigger.Click])">
+    <Overlay>
+        <Menu Selectable="false">
+            @if (State.Value.Editor.Item!.IsFavorite)
+            {
+                <MenuItem Class="d-flex" OnClick="OnUnStarButtonClicked">
+                    <i class="bi bi-star-fill"></i>
+                    <span>Un-Favorite</span>
+                </MenuItem>
+            }
+            else
+            {
+                <MenuItem Class="d-flex" OnClick="OnStarButtonClicked">
+                    <i class="bi bi-star"></i>
+                    <span>Favorite</span>
+                </MenuItem>
+            }
+            <MenuItem Class="d-flex" OnClick="OnMergeItemButtonClicked">
+                <i class="bi bi-sign-merge-right"></i>
+                <span>Merge</span>
+            </MenuItem>
+            <MenuItem Class="d-flex" OnClick="OnOpenDeleteDialogButtonClicked" Style="color:#e74c3c">
+                <i class="bi bi-trash mr-1"></i>
+                <span>Delete</span>
+            </MenuItem>
+        </Menu>
+    </Overlay>
+    <ChildContent>
+        <Button>
+            <i class="bi bi-three-dots-vertical"></i>
+        </Button>
+    </ChildContent>
+</Dropdown>
+
+<DeleteItem></DeleteItem>
+<MergeItemSelectionDialog></MergeItemSelectionDialog>
+
+@code
+{
+    private void OnStarButtonClicked()
+    {
+        Dispatcher.Dispatch(new MarkItemAsFavoriteAction());
+    }
+
+    private void OnUnStarButtonClicked()
+    {
+        Dispatcher.Dispatch(new UnmarkItemAsFavoriteAction());
+    }
+
+    private void OnMergeItemButtonClicked()
+    {
+        Dispatcher.Dispatch(new OpenMergeItemSelectorAction());
+    }
+
+    private void OnOpenDeleteDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new OpenDeleteItemDialogAction());
+    }
+
+}

@@ -1,15 +1,16 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IItemPriceCalculationService PriceCalculationService;
-
 @using Fluxor;
 @using System.Text
 @using System.Globalization;
-@using ProjectHermes.Xipona.Frontend.Redux.Shared.States
-@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Summary
-@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
-@using ProjectHermes.Xipona.Frontend.WebApp.Services;
+@using Xipona.Frontend.Redux.Shared.States
+@using Xipona.Frontend.Redux.ShoppingList.Actions.Summary
+@using Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.WebApp.Services;
+@using Xipona.Frontend.WebApp.Services.Prices
 
+@inject IPriceLabelService PriceLabelService
+@inject IItemPriceCalculationService PriceCalculationService;
 @inject IState<ShoppingListState> State
 @inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
@@ -19,15 +20,9 @@
     <div class="d-flex flex-column mt-2 summary @(SharedState.Value.IsOnline ? "" : "summary-retry")">
         <div class="pb-1 d-flex align-items-end flex-column">
             <div class="d-flex border-top pt-1 price-sum">
-                <div class="d-flex">
-                    <span>@GetInBasketPrice()</span>
-                    <span class="currency">€</span>
-                </div>
+                <div>@GetInBasketPrice()</div>
                 <span class="px-1">/</span>
-                <div class="d-flex">
-                    <span>@GetTotalListPrice()</span>
-                    <span class="currency">€</span>
-                </div>
+                <div>@GetTotalListPrice()</div>
             </div>
         </div>
         <Button Type="@ButtonType.Primary"
@@ -44,15 +39,17 @@
             <div>@GetItemInBasketCountText()</div>
             @if (State.Value.ShoppingList.ItemNotInBasketCount > 0)
             {
-                <div class="pt-2">@GetItemNotInBasketCountText()</div>
+                <div class="pt-1">@GetItemNotInBasketCountText()</div>
+            }
+            @if (State.Value.ShoppingList.Discounts.Count > 0)
+            {
+                <div class="pt-1">@GetDiscountCountText()</div>
             }
         </Modal>
     </div>
 }
 
 @code {
-    private string Title => $"Finish shopping at {State.Value.SelectedStore?.Name}";
-
     private void OnSummaryButtonClicked()
     {
         if (!State.Value.ShoppingList!.AnyItemInBasket)
@@ -89,38 +86,53 @@
     private string GetTotalListPrice()
     {
         var price = PriceCalculationService.GetTotalPrice(State.Value.ShoppingList!);
-        return price.ToString("0.00");
+        return PriceLabelService.GetPriceLabel(price, string.Empty);
     }
 
     private string GetInBasketPrice()
     {
         var price = PriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!);
-        return price.ToString("0.00");
+        return PriceLabelService.GetPriceLabel(price, string.Empty);
+    }
+
+    private string GetInBasketPriceWithDiscounts()
+    {
+        var price = PriceCalculationService.GetInBasketPrice(State.Value.ShoppingList!, includeDiscounts: true);
+        return PriceLabelService.GetPriceLabel(price, string.Empty);
     }
 
     private RenderFragment GetFooter()
     {
-        return 
-             @<Template>
-                   <div class="d-flex">
-                       <div class="summary-price font-weight-bold align-self-center">@GetInBasketPrice()€</div>
-                       <Button Class="ml-auto"
-                               OnClick="OnFinishListButtonClicked"
-                               Disabled="@State.Value.Summary.IsEditingFinishedAt"
-                               @key="@("submit")"
-                               Type="@ButtonType.Primary"
-                               Loading="@State.Value.Summary.IsSaving">
-                           Finish
-                       </Button>
-                   </div>
-               </Template>;
+        return
+            @<Template>
+                <div class="d-flex">
+                    <div class="final-price d-flex align-items-center">
+                        <span class="font-weight-bold @(State.Value.ShoppingList!.Discounts.Any() ? "discounted" : "")">
+                            @GetInBasketPrice()
+                        </span>
+                        @if (State.Value.ShoppingList!.Discounts.Count > 0)
+                        {
+                            <span class="px-1">=></span>
+                            <span class="font-weight-bold">@GetInBasketPriceWithDiscounts()</span>
+                        }
+                    </div>
+                    <Button Class="ml-auto"
+                            OnClick="OnFinishListButtonClicked"
+                            Disabled="@State.Value.Summary.IsEditingFinishedAt"
+                            @key="@("submit")"
+                            Type="@ButtonType.Primary"
+                            Loading="@State.Value.Summary.IsSaving">
+                        Finish
+                    </Button>
+                </div>
+            </Template>;
     }
 
     private RenderFragment GetTitle()
     {
         return @<Template>
                    <div class ="summary-header">
-                       <div>@Title</div>
+                       <div>@($"Finish shopping at {State.Value.SelectedStore?.Name}")</div>
                        <div>
                            @if (State.Value.Summary.IsEditingFinishedAt)
                            {
@@ -160,6 +172,17 @@
                        </div>
                    </div>
             </Template>;
+    }
+
+    private string GetDiscountCountText()
+    {
+        var builder = new StringBuilder();
+        var count = State.Value.ShoppingList!.Discounts.Count;
+        builder.Append(count.ToString());
+        builder.Append(" shopping list");
+
+        builder.Append(count == 1 ? " discount " : " discounts ");
+        return builder.ToString();
     }
 
     private string GetItemInBasketCountText()

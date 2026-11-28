@@ -1,8 +1,8 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Common;
+namespace Xipona.Api.Domain.Tests.Common;
 
 public class RecordStructTests
 {

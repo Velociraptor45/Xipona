@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToContract;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Entities;
-using Ingredient = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient;
-using PreparationStep = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Repositories.Recipes.Converters.ToContract;
+using Xipona.Api.Repositories.Recipes.Entities;
+using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
+using PreparationStep = Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Recipes.Converters.ToContract;
+namespace Xipona.Api.Repositories.Tests.Recipes.Converters.ToContract;
 
 public class RecipeConverterTests : ToContractConverterTestBase<IRecipe, Recipe, RecipeConverter>
 {

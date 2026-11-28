@@ -1,11 +1,11 @@
 ﻿using Moq.Language.Flow;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.Shared.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Validation;
+namespace Xipona.Api.Domain.TestKit.Items.Services.Validation;
 
 public class ValidatorMock : Mock<IValidator>
 {

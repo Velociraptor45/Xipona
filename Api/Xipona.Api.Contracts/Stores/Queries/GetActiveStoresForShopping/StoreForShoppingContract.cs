@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping
+namespace Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping
 {
     /// <summary>
     /// Represents a store that is available for shopping.

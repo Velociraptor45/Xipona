@@ -1,8 +1,8 @@
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Core.TestKit;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 public class ItemSectionContractBuilder : TestBuilderBase<ItemSectionContract>
 {
     public ItemSectionContractBuilder WithId(Guid id)

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Secrets.Vault;
+﻿namespace Xipona.Api.Secrets.Vault;
 
 public sealed class VaultCredentials
 {

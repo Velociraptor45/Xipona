@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿namespace Xipona.Api.Domain.Manufacturers.Models;
 
 public readonly record struct ManufacturerId
 {
@@ -12,7 +12,7 @@ public readonly record struct ManufacturerId
         Value = value;
     }
 
-    public static ManufacturerId New => new(Guid.NewGuid());
+    public static ManufacturerId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

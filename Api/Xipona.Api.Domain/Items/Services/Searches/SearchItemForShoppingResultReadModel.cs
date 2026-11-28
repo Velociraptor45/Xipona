@@ -1,15 +1,15 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Queries;
+﻿using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.Domain.Stores.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
+namespace Xipona.Api.Domain.Items.Services.Searches;
 
 public class SearchItemForShoppingResultReadModel
 {
     public SearchItemForShoppingResultReadModel(ItemId id, ItemTypeId? typeId, string name, int defaultQuantity,
         Price price, string priceLabel, ManufacturerReadModel? manufacturer, ItemCategoryReadModel? itemCategory,
-        SectionReadModel defaultSection)
+        SectionReadModel defaultSection, bool isFavorite)
     {
         Id = id;
         TypeId = typeId;
@@ -20,6 +20,7 @@ public class SearchItemForShoppingResultReadModel
         Manufacturer = manufacturer;
         ItemCategory = itemCategory;
         DefaultSection = defaultSection;
+        IsFavorite = isFavorite;
     }
 
     public ItemId Id { get; }
@@ -31,4 +32,5 @@ public class SearchItemForShoppingResultReadModel
     public ManufacturerReadModel? Manufacturer { get; }
     public ItemCategoryReadModel? ItemCategory { get; }
     public SectionReadModel DefaultSection { get; }
+    public bool IsFavorite { get; }
 }

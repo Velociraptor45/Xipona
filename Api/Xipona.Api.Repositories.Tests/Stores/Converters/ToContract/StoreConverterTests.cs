@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Converters.ToContract;
-using Section = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Section;
-using Store = ProjectHermes.Xipona.Api.Repositories.Stores.Entities.Store;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.Stores.Converters.ToContract;
+using Section = Xipona.Api.Repositories.Stores.Entities.Section;
+using Store = Xipona.Api.Repositories.Stores.Entities.Store;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Stores.Converters.ToContract;
+namespace Xipona.Api.Repositories.Tests.Stores.Converters.ToContract;
 
 public class StoreConverterTests : ToContractConverterTestBase<IStore, Store, StoreConverter>
 {

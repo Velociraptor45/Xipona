@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands
+﻿namespace Xipona.Api.Contracts.RecipeTags.Commands
 {
     /// <summary>
     /// Represents the contract for creating a recipe tag.

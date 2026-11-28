@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models.Factories;
-using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Models.Factories;
+using RecipeTag = Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Converters.ToDomain;
+namespace Xipona.Api.Repositories.RecipeTags.Converters.ToDomain;
 
 public class RecipeTagConverter : IToDomainConverter<RecipeTag, IRecipeTag>
 {

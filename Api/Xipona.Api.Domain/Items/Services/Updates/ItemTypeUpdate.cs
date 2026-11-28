@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
+namespace Xipona.Api.Domain.Items.Services.Updates;
 
 public class ItemTypeUpdate
 {

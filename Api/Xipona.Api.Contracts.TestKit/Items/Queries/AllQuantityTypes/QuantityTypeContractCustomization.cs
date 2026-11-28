@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.AllQuantityTypes;
+namespace Xipona.Api.Contracts.TestKit.Items.Queries.AllQuantityTypes;
 
 public class QuantityTypeContractCustomization : ICustomization
 {
@@ -17,8 +17,8 @@ public class QuantityTypeContractCustomization : ICustomization
 
         private readonly QuantityTypeContract[] _quantityTypes =
         [
-            new QuantityTypeContract(0, "Unit", 1, "€", "x", 1),
-            new QuantityTypeContract(1, "Weight", 100, "€/kg", "g", 1000),
+            new QuantityTypeContract(0, "Unit", 1, "", "x", 1),
+            new QuantityTypeContract(1, "Weight", 100, "/kg", "g", 1000),
         ];
 
         public object Create(object request, ISpecimenContext context)

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Deletions;
+﻿using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Deletions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Services.Deletions;
+namespace Xipona.Api.Domain.TestKit.Stores.Services.Deletions;
 
 public class StoreDeletionServiceMock : Mock<IStoreDeletionService>
 {

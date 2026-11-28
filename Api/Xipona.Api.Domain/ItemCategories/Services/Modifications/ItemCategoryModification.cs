@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
+namespace Xipona.Api.Domain.ItemCategories.Services.Modifications;
 
 public class ItemCategoryModification
 {

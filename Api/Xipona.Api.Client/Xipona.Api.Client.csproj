@@ -2,17 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <RootNamespace>ProjectHermes.Xipona.Api.Client</RootNamespace>
+    <RootNamespace>Xipona.Api.Client</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Title>ProjectHermes Xipona Api Client</Title>
-    <Version>0.13.1</Version>
+    <Title>Xipona Api Client</Title>
+    <Version>0.14.0</Version>
     <Authors>Velociraptor45</Authors>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Velociraptor45/Xipona</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageId>ProjectHermes.Xipona.Api.Client</PackageId>
+    <PackageId>Xipona.Api.Client</PackageId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestEase" Version="1.6.4" />
+    <PackageReference Include="RestEase" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,18 +1,19 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using Xipona.Frontend.Redux.Items.Actions.Search;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
 using RestEase;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Saving;
 using Timer = System.Timers.Timer;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
+namespace Xipona.Frontend.Redux.Items.Effects;
 
 public sealed class ItemEditorEffects
 {
@@ -21,7 +22,7 @@ public sealed class ItemEditorEffects
     private readonly NavigationManager _navigationManager;
     private readonly IShoppingListNotificationService _notificationService;
 
-    private Timer? _leaveEditorTimer;
+    private Timer? _leaveViewTimer;
 
     public ItemEditorEffects(IApiClient client, IState<ItemState> state, NavigationManager navigationManager,
         IShoppingListNotificationService notificationService)
@@ -163,12 +164,12 @@ public sealed class ItemEditorEffects
     }
 
     [EffectMethod]
-    public Task HandleLeaveItemEditorAction(LeaveItemEditorAction action, IDispatcher dispatcher)
+    public Task HandleLeaveItemViewAction(LeaveItemViewAction action, IDispatcher dispatcher)
     {
-        if (_leaveEditorTimer is not null)
+        if (_leaveViewTimer is not null)
         {
-            _leaveEditorTimer.Stop();
-            _leaveEditorTimer.Dispose();
+            _leaveViewTimer.Stop();
+            _leaveViewTimer.Dispose();
         }
 
         _navigationManager.NavigateTo(PageRoutes.Items);
@@ -213,7 +214,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new CreateItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully created item {item.Name}");
     }
 
@@ -251,7 +252,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new UpdateItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully updated item {item.Name}");
     }
 
@@ -289,7 +290,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new ModifyItemFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully modified item {item.Name}");
     }
 
@@ -331,7 +332,7 @@ public sealed class ItemEditorEffects
         }
 
         dispatcher.Dispatch(new MakeItemPermanentFinishedAction());
-        dispatcher.Dispatch(new LeaveItemEditorAction(true));
+        dispatcher.Dispatch(new LeaveItemViewAction(true));
         _notificationService.NotifySuccess($"Successfully made item {item.Name} permanent");
     }
 
@@ -370,17 +371,73 @@ public sealed class ItemEditorEffects
         if (!action.LeaveEditor)
             return Task.CompletedTask;
 
-        if (_leaveEditorTimer is not null)
+        if (_leaveViewTimer is not null)
         {
-            _leaveEditorTimer.Stop();
-            _leaveEditorTimer.Dispose();
+            _leaveViewTimer.Stop();
+            _leaveViewTimer.Dispose();
         }
 
-        _leaveEditorTimer = new Timer(Delays.LeaveEditorAfterDelete);
-        _leaveEditorTimer.AutoReset = false;
-        _leaveEditorTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemEditorAction(true));
-        _leaveEditorTimer.Start();
+        _leaveViewTimer = new Timer(Delays.LeaveEditorAfterDelete);
+        _leaveViewTimer.AutoReset = false;
+        _leaveViewTimer.Elapsed += (_, _) => dispatcher.Dispatch(new LeaveItemViewAction(true));
+        _leaveViewTimer.Start();
 
         return Task.CompletedTask;
+    }
+
+    [EffectMethod(typeof(MarkItemAsFavoriteAction))]
+    public async Task HandleMarkItemAsFavoriteAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new MarkItemAsFavoriteStartedAction());
+
+        var item = _state.Value.Editor.Item!;
+
+        try
+        {
+            await _client.MarkItemAsFavoriteAsync(item.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Marking item as favorite failed", e));
+            dispatcher.Dispatch(new MarkItemAsFavoriteFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Marking item as favorite failed", e.Message));
+            dispatcher.Dispatch(new MarkItemAsFavoriteFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new MarkItemAsFavoriteFinishedAction());
+        _notificationService.NotifySuccess($"Successfully marked item {item.Name} as favorite");
+    }
+
+    [EffectMethod(typeof(UnmarkItemAsFavoriteAction))]
+    public async Task HandleUnmarkItemAsFavoriteAction(IDispatcher dispatcher)
+    {
+        dispatcher.Dispatch(new UnmarkItemAsFavoriteStartedAction());
+
+        var item = _state.Value.Editor.Item!;
+
+        try
+        {
+            await _client.UnmarkItemAsFavoriteAsync(item.Id);
+        }
+        catch (ApiException e)
+        {
+            dispatcher.Dispatch(new DisplayApiExceptionNotificationAction("Unmarking item as favorite failed", e));
+            dispatcher.Dispatch(new UnmarkItemAsFavoriteFinishedAction());
+            return;
+        }
+        catch (HttpRequestException e)
+        {
+            dispatcher.Dispatch(new DisplayErrorNotificationAction("Unmarking item as favorite failed", e.Message));
+            dispatcher.Dispatch(new UnmarkItemAsFavoriteFinishedAction());
+            return;
+        }
+
+        dispatcher.Dispatch(new UnmarkItemAsFavoriteFinishedAction());
+        _notificationService.NotifySuccess($"Successfully unmarked item {item.Name} as favorite");
     }
 }

@@ -1,0 +1,41 @@
+﻿
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts
+@using Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.WebApp.Services.Prices
+
+@inject IPriceLabelService PriceLabelService
+@inject IDispatcher Dispatcher
+
+<div class="d-flex mt-2">
+    <div>
+        @FormatDiscount()
+    </div>
+    <div class="ml-2">
+        <Button Size="ButtonSize.Small" Danger="true" Loading="Model.IsDeleting"
+                OnClick="RemoveDiscount">
+            <i class="bi bi-dash"></i>
+        </Button>
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public ShoppingListDiscount Model { get; set; }
+
+    private void RemoveDiscount()
+    {
+        Dispatcher.Dispatch(new RemoveDiscountAction(Model.Id));
+    }
+
+    private string FormatDiscount()
+    {
+        if (Model.Type == ShoppingListDiscountType.Percentage)
+            return $"{Model.DiscountValue:n2}%";
+
+        return PriceLabelService.GetPriceLabel(Model.DiscountValue, string.Empty);
+    }
+}

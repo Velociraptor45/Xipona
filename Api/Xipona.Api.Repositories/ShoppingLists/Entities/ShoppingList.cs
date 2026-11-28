@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+namespace Xipona.Api.Repositories.ShoppingLists.Entities;
 
 public class ShoppingList
 {
@@ -9,7 +9,7 @@ public class ShoppingList
     {
         ItemsOnList ??= new List<ItemsOnList>();
         Discounts ??= new List<Discount>();
-        RowVersion ??= [];
+        ListDiscounts ??= new List<ShoppingListDiscount>();
     }
 
     [Key]
@@ -26,6 +26,9 @@ public class ShoppingList
     [InverseProperty("ShoppingList")]
     public ICollection<Discount> Discounts { get; set; }
 
+    [InverseProperty("ShoppingList")]
+    public ICollection<ShoppingListDiscount> ListDiscounts { get; set; }
+
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public uint RowVersion { get; set; }
 }

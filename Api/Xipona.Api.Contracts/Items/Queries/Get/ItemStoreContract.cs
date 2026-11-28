@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get
+namespace Xipona.Api.Contracts.Items.Queries.Get
 {
     /// <summary>
     /// Represents a store where an item is available.

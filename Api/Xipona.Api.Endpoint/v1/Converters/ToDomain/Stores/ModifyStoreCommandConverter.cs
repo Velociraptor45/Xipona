@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
+﻿using Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
+using Xipona.Api.Contracts.Stores.Commands.ModifyStore;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Stores;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Stores;
 
 public class ModifyStoreCommandConverter : IToDomainConverter<ModifyStoreContract, ModifyStoreCommand>
 {

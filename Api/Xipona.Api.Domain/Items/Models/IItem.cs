@@ -1,13 +1,14 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models;
+namespace Xipona.Api.Domain.Items.Models;
 
 public interface IItem
 {
@@ -26,8 +27,10 @@ public interface IItem
     DateTimeOffset? UpdatedOn { get; }
     ItemId? PredecessorId { get; }
     DateTimeOffset CreatedAt { get; }
+    bool IsFavorite { get; }
 
     void Delete();
+    void MarkAsMerged(ItemId newItemId, ItemTypeId newItemTypeId);
 
     SectionId GetDefaultSectionIdForStore(StoreId storeId);
 
@@ -41,7 +44,7 @@ public interface IItem
 
     Task ModifyAsync(ItemWithTypesModification modification, IValidator validator);
 
-    bool TryGetType(ItemTypeId itemTypeId, out IItemType? itemType);
+    bool TryGetType(ItemTypeId itemTypeId, [NotNullWhen(true)] out IItemType? itemType);
 
     IReadOnlyCollection<IItemType> GetTypesFor(StoreId storeId);
 
@@ -59,4 +62,6 @@ public interface IItem
     void TransferToDefaultSection(SectionId oldSectionId, SectionId newSectionId);
 
     void RemoveAvailabilitiesFor(StoreId storeId);
+    void MarkAsFavoriteAsync();
+    void UnmarkAsFavoriteAsync();
 }

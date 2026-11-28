@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar;
+using Xipona.Frontend.Redux.ShoppingList.Reducers;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.ShoppingLists.Reducers;
+namespace Xipona.Frontend.Redux.Tests.ShoppingLists.Reducers;
 
 public class ShoppingListSearchBarReducerTests
 {
@@ -234,7 +234,7 @@ public class ShoppingListSearchBarReducerTests
         }
 
         [Fact]
-        public void OnSearchItemForShoppingListFinished_WithValidData_ShouldSetAndOrderSearchResults()
+        public void OnSearchItemForShoppingListFinished_WithValidData_ShouldSetResults()
         {
             // Arrange
             _fixture.SetupInitialState();
@@ -272,25 +272,14 @@ public class ShoppingListSearchBarReducerTests
                 {
                     SearchBar = ExpectedState.SearchBar with
                     {
-                        Results = new List<SearchItemForShoppingListResult>
-                        {
-                            new DomainTestBuilder<SearchItemForShoppingListResult>()
-                                .FillConstructorWith("name", $"A{new DomainTestBuilder<string>().Create()}")
-                                .Create(),
-                            new DomainTestBuilder<SearchItemForShoppingListResult>()
-                                .FillConstructorWith("name", $"B{new DomainTestBuilder<string>().Create()}")
-                                .Create(),
-                            new DomainTestBuilder<SearchItemForShoppingListResult>()
-                                .FillConstructorWith("name", $"Z{new DomainTestBuilder<string>().Create()}")
-                                .Create()
-                        }
+                        Results = new DomainTestBuilder<SearchItemForShoppingListResult>().CreateMany(3).ToList()
                     }
                 };
             }
 
             public void SetupAction()
             {
-                Action = new SearchItemForShoppingListFinishedAction(ExpectedState.SearchBar.Results.Reverse().ToList());
+                Action = new SearchItemForShoppingListFinishedAction(ExpectedState.SearchBar.Results.ToList());
             }
         }
     }

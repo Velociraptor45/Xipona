@@ -1,8 +1,10 @@
 ﻿using Fluxor;
 using Moq;
+using Moq.Contrib.InOrder;
 using Moq.Contrib.InOrder.Extensions;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+namespace Xipona.Frontend.Redux.TestKit.Common;
 
 public class DispatcherMock : Mock<IDispatcher>
 {
@@ -10,13 +12,13 @@ public class DispatcherMock : Mock<IDispatcher>
     {
     }
 
-    public void SetupDispatch<T>(T action)
+    public void SetupDispatch<T>(T action, IQueueComponent component)
     {
-        this.SetupInOrder(x => x.Dispatch(action));
+        this.SetupInOrder(x => x.Dispatch(It.Is<T>(x => x.IsEquivalentTo(action))), component);
     }
 
-    public void SetupDispatchAny<T>()
+    public void SetupDispatchAny<T>(IQueueComponent component)
     {
-        this.SetupInOrder(x => x.Dispatch(It.IsAny<T>()));
+        this.SetupInOrder(x => x.Dispatch(It.IsAny<T>()), component);
     }
 }

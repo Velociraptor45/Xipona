@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Manufacturers.Reasons;
+using Xipona.Api.Domain.Manufacturers.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+namespace Xipona.Api.Domain.Manufacturers.Models;
 
 public class Manufacturer : AggregateRoot, IManufacturer
 {

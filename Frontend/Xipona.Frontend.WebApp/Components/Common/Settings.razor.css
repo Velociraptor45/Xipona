@@ -1,0 +1,25 @@
+﻿.bi-x-lg {
+    cursor: pointer;
+}
+
+hr {
+    margin-top: -2px;
+}
+
+.section-title {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.settings-container {
+    color: var(--secondary-contrast-color);
+}
+
+::deep .currency-select {
+    max-width: 70px;
+    margin-top: 4px;
+}
+
+.currency-skeleton {
+    height: 36px;
+}

@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Secrets.Configs;
+﻿namespace Xipona.Api.Secrets.Configs;
 
 public class ConnectionStrings
 {

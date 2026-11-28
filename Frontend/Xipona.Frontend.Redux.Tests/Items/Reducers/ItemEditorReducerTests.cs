@@ -1,14 +1,15 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Editor.InputChanges;
+using Xipona.Frontend.Redux.Items.Reducers;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.Reducers;
+namespace Xipona.Frontend.Redux.Tests.Items.Reducers;
 
 public partial class ItemEditorReducerTests
 {
@@ -448,6 +449,7 @@ public partial class ItemEditorReducerTests
                             false,
                             string.Empty,
                             false,
+                            false,
                             ExpectedState.QuantityTypes.First(),
                             1,
                             ExpectedState.QuantityTypesInPacket.First(),
@@ -577,15 +579,7 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         IsLoadingEditedItem = false,
-                        ValidationResult = new(),
-                        ItemCategorySelector = ExpectedState.Editor.ItemCategorySelector with
-                        {
-                            Input = string.Empty
-                        },
-                        ManufacturerSelector = ExpectedState.Editor.ManufacturerSelector with
-                        {
-                            Input = string.Empty
-                        }
+                        ReadOnlyItem = ExpectedState.Editor.Item
                     }
                 };
             }
@@ -597,8 +591,8 @@ public partial class ItemEditorReducerTests
                     Editor = ExpectedState.Editor with
                     {
                         Item = new DomainTestBuilder<EditedItem>().Create(),
-                        IsLoadingEditedItem = true,
-                        ValidationResult = new DomainTestBuilder<EditorValidationResult>().Create()
+                        ReadOnlyItem = new DomainTestBuilder<EditedItem>().Create(),
+                        IsLoadingEditedItem = true
                     }
                 };
             }
@@ -650,6 +644,7 @@ public partial class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
+                        ItemId = null,
                         Item = null
                     }
                 };
@@ -661,7 +656,9 @@ public partial class ItemEditorReducerTests
                 {
                     Editor = ExpectedState.Editor with
                     {
-                        Item = null
+                        ItemId = null,
+                        Item = null,
+                        ReadOnlyItem = null
                     }
                 };
             }

@@ -1,16 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.DomainEventHandlers;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.DomainEventHandlers;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ItemCategories.Adapters;
+namespace Xipona.Api.Repositories.ItemCategories.Adapters;
 
 public class ItemCategoryRepository : IItemCategoryRepository
 {
@@ -40,7 +39,7 @@ public class ItemCategoryRepository : IItemCategoryRepository
         int? limit)
     {
         var query = _dbContext.ItemCategories.AsNoTracking()
-            .Where(category => category.Name.Contains(searchInput));
+            .Where(category => EF.Functions.ILike(category.Name, $"%{searchInput}%"));
 
         if (!includeDeleted)
             query = query.Where(category => !category.Deleted);

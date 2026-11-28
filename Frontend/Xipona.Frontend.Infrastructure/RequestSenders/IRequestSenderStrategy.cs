@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
+﻿using Xipona.Frontend.Redux.Shared.Ports.Requests;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
+namespace Xipona.Frontend.Infrastructure.RequestSenders;
 
 public interface IRequestSenderStrategy
 {

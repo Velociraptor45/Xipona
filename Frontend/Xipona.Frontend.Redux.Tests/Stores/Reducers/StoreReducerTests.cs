@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.Reducers;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
-using ProjectHermes.Xipona.Frontend.TestTools.Exceptions;
+using Xipona.Frontend.Redux.Stores.Actions;
+using Xipona.Frontend.Redux.Stores.Reducers;
+using Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Stores.Reducers;
+namespace Xipona.Frontend.Redux.Tests.Stores.Reducers;
 
 public class StoreReducerTests
 {

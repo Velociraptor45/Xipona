@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Stores.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Stores.Reasons;
+using Xipona.Api.Domain.Stores.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Models;
+namespace Xipona.Api.Domain.Stores.Models;
 
 public class Section : ISection
 {

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+﻿using Xipona.Frontend.Redux.Shared.States.Validators;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.States.Validators;
+namespace Xipona.Frontend.Redux.Recipes.States.Validators;
 
 public class IngredientItemCategoryValidator : IValidator<Guid>
 {

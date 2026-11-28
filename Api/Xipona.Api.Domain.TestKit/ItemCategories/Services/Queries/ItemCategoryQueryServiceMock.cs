@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services.Queries;
+namespace Xipona.Api.Domain.TestKit.ItemCategories.Services.Queries;
 
 public class ItemCategoryQueryServiceMock : Mock<IItemCategoryQueryService>
 {

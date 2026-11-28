@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities;
+namespace Xipona.Api.Repositories.RecipeTags.Entities;
 
 public class RecipeTag
 {
@@ -15,5 +15,5 @@ public class RecipeTag
     public string Name { get; set; } = string.Empty;
 
     [Timestamp]
-    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
+    public uint RowVersion { get; set; }
 }

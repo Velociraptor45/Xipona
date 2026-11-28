@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
+﻿using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Recipes.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
+namespace Xipona.Api.Domain.TestKit.Recipes.Models.Factories;
 
 public class PreparationStepFactoryMock : Mock<IPreparationStepFactory>
 {

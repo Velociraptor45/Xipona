@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using PreparationStep = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using PreparationStep = Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Recipes.Converters.ToDomain;
 
 public class PreparationStepConverter : IToDomainConverter<Entities.PreparationStep, IPreparationStep>
 {

@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Recipes.ToContract;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Recipes.States;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+﻿using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Frontend.Infrastructure.Converters.Recipes.ToContract;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.TestKit.Recipes.States;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.Recipes.ToContract;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.Recipes.ToContract;
 
 public class ModifyRecipeContractConverterTests
     : ToContractConverterBase<EditedRecipe, ModifyRecipeContract, ModifyRecipeContractConverter>

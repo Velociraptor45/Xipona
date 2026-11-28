@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.TestKit.Common;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Core.Tests.Converter;
+namespace Xipona.Api.Core.Tests.Converter;
 
 public abstract class ToDomainFailedConverterTestBase<TSource, TDest, TConverter, TException>
     where TConverter : IToDomainConverter<TSource, TDest>

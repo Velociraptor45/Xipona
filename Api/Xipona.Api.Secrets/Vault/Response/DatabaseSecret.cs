@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ProjectHermes.Xipona.Api.Secrets.Vault.Response;
+namespace Xipona.Api.Secrets.Vault.Response;
 
 internal sealed class DatabaseSecret
 {

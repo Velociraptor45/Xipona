@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models.Factories;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Models.Factories;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Manufacturers.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Manufacturers.Converters.ToDomain;
 
 public class ManufacturerConverter : IToDomainConverter<Entities.Manufacturer, IManufacturer>
 {

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Endpoint.v1.Converters.ToContract.ShoppingLists;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Converters.ToContract.ShoppingLists;
+namespace Xipona.Api.Endpoints.Tests.v1.Converters.ToContract.ShoppingLists;
 
 public class TemporaryShoppingListItemContractConverterTests :
     ToContractConverterTestBase<TemporaryShoppingListItemReadModel, TemporaryShoppingListItemContract,

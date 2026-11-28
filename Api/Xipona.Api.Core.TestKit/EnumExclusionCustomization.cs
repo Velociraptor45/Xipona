@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Kernel;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Api.Core.TestKit;
+namespace Xipona.Api.Core.TestKit;
 
 public class EnumExclusionCustomization<T> : ICustomization
     where T : Enum

@@ -1,0 +1,118 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using System.Globalization
+@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions.Editor.ItemCategorySelectors
+@using Xipona.Frontend.Redux.Items.Actions.Editor.ManufacturerSelectors
+@using Xipona.Frontend.Redux.Items.States
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+@{
+    var categoryName = GetItemCategoryName();
+    var manufacturerName = GetManufacturerName();
+    var quantityDisplay = GetQuantityDisplay();
+    
+    <div class="d-flex flex-wrap align-items-center item-meta mb-3">
+        @if (!string.IsNullOrWhiteSpace(categoryName))
+        {
+            <span class="meta-tag mr-2 mb-1" title="Category">
+                <i class="bi bi-tag mr-1"></i>@categoryName
+            </span>
+        }
+        @if (!string.IsNullOrWhiteSpace(manufacturerName))
+        {
+            <span class="meta-tag mr-2 mb-1" title="Manufacturer">
+                <i class="bi bi-building mr-1"></i>@manufacturerName
+            </span>
+        }
+        @if (!string.IsNullOrWhiteSpace(quantityDisplay))
+        {
+            <span class="meta-tag mr-2 mb-1" title="Quantity">
+                <i class="bi bi-box mr-1"></i>@quantityDisplay
+            </span>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public EditedItem Item { get; set; }
+    
+    private Guid? _loadedItemCategoryId;
+    private Guid? _loadedManufacturerId;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        LoadCategoryAndManufacturer();
+    }
+
+    private void LoadCategoryAndManufacturer()
+    {
+        var item = State.Value.Editor.ReadOnlyItem;
+        if (item == null)
+            return;
+
+        // this is a horrible workaround. v2 needs to rethink how data is loaded for read-only and edit views.
+        if (item.ItemCategoryId.HasValue && item.ItemCategoryId != _loadedItemCategoryId)
+        {
+            _loadedItemCategoryId = item.ItemCategoryId;
+            if (State.Value.Editor.ItemCategorySelector.ItemCategories.All(c => c.Id != item.ItemCategoryId.Value))
+            {
+                Dispatcher.Dispatch(new LoadInitialItemCategoryAction());
+            }
+        }
+
+        if (item.ManufacturerId.HasValue && item.ManufacturerId != _loadedManufacturerId)
+        {
+            _loadedManufacturerId = item.ManufacturerId;
+            if (State.Value.Editor.ManufacturerSelector.Manufacturers.All(m => m.Id != item.ManufacturerId.Value))
+            {
+                Dispatcher.Dispatch(new LoadInitialManufacturerAction());
+            }
+        }
+    }
+
+    private string? GetItemCategoryName()
+    {
+        var item = State.Value.Editor.ReadOnlyItem;
+        if (item?.ItemCategoryId == null)
+            return null;
+
+        var category = State.Value.Editor.ItemCategorySelector.ItemCategories
+            .FirstOrDefault(c => c.Id == item.ItemCategoryId.Value);
+
+        if (category == null)
+            LoadCategoryAndManufacturer();
+
+        return category?.Name;
+    }
+
+    private string? GetManufacturerName()
+    {
+        var item = State.Value.Editor.ReadOnlyItem;
+        if (item?.ManufacturerId == null)
+            return null;
+
+        var manufacturer = State.Value.Editor.ManufacturerSelector.Manufacturers
+            .FirstOrDefault(m => m.Id == item.ManufacturerId.Value);
+
+        if (manufacturer == null)
+            LoadCategoryAndManufacturer();
+
+        return manufacturer?.Name;
+    }
+
+    private string GetQuantityDisplay()
+    {
+        if (Item.QuantityType.Id == 0 && Item.QuantityInPacket.HasValue)
+        {
+            var unit = Item.QuantityInPacketType?.QuantityLabel ?? string.Empty;
+            return $"{Item.QuantityType.Name} ({Item.QuantityInPacket.Value.ToString(CultureInfo.CurrentCulture)}{unit})".Trim();
+        }
+
+        return Item.QuantityType.Name;
+    }
+    
+}

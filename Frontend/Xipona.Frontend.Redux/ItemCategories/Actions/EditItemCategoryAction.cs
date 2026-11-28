@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
+﻿using Xipona.Frontend.Redux.Shared.Actions;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ItemCategories.Actions;
+namespace Xipona.Frontend.Redux.ItemCategories.Actions;
 
 public record EditItemCategoryAction : ISearchResultTriggerAction
 {

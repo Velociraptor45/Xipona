@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToDomain;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.Items.Converters.ToDomain;
+using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.TestKit.Items.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Items.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Tests.Items.Converters.ToDomain;
 
 public class ItemTypeAvailabilityConverterTests
     : ToDomainConverterTestBase<ItemTypeAvailableAt, ItemAvailability, ItemTypeAvailabilityConverter>

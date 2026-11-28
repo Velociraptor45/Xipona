@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Exceptions;
+namespace Xipona.Frontend.Infrastructure.Exceptions;
 
 public class ApiConnectionException : Exception
 {

@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.ItemCategories.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Validations;
+namespace Xipona.Api.Domain.ItemCategories.Services.Validations;
 
 public class ItemCategoryValidationService : IItemCategoryValidationService
 {

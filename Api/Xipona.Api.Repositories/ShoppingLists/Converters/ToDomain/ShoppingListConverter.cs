@@ -1,28 +1,31 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Models.Factories;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Converters.ToDomain;
+namespace Xipona.Api.Repositories.ShoppingLists.Converters.ToDomain;
 
 public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, IShoppingList>
 {
     private readonly IShoppingListFactory _shoppingListFactory;
     private readonly IShoppingListSectionFactory _shoppingListSectionFactory;
     private readonly IToDomainConverter<ItemsOnList, ShoppingListItem> _shoppingListItemConverter;
-    private readonly IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.Discount> _discountConverter;
+    private readonly IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.ItemDiscount> _itemDiscountConverter;
+    private readonly IToDomainConverter<ShoppingListDiscount, ListDiscount> _listDiscountConverter;
 
     public ShoppingListConverter(IShoppingListFactory shoppingListFactory,
         IShoppingListSectionFactory shoppingListSectionFactory,
         IToDomainConverter<ItemsOnList, ShoppingListItem> shoppingListItemConverter,
-        IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.Discount> discountConverter)
+        IToDomainConverter<Entities.Discount, Domain.ShoppingLists.Models.ItemDiscount> itemDiscountConverter,
+        IToDomainConverter<ShoppingListDiscount, ListDiscount> listDiscountConverter)
     {
         _shoppingListFactory = shoppingListFactory;
         _shoppingListSectionFactory = shoppingListSectionFactory;
         _shoppingListItemConverter = shoppingListItemConverter;
-        _discountConverter = discountConverter;
+        _itemDiscountConverter = itemDiscountConverter;
+        _listDiscountConverter = listDiscountConverter;
     }
 
     public IShoppingList ToDomain(Entities.ShoppingList source)
@@ -46,7 +49,8 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
             sectionModels.Add(sectionModel);
         }
 
-        var discounts = _discountConverter.ToDomain(source.Discounts);
+        var itemDiscounts = _itemDiscountConverter.ToDomain(source.Discounts);
+        var listDiscounts = _listDiscountConverter.ToDomain(source.ListDiscounts);
 
         var list = (AggregateRoot)_shoppingListFactory.Create(
             new ShoppingListId(source.Id),
@@ -54,7 +58,8 @@ public class ShoppingListConverter : IToDomainConverter<Entities.ShoppingList, I
             source.CompletionDate,
             sectionModels,
             source.CreatedAt,
-            discounts);
+            itemDiscounts,
+            listDiscounts);
 
         list.EnrichWithRowVersion(source.RowVersion);
         return (list as IShoppingList)!;

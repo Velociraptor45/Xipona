@@ -1,11 +1,15 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@using System.Threading
 @using Fluxor
-@using ProjectHermes.Xipona.Frontend.Redux.Shared.States
-@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar
-@using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.Redux.Shared.States
+@using Xipona.Frontend.Redux.ShoppingList.Actions.SearchBar
+@using Xipona.Frontend.Redux.ShoppingList.Actions.ShoppingListDiscounts
+@using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator
+@using Xipona.Frontend.Redux.ShoppingList.States
+@using Xipona.Frontend.WebApp.Components.Index.Discounts
+@using Xipona.Frontend.WebApp.Services.Prices
 
+@inject IPriceLabelService PriceLabelService
 @inject IState<ShoppingListState> State
 @inject IState<SharedState> SharedState
 @inject IDispatcher Dispatcher
@@ -14,7 +18,6 @@
     <Select Class="mr-1 cursor-text"
             Placeholder="Search for item"
             ValueName="@nameof(SearchItemForShoppingListResult.SelectIdentifier)"
-            LabelName="@nameof(SearchItemForShoppingListResult.DisplayValue)"
             DataSource="State.Value.SearchBar.Results"
             TItem="SearchItemForShoppingListResult"
             TItemValue="string"
@@ -23,8 +26,37 @@
             Value="State.Value.SearchBar.Input"
             Disabled="@(!SharedState.Value.IsOnline)"
             OnSearch="OnSearchInputChanged">
+        <ItemTemplate>
+            <span>
+                @if(context.IsFavorite)
+                {
+                    <i class="bi bi-star-fill mr-1"></i>
+                }
+                @(GetEntryValue(context))
+            </span>
+        </ItemTemplate>
     </Select>
+    <Dropdown Placement="Placement.BottomRight" Trigger="@([Trigger.Click])">
+        <Overlay>
+            <Menu Selectable="false">
+                <MenuItem Class="d-flex" OnClick="OnOpenTempItemCreatorButtonClicked">
+                    <i class="bi bi-clock-history mr-1"></i>
+                    <span>Create temporary item</span>
+                </MenuItem>
+                <MenuItem Class="d-flex" OnClick="OnOpenListDiscountDialogButtonClicked">
+                    <i class="bi bi-percent mr-1"></i>
+                    <span>Manage discounts</span>
+                </MenuItem>
+            </Menu>
+        </Overlay>
+        <ChildContent>
+            <Button Disabled="@(!SharedState.Value.IsOnline)">
+                <i class="bi bi-three-dots-vertical"></i>
+            </Button>
+        </ChildContent>
+    </Dropdown>
     <TemporaryItemCreator></TemporaryItemCreator>
+    <ShoppingListDiscountDialog></ShoppingListDiscountDialog>
 </div>
 
 @code {
@@ -39,5 +71,24 @@
             return;
 
         Dispatcher.Dispatch(new ItemForShoppingListSearchResultSelectedAction(item));
+    }
+
+    private void OnOpenListDiscountDialogButtonClicked()
+    {
+        Dispatcher.Dispatch(new OpenDiscountDialogAction());
+    }
+
+    private void OnOpenTempItemCreatorButtonClicked()
+    {
+        Dispatcher.Dispatch(new OpenTemporaryItemCreatorAction());
+    }
+
+    private string GetEntryValue(SearchItemForShoppingListResult item)
+    {
+        var price = PriceLabelService.GetPriceLabel(item.Price, item.PriceLabel);
+
+        return string.IsNullOrWhiteSpace(item.ManufacturerName)
+            ? $"{item.Name} | {price}"
+            : $"{item.Name} | {item.ManufacturerName} | {price}";
     }
 }

@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.RecipeTags.Queries.GetAll;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Services;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.RecipeTags.Queries.GetAll;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.TestKit.RecipeTags.Models;
+using Xipona.Api.Domain.TestKit.RecipeTags.Services;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.RecipeTags.Queries.GetAll;
+namespace Xipona.Api.ApplicationServices.Tests.RecipeTags.Queries.GetAll;
 
 public class GetAllQueryHandlerTests : QueryHandlerTestsBase<GetAllQueryHandler, GetAllQuery,
     IEnumerable<IRecipeTag>>

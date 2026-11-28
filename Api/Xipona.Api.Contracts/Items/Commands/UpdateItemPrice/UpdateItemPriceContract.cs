@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice
+namespace Xipona.Api.Contracts.Items.Commands.UpdateItemPrice
 {
     /// <summary>
     /// Represents a command to update the price of an item.

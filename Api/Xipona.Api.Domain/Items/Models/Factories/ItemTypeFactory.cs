@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
+﻿using Xipona.Api.Core.Services;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
+namespace Xipona.Api.Domain.Items.Models.Factories;
 
 public class ItemTypeFactory : IItemTypeFactory
 {

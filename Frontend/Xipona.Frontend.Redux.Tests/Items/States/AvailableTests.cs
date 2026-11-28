@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Items.States;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.TestKit.Items.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Tests.Items.States;
+namespace Xipona.Frontend.Redux.Tests.Items.States;
 
 public class AvailableTests
 {

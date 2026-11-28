@@ -17,10 +17,6 @@
     background-color: var(--color-red);
 }
 
-.price-currency {
-    padding-left: 2px;
-}
-
 .quantity {
     width: 44px;
 }

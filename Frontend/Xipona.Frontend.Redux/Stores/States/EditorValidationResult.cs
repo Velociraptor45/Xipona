@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Stores.States;
+﻿namespace Xipona.Frontend.Redux.Stores.States;
 
 public record EditorValidationResult(string? Name, IReadOnlyDictionary<Guid, string> SectionNames)
 {

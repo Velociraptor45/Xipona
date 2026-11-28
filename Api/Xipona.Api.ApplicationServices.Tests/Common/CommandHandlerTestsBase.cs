@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Repositories.Tests.Common.Transactions;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Repositories.Tests.Common.Transactions;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
+namespace Xipona.Api.ApplicationServices.Tests.Common;
 
 public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturnType>
     where TCommandHandler : ICommandHandler<TCommand, TReturnType>
@@ -27,7 +27,7 @@ public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturn
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        await sut.HandleAsync(_fixture.Command, default);
+        await sut.HandleAsync(_fixture.Command, TestContext.Current.CancellationToken);
 
         // Assert
         _fixture.VerifyCallingService();
@@ -45,7 +45,7 @@ public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturn
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        await sut.HandleAsync(_fixture.Command, default);
+        await sut.HandleAsync(_fixture.Command, TestContext.Current.CancellationToken);
 
         // Assert
         _fixture.VerifyCommittingTransaction();
@@ -63,7 +63,7 @@ public abstract class CommandHandlerTestsBase<TCommandHandler, TCommand, TReturn
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        var result = await sut.HandleAsync(_fixture.Command, default);
+        var result = await sut.HandleAsync(_fixture.Command, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);

@@ -2,27 +2,27 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerById;
-using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.CreateManufacturer;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.DeleteManufacturer;
+using Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
+using Xipona.Api.ApplicationServices.Manufacturers.Queries.AllActiveManufacturers;
+using Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerById;
+using Xipona.Api.ApplicationServices.Manufacturers.Queries.ManufacturerSearch;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Api.Contracts.Manufacturers.Queries;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Queries;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 using System.Threading;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
+namespace Xipona.Api.Endpoint.v1.Endpoints;
 
 public static class ManufacturerEndpoints
 {

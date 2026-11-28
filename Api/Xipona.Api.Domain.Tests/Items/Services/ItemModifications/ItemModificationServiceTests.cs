@@ -1,21 +1,21 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Validation;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Shared;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
-using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Ports;
+using Xipona.Api.Domain.TestKit.Items.Services.Validation;
+using Xipona.Api.Domain.TestKit.Shared;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
+using Xipona.Api.Domain.TestKit.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Ports;
+using Xipona.Api.TestTools.AutoFixture;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Items.Services.ItemModifications;
+namespace Xipona.Api.Domain.Tests.Items.Services.ItemModifications;
 
 public class ItemModificationServiceTests
 {
@@ -714,39 +714,18 @@ public class ItemModificationServiceTests
         {
             // Arrange
             _fixture.SetupSectionIds();
-            _fixture.SetupStoreContainingNewSection();
+            _fixture.SetupStoreReturningDefaultSection();
             _fixture.SetupNotFindingStore();
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
 
             // Act
             var func = async () =>
-                await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+                await sut.TransferToSectionAsync(_fixture.OldSectionId.Value);
 
             // Assert
             await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.StoreNotFound);
-        }
-
-        [Fact]
-        public async Task TransferToSectionAsync_WithStoreNotContainingNewSection_ShouldThrowDomainException()
-        {
-            // Arrange
-            _fixture.SetupSectionIds();
-            _fixture.SetupStoreNotContainingNewSection();
-            _fixture.SetupFindingStore();
-            var sut = _fixture.CreateSut();
-
-            TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
-
-            // Act
-            var func = async () =>
-                await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
-
-            // Assert
-            await func.Should().ThrowDomainExceptionAsync(ErrorReasonCode.OldAndNewSectionNotInSameStore);
         }
 
         [Fact]
@@ -754,7 +733,7 @@ public class ItemModificationServiceTests
         {
             // Arrange
             _fixture.SetupSectionIds();
-            _fixture.SetupStoreContainingNewSection();
+            _fixture.SetupStoreReturningDefaultSection();
             _fixture.SetupFindingStore();
             _fixture.SetupItem();
             _fixture.SetupFindingItem();
@@ -762,10 +741,9 @@ public class ItemModificationServiceTests
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
 
             // Act
-            await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+            await sut.TransferToSectionAsync(_fixture.OldSectionId.Value);
 
             // Assert
             _fixture.VerifyTransferringItem();
@@ -776,7 +754,7 @@ public class ItemModificationServiceTests
         {
             // Arrange
             _fixture.SetupSectionIds();
-            _fixture.SetupStoreContainingNewSection();
+            _fixture.SetupStoreReturningDefaultSection();
             _fixture.SetupFindingStore();
             _fixture.SetupItem();
             _fixture.SetupFindingItem();
@@ -784,10 +762,9 @@ public class ItemModificationServiceTests
             var sut = _fixture.CreateSut();
 
             TestPropertyNotSetException.ThrowIfNull(_fixture.OldSectionId);
-            TestPropertyNotSetException.ThrowIfNull(_fixture.NewSectionId);
 
             // Act
-            await sut.TransferToSectionAsync(_fixture.OldSectionId.Value, _fixture.NewSectionId.Value);
+            await sut.TransferToSectionAsync(_fixture.OldSectionId.Value);
 
             // Assert
             _fixture.VerifyStoringItem();
@@ -807,20 +784,11 @@ public class ItemModificationServiceTests
                 NewSectionId = SectionId.New;
             }
 
-            public void SetupStoreContainingNewSection()
+            public void SetupStoreReturningDefaultSection()
             {
                 TestPropertyNotSetException.ThrowIfNull(NewSectionId);
-
                 _storeMock = new StoreMock(MockBehavior.Strict, new StoreBuilder().Create());
-                _storeMock.SetupContainsSection(NewSectionId.Value, true);
-            }
-
-            public void SetupStoreNotContainingNewSection()
-            {
-                TestPropertyNotSetException.ThrowIfNull(NewSectionId);
-
-                _storeMock = new StoreMock(MockBehavior.Strict, new StoreBuilder().Create());
-                _storeMock.SetupContainsSection(NewSectionId.Value, false);
+                _storeMock.SetupGetDefaultSection(new SectionBuilder().WithId(NewSectionId.Value).Create());
             }
 
             public void SetupFindingStore()

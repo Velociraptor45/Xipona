@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Modifications;
 
 public interface IShoppingListModificationService
 {
@@ -29,6 +29,9 @@ public interface IShoppingListModificationService
         QuantityType quantityType,
         QuantityInBasket quantity, Price price, SectionId sectionId, TemporaryItemId temporaryItemId);
 
-    Task AddDiscountAsync(ShoppingListId id, Discount discount);
+    Task AddDiscountAsync(ShoppingListId id, ItemDiscount discount);
+    Task AddDiscountAsync(ShoppingListId id, ListDiscount discount);
     Task RemoveDiscountAsync(ShoppingListId id, ItemId itemId, ItemTypeId? itemTypeId);
+    Task RemoveDiscountAsync(ShoppingListId shoppingListId, ListDiscountId listDiscountId);
+    Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }

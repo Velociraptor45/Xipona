@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Recipes.Actions.Editor.SideDishes;
+using Xipona.Frontend.Redux.Recipes.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Reducers;
+namespace Xipona.Frontend.Redux.Recipes.Reducers;
 public static class SideDishSelectorReducer
 {
     [ReducerMethod]

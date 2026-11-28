@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore
+namespace Xipona.Api.Contracts.Stores.Commands.ModifyStore
 {
     /// <summary>
     /// Represents a request for modifying a store's section.

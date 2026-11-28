@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Manufacturers.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
+namespace Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
 
 public class ModifyManufacturerCommand : ICommand<bool>
 {

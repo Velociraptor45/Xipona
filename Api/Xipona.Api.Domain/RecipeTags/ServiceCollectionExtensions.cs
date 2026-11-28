@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Ports;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Creation;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Query;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Validations;
+using Xipona.Api.Domain.RecipeTags.Models.Factories;
+using Xipona.Api.Domain.RecipeTags.Ports;
+using Xipona.Api.Domain.RecipeTags.Services.Creation;
+using Xipona.Api.Domain.RecipeTags.Services.Query;
+using Xipona.Api.Domain.RecipeTags.Services.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags;
+namespace Xipona.Api.Domain.RecipeTags;
 
 internal static class ServiceCollectionExtensions
 {

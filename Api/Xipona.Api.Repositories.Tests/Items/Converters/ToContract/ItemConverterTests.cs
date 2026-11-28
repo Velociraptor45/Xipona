@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Repositories.Items.Converters.ToContract;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using Item = ProjectHermes.Xipona.Api.Domain.Items.Models.Item;
-using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Repositories.Items.Converters.ToContract;
+using Xipona.Api.Repositories.Items.Entities;
+using Item = Xipona.Api.Domain.Items.Models.Item;
+using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Items.Converters.ToContract;
+namespace Xipona.Api.Repositories.Tests.Items.Converters.ToContract;
 
 public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories.Items.Entities.Item, ItemConverter>
 {
@@ -34,6 +34,7 @@ public class ItemConverterTests : ToContractConverterTestBase<Item, Repositories
             .ForMember(dest => dest.ItemTypes, opt => opt.MapFrom(src => CreateItemTypeTuple(src)))
             .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => src.UpdatedOn))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForMember(dest => dest.IsFavorite, opt => opt.MapFrom(src => src.IsFavorite))
             .ForMember(dest => dest.PredecessorId, opt => opt.MapFrom(src => src.PredecessorId!.Value))
             .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => src.RowVersion))
             .ForMember(dest => dest.Predecessor, opt => opt.Ignore());

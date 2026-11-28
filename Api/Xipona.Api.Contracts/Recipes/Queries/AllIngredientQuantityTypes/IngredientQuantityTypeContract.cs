@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes
+﻿namespace Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes
 {
     /// <summary>
     /// Represents the contract for an ingredient quantity type.

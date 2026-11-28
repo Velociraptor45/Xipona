@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Reasons;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.ItemCategories.Reasons;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
+namespace Xipona.Api.Domain.ItemCategories.Services.Modifications;
 
 public class ItemCategoryModificationService : IItemCategoryModificationService
 {

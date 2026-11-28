@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
+﻿namespace Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists
 {
     public class AddItemWithTypeToShoppingListRequest
     {

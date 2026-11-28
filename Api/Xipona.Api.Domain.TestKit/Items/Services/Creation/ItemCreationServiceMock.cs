@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Creations;
+using Xipona.Api.Domain.Items.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services.Creation;
+namespace Xipona.Api.Domain.TestKit.Items.Services.Creation;
 
 public class ItemCreationServiceMock : Mock<IItemCreationService>
 {

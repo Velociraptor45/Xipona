@@ -1,8 +1,8 @@
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Core.TestKit;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Common.Queries;
+namespace Xipona.Api.Contracts.TestKit.Common.Queries;
 public class ItemCategoryContractBuilder : TestBuilderBase<ItemCategoryContract>
 {
     public ItemCategoryContractBuilder WithId(Guid id)

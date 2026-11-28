@@ -1,6 +1,7 @@
-﻿namespace ProjectHermes.Xipona.Frontend.WebApp.Configs;
+﻿namespace Xipona.Frontend.WebApp.Configs;
 
 public sealed class ConnectionConfig
 {
-    public string ApiUri { get; init; } = string.Empty;
+    [ConfigurationKeyName("XIPONA_API_URL")]
+    public string ApiUri { get; set; } = string.Empty;
 }

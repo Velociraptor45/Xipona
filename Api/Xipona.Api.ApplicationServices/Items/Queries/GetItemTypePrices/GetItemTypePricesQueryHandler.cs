@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Items.Services.Queries;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
+namespace Xipona.Api.ApplicationServices.Items.Queries.GetItemTypePrices;
 
 public class GetItemTypePricesQueryHandler : IQueryHandler<GetItemTypePricesQuery, ItemTypePricesReadModel>
 {

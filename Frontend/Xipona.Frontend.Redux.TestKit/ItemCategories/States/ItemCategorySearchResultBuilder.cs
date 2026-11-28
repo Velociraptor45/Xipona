@@ -1,8 +1,8 @@
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.TestTools;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.TestTools;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.ItemCategories.States;
+namespace Xipona.Frontend.Redux.TestKit.ItemCategories.States;
 public class ItemCategorySearchResultBuilder : TestBuilderBase<ItemCategorySearchResult>
 {
     public ItemCategorySearchResultBuilder WithId(Guid id)

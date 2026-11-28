@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Services.Modifications;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Manufacturers.Services.Modifications;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Manufacturers.Commands.ModifyManufacturer;
+namespace Xipona.Api.ApplicationServices.Tests.Manufacturers.Commands.ModifyManufacturer;
 
 public class ModifyManufacturerCommandHandlerTests()
     : CommandHandlerTestsBase<ModifyManufacturerCommandHandler, ModifyManufacturerCommand, bool>

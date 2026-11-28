@@ -1,10 +1,10 @@
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services.AddItems;
+namespace Xipona.Api.Domain.TestKit.ShoppingLists.Services.AddItems;
 public class ItemToShoppingListAdditionBuilder : DomainTestBuilderBase<ItemToShoppingListAddition>
 {
     public ItemToShoppingListAdditionBuilder WithItemId(ItemId itemId)

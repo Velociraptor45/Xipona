@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.ErrorReasons;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.ErrorReasons;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public class ShoppingListSection : IShoppingListSection
 {
@@ -28,6 +28,16 @@ public class ShoppingListSection : IShoppingListSection
         var items = new Dictionary<(ItemId, ItemTypeId?), ShoppingListItem>(relevantItems);
 
         return new ShoppingListSection(Id, items.Values);
+    }
+
+    public bool ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        if (!_shoppingListItems.TryGetValue((originalItemId, null), out var item))
+            return false;
+
+        _shoppingListItems.Remove((originalItemId, null));
+        _shoppingListItems[(newItemId, newItemTypeId)] = item.WithNewId(newItemId, newItemTypeId);
+        return true;
     }
 
     public IShoppingListSection RemoveItem(ItemId itemId)

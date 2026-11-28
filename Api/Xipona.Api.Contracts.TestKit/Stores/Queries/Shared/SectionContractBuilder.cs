@@ -1,8 +1,8 @@
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Stores.Queries.Shared;
+using Xipona.Api.Core.TestKit;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Stores.Queries.Shared;
+namespace Xipona.Api.Contracts.TestKit.Stores.Queries.Shared;
 public class SectionContractBuilder : TestBuilderBase<SectionContract>
 {
     public SectionContractBuilder WithId(Guid id)

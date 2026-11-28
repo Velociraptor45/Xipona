@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Models;
+﻿using Xipona.Api.Domain.Common.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
+namespace Xipona.Api.Domain.RecipeTags.Models;
 
 public class RecipeTag : AggregateRoot, IRecipeTag
 {

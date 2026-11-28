@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
+﻿using Xipona.Api.Repositories.Items.Entities;
 
-namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
+namespace Xipona.Api.Repositories.TestKit.Items.Entities;
 
 public static class ItemEntityMother
 {
@@ -14,7 +14,13 @@ public static class ItemEntityMother
             .WithoutPredecessorId()
             .WithoutPredecessor()
             .WithEmptyItemTypes()
+            .WithIsFavorite(false)
             .WithAvailableAt(new AvailableAtEntityBuilder().CreateMany(3).ToList());
+    }
+
+    public static ItemEntityBuilder Deleted()
+    {
+        return Initial().WithDeleted(true);
     }
 
     public static ItemEntityBuilder InitialForStore(Guid storeId)
@@ -45,6 +51,7 @@ public static class ItemEntityMother
             .WithoutPredecessor()
             .WithEmptyAvailableAt()
             .WithoutUpdatedOn()
+            .WithIsFavorite(false)
             .WithItemTypes(types);
     }
 
@@ -53,19 +60,29 @@ public static class ItemEntityMother
         return InitialWithTypesForStore(storeId, Guid.NewGuid());
     }
 
+    public static ItemEntityBuilder InitialWithTypesForSameStore(Guid? storeId = null)
+    {
+        storeId ??= Guid.NewGuid();
+        var types = Enumerable.Range(0, 3)
+            .Select(_ => ItemTypeEntityMother.Initial().WithAvailableAt(CreateAvailabilities()).Create())
+            .ToList();
+
+        return InitialWithTypes()
+            .WithItemTypes(types);
+
+        IList<ItemTypeAvailableAt> CreateAvailabilities()
+        {
+            return ItemTypeAvailableAtEntityMother.InitialForStore(storeId.Value).CreateMany(1).ToList();
+        }
+    }
+
     public static ItemEntityBuilder InitialWithTypesForStore(Guid storeId, Guid sectionId)
     {
         var types = Enumerable.Range(0, 3)
             .Select(_ => ItemTypeEntityMother.Initial().WithAvailableAt(CreateAvailabilities()).Create())
             .ToList();
 
-        return new ItemEntityBuilder()
-            .WithDeleted(false)
-            .WithIsTemporary(false)
-            .WithoutCreatedFrom()
-            .WithoutPredecessorId()
-            .WithoutPredecessor()
-            .WithEmptyAvailableAt()
+        return InitialWithTypes()
             .WithItemTypes(types);
 
         IList<ItemTypeAvailableAt> CreateAvailabilities()

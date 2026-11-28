@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Common.Extensions;
+﻿namespace Xipona.Frontend.Redux.TestKit.Common.Extensions;
 
 public static class GenericExtensions
 {

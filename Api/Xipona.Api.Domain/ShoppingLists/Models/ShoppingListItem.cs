@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public record ShoppingListItem(ItemId Id, ItemTypeId? TypeId, bool IsInBasket, QuantityInBasket Quantity)
 {
@@ -22,5 +22,10 @@ public record ShoppingListItem(ItemId Id, ItemTypeId? TypeId, bool IsInBasket, Q
     public ShoppingListItem AddQuantity(QuantityInBasket quantity)
     {
         return this with { Quantity = Quantity + quantity };
+    }
+
+    public ShoppingListItem WithNewId(ItemId id, ItemTypeId? typeId)
+    {
+        return this with { Id = id, TypeId = typeId };
     }
 }

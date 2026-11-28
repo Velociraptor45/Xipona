@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+﻿using Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
 
 public class UpdateItemPriceContractConverter : IToContractConverter<UpdateItemPriceRequest, UpdateItemPriceContract>
 {

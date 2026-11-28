@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Models.Factories;
+using Xipona.Api.Domain.ItemCategories.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Creations;
+namespace Xipona.Api.Domain.ItemCategories.Services.Creations;
 
 public class ItemCategoryCreationService : IItemCategoryCreationService
 {

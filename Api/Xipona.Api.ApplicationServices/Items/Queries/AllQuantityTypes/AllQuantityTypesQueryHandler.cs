@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
+namespace Xipona.Api.ApplicationServices.Items.Queries.AllQuantityTypes;
 
 public class AllQuantityTypesQueryHandler : IQueryHandler<AllQuantityTypesQuery, IEnumerable<QuantityTypeReadModel>>
 {

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.TestTools;
+﻿using Xipona.Frontend.TestTools;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+namespace Xipona.Frontend.Redux.TestKit.Common;
 
 public class DomainTestBuilder<TModel> : TestBuilder<TModel, DomainTestBuilder<TModel>>
 {

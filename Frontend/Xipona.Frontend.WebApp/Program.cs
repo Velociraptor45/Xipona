@@ -3,25 +3,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Client;
-using ProjectHermes.Xipona.Frontend.Infrastructure;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
-using ProjectHermes.Xipona.Frontend.Redux;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Configurations;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.WebApp.Auth;
-using ProjectHermes.Xipona.Frontend.WebApp.Configs;
-using ProjectHermes.Xipona.Frontend.WebApp.Services;
-using ProjectHermes.Xipona.Frontend.WebApp.Services.Notification;
 using Serilog;
 using Serilog.Core;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+using Xipona.Api.Client;
+using Xipona.Frontend.Infrastructure;
+using Xipona.Frontend.Infrastructure.Connection;
+using Xipona.Frontend.Redux;
+using Xipona.Frontend.Redux.Shared.Configurations;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.WebApp.Auth;
+using Xipona.Frontend.WebApp.Configs;
+using Xipona.Frontend.WebApp.Services.Notification;
+using Xipona.Frontend.WebApp.Services.Prices;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp;
+namespace Xipona.Frontend.WebApp;
 
 public static class Program
 {
@@ -31,7 +26,11 @@ public static class Program
         builder.RootComponents.Add<App>("app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        var authConfig = builder.Configuration.GetSection("Auth").Get<AuthConfig>();
+        await LoadVariables(builder);
+        
+        var authConfig = new AuthConfig();
+        builder.Configuration.GetSection("authConfig").Bind(authConfig);
+        builder.Services.AddSingleton(authConfig);
         AddSecurity(builder, authConfig);
 
         ConfigureHttpClient(builder, authConfig);
@@ -43,14 +42,25 @@ public static class Program
         await builder.Build().RunAsync();
     }
 
+    private static async Task LoadVariables(WebAssemblyHostBuilder builder)
+    {
+        using var client = new HttpClient();
+        client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+        var responseMessage = await client.GetAsync("runtime-config.json").ConfigureAwait(false);
+        var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+        builder.Configuration.AddJsonStream(stream);
+    }
+
     private static void ConfigureHttpClient(WebAssemblyHostBuilder builder, AuthConfig authConfig)
     {
-        var connectionConfig = builder.Configuration.GetSection("Connection").Get<ConnectionConfig>();
+        var connectionConfig = new ConnectionConfig();
+        builder.Configuration.GetSection("connectionConfig").Bind(connectionConfig);
 
         builder.Services.AddSingleton(connectionConfig);
 
         if (string.IsNullOrWhiteSpace(connectionConfig.ApiUri))
-            throw new InvalidOperationException($"The Connection:{nameof(ConnectionConfig.ApiUri)} section in the appsettings is missing");
+            throw new InvalidOperationException("The Api-Url is missing in the configuration");
 
         var uri = new Uri(connectionConfig.ApiUri);
         var httpClientBuilder = builder.Services.AddHttpClient("Api", client => client.BaseAddress = uri);
@@ -66,13 +76,15 @@ public static class Program
 
     private static void ConfigureLogging(WebAssemblyHostBuilder builder)
     {
-        var config = builder.Configuration.GetSection("CollectRemoteLogs").Get<CollectRemoteLogsConfig>();
+        var config = new CollectRemoteLogsConfig();
+        builder.Configuration.GetSection("logConfig").Bind(config);
+
         if (!config.Enabled)
             return;
 
-        var endpointUrl = config.HostUri.EndsWith('/')
-            ? $"{config.HostUri}ingest"
-            : $"{config.HostUri}/ingest";
+        var endpointUrl = config.HostUrl.EndsWith('/')
+            ? $"{config.HostUrl}ingest"
+            : $"{config.HostUrl}/ingest";
 
         var levelSwitch = new LoggingLevelSwitch();
         Log.Logger = new LoggerConfiguration()
@@ -102,6 +114,7 @@ public static class Program
 
         builder.Services.AddTransient<IXiponaApiClient, XiponaApiClient>();
         builder.Services.AddTransient<IShoppingListNotificationService, ShoppingListNotificationService>();
+        builder.Services.AddTransient<IPriceLabelService, PriceLabelService>();
         builder.Services.AddTransient<IApiClient, ApiClient>();
         builder.Services.AddScoped<ICommandQueue, CommandQueue>();
 
@@ -130,9 +143,17 @@ public static class Program
 
         builder.Services.AddOidcAuthentication(opt =>
         {
-            builder.Configuration.Bind("Auth:Provider", opt.ProviderOptions);
-            builder.Configuration.Bind("Auth:User", opt.UserOptions);
+            opt.ProviderOptions.Authority = authConfig.Authority;
             opt.ProviderOptions.MetadataUrl = $"{opt.ProviderOptions.Authority}/.well-known/openid-configuration";
+            opt.ProviderOptions.ClientId = authConfig.ClientId;
+            opt.ProviderOptions.ResponseType = authConfig.ResponseType;
+            foreach (var scope in authConfig.DefaultScopes)
+                opt.ProviderOptions.DefaultScopes.Add(scope);
+
+            opt.UserOptions.NameClaim = authConfig.NameClaimIdentifier;
+            opt.UserOptions.RoleClaim = authConfig.RoleClaimIdentifier;
+            opt.UserOptions.ScopeClaim = authConfig.ScopeClaimIdentifier;
+
         }).AddAccountClaimsPrincipalFactory<ArrayClaimsPrincipalFactory<RemoteUserAccount>>();
 
         builder.Services.AddAuthorizationCore(cfg =>
@@ -145,7 +166,10 @@ public static class Program
 
     private sealed class CollectRemoteLogsConfig
     {
-        public bool Enabled { get; init; }
-        public string HostUri { get; init; } = string.Empty;
+        [ConfigurationKeyName("XIPONA_LOGS_ENABLED")]
+        public bool Enabled { get; init; } = false;
+
+        [ConfigurationKeyName("XIPONA_LOGS_HOST_URL")]
+        public string HostUrl { get; init; } = string.Empty;
     }
 }

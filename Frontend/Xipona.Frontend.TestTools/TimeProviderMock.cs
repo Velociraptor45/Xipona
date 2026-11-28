@@ -1,7 +1,8 @@
 ﻿using Moq;
+using Moq.Contrib.InOrder;
 using Moq.Contrib.InOrder.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.TestTools;
+namespace Xipona.Frontend.TestTools;
 
 public class TimeProviderMock : Mock<TimeProvider>
 {
@@ -13,7 +14,7 @@ public class TimeProviderMock : Mock<TimeProvider>
 
     public void SetupCreateTimer(TimeSpan delay, ITimer returnValue)
     {
-        this.SetupInOrder(x => x.CreateTimer(It.IsAny<TimerCallback>(), null, delay, Timeout.InfiniteTimeSpan))
+        this.Setup(x => x.CreateTimer(It.IsAny<TimerCallback>(), null, delay, Timeout.InfiniteTimeSpan))
             .Callback<TimerCallback, object, TimeSpan, TimeSpan>((callback, _, _, _) => CapturedCallback = callback)
             .Returns(returnValue);
     }

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Core.TestKit;
+﻿using Xipona.Api.Core.TestKit;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+namespace Xipona.Api.Domain.TestKit.Common;
 
 public class DomainTestBuilder<TModel> : TestBuilder<TModel, DomainTestBuilder<TModel>>
 {

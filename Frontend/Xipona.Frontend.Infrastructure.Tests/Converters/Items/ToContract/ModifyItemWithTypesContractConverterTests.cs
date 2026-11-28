@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
+﻿using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Items.States;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.Items.ToContract;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.Items.ToContract;
 
 public class ModifyItemWithTypesContractConverterTests :
     ToContractConverterBase<EditedItem, ModifyItemWithTypesContract, ModifyItemWithTypesContractConverter>

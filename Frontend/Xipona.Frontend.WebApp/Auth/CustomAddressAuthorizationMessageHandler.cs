@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using ProjectHermes.Xipona.Frontend.WebApp.Configs;
+using Xipona.Frontend.WebApp.Configs;
 
-namespace ProjectHermes.Xipona.Frontend.WebApp.Auth;
+namespace Xipona.Frontend.WebApp.Auth;
 
 public class CustomAddressAuthorizationMessageHandler : AuthorizationMessageHandler
 {

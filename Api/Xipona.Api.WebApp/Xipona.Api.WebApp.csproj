@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>ProjectHermes.Xipona.Api.WebApp</RootNamespace>
-    <Version>0.13.1</Version>
+    <RootNamespace>Xipona.Api.WebApp</RootNamespace>
+    <Version>0.14.0</Version>
     <UserSecretsId>fa7d8437-775b-44ff-a217-06a4efe92f94</UserSecretsId>
-    <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
@@ -13,20 +11,25 @@
 
   <ItemGroup>
     <TrimmableAssembly Include="Xipona.Api.WebApp" />
-    <TrimmableAssembly Include="Xipona.Api.Core" />
+    <TrimmableAssembly Include="Xipona.Api.Endpoint" />
+    <TrimmableAssembly Include="Xipona.Api.Contracts" />
+    <TrimmableAssembly Include="Xipona.Api.ApplicationServices" />
     <TrimmableAssembly Include="Xipona.Api.Secrets" />
+    <TrimmableAssembly Include="Xipona.Api.Domain" />
+    <TrimmableAssembly Include="Xipona.Api.Core" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.0.9" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,10 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.Development.json">
+    <Content Update="appsettings.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="appsettings.json">
+    <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="appsettings.Production.json">

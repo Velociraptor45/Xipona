@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
+namespace Xipona.Api.ApplicationServices.Tests.Common;
 
 public abstract class QueryHandlerTestsBase<TQueryHandler, TQuery, TReturnType>
     where TQueryHandler : IQueryHandler<TQuery, TReturnType>
@@ -25,7 +25,7 @@ public abstract class QueryHandlerTestsBase<TQueryHandler, TQuery, TReturnType>
         TestPropertyNotSetException.ThrowIfNull(_fixture.ExpectedResult);
 
         // Act
-        var result = await sut.HandleAsync(_fixture.Query, default);
+        var result = await sut.HandleAsync(_fixture.Query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeEquivalentTo(_fixture.ExpectedResult);

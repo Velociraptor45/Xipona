@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Modifications;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Stores.Services.Modifications;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
+namespace Xipona.Api.ApplicationServices.Stores.Commands.ModifyStore;
 
 public class ModifyStoreCommandHandler : ICommandHandler<ModifyStoreCommand, bool>
 {

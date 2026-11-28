@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Validations;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services;
+namespace Xipona.Api.Domain.TestKit.ItemCategories.Services;
 
 public class ItemCategoryValidationServiceMock : Mock<IItemCategoryValidationService>
 {

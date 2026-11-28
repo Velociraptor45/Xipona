@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.Stores.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
+namespace Xipona.Api.ApplicationServices.Stores.Commands.CreateStore;
 
 public class CreateStoreCommand : ICommand<IStore>
 {

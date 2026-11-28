@@ -1,8 +1,8 @@
 ﻿using Fluxor;
 using Moq;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.ShoppingList.States;
+namespace Xipona.Frontend.Redux.TestKit.ShoppingList.States;
 
 public class ShoppingListStateMock : Mock<IState<ShoppingListState>>
 {

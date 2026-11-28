@@ -2,13 +2,13 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Xipona.Api.Repositories.Recipes.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
+namespace Xipona.Api.Repositories.Migrations.Recipes
 {
     [DbContext(typeof(RecipeContext))]
     partial class RecipeContextModelSnapshot : ModelSnapshot
@@ -17,39 +17,39 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.Ingredient", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<bool?>("AddToShoppingListByDefault")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid?>("DefaultItemId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("DefaultItemTypeId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("DefaultStoreId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ItemCategoryId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<float>("Quantity")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<int>("QuantityType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("RecipeId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -58,20 +58,20 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.ToTable("Ingredients");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.PreparationStep", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.PreparationStep", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Instruction")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("RecipeId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("SortingIndex")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -80,28 +80,29 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.ToTable("PreparationSteps");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<int>("NumberOfServings")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("RowVersion")
+                    b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp(6)");
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.Property<Guid?>("SideDishId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -110,14 +111,14 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.ToTable("Recipes");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
                 {
                     b.Property<Guid>("RecipeId")
-                        .HasColumnType("char(36)")
+                        .HasColumnType("uuid")
                         .HasColumnOrder(1);
 
                     b.Property<Guid>("RecipeTagId")
-                        .HasColumnType("char(36)")
+                        .HasColumnType("uuid")
                         .HasColumnOrder(2);
 
                     b.HasKey("RecipeId", "RecipeTagId");
@@ -125,9 +126,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.ToTable("TagsForRecipes");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.Ingredient", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
+                    b.HasOne("Xipona.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
                         .WithMany("Ingredients")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -136,9 +137,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.PreparationStep", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.PreparationStep", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
+                    b.HasOne("Xipona.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
                         .WithMany("PreparationSteps")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,18 +148,18 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", "SideDish")
+                    b.HasOne("Xipona.Api.Repositories.Recipes.Entities.Recipe", "SideDish")
                         .WithMany()
                         .HasForeignKey("SideDishId");
 
                     b.Navigation("SideDish");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.TagsForRecipe", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
+                    b.HasOne("Xipona.Api.Repositories.Recipes.Entities.Recipe", "Recipe")
                         .WithMany("Tags")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -167,7 +168,7 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Recipes
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Recipes.Entities.Recipe", b =>
                 {
                     b.Navigation("Ingredients");
 

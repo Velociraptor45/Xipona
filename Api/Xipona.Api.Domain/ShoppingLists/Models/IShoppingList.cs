@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public interface IShoppingList
 {
@@ -12,7 +12,8 @@ public interface IShoppingList
     IReadOnlyCollection<IShoppingListSection> Sections { get; }
     public IReadOnlyCollection<ShoppingListItem> Items { get; }
     DateTimeOffset CreatedAt { get; }
-    IReadOnlyCollection<Discount> Discounts { get; }
+    IReadOnlyCollection<ItemDiscount> ItemDiscounts { get; }
+    IReadOnlyCollection<ListDiscount> ListDiscounts { get; }
 
     void AddItem(ShoppingListItem item, SectionId sectionId, bool throwIfAlreadyPresent = true);
 
@@ -36,8 +37,11 @@ public interface IShoppingList
 
     void RemoveItemAndItsTypes(ItemId itemId);
 
-    Discount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
+    ItemDiscount? GetDiscountFor(ItemId itemId, ItemTypeId? itemTypeId);
 
-    void AddDiscount(Discount discount);
+    void AddDiscount(ItemDiscount discount);
+    void AddDiscount(ListDiscount discount);
     void RemoveDiscount(ItemId itemId, ItemTypeId? itemTypeId);
+    void RemoveDiscount(ListDiscountId discountId);
+    bool ReplaceMergedItem(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId);
 }

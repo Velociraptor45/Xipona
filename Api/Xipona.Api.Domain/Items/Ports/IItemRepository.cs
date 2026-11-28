@@ -1,16 +1,17 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Ports;
+namespace Xipona.Api.Domain.Items.Ports;
 
 public interface IItemRepository
 {
     Task<IEnumerable<IItem>> FindByAsync(IEnumerable<ItemId> itemIds);
 
-    Task<IEnumerable<IItem>> FindPermanentByAsync(IEnumerable<StoreId> storeIds,
-        IEnumerable<ItemCategoryId> itemCategoriesIds, IEnumerable<ManufacturerId> manufacturerIds);
+    Task<IEnumerable<IItem>> FindPermanentByAsync(StoreId? storeId,
+        ItemCategoryId? itemCategoryId, ManufacturerId? manufacturerId, int page, int pageSize);
 
     Task<IEnumerable<IItem>> FindActiveByAsync(ManufacturerId manufacturerId);
 
@@ -33,10 +34,10 @@ public interface IItemRepository
 
     Task<IEnumerable<IItem>> FindActiveByAsync(IEnumerable<ItemId> itemIds);
 
-    Task<IEnumerable<IItem>> FindActiveByAsync(string searchInput, StoreId storeId,
-        IEnumerable<ItemId> excludedItemIds, int? limit);
-
     Task<int> GetTotalCountByAsync(string searchInput);
 
     Task<IItem> StoreAsync(IItem item);
+
+    Task<IEnumerable<IItem>> FindForMergeByAsync(ItemCategoryId itemCategoryId, ManufacturerId? manufacturerId,
+        ItemQuantity itemQuantity, IEnumerable<ItemId> excludedItemIds);
 }

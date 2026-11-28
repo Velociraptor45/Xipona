@@ -1,13 +1,13 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Shared;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Shared;
+﻿using Xipona.Api.Domain.ItemCategories.Services.Shared;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Manufacturers.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
+namespace Xipona.Api.Domain.Items.Services.Queries;
 
 public class ItemReadModel
 {
-    public ItemReadModel(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary,
+    public ItemReadModel(ItemId id, ItemName name, bool isDeleted, Comment comment, bool isTemporary, bool isFavorite,
         QuantityTypeReadModel quantityType, Quantity? quantityInPacket, QuantityTypeInPacketReadModel? quantityTypeInPacket,
         ItemCategoryReadModel? itemCategory, ManufacturerReadModel? manufacturer,
         IEnumerable<ItemAvailabilityReadModel> availabilities, IEnumerable<ItemTypeReadModel> itemTypes)
@@ -17,6 +17,7 @@ public class ItemReadModel
         IsDeleted = isDeleted;
         Comment = comment;
         IsTemporary = isTemporary;
+        IsFavorite = isFavorite;
         QuantityType = quantityType;
         QuantityInPacket = quantityInPacket;
         QuantityTypeInPacket = quantityTypeInPacket;
@@ -31,6 +32,7 @@ public class ItemReadModel
     public bool IsDeleted { get; }
     public Comment Comment { get; }
     public bool IsTemporary { get; }
+    public bool IsFavorite { get; }
     public QuantityTypeReadModel QuantityType { get; }
     public Quantity? QuantityInPacket { get; }
     public QuantityTypeInPacketReadModel? QuantityTypeInPacket { get; }

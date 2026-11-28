@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Validations;
+namespace Xipona.Api.Domain.Manufacturers.Services.Validations;
 
 public interface IManufacturerValidationService
 {

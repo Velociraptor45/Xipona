@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
+namespace Xipona.Api.ApplicationServices.ShoppingLists.Queries.ActiveShoppingListByStoreId;
 
 public class ActiveShoppingListByStoreIdQuery : IQuery<ShoppingListReadModel>
 {

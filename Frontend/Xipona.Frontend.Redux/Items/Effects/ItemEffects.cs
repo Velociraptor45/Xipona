@@ -1,16 +1,17 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Search;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Constants;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Search;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Shared.Actions;
+using Xipona.Frontend.Redux.Shared.Constants;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.States;
 using RestEase;
+using Xipona.Frontend.Redux.Shared.Actions.Settings;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Effects;
+namespace Xipona.Frontend.Redux.Items.Effects;
 
 public class ItemEffects
 {
@@ -26,7 +27,7 @@ public class ItemEffects
     }
 
     [EffectMethod]
-    public Task HandleEditItemAction(EditItemAction action, IDispatcher dispatcher)
+    public Task HandleOpenItemAction(OpenItemAction action, IDispatcher dispatcher)
     {
         _navigationManager.NavigateTo($"{PageRoutes.Items}/{action.Id}");
         return Task.CompletedTask;
@@ -38,6 +39,7 @@ public class ItemEffects
         dispatcher.Dispatch(new LoadQuantityTypesAction());
         dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
         dispatcher.Dispatch(new LoadActiveStoresAction());
+        dispatcher.Dispatch(new LoadGeneralSettingsAction());
 
         return Task.CompletedTask;
     }

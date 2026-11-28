@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount
 {
     /// <summary>
     /// Represents a request to remove a discount from an item on a shopping list.

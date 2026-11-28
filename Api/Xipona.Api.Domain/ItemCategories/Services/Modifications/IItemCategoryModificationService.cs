@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Modifications;
+﻿namespace Xipona.Api.Domain.ItemCategories.Services.Modifications;
 
 public interface IItemCategoryModificationService
 {

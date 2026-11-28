@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToDomain;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Recipes.Entities;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Repositories.Recipes.Converters.ToDomain;
+using Xipona.Api.Repositories.TestKit.Recipes.Entities;
+using Xipona.Api.TestTools.Extensions;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Recipes.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Tests.Recipes.Converters.ToDomain;
 
 public class RecipeSearchResultConverterTests
     : ToDomainConverterTestBase<Recipe, RecipeSearchResult, RecipeSearchResultConverter>

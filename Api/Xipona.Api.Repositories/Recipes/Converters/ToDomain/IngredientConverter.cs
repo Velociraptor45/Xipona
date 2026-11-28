@@ -1,13 +1,13 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using Ingredient = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Stores.Models;
+using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToDomain;
+namespace Xipona.Api.Repositories.Recipes.Converters.ToDomain;
 
 public class IngredientConverter : IToDomainConverter<Entities.Ingredient, IIngredient>
 {

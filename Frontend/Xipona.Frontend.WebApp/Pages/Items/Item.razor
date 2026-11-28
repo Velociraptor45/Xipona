@@ -1,0 +1,38 @@
+﻿@page "/items/{ItemId:guid}"
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Fluxor
+@using Xipona.Frontend.Redux.Items.Actions
+@using Xipona.Frontend.Redux.Items.Actions.Editor
+@using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.Redux.Shared.Actions.Settings
+@using Xipona.Frontend.WebApp.Components.Items.EditView
+@using Xipona.Frontend.WebApp.Components.Items.ReadView
+
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+@if (State.Value.Editor.IsInEditMode)
+{
+    <ItemEditView></ItemEditView>
+}
+else
+{
+    <ItemReadView></ItemReadView>
+}
+
+@code {
+    [Parameter] public Guid ItemId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Dispatcher.Dispatch(new LoadGeneralSettingsAction());
+        Dispatcher.Dispatch(new SetEditorItemIdAction(ItemId));
+        Dispatcher.Dispatch(new LoadQuantityTypesAction());
+        Dispatcher.Dispatch(new LoadQuantityTypesInPacketAction());
+        Dispatcher.Dispatch(new LoadActiveStoresAction());
+    }
+}

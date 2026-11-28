@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.Items.Entities;
 
 public static class ItemTypeAvailableAtEntityMother
 {

@@ -1,0 +1,19 @@
+.item-meta {
+    gap: 0.5rem;
+}
+
+.meta-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background-color: var(--secondary-color-shade-1);
+    border: 1px solid var(--button-border-color);
+}
+
+.meta-tag i {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}

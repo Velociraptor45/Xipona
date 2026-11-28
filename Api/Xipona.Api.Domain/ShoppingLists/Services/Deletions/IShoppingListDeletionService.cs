@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Deletions;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Deletions;
 
 public interface IShoppingListDeletionService
 {

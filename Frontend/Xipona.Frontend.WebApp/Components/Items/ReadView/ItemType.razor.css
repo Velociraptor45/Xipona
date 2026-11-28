@@ -1,0 +1,16 @@
+.item-type-card {
+    background-color: var(--secondary-color-shade-2);
+    border: 1px solid var(--button-border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+
+.item-type-header {
+    display: flex;
+    align-items: center;
+}
+
+.item-type-name {
+    font-weight: 600;
+    font-size: 1rem;
+}

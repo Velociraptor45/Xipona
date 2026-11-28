@@ -1,26 +1,26 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemSearchReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Deletions;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Searches;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.TemporaryItems;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Updates;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Validations;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Ports;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.ItemCategories.Ports;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Services.Conversion;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
+using Xipona.Api.Domain.Items.Services.Creations;
+using Xipona.Api.Domain.Items.Services.Deletions;
+using Xipona.Api.Domain.Items.Services.Modifications;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Items.Services.Queries.Quantities;
+using Xipona.Api.Domain.Items.Services.Searches;
+using Xipona.Api.Domain.Items.Services.TemporaryItems;
+using Xipona.Api.Domain.Items.Services.Updates;
+using Xipona.Api.Domain.Items.Services.Validations;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items;
+namespace Xipona.Api.Domain.Items;
 
 public static class ServiceCollectionExtensions
 {
@@ -40,12 +40,6 @@ public static class ServiceCollectionExtensions
             return ct => new ItemValidationService(itemRepositoryDelegate(ct));
         });
 
-        services.AddTransient<Func<CancellationToken, IItemSearchReadModelConversionService>>(provider =>
-        {
-            return ct => new ItemSearchReadModelConversionService(
-                provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>()(ct),
-                provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>()(ct));
-        });
         services.AddTransient<Func<CancellationToken, IItemReadModelConversionService>>(provider =>
         {
             return ct => new ItemReadModelConversionService(
@@ -84,20 +78,14 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Func<CancellationToken, IItemSearchService>>(provider =>
         {
             var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            var itemReadRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemReadRepository>>();
             var manufacturerRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IManufacturerRepository>>();
-            var shoppingListRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IShoppingListRepository>>();
-            var storeRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IStoreRepository>>();
-            var itemTypeReadRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemTypeReadRepository>>();
-            var itemCategoryRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemCategoryRepository>>();
-            var conversionServiceDelegate = provider
-                .GetRequiredService<Func<CancellationToken, IItemSearchReadModelConversionService>>();
             var validatorDelegate = provider.GetRequiredService<Func<CancellationToken, IValidator>>();
             var availabilityConverterDelegate = provider.GetRequiredService<
                 Func<CancellationToken, IItemAvailabilityReadModelConversionService>>();
 
-            return ct => new ItemSearchService(itemRepositoryDelegate(ct), manufacturerRepositoryDelegate(ct),
-                shoppingListRepositoryDelegate(ct), storeRepositoryDelegate(ct), itemTypeReadRepositoryDelegate(ct),
-                itemCategoryRepositoryDelegate(ct), conversionServiceDelegate(ct), validatorDelegate(ct),
+            return ct => new ItemSearchService(itemRepositoryDelegate(ct), itemReadRepositoryDelegate(ct),
+                manufacturerRepositoryDelegate(ct), validatorDelegate(ct),
                 availabilityConverterDelegate(ct));
         });
 
@@ -130,6 +118,26 @@ public static class ServiceCollectionExtensions
             var conversionServiceDelegate = provider
                 .GetRequiredService<Func<CancellationToken, IItemReadModelConversionService>>();
             return ct => new ItemQueryService(itemRepositoryDelegate(ct), conversionServiceDelegate(ct));
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemMergeService>>(provider =>
+        {
+            var itemFactory = provider.GetRequiredService<IItemFactory>();
+            var itemTypeFactory = provider.GetRequiredService<IItemTypeFactory>();
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            return ct => new ItemMergeService(itemFactory, itemTypeFactory, itemRepositoryDelegate(ct));
+        });
+
+        services.AddTransient<Func<CancellationToken, IItemMergeSearchService>>(provider =>
+        {
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            return ct => new ItemMergeSearchService(itemRepositoryDelegate(ct));
+        });
+
+        services.AddTransient<Func<CancellationToken, IFavoriteItemService>>(provider =>
+        {
+            var itemRepositoryDelegate = provider.GetRequiredService<Func<CancellationToken, IItemRepository>>();
+            return ct => new FavoriteItemService(itemRepositoryDelegate(ct));
         });
 
         services.AddTransient<IQuantitiesQueryService, QuantitiesQueryService>();

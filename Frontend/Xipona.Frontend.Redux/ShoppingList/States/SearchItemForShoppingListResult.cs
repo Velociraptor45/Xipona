@@ -1,14 +1,10 @@
-﻿using System.Globalization;
-
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+﻿namespace Xipona.Frontend.Redux.ShoppingList.States;
 
 public class SearchItemForShoppingListResult
 {
-    private static readonly CultureInfo _culture = new("de-de");
-
     public SearchItemForShoppingListResult(Guid itemId, Guid? itemTypeId, string name, decimal price,
         int defaultQuantity, string priceLabel, string itemCategoryName, string manufacturerName,
-        Guid defaultSectionId)
+        Guid defaultSectionId, bool isFavorite)
     {
         ItemId = itemId;
         ItemTypeId = itemTypeId;
@@ -19,6 +15,7 @@ public class SearchItemForShoppingListResult
         ItemCategoryName = itemCategoryName;
         ManufacturerName = manufacturerName;
         DefaultSectionId = defaultSectionId;
+        IsFavorite = isFavorite;
     }
 
     public Guid ItemId { get; set; }
@@ -30,14 +27,7 @@ public class SearchItemForShoppingListResult
     public string ItemCategoryName { get; }
     public string ManufacturerName { get; }
     public Guid DefaultSectionId { get; }
-
-    public string DisplayValue
-    {
-        get => string.IsNullOrWhiteSpace(ManufacturerName)
-            ? $"{Name} | {Price.ToString("0.00", _culture)}{PriceLabel}"
-            : $"{Name} | {ManufacturerName} | {Price.ToString("0.00", _culture)}{PriceLabel}";
-        set { _ = value; }
-    }
+    public bool IsFavorite { get; }
 
     public string SelectIdentifier
     {

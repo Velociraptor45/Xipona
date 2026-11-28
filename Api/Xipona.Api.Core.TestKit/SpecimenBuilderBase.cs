@@ -1,6 +1,6 @@
 ﻿using AutoFixture.Kernel;
 
-namespace ProjectHermes.Xipona.Api.Core.TestKit
+namespace Xipona.Api.Core.TestKit
 {
     public abstract class SpecimenBuilderBase<T> : ISpecimenBuilder where T : notnull
     {

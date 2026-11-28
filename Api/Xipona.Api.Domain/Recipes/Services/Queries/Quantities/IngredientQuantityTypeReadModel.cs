@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
+﻿using Xipona.Api.Core.Attributes;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Recipes.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
+namespace Xipona.Api.Domain.Recipes.Services.Queries.Quantities;
 
 public class IngredientQuantityTypeReadModel
 {

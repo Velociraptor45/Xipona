@@ -1,12 +1,12 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.ShoppingList.Actions.TemporaryItemCreator;
 using System;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
+namespace Xipona.Frontend.Infrastructure.RequestSenders;
 
 public class AddTemporaryItemToShoppingListRequestSender : IRequestSender
 {

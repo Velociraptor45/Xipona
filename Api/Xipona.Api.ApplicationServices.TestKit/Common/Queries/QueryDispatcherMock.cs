@@ -1,8 +1,8 @@
 ﻿using Moq.Language.Flow;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.TestKit.Common.Queries;
+namespace Xipona.Api.ApplicationServices.TestKit.Common.Queries;
 
 public class QueryDispatcherMock : Mock<IQueryDispatcher>
 {

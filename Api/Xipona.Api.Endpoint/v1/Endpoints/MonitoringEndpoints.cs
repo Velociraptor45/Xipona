@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
+namespace Xipona.Api.Endpoint.v1.Endpoints;
 
 public static class MonitoringEndpoints
 {

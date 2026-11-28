@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.ShoppingLists.ToContract;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.ShoppingLists.ToContract;
 
 public class AddTemporaryItemToShoppingListContractConverterTests : ToContractConverterBase<
     AddTemporaryItemToShoppingListRequest, AddTemporaryItemToShoppingListContract, AddTemporaryItemToShoppingListContractConverter>

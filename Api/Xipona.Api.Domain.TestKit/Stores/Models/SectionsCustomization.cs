@@ -1,8 +1,8 @@
 ﻿using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models.Factories;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Stores.Models.Factories;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Models;
+namespace Xipona.Api.Domain.TestKit.Stores.Models;
 
 public class SectionsCustomization : ICustomization
 {

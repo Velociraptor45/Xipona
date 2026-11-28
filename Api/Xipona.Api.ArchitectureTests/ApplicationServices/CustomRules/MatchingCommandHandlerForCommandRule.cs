@@ -1,7 +1,7 @@
 ﻿using Mono.Cecil;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Commands;
 
-namespace ProjectHermes.Xipona.Api.ArchitectureTests.ApplicationServices.CustomRules;
+namespace Xipona.Api.ArchitectureTests.ApplicationServices.CustomRules;
 
 internal sealed class MatchingCommandHandlerForCommandRule : ApplicationServicesCustomRuleBase
 {

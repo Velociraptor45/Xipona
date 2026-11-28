@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
+﻿using Xipona.Api.Contracts.Items.Commands.ModifyItem;
+using Xipona.Api.Contracts.Items.Commands.Shared;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Items.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Items.ToContract;
 
 public class ModifyItemContractConverter : IToContractConverter<EditedItem, ModifyItemContract>
 {
@@ -24,7 +24,7 @@ public class ModifyItemContractConverter : IToContractConverter<EditedItem, Modi
             source.QuantityType.Id,
             source.QuantityInPacket,
             source.QuantityInPacketType?.Id,
-            source.ItemCategoryId.Value,
+            source.ItemCategoryId!.Value,
             source.ManufacturerId,
             source.Availabilities.Select(_availabilityConverter.ToContract));
     }

@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+﻿using Xipona.Frontend.Redux.Shared.States.Validators;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.States.Validators;
+namespace Xipona.Frontend.Redux.Items.States.Validators;
 
 public class DuplicatedStoresValidator : IValidator<IReadOnlyCollection<EditedItemAvailability>>
 {

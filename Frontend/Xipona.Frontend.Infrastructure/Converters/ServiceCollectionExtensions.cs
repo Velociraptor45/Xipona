@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Infrastructure.Converters.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters;
+namespace Xipona.Frontend.Infrastructure.Converters;
 
 internal static class ServiceCollectionExtensions
 {

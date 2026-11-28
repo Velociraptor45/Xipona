@@ -1,14 +1,14 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Reasons;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Reasons;
+using Xipona.Api.Domain.Shared.Validations;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Modifications;
+namespace Xipona.Api.Domain.Recipes.Services.Modifications;
 
 public class RecipeModificationService : IRecipeModificationService
 {
@@ -104,6 +104,17 @@ public class RecipeModificationService : IRecipeModificationService
         foreach (var recipe in recipes)
         {
             recipe.RemoveIngredientsOfItemCategory(itemCategoryId);
+            await _recipeRepository.StoreAsync(recipe);
+        }
+    }
+
+    public async Task ReplaceMergedItemAsync(ItemId originalItemId, ItemId newItemId, ItemTypeId newItemTypeId)
+    {
+        var recipes = await _recipeRepository.FindByAsync(originalItemId);
+
+        foreach (var recipe in recipes)
+        {
+            recipe.ReplaceMergedItem(originalItemId, newItemId, newItemTypeId);
             await _recipeRepository.StoreAsync(recipe);
         }
     }

@@ -1,3 +1,3 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
+﻿namespace Xipona.Frontend.Redux.Items.Actions.Editor;
 
 public record SetNewItemAction;

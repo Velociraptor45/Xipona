@@ -1,16 +1,16 @@
-﻿using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Stores.Ports;
+﻿using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+using Xipona.Api.Domain.ShoppingLists.Services.Queries;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
+using Xipona.Api.Domain.TestKit.Items.Ports;
+using Xipona.Api.Domain.TestKit.Manufacturers.Ports;
+using Xipona.Api.Domain.TestKit.Stores.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Services.Conversion.ShoppingListReadModels;
 
 public class ShoppingListReadModelConversionServiceTests
 {
@@ -32,18 +32,23 @@ public class ShoppingListReadModelConversionServiceTests
             itemCategoryRepositoryMock.Object,
             manufacturerRepositoryMock.Object);
 
+        var itemsList = items.ToList();
+        var itemCategoriesList = itemCategories.ToList();
+        var manufacturersList = manufacturers.ToList();
+        
+        var itemIds = itemsList.Select(i => i.Id).ToList();
+        var itemCategoryIds = itemCategoriesList.Select(cat => cat.Id).ToList();
+        var manufacturerIds = manufacturersList.Select(m => m.Id).ToList();
+        
         storeRepositoryMock.SetupFindByAsync(store.Id, store);
-        itemRepositoryMock.SetupFindByAsync(items.Select(i => i.Id), items);
-        itemCategoryRepositoryMock.SetupFindByAsync(itemCategories.Select(cat => cat.Id), itemCategories);
-        manufacturerRepositoryMock.SetupFindByAsync(manufacturers.Select(m => m.Id), manufacturers);
+        itemRepositoryMock.SetupFindByAsync(itemIds, itemsList);
+        itemCategoryRepositoryMock.SetupFindByAsync(itemCategoryIds, itemCategoriesList);
+        manufacturerRepositoryMock.SetupFindByAsync(manufacturerIds, manufacturersList);
 
         // Act
         var result = await service.ConvertAsync(list);
 
         // Assert
-        using (new AssertionScope())
-        {
-            result.Should().BeEquivalentTo(expected);
-        }
+        result.Should().BeEquivalentTo(expected);
     }
 }

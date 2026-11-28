@@ -1,10 +1,10 @@
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
-using ProjectHermes.Xipona.Api.Core.TestKit;
+using Xipona.Api.Contracts.Items.Queries.Get;
+using Xipona.Api.Core.TestKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 public class ItemStoreContractBuilder : TestBuilderBase<ItemStoreContract>
 {
     public ItemStoreContractBuilder WithId(Guid id)

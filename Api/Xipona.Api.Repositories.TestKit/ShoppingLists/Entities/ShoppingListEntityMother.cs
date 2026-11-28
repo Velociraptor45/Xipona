@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
+﻿namespace Xipona.Api.Repositories.TestKit.ShoppingLists.Entities;
 
 public static class ShoppingListEntityMother
 {
@@ -10,7 +10,7 @@ public static class ShoppingListEntityMother
     public static ShoppingListEntityBuilder InitialWithOneItem(Guid itemId, Guid? itemTypeId, Guid sectionId)
     {
         var shoppingListId = Guid.NewGuid();
-        var items = ItemsOnListEntityMother.WithItemTypeId(shoppingListId)
+        var items = ItemsOnListEntityMother.ItemType(shoppingListId)
             .WithItemId(itemId)
             .WithItemTypeId(itemTypeId)
             .WithSectionId(sectionId)
@@ -21,54 +21,72 @@ public static class ShoppingListEntityMother
             .WithId(shoppingListId)
             .WithoutCompletionDate()
             .WithEmptyDiscounts()
+            .WithEmptyListDiscounts()
             .WithItemsOnList(items);
     }
 
     public static ShoppingListEntityBuilder InitialWithTwoItems(Guid itemId, Guid? itemTypeId, Guid sectionId)
     {
         var shoppingListId = Guid.NewGuid();
-        var item1 = ItemsOnListEntityMother.WithItemTypeId(shoppingListId)
+        var item1 = ItemsOnListEntityMother.ItemType(shoppingListId)
             .WithItemId(itemId)
             .WithItemTypeId(itemTypeId)
             .WithSectionId(sectionId)
             .Create();
-        var item2 = ItemsOnListEntityMother.WithItemTypeId(shoppingListId).Create();
+        var item2 = ItemsOnListEntityMother.ItemType(shoppingListId).Create();
 
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
             .WithEmptyDiscounts()
+            .WithEmptyListDiscounts()
             .WithItemsOnList([item1, item2]);
     }
 
-    public static ShoppingListEntityBuilder Empty()
+    public static ShoppingListEntityBuilder Empty(ShoppingListEntityGodmother? godmother = null)
     {
-        return new ShoppingListEntityBuilder()
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
             .WithoutCompletionDate()
             .WithEmptyDiscounts()
+            .WithEmptyListDiscounts()
             .WithEmptyItemsOnList();
     }
 
-    public static ShoppingListEntityBuilder Active()
+    public static ShoppingListEntityBuilder Active(ShoppingListEntityGodmother? godmother = null)
     {
-        var shoppingListId = Guid.NewGuid();
-        var items = ItemsOnListEntityMother.WithItemTypeId(shoppingListId).CreateMany(3).ToList();
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
+            .WithoutCompletionDate();
+    }
 
-        return new ShoppingListEntityBuilder()
-            .WithId(shoppingListId)
+    public static ShoppingListEntityBuilder ActiveWithoutDiscounts(ShoppingListEntityGodmother? godmother = null)
+    {
+        return (godmother?.GetFoundation() ?? new ShoppingListEntityBuilder())
             .WithoutCompletionDate()
-            .WithItemsOnList(items);
+            .WithEmptyDiscounts()
+            .WithEmptyListDiscounts();
+    }
+
+    public static ShoppingListEntityBuilder Completed(ShoppingListEntityGodmother? godmother = null)
+    {
+        return godmother?.GetFoundation() ?? new ShoppingListEntityBuilder();
     }
 
     public static ShoppingListEntityBuilder ActiveWithItemsWithoutType()
     {
         var shoppingListId = Guid.NewGuid();
-        var items = ItemsOnListEntityMother.WithoutItemTypeId(shoppingListId).CreateMany(3).ToList();
+        var items = ItemsOnListEntityMother.Item(shoppingListId).CreateMany(3).ToList();
 
         return new ShoppingListEntityBuilder()
             .WithId(shoppingListId)
             .WithoutCompletionDate()
             .WithEmptyDiscounts()
+            .WithEmptyListDiscounts()
             .WithItemsOnList(items);
+    }
+
+    public static ShoppingListEntityBuilder ListDiscount()
+    {
+        return Active()
+            .WithListDiscounts([ShoppingListDiscountEntityMother.Price().Create()]);
     }
 }

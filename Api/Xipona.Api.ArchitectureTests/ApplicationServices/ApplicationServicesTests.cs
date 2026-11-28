@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ArchitectureTests.ApplicationServices.CustomRules;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ArchitectureTests.ApplicationServices.CustomRules;
 
-namespace ProjectHermes.Xipona.Api.ArchitectureTests.ApplicationServices;
+namespace Xipona.Api.ArchitectureTests.ApplicationServices;
 
 public class ApplicationServicesTests
 {

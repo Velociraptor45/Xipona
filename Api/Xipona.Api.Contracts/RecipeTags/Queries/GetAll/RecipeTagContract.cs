@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll
+namespace Xipona.Api.Contracts.RecipeTags.Queries.GetAll
 {
     /// <summary>
     /// Represents a recipe tag.

@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Commands.ModifyItemCategory;
-using ProjectHermes.Xipona.Api.ApplicationServices.Tests.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Services.Modifications;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.ApplicationServices.ItemCategories.Commands.ModifyItemCategory;
+using Xipona.Api.ApplicationServices.Tests.Common;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.ItemCategories.Services.Modifications;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory;
+namespace Xipona.Api.ApplicationServices.Tests.ItemCategories.Commands.ModifyItemCategory;
 
 public class ModifyItemCategoryCommandHandlerTests : CommandHandlerTestsBase<
     ModifyItemCategoryCommandHandler, ModifyItemCategoryCommand, bool>

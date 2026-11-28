@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes
+﻿namespace Xipona.Api.Contracts.Items.Queries.AllQuantityTypes
 {
     /// <summary>
     /// Represents a quantity type.

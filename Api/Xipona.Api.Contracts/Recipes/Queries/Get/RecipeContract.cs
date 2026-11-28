@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get
+namespace Xipona.Api.Contracts.Recipes.Queries.Get
 {
     /// <summary>
     /// Represents a recipe.

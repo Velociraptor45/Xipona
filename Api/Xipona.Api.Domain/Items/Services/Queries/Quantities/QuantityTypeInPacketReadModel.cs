@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Core.Attributes;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
+﻿using Xipona.Api.Core.Attributes;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Queries.Quantities;
+namespace Xipona.Api.Domain.Items.Services.Queries.Quantities;
 
 public class QuantityTypeInPacketReadModel
 {

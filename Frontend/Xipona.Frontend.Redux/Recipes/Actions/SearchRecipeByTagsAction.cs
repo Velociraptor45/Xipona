@@ -1,2 +1,2 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Recipes.Actions;
+﻿namespace Xipona.Frontend.Redux.Recipes.Actions;
 public record SearchRecipeByTagsAction;

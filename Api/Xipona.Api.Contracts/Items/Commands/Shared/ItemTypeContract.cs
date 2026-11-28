@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Commands.Shared
+namespace Xipona.Api.Contracts.Items.Commands.Shared
 {
     /// <summary>
     /// Represents an item type.

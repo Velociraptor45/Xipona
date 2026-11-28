@@ -1,12 +1,12 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.Comparer;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using ProjectHermes.Xipona.Frontend.Redux.TestKit.Common;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.States.Comparer;
+using Xipona.Frontend.Redux.Stores.States;
+using Xipona.Frontend.Redux.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.TestKit.Shared.Customizations;
+namespace Xipona.Frontend.Redux.TestKit.Shared.Customizations;
 
 public class SortedSetCustomization : ICustomization
 {

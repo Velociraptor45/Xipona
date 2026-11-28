@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-namespace ProjectHermes.Xipona.Api.TestTools.AutoFixture;
+namespace Xipona.Api.TestTools.AutoFixture;
 
 public static partial class EquivalencyOptionsExtensions
 {
@@ -35,6 +35,16 @@ public static partial class EquivalencyOptionsExtensions
         return options
             .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, precision.Value))
             .When(info => info.Path.EndsWith("CreatedAt"));
+    }
+
+    public static EquivalencyOptions<T> WithCompletionDatePrecision<T>(this EquivalencyOptions<T> options,
+        TimeSpan? precision = null)
+    {
+        precision ??= 1.Milliseconds();
+
+        return options
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, precision.Value))
+            .When(info => info.Path.EndsWith("CompletionDate"));
     }
 
     public static EquivalencyOptions<T> WithUpdatedOnPrecision<T>(this EquivalencyOptions<T> options)
@@ -69,11 +79,16 @@ public static partial class EquivalencyOptionsExtensions
     [GeneratedRegex(@"Discounts\[\d+\].ShoppingList")]
     private static partial Regex DiscountsShoppingListCycle();
 
+    [GeneratedRegex(@"ListDiscounts\[\d+\].ShoppingList")]
+    private static partial Regex ListDiscountsShoppingListCycle();
+
     public static EquivalencyOptions<T> ExcludeShoppingListCycleRef<T>(this EquivalencyOptions<T> options)
     {
         return options.Excluding(info =>
             ItemsOnListShoppingListCycle().IsMatch(info.Path)
-            || DiscountsShoppingListCycle().IsMatch(info.Path));
+            || DiscountsShoppingListCycle().IsMatch(info.Path)
+            || ListDiscountsShoppingListCycle().IsMatch(info.Path)
+            );
     }
 
     [GeneratedRegex(@"ItemsOnList\[\d+\].Id")]
@@ -92,6 +107,14 @@ public static partial class EquivalencyOptionsExtensions
         return options.Excluding(info => DiscountId().IsMatch(info.Path));
     }
 
+    [GeneratedRegex(@"ListDiscounts\[\d+\].Id")]
+    private static partial Regex ListDiscountId();
+
+    public static EquivalencyOptions<T> ExcludeListDiscountId<T>(this EquivalencyOptions<T> options)
+    {
+        return options.Excluding(info => ListDiscountId().IsMatch(info.Path));
+    }
+
     [GeneratedRegex(@"PreparationSteps\[\d+\].Recipe")]
     private static partial Regex PreparationStepsRecipeCycle();
 
@@ -106,6 +129,14 @@ public static partial class EquivalencyOptionsExtensions
         return options.Excluding(info => PreparationStepsRecipeCycle().IsMatch(info.Path)
                                          || IngredientsRecipeCycle().IsMatch(info.Path)
                                          || RecipeTagRecipeCycle().IsMatch(info.Path));
+    }
+
+    [GeneratedRegex(@"Sections\[\d+\].Id")]
+    private static partial Regex SectionIds();
+
+    public static EquivalencyOptions<T> ExcludeSectionIds<T>(this EquivalencyOptions<T> options)
+    {
+        return options.Excluding(info => SectionIds().IsMatch(info.Path));
     }
 
     public static EquivalencyOptions<T> UsingDateTimeOffsetWithPrecision<T>(

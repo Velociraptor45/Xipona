@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Core.Services;
-using ProjectHermes.Xipona.Api.Domain.Stores.Services.Creations;
+﻿using Xipona.Api.Core.Services;
+using Xipona.Api.Domain.Stores.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Stores.Models.Factories;
+namespace Xipona.Api.Domain.Stores.Models.Factories;
 
 public class StoreFactory : IStoreFactory
 {
@@ -24,6 +24,6 @@ public class StoreFactory : IStoreFactory
     {
         var sections = creationInfo.Sections.Select(s => _sectionFactory.CreateNew(s));
 
-        return Create(new StoreId(Guid.NewGuid()), creationInfo.Name, false, sections, _dateTimeService.UtcNow);
+        return Create(StoreId.New, creationInfo.Name, false, sections, _dateTimeService.UtcNow);
     }
 }

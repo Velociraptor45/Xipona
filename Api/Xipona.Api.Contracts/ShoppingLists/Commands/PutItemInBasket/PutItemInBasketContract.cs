@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket
 {
     /// <summary>
     /// Represents a request to put an item in the basket.

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.ShoppingLists.Reasons;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
 
 public class ShoppingListExchangeService : IShoppingListExchangeService
 {

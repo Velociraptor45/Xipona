@@ -1,6 +1,8 @@
 ﻿using Moq;
-using ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Moq.Contrib.InOrder;
+using Moq.Contrib.InOrder.Extensions;
+using Xipona.Frontend.Infrastructure.RequestSenders;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
 
 namespace Xipona.Frontend.Infrastructure.TestKit.RequestSenders;
 
@@ -10,13 +12,13 @@ public class RequestSenderStrategyMock : Mock<IRequestSenderStrategy>
     {
     }
 
-    public void SetupSendAsync(IApiRequest request)
+    public void SetupSendAsync(IApiRequest request, IQueueComponent component)
     {
-        Setup(x => x.SendAsync(request)).Returns(Task.CompletedTask);
+        this.SetupInOrder(x => x.SendAsync(request), component).Returns(Task.CompletedTask);
     }
 
-    public void SetupSendAsyncThrowing(IApiRequest request, Exception ex)
+    public void SetupSendAsyncThrowing(IApiRequest request, Exception ex, IQueueComponent component)
     {
-        Setup(x => x.SendAsync(request)).ThrowsAsync(ex);
+        this.SetupInOrder(x => x.SendAsync(request), component).ThrowsAsync(ex);
     }
 }

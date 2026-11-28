@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.TestKit.Items.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.Recipes.Services.Queries;
+namespace Xipona.Api.Domain.Tests.Recipes.Services.Queries;
 
 public class QuantityTranslationServiceTests
 {

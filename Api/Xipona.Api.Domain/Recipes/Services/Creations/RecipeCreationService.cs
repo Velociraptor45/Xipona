@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.Common.Exceptions;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Ports;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Shared;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.Common.Exceptions;
+using Xipona.Api.Domain.Recipes.Models.Factories;
+using Xipona.Api.Domain.Recipes.Ports;
+using Xipona.Api.Domain.Recipes.Reasons;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.Recipes.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
+namespace Xipona.Api.Domain.Recipes.Services.Creations;
 
 public class RecipeCreationService : IRecipeCreationService
 {

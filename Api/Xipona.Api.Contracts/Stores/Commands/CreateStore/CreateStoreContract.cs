@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore
+namespace Xipona.Api.Contracts.Stores.Commands.CreateStore
 {
     /// <summary>
     /// Represents a request for creating a store.

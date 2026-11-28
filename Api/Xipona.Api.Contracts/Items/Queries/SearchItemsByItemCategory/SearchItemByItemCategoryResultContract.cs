@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory
+namespace Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory
 {
     /// <summary>
     /// Represents a search result for an item or item type in a specific category.

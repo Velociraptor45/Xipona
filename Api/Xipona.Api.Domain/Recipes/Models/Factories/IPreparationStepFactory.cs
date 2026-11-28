@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Creations;
+﻿using Xipona.Api.Domain.Recipes.Services.Creations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Recipes.Models.Factories;
+namespace Xipona.Api.Domain.Recipes.Models.Factories;
 
 public interface IPreparationStepFactory
 {

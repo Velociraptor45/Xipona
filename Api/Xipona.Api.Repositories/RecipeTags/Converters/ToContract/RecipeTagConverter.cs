@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using RecipeTag = ProjectHermes.Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.RecipeTags.Models;
+using RecipeTag = Xipona.Api.Repositories.RecipeTags.Entities.RecipeTag;
 
-namespace ProjectHermes.Xipona.Api.Repositories.RecipeTags.Converters.ToContract;
+namespace Xipona.Api.Repositories.RecipeTags.Converters.ToContract;
 
 public class RecipeTagConverter : IToContractConverter<IRecipeTag, RecipeTag>
 {

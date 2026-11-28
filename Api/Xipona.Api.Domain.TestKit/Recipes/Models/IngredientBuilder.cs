@@ -1,8 +1,8 @@
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.TestKit.Common;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
+namespace Xipona.Api.Domain.TestKit.Recipes.Models;
 
 public class IngredientBuilder : DomainTestBuilderBase<Ingredient>
 {

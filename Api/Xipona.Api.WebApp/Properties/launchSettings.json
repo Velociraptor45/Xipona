@@ -16,7 +16,8 @@
       "applicationUrl": "https://localhost:5050",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "APP_VERSION": "0.13.0-pre"
+        "APP_VERSION": "0.14.0-pre",
+        "XIPONA_CORS_ORIGIN__0": "https://localhost:5000"
       }
     },
     "http": {
@@ -26,7 +27,8 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local",
-        "APP_VERSION": "0.13.0-pre"
+        "APP_VERSION": "0.14.0-pre",
+        "XIPONA_CORS_ORIGIN__0": "https://localhost:5000"
       }
     }
   }

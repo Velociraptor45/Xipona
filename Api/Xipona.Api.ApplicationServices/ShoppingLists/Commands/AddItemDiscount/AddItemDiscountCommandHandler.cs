@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Modifications;
-using ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.ShoppingLists.Services.Modifications;
+using Xipona.Api.Repositories.Common.Transactions;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemDiscount;
+namespace Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemDiscount;
 
 public class AddItemDiscountCommandHandler : ICommandHandler<AddItemDiscountCommand, bool>
 {
@@ -18,7 +18,6 @@ public class AddItemDiscountCommandHandler : ICommandHandler<AddItemDiscountComm
 
     public async Task<bool> HandleAsync(AddItemDiscountCommand command, CancellationToken cancellationToken)
     {
-
         using var transaction = await _transactionGenerator.GenerateAsync(cancellationToken);
 
         var modificationService = _modificationServiceDelegate(cancellationToken);

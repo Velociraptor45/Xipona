@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList
 {
     /// <summary>
     /// Represents a request to add an item type to a shopping list.

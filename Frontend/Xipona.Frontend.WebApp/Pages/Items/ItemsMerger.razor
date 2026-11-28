@@ -1,0 +1,49 @@
+﻿@page "/items/merge"
+
+@using Fluxor
+@using Microsoft.AspNetCore.WebUtilities
+@using Xipona.Frontend.Redux.Items.Actions.Merges
+@using Xipona.Frontend.Redux.Items.States
+@using Xipona.Frontend.WebApp.Components.Items.Merger
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject NavigationManager NavigationManager
+@inject IState<ItemState> State
+@inject IDispatcher Dispatcher
+
+@if(State.Value.Merge.Item is not null)
+{
+    <div class="container">
+        <ItemMerger MergedItem="State.Value.Merge.Item"></ItemMerger>
+    </div>
+}
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+
+        List<Guid> itemIds = [];
+        if (query.TryGetValue("itemId", out var values))
+        {
+            itemIds = values
+                .Select(v =>
+                    {
+                        if(Guid.TryParse(v, out var id))
+                            return id;
+                        return (Guid?)null;
+                    })
+                .Where(id => id.HasValue)
+                .Select(id => id.Value)
+                .ToList();
+        }
+
+        // dispatch ids to load
+        Dispatcher.Dispatch(new InitializeMergingAction(itemIds));
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace ProjectHermes.Xipona.Api.TestTools.Exceptions;
+namespace Xipona.Api.TestTools.Exceptions;
 
 public class TestPropertyNotSetException : Exception
 {

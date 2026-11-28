@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Common.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities;
-using Discount = ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
+﻿using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Common.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Repositories.ShoppingLists.Entities;
+using Discount = Xipona.Api.Repositories.ShoppingLists.Entities.Discount;
 
-namespace ProjectHermes.Xipona.Api.Repositories.ShoppingLists.Converters.ToContract;
+namespace Xipona.Api.Repositories.ShoppingLists.Converters.ToContract;
 
 public class ShoppingListConverter : IToContractConverter<IShoppingList, Entities.ShoppingList>
 {
@@ -16,7 +16,8 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
             CompletionDate = source.CompletionDate,
             StoreId = source.StoreId,
             ItemsOnList = CreateItemsOnListMap(source).ToList(),
-            Discounts = CreateDiscountsMap(source).ToList(),
+            Discounts = CreateItemDiscounts(source).ToList(),
+            ListDiscounts = CreateShoppingListDiscounts(source).ToList(),
             CreatedAt = source.CreatedAt,
             RowVersion = ((AggregateRoot)source).RowVersion
         };
@@ -41,9 +42,9 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
         }
     }
 
-    private static IEnumerable<Discount> CreateDiscountsMap(IShoppingList source)
+    private static IEnumerable<Discount> CreateItemDiscounts(IShoppingList source)
     {
-        foreach (var discount in source.Discounts)
+        foreach (var discount in source.ItemDiscounts)
         {
             yield return new Discount
             {
@@ -53,5 +54,16 @@ public class ShoppingListConverter : IToContractConverter<IShoppingList, Entitie
                 DiscountPrice = discount.Price
             };
         }
+    }
+
+    private static IEnumerable<ShoppingListDiscount> CreateShoppingListDiscounts(IShoppingList source)
+    {
+        return source.ListDiscounts.Select(d => new ShoppingListDiscount
+        {
+            Id = d.Id,
+            ShoppingListId = source.Id,
+            DiscountPercentage = d.Percentage,
+            DiscountPrice = d.Price
+        });
     }
 }

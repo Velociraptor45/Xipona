@@ -1,0 +1,7 @@
+﻿.previous-item-name {
+    font-size: 12px
+}
+
+::deep .item-type-name-input {
+    max-width: 160px
+}

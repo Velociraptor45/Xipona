@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Modifications;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.Items.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
+namespace Xipona.Api.ApplicationServices.Items.Commands.ModifyItemWithTypes;
 
 public class ModifyItemWithTypesCommand : ICommand<bool>
 {

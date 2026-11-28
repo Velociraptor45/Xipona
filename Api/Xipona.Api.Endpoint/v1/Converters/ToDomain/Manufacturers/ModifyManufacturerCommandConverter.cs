@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
+﻿using Xipona.Api.ApplicationServices.Manufacturers.Commands.ModifyManufacturer;
+using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.Manufacturers;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.Manufacturers;
 
 public class ModifyManufacturerCommandConverter :
     IToDomainConverter<ModifyManufacturerContract, ModifyManufacturerCommand>

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Ports;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Deletions;
+namespace Xipona.Api.Domain.Items.Services.Deletions;
 
 public class ItemDeletionService : IItemDeletionService
 {

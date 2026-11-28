@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
+﻿namespace Xipona.Api.ApplicationServices.Common.Commands;
 
 public interface ICommandHandler<TCommand, TValue>
     where TCommand : ICommand<TValue>

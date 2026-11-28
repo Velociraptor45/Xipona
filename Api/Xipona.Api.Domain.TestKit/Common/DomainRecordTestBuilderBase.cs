@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.TestKit.Common;
+﻿namespace Xipona.Api.Domain.TestKit.Common;
 
 public class DomainRecordTestBuilderBase<TModel> : DomainTestBuilderBase<TModel>
 {

@@ -1,19 +1,19 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ShoppingLists.Services;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using Xunit.Abstractions;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.ShoppingLists.Models;
+using Xipona.Api.Domain.ShoppingLists.Services.Exchanges;
+using Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.Items.Models;
+using Xipona.Api.Domain.TestKit.Items.Models.Factories;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Models;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Ports;
+using Xipona.Api.Domain.TestKit.ShoppingLists.Services;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ShoppingLists.Services;
+
+namespace Xipona.Api.Domain.Tests.ShoppingLists.Services;
 
 public class ShoppingListExchangeServiceTests
 {
@@ -804,7 +804,7 @@ public class ShoppingListExchangeServiceTests
                     .WithPredecessorId(OldShoppingListItem.TypeId.Value)
                     .CreateMany(1).ToList();
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithItemTypes(itemTypes).Create();
             }
 
             public void SetupItemMatchingShoppingListWithNewTypes()
@@ -815,7 +815,7 @@ public class ShoppingListExchangeServiceTests
                     .CreateMany(1);
                 var type = new ItemTypeBuilder().WithAvailabilities(availability).CreateMany(1);
                 var itemTypes = new ItemTypes(type, _itemTypeFactoryMock.Object);
-                NewItem = new ItemBuilder().WithTypes(itemTypes).Create();
+                NewItem = new ItemBuilder().WithItemTypes(itemTypes).Create();
             }
 
             public void SetupShoppingListWithItemWithoutType()

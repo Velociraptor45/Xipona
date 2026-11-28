@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.Tests.Converter;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Converters.ToContract;
-using Ingredient = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.Tests.Converter;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Repositories.Recipes.Converters.ToContract;
+using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Tests.Recipes.Converters.ToContract;
+namespace Xipona.Api.Repositories.Tests.Recipes.Converters.ToContract;
 
 public class IngredientConverterTests : ToContractConverterTestBase<(RecipeId, IIngredient), Ingredient, IngredientConverter>
 {

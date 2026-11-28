@@ -1,14 +1,14 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
-using ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+﻿using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.ItemCategories.Models;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common.Extensions.FluentAssertions;
+using Xipona.Api.Domain.TestKit.ItemCategories.Models;
+using Xipona.Api.Domain.TestKit.ItemCategories.Ports;
+using Xipona.Api.TestTools.Exceptions;
 
-using DomainModels = ProjectHermes.Xipona.Api.Domain.ItemCategories.Models;
+using DomainModels = Xipona.Api.Domain.ItemCategories.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.Tests.ItemCategories.Services.Queries;
+namespace Xipona.Api.Domain.Tests.ItemCategories.Services.Queries;
 
 public class ItemCategoryQueryServiceTests
 {

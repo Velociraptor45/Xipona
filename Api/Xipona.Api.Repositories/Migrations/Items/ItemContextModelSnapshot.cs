@@ -3,11 +3,12 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Xipona.Api.Repositories.Items.Contexts;
 
 #nullable disable
 
-namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
+namespace Xipona.Api.Repositories.Migrations.Items
 {
     [DbContext(typeof(ItemContext))]
     partial class ItemContextModelSnapshot : ModelSnapshot
@@ -16,80 +17,86 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.AvailableAt", b =>
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.AvailableAt", b =>
                 {
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)")
+                        .HasColumnType("uuid")
                         .HasColumnOrder(1);
 
                     b.Property<Guid>("StoreId")
-                        .HasColumnType("char(36)")
+                        .HasColumnType("uuid")
                         .HasColumnOrder(2);
 
                     b.Property<Guid>("DefaultSectionId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("numeric");
 
                     b.HasKey("ItemId", "StoreId");
 
                     b.ToTable("AvailableAts");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.Item", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("CreatedFrom")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsTemporary")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid?>("ItemCategoryId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ManufacturerId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("PredecessorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<float?>("QuantityInPacket")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<int>("QuantityType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("QuantityTypeInPacket")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("RowVersion")
+                    b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp(6)");
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.Property<DateTimeOffset?>("UpdatedOn")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -98,26 +105,26 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.ItemType", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("PredecessorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -128,30 +135,30 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.ToTable("ItemTypes");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemTypeAvailableAt", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.ItemTypeAvailableAt", b =>
                 {
                     b.Property<Guid>("ItemTypeId")
-                        .HasColumnType("char(36)")
+                        .HasColumnType("uuid")
                         .HasColumnOrder(1);
 
                     b.Property<Guid>("StoreId")
-                        .HasColumnType("char(36)")
+                        .HasColumnType("uuid")
                         .HasColumnOrder(2);
 
                     b.Property<Guid>("DefaultSectionId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("numeric");
 
                     b.HasKey("ItemTypeId", "StoreId");
 
                     b.ToTable("ItemTypeAvailableAts");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.AvailableAt", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.AvailableAt", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item", "Item")
+                    b.HasOne("Xipona.Api.Repositories.Items.Entities.Item", "Item")
                         .WithMany("AvailableAt")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -160,24 +167,24 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.Navigation("Item");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.Item", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item", "Predecessor")
+                    b.HasOne("Xipona.Api.Repositories.Items.Entities.Item", "Predecessor")
                         .WithMany()
                         .HasForeignKey("PredecessorId");
 
                     b.Navigation("Predecessor");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.ItemType", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item", "Item")
+                    b.HasOne("Xipona.Api.Repositories.Items.Entities.Item", "Item")
                         .WithMany("ItemTypes")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType", "Predecessor")
+                    b.HasOne("Xipona.Api.Repositories.Items.Entities.ItemType", "Predecessor")
                         .WithMany()
                         .HasForeignKey("PredecessorId");
 
@@ -186,9 +193,9 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.Navigation("Predecessor");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemTypeAvailableAt", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.ItemTypeAvailableAt", b =>
                 {
-                    b.HasOne("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType", "ItemType")
+                    b.HasOne("Xipona.Api.Repositories.Items.Entities.ItemType", "ItemType")
                         .WithMany("AvailableAt")
                         .HasForeignKey("ItemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -197,14 +204,14 @@ namespace ProjectHermes.Xipona.Api.Repositories.Migrations.Items
                     b.Navigation("ItemType");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.Item", b =>
                 {
                     b.Navigation("AvailableAt");
 
                     b.Navigation("ItemTypes");
                 });
 
-            modelBuilder.Entity("ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType", b =>
+            modelBuilder.Entity("Xipona.Api.Repositories.Items.Entities.ItemType", b =>
                 {
                     b.Navigation("AvailableAt");
                 });

@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Recipes.States;
 using System;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
+namespace Xipona.Frontend.Infrastructure.Converters.Recipes.ToDomain;
 
 public class EditedPreparationStepConverter : IToDomainConverter<PreparationStepContract, EditedPreparationStep>
 {

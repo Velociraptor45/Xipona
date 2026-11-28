@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.Extensions;
 using System.Data.Common;
 
-namespace ProjectHermes.Xipona.Api.Repositories.Common.Transactions;
+namespace Xipona.Api.Repositories.Common.Transactions;
 
 public class TransactionGenerator : ITransactionGenerator
 {

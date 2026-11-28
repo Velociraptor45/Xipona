@@ -1,20 +1,16 @@
 ﻿using Fluxor;
 using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Exceptions;
-using ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
+using Xipona.Frontend.Infrastructure.Exceptions;
+using Xipona.Frontend.Infrastructure.RequestSenders;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.Redux.ShoppingList.Actions;
+using Xipona.Frontend.Redux.ShoppingList.Actions.Processing;
 using RestEase;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Timers;
+using Timer = System.Timers.Timer;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
+namespace Xipona.Frontend.Infrastructure.Connection;
 
 public sealed class CommandQueue : ICommandQueue, IDisposable
 {
@@ -25,7 +21,7 @@ public sealed class CommandQueue : ICommandQueue, IDisposable
 
     private bool _connectionAlive = true;
     private static readonly List<IApiRequest> _queue = new();
-    private readonly Timer _timer;
+    private readonly Timer? _timer;
 
     public CommandQueue(IApiClient commandClient, IRequestSenderStrategy senderStrategy, IDispatcher dispatcher,
         CommandQueueConfig config, ILogger<CommandQueue> logger)

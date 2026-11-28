@@ -1,6 +1,6 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get;
+﻿using Xipona.Api.Contracts.Items.Queries.Get;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.Get;
+namespace Xipona.Api.Contracts.TestKit.Items.Queries.Get;
 
 public static class ItemTypeContractMother
 {

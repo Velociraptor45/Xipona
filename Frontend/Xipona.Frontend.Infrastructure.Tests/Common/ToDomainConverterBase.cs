@@ -1,8 +1,9 @@
-﻿using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.TestTools;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+﻿using Microsoft.Extensions.Logging;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.TestTools;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
+namespace Xipona.Frontend.Infrastructure.Tests.Common;
 
 public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TConverter : IToDomainConverter<TSource, TDest>
 {
@@ -20,7 +21,7 @@ public abstract class ToDomainConverterBase<TSource, TDest, TConverter> where TC
         {
             AddMapping(cfg);
             AddAdditionalMapping(cfg);
-        });
+        }, new LoggerFactory());
         var mapper = config.CreateMapper();
 
         mapper.ConfigurationProvider.AssertConfigurationIsValid();

@@ -1,8 +1,8 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.ShoppingList.Actions.PriceUpdater;
+using Xipona.Frontend.Redux.ShoppingList.States;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.ShoppingList.Reducers;
+namespace Xipona.Frontend.Redux.ShoppingList.Reducers;
 
 public static class PriceUpdaterReducer
 {

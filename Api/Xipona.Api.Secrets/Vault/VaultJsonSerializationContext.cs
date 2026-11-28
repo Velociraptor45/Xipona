@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Secrets.Vault.Response;
-using ProjectHermes.Xipona.Api.Secrets.Vault.Response.Token;
+﻿using Xipona.Api.Secrets.Vault.Response;
+using Xipona.Api.Secrets.Vault.Response.Token;
 using System.Text.Json.Serialization;
 
-namespace ProjectHermes.Xipona.Api.Secrets.Vault;
+namespace Xipona.Api.Secrets.Vault;
 
 [JsonSourceGenerationOptions(WriteIndented = false)]
 [JsonSerializable(typeof(TokenAuthResponse))]

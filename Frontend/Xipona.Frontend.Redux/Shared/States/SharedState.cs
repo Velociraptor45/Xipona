@@ -1,8 +1,14 @@
 ﻿using Fluxor;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.States;
+namespace Xipona.Frontend.Redux.Shared.States;
 
-public record SharedState(bool IsMobile, bool IsOnline, bool IsRetryOngoing);
+public record SharedState(UserInfo? User, bool IsMobile, bool IsOnline, bool IsRetryOngoing, Settings Settings)
+{
+    public string GetCurrencySymbol()
+    {
+        return Settings.GeneralSettings?.Currency.Symbol ?? string.Empty;
+    }
+}
 
 public class SharedFeatureState : Feature<SharedState>
 {
@@ -13,6 +19,6 @@ public class SharedFeatureState : Feature<SharedState>
 
     protected override SharedState GetInitialState()
     {
-        return new SharedState(false, true, false);
+        return new SharedState(null, false, true, false, new(null, null, null, false, false));
     }
 }

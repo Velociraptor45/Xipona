@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get
+namespace Xipona.Api.Contracts.Recipes.Queries.Get
 {
     /// <summary>
     /// Represents a side dish to a recipe.

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Services.Modifications;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Services.Modifications;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Models;
+namespace Xipona.Api.Domain.TestKit.Manufacturers.Models;
 
 public class ManufacturerMock : Mock<IManufacturer>
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Shared;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.ShoppingLists.Services.Shared;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists;
+namespace Xipona.Api.Endpoint.v1.Converters.ToDomain.ShoppingLists;
 
 public class ShoppingListItemIdConverter : IToDomainConverter<ItemIdContract, OfflineTolerantItemId>
 {

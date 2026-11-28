@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe
+namespace Xipona.Api.Contracts.Recipes.Commands.CreateRecipe
 {
     /// <summary>
     /// Represents the contract for creating a recipe.

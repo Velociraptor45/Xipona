@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Models.Factories;
-using ProjectHermes.Xipona.Api.Domain.Items.Ports;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.Shared.Validations;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Models.Factories;
+using Xipona.Api.Domain.Items.Ports;
+using Xipona.Api.Domain.Items.Services.Conversion.ItemReadModels;
+using Xipona.Api.Domain.Items.Services.Queries;
+using Xipona.Api.Domain.Shared.Validations;
 
-namespace ProjectHermes.Xipona.Api.Domain.Items.Services.Creations;
+namespace Xipona.Api.Domain.Items.Services.Creations;
 
 public class ItemCreationService : IItemCreationService
 {

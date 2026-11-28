@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using ProjectHermes.Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.ItemCategories.Services.Queries;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common;
-using ProjectHermes.Xipona.Api.Endpoints.Tests.Common.StatusResults;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.ApplicationServices.ItemCategories.Queries.ItemCategorySearch;
+using Xipona.Api.Contracts.ItemCategories.Queries;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.ItemCategories.Services.Queries;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Endpoints.Tests.Common;
+using Xipona.Api.Endpoints.Tests.Common.StatusResults;
+using Xipona.Api.TestTools.Exceptions;
 
-namespace ProjectHermes.Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
+namespace Xipona.Api.Endpoints.Tests.v1.Endpoints.ItemCategoryEndpointTests;
 
 public class SearchItemCategoriesByNameTests : EndpointEnumerableQueryNoConverterTestsBase<
     ItemCategorySearchQuery, ItemCategorySearchResultReadModel, ItemCategorySearchResultContract,
@@ -41,7 +41,7 @@ public class SearchItemCategoriesByNameTests : EndpointEnumerableQueryNoConverte
                 _searchInput, _includeDeleted.Value,
                 QueryDispatcherMock.Object,
                 ContractConverterMock.Object,
-                default);
+                TestContext.Current.CancellationToken);
         }
 
         public override void SetupParameters()

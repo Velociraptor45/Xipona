@@ -1,9 +1,9 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
+﻿using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Frontend.Infrastructure.Converters.Common;
+using Xipona.Frontend.Redux.Recipes.States;
 using System.Linq;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Converters.Recipes.ToContract;
+namespace Xipona.Frontend.Infrastructure.Converters.Recipes.ToContract;
 
 public class CreateRecipeContractConverter : IToContractConverter<EditedRecipe, CreateRecipeContract>
 {

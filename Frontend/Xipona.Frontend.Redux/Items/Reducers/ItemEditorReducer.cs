@@ -1,14 +1,16 @@
 ﻿using Fluxor;
-using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor;
-using ProjectHermes.Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States.Validators;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States.Validators;
+using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.Actions;
+using Xipona.Frontend.Redux.Items.Actions.Editor;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Availabilities;
+using Xipona.Frontend.Redux.Items.Actions.Editor.InputChanges;
+using Xipona.Frontend.Redux.Items.Actions.Editor.Saving;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Validators;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Shared.States.Validators;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Items.Reducers;
+namespace Xipona.Frontend.Redux.Items.Reducers;
 
 public static class ItemEditorReducer
 {
@@ -29,7 +31,8 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                ItemId = action.ItemId
+                ItemId = action.ItemId,
+                IsInEditMode = false
             }
         };
     }
@@ -235,6 +238,7 @@ public static class ItemEditorReducer
                     false,
                     string.Empty,
                     false,
+                    false,
                     state.QuantityTypes.First(),
                     1,
                     state.QuantityTypesInPacket.First(),
@@ -243,6 +247,7 @@ public static class ItemEditorReducer
                     new List<EditedItemAvailability>(),
                     new List<EditedItemType>(),
                     ItemMode.NotDefined),
+                IsInEditMode = true,
                 ItemCategorySelector = state.Editor.ItemCategorySelector with
                 {
                     ItemCategories = new List<ItemCategorySearchResult>(0),
@@ -279,15 +284,7 @@ public static class ItemEditorReducer
             {
                 IsLoadingEditedItem = false,
                 Item = action.Item,
-                ValidationResult = new(),
-                ItemCategorySelector = state.Editor.ItemCategorySelector with
-                {
-                    Input = string.Empty
-                },
-                ManufacturerSelector = state.Editor.ManufacturerSelector with
-                {
-                    Input = string.Empty
-                }
+                ReadOnlyItem = action.Item
             }
         };
     }
@@ -643,7 +640,7 @@ public static class ItemEditorReducer
         if (_nameValidator.Validate(modifiedType.Name, out var nameErrorMessage))
             typeNameResults.Remove(modifiedType.Key);
         else
-            typeNameResults[modifiedType.Key] = nameErrorMessage!;
+            typeNameResults[modifiedType.Key] = nameErrorMessage;
 
         return state with
         {
@@ -709,7 +706,9 @@ public static class ItemEditorReducer
         {
             Editor = state.Editor with
             {
-                Item = null
+                ItemId = null,
+                Item = null,
+                ReadOnlyItem = null
             }
         };
     }
@@ -854,6 +853,36 @@ public static class ItemEditorReducer
             Editor = state.Editor with
             {
                 IsDeleteDialogOpen = false
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(MarkItemAsFavoriteAction))]
+    public static ItemState OnMarkItemAsFavorite(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = state.Editor.Item! with
+                {
+                    IsFavorite = true
+                }
+            }
+        };
+    }
+
+    [ReducerMethod(typeof(UnmarkItemAsFavoriteAction))]
+    public static ItemState OnUnmarkItemAsFavorite(ItemState state)
+    {
+        return state with
+        {
+            Editor = state.Editor with
+            {
+                Item = state.Editor.Item! with
+                {
+                    IsFavorite = false
+                }
             }
         };
     }

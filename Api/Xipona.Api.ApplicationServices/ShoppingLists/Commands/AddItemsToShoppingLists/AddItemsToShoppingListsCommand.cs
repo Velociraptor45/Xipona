@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.AddItems;
+﻿using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.Domain.ShoppingLists.Services.AddItems;
 
-namespace ProjectHermes.Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
+namespace Xipona.Api.ApplicationServices.ShoppingLists.Commands.AddItemsToShoppingLists;
 
 public class AddItemsToShoppingListsCommand : ICommand<bool>
 {

@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+﻿using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.v1.Converters.ToContract.Stores;
+namespace Xipona.Api.Endpoint.v1.Converters.ToContract.Stores;
 
 public class SectionForShoppingContractConverter : IToContractConverter<ISection, SectionForShoppingContract>
 {

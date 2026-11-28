@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
-using ProjectHermes.Xipona.Api.Contracts.TestKit.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.TestKit.Items.Queries.AllQuantityTypes;
 
-namespace ProjectHermes.Xipona.Api.Contracts.TestKit.Common;
+namespace Xipona.Api.Contracts.TestKit.Common;
 
 public class ContractCustomization : ICustomization
 {

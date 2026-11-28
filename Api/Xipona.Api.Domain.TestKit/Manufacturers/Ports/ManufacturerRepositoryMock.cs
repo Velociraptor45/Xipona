@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Manufacturers.Models;
-using ProjectHermes.Xipona.Api.Domain.Manufacturers.Ports;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿using Xipona.Api.Domain.Manufacturers.Models;
+using Xipona.Api.Domain.Manufacturers.Ports;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Manufacturers.Ports;
+namespace Xipona.Api.Domain.TestKit.Manufacturers.Ports;
 
 public class ManufacturerRepositoryMock : Mock<IManufacturerRepository>
 {

@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.Shared;
 using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket
+namespace Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket
 {
     /// <summary>
     /// Represents a request to remove an item from the basket.

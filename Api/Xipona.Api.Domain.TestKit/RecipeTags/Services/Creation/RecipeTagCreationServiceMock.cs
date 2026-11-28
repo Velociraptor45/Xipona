@@ -1,7 +1,7 @@
-﻿using ProjectHermes.Xipona.Api.Domain.RecipeTags.Models;
-using ProjectHermes.Xipona.Api.Domain.RecipeTags.Services.Creation;
+﻿using Xipona.Api.Domain.RecipeTags.Models;
+using Xipona.Api.Domain.RecipeTags.Services.Creation;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.RecipeTags.Services.Creation;
+namespace Xipona.Api.Domain.TestKit.RecipeTags.Services.Creation;
 
 public class RecipeTagCreationServiceMock : Mock<IRecipeTagCreationService>
 {

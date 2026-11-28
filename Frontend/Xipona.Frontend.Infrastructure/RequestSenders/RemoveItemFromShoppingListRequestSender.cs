@@ -1,11 +1,11 @@
-﻿using ProjectHermes.Xipona.Frontend.Infrastructure.Connection;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+﻿using Xipona.Frontend.Infrastructure.Connection;
+using Xipona.Frontend.Redux.Shared.Ports;
+using Xipona.Frontend.Redux.Shared.Ports.Requests;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
 using System;
 using System.Threading.Tasks;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.RequestSenders;
+namespace Xipona.Frontend.Infrastructure.RequestSenders;
 
 public class RemoveItemFromShoppingListRequestSender : IRequestSender
 {

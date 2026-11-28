@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Domain.ShoppingLists.Ports;
-using ProjectHermes.Xipona.Api.Domain.Stores.Models;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Domain.ShoppingLists.Ports;
+using Xipona.Api.Domain.Stores.Models;
 
-namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Services.Deletions;
+namespace Xipona.Api.Domain.ShoppingLists.Services.Deletions;
 
 public class ShoppingListDeletionService : IShoppingListDeletionService
 {

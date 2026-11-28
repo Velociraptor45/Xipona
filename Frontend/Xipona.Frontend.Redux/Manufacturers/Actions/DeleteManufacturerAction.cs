@@ -1,3 +1,5 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Manufacturers.Actions;
+﻿namespace Xipona.Frontend.Redux.Manufacturers.Actions;
 
 public record DeleteManufacturerAction;
+public record DeletingManufacturerStartedAction;
+public record DeletingManufacturerFinishedAction;

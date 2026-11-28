@@ -1,19 +1,20 @@
-﻿using ProjectHermes.Xipona.Frontend.Redux.ItemCategories.States;
-using ProjectHermes.Xipona.Frontend.Redux.Items.States;
-using ProjectHermes.Xipona.Frontend.Redux.Manufacturers.States;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
-using ProjectHermes.Xipona.Frontend.Redux.Shared.States;
-using ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States;
-using ProjectHermes.Xipona.Frontend.Redux.Stores.States;
-using IngredientQuantityType = ProjectHermes.Xipona.Frontend.Redux.Recipes.States.IngredientQuantityType;
-using ItemStore = ProjectHermes.Xipona.Frontend.Redux.Items.States.ItemStore;
-using ShoppingListStore = ProjectHermes.Xipona.Frontend.Redux.ShoppingList.States.ShoppingListStore;
+﻿using Xipona.Frontend.Redux.ItemCategories.States;
+using Xipona.Frontend.Redux.Items.States;
+using Xipona.Frontend.Redux.Items.States.Merges;
+using Xipona.Frontend.Redux.Manufacturers.States;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Items;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.Manufacturers;
+using Xipona.Frontend.Redux.Shared.Ports.Requests.ShoppingLists;
+using Xipona.Frontend.Redux.Shared.States;
+using Xipona.Frontend.Redux.ShoppingList.States;
+using Xipona.Frontend.Redux.Stores.States;
+using IngredientQuantityType = Xipona.Frontend.Redux.Recipes.States.IngredientQuantityType;
+using ItemStore = Xipona.Frontend.Redux.Items.States.ItemStore;
+using ShoppingListStore = Xipona.Frontend.Redux.ShoppingList.States.ShoppingListStore;
 
-namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports;
+namespace Xipona.Frontend.Redux.Shared.Ports;
 
 public interface IApiClient
 {
@@ -128,4 +129,17 @@ public interface IApiClient
     Task<IEnumerable<ItemTypePrice>> GetItemTypePricesAsync(Guid itemId, Guid storeId);
     Task AddItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId, decimal discount);
     Task RemoveItemDiscountAsync(Guid shoppingListId, Guid itemId, Guid? itemTypeId);
+    Task<UserInfo> LoginAsync();
+    Task<IEnumerable<Currency>> GetAllCurrenciesAsync();
+    Task UpdateGeneralSettingsAsync(Currency currency);
+    Task<GeneralSettings> GetGeneralSettingsAsync();
+    Task AddShoppingListDiscountAsync(Guid shoppingListId, decimal discount, ShoppingListDiscountType type);
+    Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId);
+    Task<Guid> MergeItemsAsync(MergedItem mergedItem);
+    Task<IEnumerable<MergeItemSearchResult>> SearchItemsForMergeAsync(EditedItem item, Guid[] alreadySelectedItems);
+    Task MarkItemAsFavoriteAsync(Guid itemId);
+    Task UnmarkItemAsFavoriteAsync(Guid itemId);
+
+    Task<List<ItemSearchResult>> FilterItemsAsync(Guid? storeId, Guid? itemCategoryId,
+        Guid? manufacturerId, int page, int pageSize);
 }

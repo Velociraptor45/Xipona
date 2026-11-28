@@ -1,8 +1,8 @@
-﻿using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Items.Services.Validations;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+﻿using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Items.Services.Validations;
+using Xipona.Api.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Api.Domain.TestKit.Items.Services;
+namespace Xipona.Api.Domain.TestKit.Items.Services;
 
 public class AvailabilityValidationServiceMock : Mock<IAvailabilityValidationService>
 {

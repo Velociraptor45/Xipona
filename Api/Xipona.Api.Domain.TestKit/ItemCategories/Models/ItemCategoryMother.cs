@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.TestKit.ItemCategories.Models;
+﻿namespace Xipona.Api.Domain.TestKit.ItemCategories.Models;
 
 public static class ItemCategoryMother
 {

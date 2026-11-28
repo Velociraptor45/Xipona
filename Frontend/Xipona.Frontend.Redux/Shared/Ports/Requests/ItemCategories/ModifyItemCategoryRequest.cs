@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories
+﻿namespace Xipona.Frontend.Redux.Shared.Ports.Requests.ItemCategories
 {
     public class ModifyItemCategoryRequest
     {

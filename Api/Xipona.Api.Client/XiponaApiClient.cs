@@ -1,57 +1,63 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using ProjectHermes.Xipona.Api.Contracts.Common.Queries;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Commands;
-using ProjectHermes.Xipona.Api.Contracts.ItemCategories.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItem;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
-using ProjectHermes.Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.Items.Queries.Shared;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Commands;
-using ProjectHermes.Xipona.Api.Contracts.Manufacturers.Queries;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Commands;
-using ProjectHermes.Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
-using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.CreateStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Commands.ModifyStore;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
-using ProjectHermes.Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
 using RestEase;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AddItemToShoppingListContract = ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
-using ItemContract = ProjectHermes.Xipona.Api.Contracts.Items.Queries.Get.ItemContract;
+using Xipona.Api.Contracts.Common.Queries;
+using Xipona.Api.Contracts.ItemCategories.Commands;
+using Xipona.Api.Contracts.ItemCategories.Queries;
+using Xipona.Api.Contracts.Items.Commands.CreateItem;
+using Xipona.Api.Contracts.Items.Commands.CreateItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.MakeTemporaryItemPermanent;
+using Xipona.Api.Contracts.Items.Commands.MergeItems;
+using Xipona.Api.Contracts.Items.Commands.ModifyItem;
+using Xipona.Api.Contracts.Items.Commands.ModifyItemWithTypes;
+using Xipona.Api.Contracts.Items.Commands.UpdateItem;
+using Xipona.Api.Contracts.Items.Commands.UpdateItemPrice;
+using Xipona.Api.Contracts.Items.Commands.UpdateItemWithTypes;
+using Xipona.Api.Contracts.Items.Queries.AllQuantityTypes;
+using Xipona.Api.Contracts.Items.Queries.GetItemTypePrices;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsByItemCategory;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForMerge;
+using Xipona.Api.Contracts.Items.Queries.SearchItemsForShoppingLists;
+using Xipona.Api.Contracts.Items.Queries.Shared;
+using Xipona.Api.Contracts.Manufacturers.Commands;
+using Xipona.Api.Contracts.Manufacturers.Queries;
+using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Recipes.Queries.AllIngredientQuantityTypes;
+using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using Xipona.Api.Contracts.RecipeTags.Commands;
+using Xipona.Api.Contracts.RecipeTags.Queries.GetAll;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemWithTypeToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddShoppingListDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.AddTemporaryItemToShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.ChangeItemQuantityOnShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Commands.PutItemInBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemDiscount;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromBasket;
+using Xipona.Api.Contracts.ShoppingLists.Commands.RemoveItemFromShoppingList;
+using Xipona.Api.Contracts.ShoppingLists.Queries.GetActiveShoppingListByStoreId;
+using Xipona.Api.Contracts.Stores.Commands.CreateStore;
+using Xipona.Api.Contracts.Stores.Commands.ModifyStore;
+using Xipona.Api.Contracts.Stores.Queries.Get;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForItem;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresForShopping;
+using Xipona.Api.Contracts.Stores.Queries.GetActiveStoresOverview;
+using Xipona.Api.Contracts.Users.Commands.AllCurrencies;
+using Xipona.Api.Contracts.Users.Commands.Login;
+using Xipona.Api.Contracts.Users.Commands.UpdateGeneralSettings;
+using AddItemToShoppingListContract = Xipona.Api.Contracts.ShoppingLists.Commands.AddItemToShoppingList.AddItemToShoppingListContract;
+using ItemContract = Xipona.Api.Contracts.Items.Queries.Get.ItemContract;
 
-namespace ProjectHermes.Xipona.Api.Client
+namespace Xipona.Api.Client
 {
     /// <inheritdoc cref="IXiponaApiClient"/>
     public class XiponaApiClient : IXiponaApiClient
@@ -81,6 +87,34 @@ namespace ProjectHermes.Xipona.Api.Client
         {
             return await _apiClient.IsAlive();
         }
+
+        #region User
+
+        /// <inheritdoc/>
+        public async Task<UserInfoContract> LoginAsync(CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.LoginAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateGeneralSettingsAsync(GeneralSettingsContract contract, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.UpdateGeneralSettingsAsync(contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<CurrencyContract>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetAllCurrenciesAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Contracts.Users.Queries.GetGeneralSettings.GeneralSettingsContract> GetGeneralSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.GetGeneralSettingsAsync(cancellationToken);
+        }
+
+        #endregion
 
         #region ShoppingList
 
@@ -166,6 +200,20 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             await _apiClient.RemoveItemDiscountAsync(id, contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task AddShoppingListDiscountAsync(Guid id, AddShoppingListDiscountContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.AddShoppingListDiscountAsync(id, contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task RemoveShoppingListDiscountAsync(Guid shoppingListId, Guid discountId,
+            CancellationToken cancellationToken = default)
+        {
+            await _apiClient.RemoveShoppingListDiscountAsync(shoppingListId, discountId, cancellationToken);
         }
 
         #endregion ShoppingList
@@ -262,11 +310,12 @@ namespace ProjectHermes.Xipona.Api.Client
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<SearchItemResultContract>> SearchItemsByFilterAsync(Guid[] storeIds,
-            Guid[] itemCategoryIds, Guid[] manufacturerIds,
+        public async Task<IEnumerable<SearchItemResultContract>> FilterItemsAsync(Guid? storeId,
+            Guid? itemCategoryId, Guid? manufacturerId, int page = 1, int pageSize = 20,
             CancellationToken cancellationToken = default)
         {
-            return await _apiClient.SearchItemsByFilterAsync(storeIds, itemCategoryIds, manufacturerIds, cancellationToken);
+            return await _apiClient.FilterItemsAsync(storeId, itemCategoryId, manufacturerId, page, pageSize,
+                cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -294,6 +343,34 @@ namespace ProjectHermes.Xipona.Api.Client
             CancellationToken cancellationToken = default)
         {
             return await _apiClient.GetAllQuantityTypesInPacketAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Guid> MergeItemsAsync(MergeItemsContract contract,
+            CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.MergeItemsAsync(contract, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<SearchItemsForMergeResultContract>> SearchItemsForMergeAsync(
+            Guid itemCategory, Guid? manufacturer, int quantityType, float? quantity,
+            int? quantityTypeInPacket, Guid[] excludedItemIds, CancellationToken cancellationToken = default)
+        {
+            return await _apiClient.SearchItemsForMergeAsync(itemCategory, manufacturer, quantityType, quantity,
+                quantityTypeInPacket, excludedItemIds, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task MarkItemAsFavoriteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.MarkItemAsFavoriteAsync(id, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task UnmarkItemAsFavoriteAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            await _apiClient.UnmarkItemAsFavoriteAsync(id, cancellationToken);
         }
 
         #endregion Item

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectHermes.Xipona.Api.Contracts.Stores.Queries.Shared
+namespace Xipona.Api.Contracts.Stores.Queries.Shared
 {
     /// <summary>
     /// Represents a section of a store.

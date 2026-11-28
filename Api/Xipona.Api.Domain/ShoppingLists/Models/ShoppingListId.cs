@@ -1,4 +1,4 @@
-﻿namespace ProjectHermes.Xipona.Api.Domain.ShoppingLists.Models;
+﻿namespace Xipona.Api.Domain.ShoppingLists.Models;
 
 public readonly record struct ShoppingListId
 {
@@ -12,7 +12,7 @@ public readonly record struct ShoppingListId
         Value = value;
     }
 
-    public static ShoppingListId New => new(Guid.NewGuid());
+    public static ShoppingListId New => new(Guid.CreateVersion7());
 
     public Guid Value { get; }
 

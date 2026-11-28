@@ -1,10 +1,10 @@
-﻿using ProjectHermes.Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
-using ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Common;
-using ProjectHermes.Xipona.Frontend.Redux.Recipes.States;
-using ProjectHermes.Xipona.Frontend.TestTools.Extensions;
+﻿using Xipona.Api.Contracts.ShoppingLists.Commands.AddItemsToShoppingLists;
+using Xipona.Frontend.Infrastructure.Converters.ShoppingLists.ToContract;
+using Xipona.Frontend.Infrastructure.Tests.Common;
+using Xipona.Frontend.Redux.Recipes.States;
+using Xipona.Frontend.TestTools.Extensions;
 
-namespace ProjectHermes.Xipona.Frontend.Infrastructure.Tests.Converters.ShoppingLists.ToContract;
+namespace Xipona.Frontend.Infrastructure.Tests.Converters.ShoppingLists.ToContract;
 
 public class AddItemsToShoppingListsContractConverterTests
     : ToContractConverterBase<IEnumerable<AddToShoppingListItem>, AddItemsToShoppingListsContract,

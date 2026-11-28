@@ -4,56 +4,58 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Commands;
-using ProjectHermes.Xipona.Api.ApplicationServices.Common.Queries;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Common;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.Get;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
-using ProjectHermes.Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
-using ProjectHermes.Xipona.Api.Core.Converter;
-using ProjectHermes.Xipona.Api.Core.Extensions;
-using ProjectHermes.Xipona.Api.Core.TestKit;
-using ProjectHermes.Xipona.Api.Domain.Common.Reasons;
-using ProjectHermes.Xipona.Api.Domain.Items.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Models;
-using ProjectHermes.Xipona.Api.Domain.Recipes.Services.Queries;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Common;
-using ProjectHermes.Xipona.Api.Domain.TestKit.Recipes.Models;
-using ProjectHermes.Xipona.Api.Endpoint.v1.Endpoints;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Items.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.Recipes.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.RecipeTags.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Contexts;
-using ProjectHermes.Xipona.Api.Repositories.Stores.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Items.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Recipes.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.RecipeTags.Entities;
-using ProjectHermes.Xipona.Api.Repositories.TestKit.Stores.Entities;
-using ProjectHermes.Xipona.Api.TestTools.AutoFixture;
-using ProjectHermes.Xipona.Api.TestTools.Exceptions;
-using ProjectHermes.Xipona.Api.TestTools.Extensions;
+using Xipona.Api.ApplicationServices.Common.Commands;
+using Xipona.Api.ApplicationServices.Common.Queries;
+using Xipona.Api.ApplicationServices.Recipes.Commands.CreateRecipe;
+using Xipona.Api.ApplicationServices.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Common;
+using Xipona.Api.Contracts.Recipes.Commands.CreateRecipe;
+using Xipona.Api.Contracts.Recipes.Commands.ModifyRecipe;
+using Xipona.Api.Contracts.Recipes.Queries.Get;
+using Xipona.Api.Contracts.Recipes.Queries.GetItemAmountsForOneServing;
+using Xipona.Api.Contracts.Recipes.Queries.SearchRecipesByName;
+using Xipona.Api.Core.Converter;
+using Xipona.Api.Core.Extensions;
+using Xipona.Api.Core.TestKit;
+using Xipona.Api.Domain.Common.Reasons;
+using Xipona.Api.Domain.Items.Models;
+using Xipona.Api.Domain.Recipes.Models;
+using Xipona.Api.Domain.Recipes.Services.Queries;
+using Xipona.Api.Domain.TestKit.Common;
+using Xipona.Api.Domain.TestKit.Recipes.Models;
+using Xipona.Api.Endpoint.v1.Endpoints;
+using Xipona.Api.Repositories.ItemCategories.Contexts;
+using Xipona.Api.Repositories.ItemCategories.Entities;
+using Xipona.Api.Repositories.Items.Contexts;
+using Xipona.Api.Repositories.Items.Entities;
+using Xipona.Api.Repositories.Recipes.Contexts;
+using Xipona.Api.Repositories.RecipeTags.Contexts;
+using Xipona.Api.Repositories.Stores.Contexts;
+using Xipona.Api.Repositories.Stores.Entities;
+using Xipona.Api.Repositories.TestKit.ItemCategories.Entities;
+using Xipona.Api.Repositories.TestKit.Items.Entities;
+using Xipona.Api.Repositories.TestKit.Recipes.Entities;
+using Xipona.Api.Repositories.TestKit.RecipeTags.Entities;
+using Xipona.Api.Repositories.TestKit.Stores.Entities;
+using Xipona.Api.TestTools.AutoFixture;
+using Xipona.Api.TestTools.Exceptions;
+using Xipona.Api.TestTools.Extensions;
 using System;
 using System.Text.RegularExpressions;
+using Xipona.Api.Repositories.Manufacturers.Contexts;
+using Xipona.Api.Repositories.ShoppingLists.Contexts;
 using Xunit;
-using Ingredient = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Ingredient;
-using Item = ProjectHermes.Xipona.Api.Repositories.Items.Entities.Item;
-using ItemType = ProjectHermes.Xipona.Api.Repositories.Items.Entities.ItemType;
-using PreparationStep = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
-using Recipe = ProjectHermes.Xipona.Api.Repositories.Recipes.Entities.Recipe;
+using Ingredient = Xipona.Api.Repositories.Recipes.Entities.Ingredient;
+using Item = Xipona.Api.Repositories.Items.Entities.Item;
+using ItemType = Xipona.Api.Repositories.Items.Entities.ItemType;
+using PreparationStep = Xipona.Api.Repositories.Recipes.Entities.PreparationStep;
+using Recipe = Xipona.Api.Repositories.Recipes.Entities.Recipe;
 
-namespace ProjectHermes.Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
+namespace Xipona.Api.Endpoint.IntegrationTests.v1.Endpoints;
 
 public class RecipeEndpointsIntegrationTests
 {
-    public class CreateRecipeAsync : IAssemblyFixture<DockerFixture>
+    public class CreateRecipeAsync
     {
         private readonly CreateRecipeAsyncFixture _fixture;
 
@@ -151,7 +153,7 @@ public class RecipeEndpointsIntegrationTests
                         .GetRequiredService<IToDomainConverter<CreateRecipeContract, CreateRecipeCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<RecipeReadModel, RecipeContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -318,7 +320,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class SearchRecipesByNameAsync : IAssemblyFixture<DockerFixture>
+    public class SearchRecipesByNameAsync
     {
         private readonly SearchRecipesByNameAsyncFixture _fixture;
 
@@ -370,7 +372,7 @@ public class RecipeEndpointsIntegrationTests
                     scope.ServiceProvider
                         .GetRequiredService<IToContractConverter<RecipeSearchResult, RecipeSearchResultContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public async Task PrepareDatabaseAsync()
@@ -461,7 +463,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class ModifyRecipeAsync : IAssemblyFixture<DockerFixture>
+    public class ModifyRecipeAsync
     {
         private readonly ModifyRecipeAsyncFixture _fixture;
 
@@ -578,7 +580,7 @@ public class RecipeEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToDomainConverter<(Guid, ModifyRecipeContract), ModifyRecipeCommand>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupRecipeId()
@@ -759,7 +761,7 @@ public class RecipeEndpointsIntegrationTests
         }
     }
 
-    public class GetItemAmountsForOneServingAsync : IAssemblyFixture<DockerFixture>
+    public class GetItemAmountsForOneServingAsync
     {
         private readonly GetItemAmountsForOneServingAsyncFixture _fixture;
 
@@ -812,7 +814,7 @@ public class RecipeEndpointsIntegrationTests
                     scope.ServiceProvider.GetRequiredService<
                         IToContractConverter<IEnumerable<ItemAmountForOneServing>, ItemAmountsForOneServingContract>>(),
                     scope.ServiceProvider.GetRequiredService<IToContractConverter<IReason, ErrorContract>>(),
-                    default);
+                    TestContext.Current.CancellationToken);
             }
 
             public void SetupRecipeId()
@@ -1032,6 +1034,8 @@ public class RecipeEndpointsIntegrationTests
         {
             yield return scope.ServiceProvider.GetRequiredService<StoreContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemCategoryContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ManufacturerContext>();
+            yield return scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
             yield return scope.ServiceProvider.GetRequiredService<ItemContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeTagContext>();
             yield return scope.ServiceProvider.GetRequiredService<RecipeContext>();
