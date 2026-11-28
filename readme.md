@@ -155,7 +155,7 @@ Fill the following env variables. As long as you don't set `XIPONA_AUTH_ENABLED`
 - `XIPONA_AUTH_ENABLED` (default: false)
 - `XIPONA_AUTH_AUTHORITY` (the URL of the authority, **without** the well-known part)
 - `XIPONA_AUTH_CLIENT_ID`
-- `XIPONA_AUTH_DEFAULT_SCOPES__0` (optional, only if you need additional scopes, openid and profile are always active, default: empty)
+- `XIPONA_AUTH_DEFAULT_SCOPES` (array, optional, only if you need additional scopes, openid and profile are always active, default: empty)
 - `XIPONA_AUTH_RESPONSE_TYPE` (optional, default: code)
 - `XIPONA_AUTH_ROLE_NAME_USER` (optional, default: User)
 - `XIPONA_AUTH_CLAIM_NAME` (optional, default: given_name)

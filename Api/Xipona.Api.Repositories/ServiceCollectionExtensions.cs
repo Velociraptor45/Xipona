@@ -236,9 +236,9 @@ public static class ServiceCollectionExtensions
         yield return typeof(ManufacturerContext);
         yield return typeof(ItemCategoryContext);
         yield return typeof(StoreContext);
-        yield return typeof(ItemContext);
         yield return typeof(ShoppingListContext);
         yield return typeof(RecipeTagContext);
         yield return typeof(RecipeContext);
+        yield return typeof(ItemContext);
     }
 }

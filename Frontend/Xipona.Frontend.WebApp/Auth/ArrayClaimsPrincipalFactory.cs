@@ -26,16 +26,40 @@ public class ArrayClaimsPrincipalFactory<TAccount> : AccountClaimsPrincipalFacto
         foreach (var kvp in account.AdditionalProperties)
         {
             var value = kvp.Value;
-            if (value is JsonElement { ValueKind: JsonValueKind.Array } element)
-            {
-                claimsIdentity.RemoveClaim(claimsIdentity.FindFirst(kvp.Key));
 
-                var claims = element.EnumerateArray().Select(x => new Claim(kvp.Key, x.ToString()));
-
-                claimsIdentity.AddClaims(claims);
-            }
+            if (value is JsonElement jsonElement) 
+                ProcessJsonElement(jsonElement, kvp.Key, claimsIdentity);
         }
 
         return user;
+    }
+
+    private void ProcessJsonElement(JsonElement jsonElement, string typeName, ClaimsIdentity claimsIdentity)
+    {
+        if (jsonElement.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var jsonProperty in jsonElement.EnumerateObject())
+            {
+                ProcessJsonElement(jsonProperty.Value, typeName + $".{jsonProperty.Name}", claimsIdentity);
+            }
+        }
+        
+        if (jsonElement.ValueKind == JsonValueKind.Array)
+        {
+            claimsIdentity.TryRemoveClaim(claimsIdentity.FindFirst(typeName));
+
+            var claims = jsonElement.EnumerateArray().Select(x => new Claim(typeName, x.ToString()));
+
+            claimsIdentity.AddClaims(claims);
+        }
+        
+        if(jsonElement.ValueKind == JsonValueKind.String)
+        {
+            claimsIdentity.TryRemoveClaim(claimsIdentity.FindFirst(typeName));
+
+            var value = jsonElement.GetString()!;
+
+            claimsIdentity.AddClaim(new Claim(typeName, value));
+        }
     }
 }

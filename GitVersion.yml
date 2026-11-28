@@ -8,7 +8,7 @@ tag-prefix: '[vV]'
 branches:
   main:
     regex: ^main$
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     tag: ''
     increment: None
     prevent-increment-of-merged-branch-version: true

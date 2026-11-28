@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,7 @@ using Xipona.Api.WebApp.BackgroundServices;
 using Xipona.Api.WebApp.Configs;
 using Xipona.Api.WebApp.Extensions;
 using Xipona.Api.WebApp.Serialization;
+using AuthenticationOptions = Xipona.Api.Endpoint.Middleware.AuthenticationOptions;
 
 var builder = WebApplication.CreateBuilder();
 builder.Host.UseDefaultServiceProvider((_, opt) =>
@@ -142,7 +144,10 @@ void SetupSecurity()
 
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
     JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
+    
+    // flatten nested claims
+    builder.Services.AddTransient<IClaimsTransformation, RoleClaimsTransformation>();
+    
     builder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(opt =>

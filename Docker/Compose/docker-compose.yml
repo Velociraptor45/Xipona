@@ -15,7 +15,7 @@ services:
       - xipona-database:/var/lib/postgresql/data
 
   Api:
-    image: velocir4ptor/xipona-api:0.13.1
+    image: velocir4ptor/xipona-api:0.14.0
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       XIPONA_CORS_ORIGIN__0: 
@@ -66,7 +66,7 @@ services:
   #     - xipona
 
   Frontend:
-    image: velocir4ptor/xipona-frontend:0.13.1
+    image: velocir4ptor/xipona-frontend:0.14.0
     environment:
       XIPONA_API_URL: http://<api-url>:12489/v1
       # uncomment this for log collection
@@ -76,7 +76,7 @@ services:
       # XIPONA_AUTH_ENABLED: "false"
       # XIPONA_AUTH_AUTHORITY: 
       # XIPONA_AUTH_CLIENT_ID: 
-      # XIPONA_AUTH_DEFAULT_SCOPES__0: 
+      # XIPONA_AUTH_DEFAULT_SCOPES: []
       # XIPONA_AUTH_RESPONSE_TYPE: code
       # XIPONA_AUTH_ROLE_NAME_USER: User
       # XIPONA_AUTH_CLAIM_NAME: given_name
